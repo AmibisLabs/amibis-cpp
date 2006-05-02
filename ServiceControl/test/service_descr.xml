@@ -1,0 +1,56 @@
+<service name="mycamera">
+  <variable name="genealogy">
+    <access>read</access>
+    <type>string</type>
+    <description>Service inheritance</description>
+    <formatDescription>(string)(::string)*</formatDescription>
+    <value>hardware::camera</value>
+  </variable>
+  <variable name="Position3D">
+    <access>read</access>
+    <type>float vector 3</type>
+    <description>coordinates along x, y, and z axis</description>
+    <formatDescription>list of decimal representation</formatDescription>
+    <value>0; 0; 0</value>
+    <default>0; 0; 0</default>
+  </variable>
+  <variable name="Orientation">
+    <access>read</access>
+    <type>float vector 3</type>
+    <description>orientation : vertical, horizontal, axial</description>
+    <formatDescription>list of decimal representation</formatDescription>
+    <value>0; 0; 0</value>
+    <default>0; 0; 0</default>
+  </variable>
+  <variable name="Homographypos">
+    <access>read</access>
+    <type>float vector 3</type>
+    <description>coordinates along x, y, and z axis</description>
+    <formatDescription>list of decimal representation</formatDescription>
+    <value>0; 0; 0</value>
+    <default>0; 0; 0</default>
+  </variable>
+  <variable name="Homographymatrix">
+    <access>read</access>
+    <type>float vector 9</type>
+    <description>Homography</description>
+    <formatDescription>list of decimal representation</formatDescription>
+    <value>0; 0; 0; 0; 0; 0; 0; 0; 0</value>
+    <default>0; 0; 0; 0; 0; 0; 0; 0; 0</default>
+  </variable>
+  <in_output name="image">
+    <description>Obtain Image</description>
+    <formatDescription>camera image query</formatDescription>
+  </in_output>
+  <variable name="MyPosition.">
+    <access>read</access>
+    <type>float vector 3</type>
+    <description>coordinates along x, y, and z axis</description>
+    <formatDescription>list of decimal representation</formatDescription>
+    <value>0; 0; 0</value>
+    <default>0; 0; 0</default>
+  </variable>
+  <variable name="Position3D.xyz">
+    <value>1; 20; 9</value>
+  </variable>
+</service>

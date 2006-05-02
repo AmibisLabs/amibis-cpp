@@ -1,0 +1,143 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: Services - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\vaufreyd\LOCALS~1\Temp\RSP23D.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "Com" /I "ServiceControl" /I "..\commoncpp2\include" /I "..\commoncpp2\w32" /I "..\Rendezvous\include" /D "_DEBUG" /D "WIN32" /D "_MBCS" /D "_LIB" /D "_WIN32" /D "READ_LEN_UNSIGNED_INT" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\Attribut.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\BipServices.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\BrowseForService.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\ControlClient.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\ControlServer.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\ControlUtils.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\InOutputAttribut.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\Service.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\ServiceProperties.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\ServicesCommon.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\VariableAttribut.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\WaitForServices.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\ServiceControl\XMLTreeParser.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\UdpServer.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\Client.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\ComTools.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\Message.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\MsgManager.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\MsgSocket.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\Server.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\Socket.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\SocketException.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\TcpClient.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\TcpServer.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\TcpUdpClientServer.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\UdpClient.cpp"
+"C:\Users\Vaufreyd\Developpement\Services\com\UdpExchange.cpp"
+]
+Creating command line "cl.exe @C:\DOCUME~1\vaufreyd\LOCALS~1\Temp\RSP23D.tmp" 
+Creating temporary file "C:\DOCUME~1\vaufreyd\LOCALS~1\Temp\RSP23E.tmp" with contents
+[
+/nologo /out:"Debug\Services.lib" 
+.\Debug\Attribut.obj
+.\Debug\BipServices.obj
+.\Debug\BrowseForService.obj
+.\Debug\ControlClient.obj
+.\Debug\ControlServer.obj
+.\Debug\ControlUtils.obj
+.\Debug\InOutputAttribut.obj
+.\Debug\Service.obj
+.\Debug\ServiceProperties.obj
+.\Debug\ServicesCommon.obj
+.\Debug\VariableAttribut.obj
+.\Debug\WaitForServices.obj
+.\Debug\XMLTreeParser.obj
+.\Debug\UdpServer.obj
+.\Debug\Client.obj
+.\Debug\ComTools.obj
+.\Debug\Message.obj
+.\Debug\MsgManager.obj
+.\Debug\MsgSocket.obj
+.\Debug\Server.obj
+.\Debug\Socket.obj
+.\Debug\SocketException.obj
+.\Debug\TcpClient.obj
+.\Debug\TcpServer.obj
+.\Debug\TcpUdpClientServer.obj
+.\Debug\UdpClient.obj
+.\Debug\UdpExchange.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\vaufreyd\LOCALS~1\Temp\RSP23E.tmp"
+<h3>Output Window</h3>
+Compiling...
+Attribut.cpp
+BipServices.cpp
+BrowseForService.cpp
+c:\users\vaufreyd\developpement\rendezvous\include\dns_sd.h(51) : error C2146: syntax error : missing ';' before identifier 'uint8_t'
+c:\users\vaufreyd\developpement\rendezvous\include\dns_sd.h(51) : fatal error C1004: unexpected end of file found
+ControlClient.cpp
+ControlServer.cpp
+c:\program files\microsoft visual studio\vc98\include\list(166) : warning C4786: 'std::reverse_bidirectional_iterator<std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::iterator,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::basic_string<char,std::char_traits<char>,std::allocator<char> > &,std::basic_string<char,std::char_traits<char>,std::allocator<char> > *,int>' : identifier was truncated to '255' characters in the debug information
+        c:\program files\microsoft visual studio\vc98\include\list(166) : while compiling class-template member function 'std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::iterator __thiscall std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::begin(void)'
+c:\program files\microsoft visual studio\vc98\include\list(166) : warning C4786: 'std::reverse_bidirectional_iterator<std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::const_iterator,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const &,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const *,int>' : identifier was truncated to '255' characters in the debug information
+        c:\program files\microsoft visual studio\vc98\include\list(166) : while compiling class-template member function 'std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::iterator __thiscall std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::begin(void)'
+ControlUtils.cpp
+InOutputAttribut.cpp
+Service.cpp
+ServiceProperties.cpp
+ServicesCommon.cpp
+VariableAttribut.cpp
+WaitForServices.cpp
+c:\users\vaufreyd\developpement\services\servicecontrol\servicecontrol\waitforservices.h(15) : error C2871: 'std' : does not exist or is not a namespace
+XMLTreeParser.cpp
+c:\program files\microsoft visual studio\vc98\include\list(131) : warning C4786: 'std::reverse_bidirectional_iterator<std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::iterator,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::basic_string<char,std::char_traits<char>,std::allocator<char> > &,std::basic_string<char,std::char_traits<char>,std::allocator<char> > *,int>' : identifier was truncated to '255' characters in the debug information
+        c:\program files\microsoft visual studio\vc98\include\list(129) : while compiling class-template member function '__thiscall std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >(const std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > &)'
+c:\program files\microsoft visual studio\vc98\include\list(131) : warning C4786: 'std::reverse_bidirectional_iterator<std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::const_iterator,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const &,std::basic_string<char,std::char_traits<char>,std::allocator<char> > const *,int>' : identifier was truncated to '255' characters in the debug information
+        c:\program files\microsoft visual studio\vc98\include\list(129) : while compiling class-template member function '__thiscall std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >(const std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > &)'
+UdpServer.cpp
+Client.cpp
+ComTools.cpp
+Message.cpp
+MsgManager.cpp
+MsgSocket.cpp
+Server.cpp
+Generating Code...
+c:\program files\microsoft visual studio\vc98\include\list(131) : warning C4786: 'std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >' : identifier was truncated to '255' characters in the debug information
+c:\program files\microsoft visual studio\vc98\include\list(153) : warning C4786: 'std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::~list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >' : identifier was truncated to '255' characters in the debug information
+c:\program files\microsoft visual studio\vc98\include\list(131) : warning C4786: 'std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >' : identifier was truncated to '255' characters in the debug information
+c:\program files\microsoft visual studio\vc98\include\list(153) : warning C4786: 'std::list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >::~list<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::allocator<std::basic_string<char,std::char_traits<char>,std::allocator<char> > > >' : identifier was truncated to '255' characters in the debug information
+Compiling...
+Socket.cpp
+SocketException.cpp
+TcpClient.cpp
+TcpServer.cpp
+TcpUdpClientServer.cpp
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(130) : error C2385: 'TcpUdpClientServer::MsgSocket' is ambiguous
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(130) : warning C4385: could be the 'MsgSocket' in base 'TcpServer' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(130) : warning C4385: or the 'MsgSocket' in base 'UdpExchange' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(158) : error C2385: 'TcpUdpClientServer::MsgSocket' is ambiguous
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(158) : warning C4385: could be the 'MsgSocket' in base 'TcpServer' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(158) : warning C4385: or the 'MsgSocket' in base 'UdpExchange' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(183) : error C2385: 'TcpUdpClientServer::MsgSocket' is ambiguous
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(183) : warning C4385: could be the 'MsgSocket' in base 'TcpServer' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\com\tcpudpclientserver.h(183) : warning C4385: or the 'MsgSocket' in base 'UdpExchange' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\tcpudpclientserver.cpp(219) : error C2385: 'TcpUdpClientServer::MsgSocket' is ambiguous
+c:\users\vaufreyd\developpement\services\com\tcpudpclientserver.cpp(219) : warning C4385: could be the 'MsgSocket' in base 'TcpServer' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\tcpudpclientserver.cpp(219) : warning C4385: or the 'MsgSocket' in base 'UdpExchange' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\tcpudpclientserver.cpp(230) : error C2385: 'TcpUdpClientServer::MsgSocket' is ambiguous
+c:\users\vaufreyd\developpement\services\com\tcpudpclientserver.cpp(230) : warning C4385: could be the 'MsgSocket' in base 'TcpServer' of class 'TcpUdpClientServer'
+c:\users\vaufreyd\developpement\services\com\tcpudpclientserver.cpp(230) : warning C4385: or the 'MsgSocket' in base 'UdpExchange' of class 'TcpUdpClientServer'
+UdpClient.cpp
+UdpExchange.cpp
+Generating Code...
+Error executing cl.exe.
+
+
+
+<h3>Results</h3>
+Services.lib - 8 error(s), 18 warning(s)
+</pre>
+</body>
+</html>

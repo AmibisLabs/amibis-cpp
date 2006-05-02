@@ -1,0 +1,69 @@
+# -*- Makefile -*-
+
+HFILESPATH= -I.
+HFILES = $(addprefix $(HFILESDIR), $(addsuffix .h, ${SRCNAME}))
+
+SRCS = $(addsuffix .cpp, ${SRCNAME})
+OBJS = $(addsuffix .o, ${SRCNAME})
+
+objs: ${OBJS} 
+modules: ${MODULENAME}.$(LIBEXT) ${MODULENAME}.x.scm
+libs: ${LIBNAME}
+
+${LIBNAME}: ${SRCS} $(HFILES)
+	$(CXX) ${LDFLAGS} ${LIBS} -o ${LIBNAME} ${CFLAGS} ${CPPFLAGS} ${SRCS}
+
+${MODULENAME}.$(LIBEXT):  ${MODULENAME}.o
+	ravitool --link ${LDFLAGS} ${LIBS_MODULE} -o ${MODULENAME}.$(LIBEXT) ${MODULENAME}.o ${OBJS}
+
+${MODULENAME}.o: ${MODULENAME}.cpp
+	ravitool --compile ${CXXFLAGS} ${CPPFLAGS} -o $@ $<
+
+${MODULENAME}.cpp: ${HFILES} ${SRCS}
+	ravitool --generate  ${MODULEPATH} ${DCL_FILE}\
+		${HFILESPATH} -o $@ ${HFILES}
+
+%.o: %.cpp %.h
+	$(CXX) -c ${CXXFLAGS} ${CPPFLAGS} -o $@ $<
+
+doc:
+	doxygen Doxyfile
+doc-clean:
+	${RM} DOC/html
+doc-install:
+	${MKDIRHIER} ${DOCDIR_CONTROL}
+	${INSTALL} ./DOC/html/* ${DOCDIR_CONTROL}/
+
+clean:
+	${RM} ${MODULENAME}.x.scm *.o \
+	${MODULENAME}.cpp ${MODULENAME}.$(LIBEXT) *~\
+	${LIBNAME}
+	${RM} $(HFILESDIR)/*~
+
+distclean: clean
+	${RM} Makefile.conf ${CONFIG_SH} Doxyfile
+
+install-module:
+	${MKDIRHIER} ${DESTDIR}/${RAVIMOD}/${HOSTTYPE}
+	${INSTALL} ${MODULENAME}.$(LIBEXT) ${DESTDIR}/${RAVIMOD}/${HOSTTYPE}
+	${INSTALL} ${MODULENAME}.x.scm ${DESTDIR}/${RAVIMOD}
+install-lib:
+	${MKDIRHIER} ${DESTDIR}/${LIBDIR}
+	${INSTALL} ${LIBNAME} ${DESTDIR}/${LIBDIR}
+install-hfiles:
+	${MKDIRHIER} ${DESTDIR}/${INCLUDEDIR}/$(HFILESDIR)
+	${INSTALL} $(HFILES) ${DESTDIR}/${INCLUDEDIR}/$(HFILESDIR)
+install-config:
+	${MKDIRHIER} ${DESTDIR}/${EXEC_DIR}
+	${INSTALL} ${CONFIG_SH} ${DESTDIR}/${EXEC_DIR}
+
+uninstall-module:
+	${UNINSTALL} ${RAVIMOD}/${MODULENAME}.x.scm ${RAVIMOD}/${HOSTTYPE}/${MODULENAME}.$(LIBEXT)	
+uninstall-hfiles:
+	${UNINSTALL} $(addprefix ${INCLUDEDIR}/, $(HFILES))
+uninstall-lib :
+	${UNINSTALL} ${LIBDIR}/${LIBNAME}
+
+
+uninstall-config:
+	${UNINSTALL} ${EXEC_DIR}/${CONFIG_SH}

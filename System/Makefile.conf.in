@@ -1,0 +1,39 @@
+# -*- Makefile -*-
+# @configure_input@
+#
+# this Make file *should not* be used with Visual Studio
+# consider using the Visual Studio project at the "Services" level
+
+
+# Specify instalation directories
+LIBDIR=@libdir@
+INCLUDEDIR=@includedir@
+# here specify your modules directory
+RAVIMOD=@RAVIMOD@
+
+EXEC_DIR=@bindir@
+
+DOCDIR_SYSTEM=@DOCDIR_SYSTEM@
+
+RAVI_MAKE=@RAVI_MAKE@
+RAVI_INSTALL=@RAVI_INSTALL@
+RAVI_UNINSTALL=@RAVI_UNINSTALL@
+
+###############################################################
+#      Normally you do not need to edit lines bellow          #
+
+HOSTTYPE=@HOST@
+
+# specify compilation options
+CXX=@CXX@
+CFLAGS=@CFLAGS@
+CXXFLAGS=@CXXFLAGS@
+LDFLAGS=@LDFLAGS@
+LIBEXT=@LIBEXT@
+
+RM=@RM@
+MKDIRHIER=@MKDIRHIER@
+INSTALL=@INSTALL@
+UNINSTALL=@UNINSTALL@
+
+RAVITOOL=@RAVITOOL@

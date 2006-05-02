@@ -1,0 +1,171 @@
+//      -*- C++ -*-
+
+/*! @file Attribut.h
+ * @brief Header of the common classes and values for the PRIMA Service package
+ * @date 2004-2005
+ */
+
+#ifndef ATTRIBUT_H
+#define ATTRIBUT_H
+
+#ifdef WIN32
+	#ifdef USE_AFX
+		#include "StdAfx.h"
+	#else
+		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
+		#include <windows.h>
+	#endif
+#endif
+
+#include <System/SimpleString.h>
+
+/**
+ * @class Attribut Attribut.h ServiceControl/Attribut.h
+ * \brief Abstract class using as base for the different kind of attribute of services.
+ *
+ * The Attribute have a name, a description to give comments, and a description of the used format.
+ * The last description enables to give a XSchema for an XML attribute or an input or output in XML format.
+ *
+ * <br>Example of attibute : Variable, Input, Output.
+ *
+ * <br>The user needs only to use accessors to set or get to the data.
+ *
+ * \author Sebastien Pesnel
+ */
+class Attribut
+{
+ public:
+  /** \name Constructors */
+  //@{
+  Attribut(); /*!< \brief Default Constructor*/
+
+  /** \brief Constructor 
+   * \param a_name [in] name of the attribute */
+  Attribut(const SimpleString& a_name); 
+
+  /** \brief Constructor 
+   * \param a_name [in] name of the attribute */
+  Attribut(const char* a_name);
+  //@}
+
+  /** \brief Destructor */
+  virtual ~Attribut();
+
+ public:
+  /** \name Read Accessors */
+  //@{
+  const SimpleString& GetName() const;
+  const SimpleString& GetDescription() const;
+  const SimpleString& GetFormatDescription() const;
+  const char* GetNameCh() const;
+  const char* GetDescriptionCh() const;
+  const char* GetFormatDescriptionCh() const;
+  //@}
+
+  /** \name Write Accessors */
+  //@{
+  void SetName(const char*);
+  void SetDescription(const char*); 
+  void SetFormatDescription(const char* str);
+  void SetName(const SimpleString& str);
+  void SetDescription(const SimpleString& str);
+  void SetFormatDescription(const SimpleString& str);
+  //@}
+
+  /** \name XML Generation */
+  //@{
+  /** \brief Add to str a short xml description of the attribut. 
+   *
+   * This description is composed by the kind of the attribute and the name.
+   * It can be generated with the method GenerateHeaderDescription.
+   * (to implement in the child)
+   * \param str [in, out] the SimpleString where add the description
+   */
+  virtual void GenerateShortDescription(SimpleString& str) = 0;
+
+  /** \brief Add to str a long xml description of the attribut.
+   *
+   * This description contained the descriptions and other data defined in child class.
+   * The description information can be added to a string with the method AddTagDescriptionToStr
+   * (to implement in the child)
+   * \param str [in, out] the SimpleString where add the description
+   */
+  virtual void GenerateLongDescription(SimpleString& str) = 0;
+
+  /** \brief add a CDATA section
+   *
+   * add to 'str' the string 'val' in a CDATA section
+   * \verbatim str <- str + "<![CDATA[" + val + "]]>" \endverbatim
+   * \param val [in] the content for the CDATA section
+   * \param str [in, out] add the section to the end of str
+   */
+  static void PutAValueInCData(const char* val, SimpleString& str);
+  //@}
+
+ protected:
+  /**
+   * Add to a SimpleString the line : <[type] name="[name]">  or <[type] name="[name]"/> if end is true.
+   * where [type] and [name] are the value of parameter.
+   * \param type [in] the tag name
+   * \param name [in] the value of the XML attribut name
+   * \param str [in, out] the SimpleString where append the data.
+   * \param end [in] define if the tag is closed or not.
+   */
+  static void GenerateHeaderDescription(const SimpleString& type,
+					const SimpleString& name,
+					SimpleString& str,
+					bool end = true);
+  /**
+   * \brief Add to a SimpleString the xml tag for description.
+   *
+   * \verbatim str = str + <description>description content</description> \endverbatim
+   * \param str [in, out] the xml tag for description is added to the ned of the SimpleString
+   */
+  void AddTagDescriptionToStr(SimpleString& str);
+  
+ private:
+  SimpleString name; /*!< name of the attribute*/
+  SimpleString description; /*!< description of the attribute*/
+  /** \brief description of the format of the attribut (example for xml : the associated xsd) */
+  SimpleString formatDescription;
+};
+
+//////////// inline methods ////////////
+#ifndef RAVI_INTERFACE
+
+inline const SimpleString& Attribut::GetName() const
+{ return name; }
+inline const SimpleString& Attribut::GetDescription() const
+{ return description;}
+
+inline const char* Attribut::GetNameCh() const { return name.GetStr(); }
+inline const char* Attribut::GetDescriptionCh() const { return description.GetStr();}
+
+inline void Attribut::SetName(const char* str){ name = str; }
+inline void Attribut::SetDescription(const char* str){ description = str; }
+inline void Attribut::SetName(const SimpleString& str){ name = str; }
+inline void Attribut::SetDescription(const SimpleString& str){ description = str; }
+
+inline void Attribut::GenerateHeaderDescription(const SimpleString& type,
+						const SimpleString& name,
+						SimpleString& str,
+						bool end)
+{
+  str = str + "<"+ type + " name=\"" + name;
+  if(end) str = str + "\"/>";
+  else  str = str + "\">";
+}
+
+inline const SimpleString& Attribut::GetFormatDescription() const
+{ return formatDescription; }
+inline const char* Attribut::GetFormatDescriptionCh() const
+{ return formatDescription.GetStr(); }
+
+inline void Attribut::SetFormatDescription(const SimpleString& str)
+{ formatDescription = str; }
+inline void Attribut::SetFormatDescription(const char* str)
+{ formatDescription = str; }
+
+#endif /* RAVI_INTERFACE */
+
+#endif /** ATTRIBUT_H */

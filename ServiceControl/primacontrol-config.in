@@ -1,0 +1,87 @@
+#! /bin/sh
+# @configure_input@
+# @EditPossible@
+
+usage()
+{
+    cat <<EOF
+Usage primacontrol-config [OPTION] mode ...
+
+mode:
+    --help                print this message
+    --cflags              print cflags necessary to compile with the control part
+    --cflags-only-I       print only the -I flags
+    --libs                print flags to link with the control part
+    --libs-only-L         print only the -L flags (ie the libdir)
+    --libs-only-l         print only the -l flags
+    --libdir              print name of the directory containing libcontrol
+    --includedir          print name of the directory containing the headers
+    --prefix              print the prefix where lib script and headers are
+    --doc                 print the path to the html documentation
+    --doc-tag             print theline for doxyfile to link with the documentation
+
+
+EOF
+    exit $1
+}
+
+if test $# -eq 0; then
+    usage 1
+fi
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+
+while test $# -gt 0; do
+case "$1" in
+    --help)
+	usage 0
+	;;
+    --cflags)
+	echo "-I@includedir@ `primacom-config --cflags` `xml2-config --cflags`"
+	exit 0
+	;;
+    --cflags-only-I)
+	echo "-I@includedir@ `primacom-config --cflags-only-I`"
+	exit 0
+	;;
+    --libs)
+	echo "-L@libdir@ -lcontrol `xml2-config --libs`"
+	exit 0
+	;;
+    --libs-only-L)
+	echo "-L@libdir@"
+	exit 0
+	;;
+    --libs-only-l)
+	echo "-lcontrol"
+	exit 0
+	;;
+    --libdir)
+	echo "@libdir@"
+	exit 0
+	;;
+    --includedir)
+	echo "@includedir@"
+	exit 0
+	;;
+    --prefix)
+	echo "$prefix"
+	exit 0
+	;;
+    --doc)
+	echo "@DOCDIR_CONTROL@"
+	exit 0
+	;;
+    --doc-tag)
+	    echo "@DOCDIR_CONTROL@/doc_control.tag=@DOCDIR_CONTROL@"
+	    exit 0
+	    ;;
+    *)
+	echo "Unknown mode \"$1\""
+	echo
+	usage 1
+	;;
+    esac
+shift
+done

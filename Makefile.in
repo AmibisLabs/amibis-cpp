@@ -1,0 +1,75 @@
+# -*- Makefile -*-
+# @configure_input@
+#
+# Written by :
+#	Sebastien Pesnel
+#	Rémi Emonet (the find ... stuffs)
+
+SUBDIRS=@SUBDIRS@
+
+TAR_NAME=@TAR_NAME@
+
+#find $HOME/Compiled/share/doc/Com/ -type f -name \*.html -exec sed -i s#'/home/ananke/pesnel/src/Services/System/DOC/html'#'/home/ananke/pesnel/Compiled/share/doc/System'#g {} \;     
+
+all : all-subdirs message
+
+message:
+	@echo "###################################################"
+	@echo "## You can now use scons to build OMiSCID libraries"
+	@echo "## Scons replaces autoconf/configure/make/..."
+	@echo "###################################################"
+
+clean : clean-subdirs
+	rm -f *~
+
+install : install-subdirs
+
+uninstall: uninstall-subdirs
+
+doc : doc-subdirs
+doc-clean : doc-clean-subdirs
+doc-install : doc-install-subdirs
+
+
+tar:
+	tar cvf $(TAR_NAME).tar System/*.cpp System/System/*.h  System/modPrimaSystem.dcl \
+		System/primasystem-config.in   System/Makefile  System/Makefile.conf.in  System/Makefile.rules  System/configure.ac \
+		ServiceControl/*.cpp ServiceControl/ServiceControl/*.h ServiceControl/modControl.dcl \
+		ServiceControl/primacontrol-config.in ServiceControl/Doxyfile.in \
+		ServiceControl/Makefile ServiceControl/Makefile.conf.in ServiceControl/Makefile.rules ServiceControl/configure.ac \
+		ServiceControl/test/Makefile ServiceControl/test/*.cpp \
+		Com/*.cpp Com/Com/*.h Com/modCom.dcl \
+		Com/primacom-config.in Com/Doxyfile.in Com/Makefile Com/Makefile.conf.in Com/Makefile.rules Com/configure.ac \
+		autom4te.cache config.log config.status configure configure.ac Doxyfile Makefile.in bipservices.ebuild Services.*
+	mkdir -p $(TAR_NAME)
+	tar xvf $(TAR_NAME).tar -C $(TAR_NAME)
+	tar cvfz $(TAR_NAME).tar.gz $(TAR_NAME)
+	rm -rf $(TAR_NAME) $(TAR_NAME).tar
+
+
+
+all-subdirs clean-subdirs install-subdirs uninstall-subdirs \
+doc-subdirs doc-clean-subdirs tar-subdirs:
+	@for subdir in $(SUBDIRS); do \
+	  target=`echo $@ | sed s/-subdirs//`;   \
+	  echo "*******************************"; \
+	  echo "**   make "$$target" in "$$subdir; \
+	  echo "*******************************"; \
+	  (cd $$subdir && make $$target; ) || exit 1;\
+	done;	
+
+doc-install-subdirs:	
+	@for subdir in $(SUBDIRS); do \
+	  target=`echo $@ | sed s/-subdirs//`;   \
+	  echo "*******************************"; \
+	  echo "**   make "$$target" in "$$subdir; \
+	  echo "*******************************"; \
+	  (cd $$subdir && make $$target; ) || exit 1;\
+	done;
+	@echo "in @DOCDIR_COM@ replace @BASE_PATH@/System/DOC/html by @DOCDIR_SYSTEM@"
+	find  @DOCDIR_COM@ -type f -name \*.html -exec sed -i s#'@BASE_PATH@/System/DOC/html'#'@DOCDIR_SYSTEM@'#g {} \;
+	@echo "in @DOCDIR_CONTROL@ replace @BASE_PATH@/System/DOC/html by @DOCDIR_SYSTEM@"
+	find  @DOCDIR_CONTROL@ -type f -name \*.html -exec sed -i s#'@BASE_PATH@/System/DOC/html'#'@DOCDIR_SYSTEM@'#g {} \;
+	@echo "in @DOCDIR_CONTROL@ replace @BASE_PATH@/Com/DOC/html by @DOCDIR_COM@"
+	find  @DOCDIR_CONTROL@ -type f -name \*.html -exec sed -i s#'@BASE_PATH@/Com/DOC/html'#'@DOCDIR_COM@'#g {} \;
+
