@@ -239,7 +239,7 @@ void TcpServer::AcceptConnection(MsgSocket* sock)
 
 
   // Send empty message information
-  sock->Send(0, NULL);
+  sock->SendSyncLinkMsg();
 }
 
 void TcpServer::SetCallBackOnRecv(MsgSocket::Callback_Receive callback, 

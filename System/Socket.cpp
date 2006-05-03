@@ -70,7 +70,7 @@ Socket::Socket(SocketKind type)
 {
   if((descriptor = socket(AF_INET, type, 0)) == -1)
     {
-      throw SocketException("socket", errno);
+      throw SocketException("socket", Errno());
     }
 }
 
@@ -78,6 +78,15 @@ Socket::~Socket()
 {
   if(descriptor != -1) Close();
  
+}
+
+int Socket::Errno()
+{
+#ifdef WIN32
+	return WSAGetLastError();
+#else
+	return errno;
+#endif
 }
 
 void Socket::SetDescriptor(SOCKET descr)
@@ -88,7 +97,7 @@ void Socket::SetDescriptor(SOCKET descr)
 
   if(getsockopt(descriptor, SOL_SOCKET,SO_TYPE , (char*)&t, (socklen_t*)&size) == -1)
     {
-      throw SocketException("getsockopt", errno);
+      throw SocketException("getsockopt", Errno());
     }
 
   socketType = (SocketKind)t;
@@ -146,7 +155,7 @@ void Socket::Listen()
 {
   int res;
   if((res = listen(descriptor, BACKLOG)) == -1)
-    throw SocketException("listen", errno);
+    throw SocketException("listen", Errno());
 }
 
 Socket* Socket::Accept()
@@ -212,7 +221,7 @@ void Socket::Connect(const char* addr, int port)
       if(connect(descriptor, (struct sockaddr*)&the_addr,
 		   sizeof(struct sockaddr)) == -1)
 		{
-		throw SocketException("connect", errno);
+		throw SocketException("connect", Errno());
 		}
 
     }
@@ -243,10 +252,20 @@ int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
   int res = 0;
   if(socketType == TCP)
     {
-      if((res = recv(descriptor, (char*)buf, len, 0)) == -1)
-	{
-	   throw SocketException("recv_sock_stream", errno);
-	}
+		if((res = recv(descriptor, (char*)buf, len, 0)) == -1)
+		{
+			res = Errno();
+#ifdef WIN32
+			if ( res == WSAECONNRESET )
+			{
+				// Connection close
+			}
+#else
+			// REVIEW
+			fprintf( stderr, "Here we may need some *nix code...\n" );
+#endif
+			throw SocketException("recv_sock_stream", res );
+		}
     }
   else
     {
@@ -257,7 +276,7 @@ int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
       if((res = recvfrom(descriptor, (char*)buf, len, 0,
 		  (struct sockaddr*)fromptr, (socklen_t*)&from_len)) == -1)
 	{
-	  throw SocketException("recv_sock_dgram", errno);
+	  throw SocketException("recv_sock_dgram", Errno());
 	}
     }
   return res;
@@ -272,7 +291,7 @@ int Socket::Send(int len, const char* buf)
       
       if((res = send(descriptor, buf, len, socket_send_flag)) == -1)
 	{
-	   throw SocketException("send_sock_stream", errno);
+	   throw SocketException("send_sock_stream", Errno());
 	}
     }
   else
@@ -280,7 +299,7 @@ int Socket::Send(int len, const char* buf)
       if((res = sendto(descriptor, buf, len, socket_send_flag,
 			 (struct sockaddr*)&dest, sizeof(struct sockaddr))) == -1)
 	{
-	  throw SocketException("send_sock_dgram", errno);
+	  throw SocketException("send_sock_dgram", Errno());
 	}
     }
   return res;
@@ -294,7 +313,7 @@ int Socket::SendTo(int len, const char* buf, struct sockaddr_in* adest)
   if((res = sendto(descriptor, buf, len, socket_send_flag,
 		   (struct sockaddr*)adest, sizeof(struct sockaddr))) == -1)
     {
-      throw SocketException("send_sock_dgram", errno);
+      throw SocketException("send_sock_dgram", Errno());
     }
   return res;
 }
@@ -310,7 +329,7 @@ bool Socket::Select()
 
   if(::select((int)descriptor+1, &readfds, NULL, NULL, NULL) == -1)
     {
-      throw SocketException("select", errno);
+      throw SocketException("select", Errno());
     }
 
   return FD_ISSET(descriptor, &readfds);
@@ -322,7 +341,7 @@ unsigned short Socket::GetPortNb()
   socklen_t size = sizeof(struct sockaddr_in);
   memset(&name, 0, size);
   if(getsockname(descriptor, (struct sockaddr*)&name, &size))
-    throw SocketException("getsockname", errno);
+    throw SocketException("getsockname", Errno());
         
   return ntohs(name.sin_port);
 }
@@ -332,7 +351,7 @@ void Socket::GetHostName(char* name, int len)
 {  
   if(gethostname(name, len))
     {
-      throw SocketException("gethostname", errno);
+      throw SocketException("gethostname", Errno());
     }
 }
 
@@ -343,7 +362,7 @@ void Socket::GetDnsNameSolvingOption()
 	{
 		DynamicNameSolving = OMISCIDNS_USE_DNS_ONLY;
 		#ifdef _DEBUG
-			fprintf( stderr, "OMISCIDNS_USE_MDNS_NAME_SOLVING\n" );
+			fprintf( stderr, "OMISCIDNS_USE_DNS_ONLY found. Use DNS for name solving.\n" );
 		#endif
 		return;
 	}
@@ -351,7 +370,7 @@ void Socket::GetDnsNameSolvingOption()
 	DynamicNameSolving = OMISCIDNS_USE_MDNS_NAME_SOLVING;
 
 #ifdef _DEBUG
-	fprintf( stderr, "OMISCIDNS_USE_MDNS_NAME_SOLVING" );
+	fprintf( stderr, "OMISCIDNS_USE_MDNS_NAME_SOLVING found. Use mDNS for name solving." );
 #endif
 }
 
@@ -363,7 +382,7 @@ hostent* Socket::GetHostByName( const char* name )
 	{
 		if((he = ::gethostbyname(name)) == NULL)
 		{
-			throw SocketException("GetHostByName", errno);
+			throw SocketException("GetHostByName", Errno());
 		}
 		return he;
 	}
@@ -382,7 +401,7 @@ hostent* Socket::GetHostByName( const char* name )
 
 	if((he = ::gethostbyname(hostname)) == NULL)
     {
-      throw SocketException("GetHostByName", errno);
+      throw SocketException("GetHostByName", Errno());
     }
 
 	return he;

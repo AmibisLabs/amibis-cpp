@@ -107,7 +107,16 @@ class MsgSocket : public Thread
  public:
 
 #ifdef _DEBUG
-  static bool Debug;
+
+	 enum {
+		 DBG_NONE		= 0x000000000,
+		 DBG_LINKSYNC	= 0x000000001,
+		 DBG_RECV		= 0x000000002,
+		 DBG_SEND		= 0x000000004,
+		 DBG_ALL		= 0xffffffff
+	 };
+	 static unsigned int Debug;
+
 #endif
 
   /** \brief Callback for the message reception */
@@ -212,6 +221,7 @@ class MsgSocket : public Thread
 
   static int PrepareBufferForBip(char * buf, const char * data, int datalen);
   static int WriteHeaderForBip(char * buf, int service_id, int message_id );
+
 #ifndef RAVI_INTERFACE
   static int PrepareBufferForBipFromCuttedMsg(char * buf, int* tab_length, const char** tab_buf, int nb_buf);
 
@@ -226,6 +236,7 @@ class MsgSocket : public Thread
    */
   int SendCuttedMsg(int* tab_len, const char** tab_buf, int nb_buf);
 #endif
+
   /** Send a message (on UDP) by using BIP protocol
    * \param len [in] number of byte to send
    * \param buf [in] buffer to send
@@ -264,13 +275,25 @@ class MsgSocket : public Thread
   /** \return the peer id : the service id of the other extremity of the socket */
   unsigned int GetPeerPid() const;
 
-  /** \brief test if the Socket has received an empty message
+  /** \brief test if the Socket has received the link message
    *
-   * An empty message is exchanged when the socket are connected. 
+   * An link message is exchanged when the socket are connected. 
    * The extremity can then exchange their id
    * \return true if the Socket has received an empty message
    */
-  bool ReceivedSyncEmptyMsg() const;
+  bool ReceivedSyncLinkMsg();
+
+  /** \brief test if the Socket has sent the link message
+   *
+   * An link message is exchanged when the socket are connected. 
+   * The extremity can then exchange their id
+   * \return true if the Socket has received an empty message
+   */
+  bool SyncLinkMsgSent() const;
+
+  
+  // TO COMMENT
+	bool SendSyncLinkMsg();
 
   /**\brief size max for message on TCP
    * \return the size max accepted for exchange on TCP */
@@ -373,6 +396,7 @@ class MsgSocket : public Thread
 		    unsigned int& pid, unsigned int& mid);
   //@}
 
+
 private:
 
 	// let say that TcpServer Need to now these constant values
@@ -404,6 +428,9 @@ private:
 
   MsgSocketKind kind;
 
+  unsigned char * SendBuffer;
+  Mutex protectSend; /*!< mutex to protect the call of Send method */
+
   unsigned int service_id; /*!< id of the service */
   unsigned int message_id; /*!< message id (incremented after each Send)*/
 
@@ -411,12 +438,11 @@ private:
 
   UdpConnection udpConnection;
 
-  bool receivedSyncEmptyMsg;
+  bool receivedSyncLinkMsg;
+  bool sendSyncLinkMsg;
 
   int maxMessageSizeForTCP;
   int maxBIPMessageSize;
-  
-  Mutex protectSend; /*!< mutex to protect the call of Send method */
 };
 
 ///////// inline methods ////////////////
@@ -445,7 +471,16 @@ inline unsigned int MsgSocket::GetServiceId() const
 inline unsigned int MsgSocket::GetPeerPid() const
 { return peer_pid; }
 
-inline bool MsgSocket::ReceivedSyncEmptyMsg() const { return receivedSyncEmptyMsg; }
+inline bool MsgSocket::ReceivedSyncLinkMsg()
+{
+	bool tmpb;
+	protectSend.EnterMutex();
+	tmpb = receivedSyncLinkMsg;
+	protectSend.LeaveMutex();
+	return tmpb;
+}
+
+inline bool MsgSocket::SyncLinkMsgSent() const { return sendSyncLinkMsg; }
 
 inline int MsgSocket::GetMaxMessageSizeForTCP()
 { return maxMessageSizeForTCP; }

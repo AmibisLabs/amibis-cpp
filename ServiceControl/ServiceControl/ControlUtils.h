@@ -31,7 +31,7 @@ namespace ControlUtils
    * current time and 2 other bytes obtained by using a random generator
    * @return a value that can be used as service Id
    */
-  unsigned int GenerateServiceId();
+  unsigned int GeneratePeerId();
 
 
 

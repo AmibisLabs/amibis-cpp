@@ -9,7 +9,7 @@
 
 #include <ServiceControl/ServicesCommon.h>
 
-char * CommonServiceValues::OmiscidServiceDnsSdType = "_bip._tcp";
+char * CommonServiceValues::OmiscidServiceDnsSdType = "_bip_dev._tcp";
 
 ServiceException::ServiceException( const char * Message )
   : SimpleException(Message)

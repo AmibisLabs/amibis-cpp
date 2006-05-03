@@ -14,27 +14,43 @@
 #endif
 
 #ifdef WIN32
+	#include <System/Portage.h>
 	#include <process.h>
 #else
 	#include <sys/types.h>
 	#include <unistd.h>
 #endif
 
-unsigned int ControlUtils::GenerateServiceId()
+class OmiscidRandomInitClass
 {
-#ifdef WIN32
-  static unsigned int number = 0;
-  unsigned int res = getpid() << 16;
+public:
+	OmiscidRandomInitClass()
+	{
+		struct timeval t;    
+		gettimeofday(&t, NULL);
 
-  res = res | (0x0000FFFF & number++ );
+#ifdef WIN32
+		srand(t.tv_sec ^ t.tv_usec);
 #else
+		srandom(t.tv_sec ^ t.tv_usec);
+#endif
+	};
+};
+
+static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
+
+unsigned int ControlUtils::GeneratePeerId()
+{
   struct timeval t;    
   gettimeofday(&t, NULL);
 
   unsigned int res = t.tv_sec << 16;
+
+#ifdef WIN32
+  res += (0x0000FFFF & rand());
+#else
   res += (0x0000FFFF & random());
 #endif
-
 
   return res;
 }

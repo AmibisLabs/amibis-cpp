@@ -10,6 +10,7 @@
 #include <System/Socket.h>
 #include <System/SocketException.h>
 #include <Com/MsgSocketException.h>
+#include <Com/MsgSocket.h>
 
 UdpConnection::UdpConnection()
 {}
@@ -28,10 +29,12 @@ UdpConnection::UdpConnection(const char* an_addr, int port)
   else addr.sin_addr.s_addr = inet_addr(an_addr);    
   memset(&(addr.sin_zero), 0, 8);
 }
+
 void UdpConnection::SetAddr(const struct sockaddr_in* nv_addr)
 {
   memcpy(&addr, nv_addr, sizeof(struct sockaddr_in));
 }
+
 const char* MsgSocket::tag_start1 = "BIP/1.0";
 const char* MsgSocket::tag_start2 = "\r\n";
 const char* MsgSocket::tag_end = "\r\n";
@@ -48,21 +51,27 @@ const int MsgSocket::tag_end_size = (const int)strlen(MsgSocket::tag_end);
 const int MsgSocket::tag_size = (const int)(strlen(tag_start1) + 1 + MsgSocket::pid_size + 1 + MsgSocket::mid_size + 1 + MsgSocket::len_size + strlen(tag_start2));
 
 #ifdef _DEBUG
-bool MsgSocket::Debug = false;
+
+unsigned int MsgSocket::Debug = MsgSocket::DBG_NONE;
+
 #endif
 
 MsgSocket::MsgSocket(Socket* s)
   : socket(s),    
     bufferSize(TCP_BUFFER_SIZE), buffer(NULL), occupiedSize(0),
+	SendBuffer(NULL),
     connected(true),
     start_tag(NULL), buffer_udp_send(NULL),
     kind(TCP_CLIENT_KIND),
     service_id(0), message_id(0), peer_pid(0),
-    receivedSyncEmptyMsg(false)
+    receivedSyncLinkMsg(false),
+	sendSyncLinkMsg(false)
 {
   callbackReceive = NULL;
 
   buffer = new unsigned char[bufferSize];
+  SendBuffer = new unsigned char[TCP_BUFFER_SIZE];
+
   start_tag = new char[tag_size+1];
   SetMaxMessageSizeForTCP(TCP_BUFFER_SIZE-1);
 }
@@ -72,8 +81,10 @@ MsgSocket::MsgSocket(Socket::SocketKind type)
     bufferSize(0), buffer(NULL), occupiedSize(0),
     connected(false), start_tag(NULL), buffer_udp_send(NULL),
     kind(NONE_KIND),
+	SendBuffer(NULL),
     service_id(0), message_id(0), peer_pid(0),
-    receivedSyncEmptyMsg(false)
+    receivedSyncLinkMsg(false),
+	sendSyncLinkMsg(false)
 {
   callbackReceive = NULL; 
 
@@ -104,6 +115,11 @@ MsgSocket::~MsgSocket()
       delete[] start_tag;
       start_tag = NULL;
     }
+	if ( SendBuffer )
+	{
+		delete [] SendBuffer;
+		SendBuffer = NULL;
+	}
 }
 
 int MsgSocket::PrepareBufferForBip(char * buf, const char * data, int datalen)
@@ -200,7 +216,20 @@ void MsgSocket::InitForTcpClient(const char* addr, int port)
   socket->Connect(addr, port);
   bufferSize = TCP_BUFFER_SIZE;
   buffer = new unsigned char[bufferSize];
+  if ( buffer == NULL )
+  {
+	  throw new MsgSocketException( "Not enougth memory" );
+  }
+  SendBuffer = new unsigned char[TCP_BUFFER_SIZE];
+  if ( SendBuffer == NULL )
+  {
+	  throw new MsgSocketException( "Not enougth memory" );
+  }
   start_tag = new char[tag_size+1];
+  if ( start_tag == NULL )
+  {
+	  throw new MsgSocketException( "Not enougth memory" );
+  }
   kind = TCP_CLIENT_KIND;
   connected = true;
   occupiedSize = 0;
@@ -248,6 +277,71 @@ void MsgSocket::SetCallbackReceive(Callback_Receive cr,
   mutex.LeaveMutex();
 }
 
+bool MsgSocket::SendSyncLinkMsg()
+{
+  int TotalLen;
+
+  protectSend.EnterMutex();
+
+  if ( SyncLinkMsgSent() )
+  {
+#ifdef _DEBUG
+	  if ( Debug & DBG_LINKSYNC )
+	  {
+		  fprintf( stderr, "SendSyncLinkMsg: warning SyncLinkMsg already sent.\n" );
+	  }
+#endif
+	  protectSend.LeaveMutex();
+	  return false;
+  }
+
+  if ( message_id != 0 )
+  {
+		fprintf( stderr, "SendSyncLinkMsg: error SyncLinkMsg should be numbered as 0 not %u.\n", message_id );
+		throw SocketException( "MsgSocket::SendSyncLinkMsg: error SyncLinkMsg should be numbered as 0." );
+  }
+
+  try
+    {
+	  TotalLen = PrepareBufferForBip( (char*)SendBuffer, "", 0 );
+	  if ( TotalLen == -1 )
+	  {
+		  protectSend.LeaveMutex();
+		  return false;
+	  }
+
+	  // We complete the header with a message id = 0
+	  WriteHeaderForBip( (char*)SendBuffer, service_id, message_id );
+
+	  message_id++;
+
+#ifdef _DEBUG
+		if ( Debug & DBG_LINKSYNC )
+		{
+			SendBuffer[TotalLen] = '\0';
+			fprintf( stderr, "SendSyncLinkMsg: %s (%d)\n", SendBuffer, TotalLen );
+		}
+#endif
+
+      if ( (TotalLen = socket->Send(TotalLen, (char*)SendBuffer)) == -1)
+	  {
+		  TotalLen = -1;
+	  }
+
+	  sendSyncLinkMsg = true;
+      protectSend.LeaveMutex();
+
+	  return (TotalLen > 0);
+    }
+	catch(SocketException& e)
+    {
+      TraceError( "SocketException: %s %d\n", e.msg, e.err);
+      connected = false;
+      protectSend.LeaveMutex();
+      return false;
+    }
+}
+
 void MsgSocket::Run()
 {
   switch (kind)
@@ -288,138 +382,155 @@ void MsgSocket::Receive()
 {
   try
     {
-      if(socket->Select())
-	{
-	  
-	  int nb_read = socket->Recv(bufferSize-occupiedSize, (buffer+occupiedSize));
-	  // TraceError( "%d %d \n ",nb_read, occupiedSize);
-	  if(nb_read == 0) 	    
-	    {
-	      connected = false;
-	      return ;
-	    }
-	  occupiedSize += nb_read;
-	  
-	  bool stop = false;
-	  unsigned int length_msg, pid, mid;
-	  int length_header;
-       
-	  int offset = 0;
-	  int size = occupiedSize;
-	  while(!stop)
-	    {
-	      if((length_header = GoodBeginning(buffer+offset, size, length_msg, pid, mid)) != 0)
+		if(socket->Select())
 		{
-		  //cerr << "good beginning ";
-		  //cerr.write(aBuffer+offset, keyword_min);
-		  //cerr << endl;
-		  if(length_msg == 0)
-		    {		      
-		      //std::cout << "Empty Msg de connexion from "<<pid<<"\n";
-		      if(!receivedSyncEmptyMsg)
+			int nb_read = socket->Recv(bufferSize-occupiedSize, (buffer+occupiedSize));
+			// TraceError( "%d %d \n ",nb_read, occupiedSize);
+			if(nb_read == 0) 	    
 			{
-			  receivedSyncEmptyMsg = true;
-			  Send(0, NULL);
+				connected = false;
+				return ;
 			}
-		      peer_pid = pid;
-		      offset += length_header;
-		      size =  occupiedSize - offset;
-		    }
-		  else if((unsigned int)size < length_header + length_msg + tag_end_size)
-		    {
-		      // TraceError( "wait more byte\n");
-		      int total = (int)(length_header + length_msg + tag_end_size);
-		      if(total >= bufferSize)
-			{
-			  TraceError( "buffer too small : new buffer allocation\n");
-			  //allocation new buffer
-			  bufferSize = (total+1023)&~1023; // bufferSize = total arrondi au kilo d'octet superieur
-			  unsigned char* tmp_buffer = new unsigned char[bufferSize];
-			  if(tmp_buffer)
-			    {
-			      memcpy(tmp_buffer, buffer+offset, size*sizeof(unsigned char));
-			      offset = 0;
-			      occupiedSize = size;
-			      delete[] buffer;
-			      buffer = tmp_buffer;
-			    }			 
-			}
+			occupiedSize += nb_read;
 
-		      stop = true;
-		    }
-		  else
-		    {
-		      offset += length_header;
-		      		    		    
-		      unsigned char* msgptr =  (buffer+offset);
-		     
-		      //verif end tag		     
-		      if(memcmp(tag_end, (msgptr + length_msg), tag_end_size))
-			{
-			  TraceError( "warning end tag\n");
-// 			  TraceError( "[%d|%d]\n", *(msgptr + length_msg), *(msgptr + length_msg+1));
-// 			  for(int i=0; i< length_msg; i++)
-// 			    {
-// 			      TraceError( "%c", *(msgptr+i));
-// 			    }
-// 			  TraceError( "\n");
-			  //ignore message, search for new header after the detected header
-			  size =  occupiedSize - offset;
-			}
-		      else
-			{
+			// For printing stuff...
+			buffer[occupiedSize] = '\0';
 			  
-			  offset += length_msg + tag_end_size;
-			  size =  occupiedSize - offset;
-			  if(length_msg != 0)	     		     		  
-			    {
-			      mutex.EnterMutex();
-			      if(callbackReceive)
+			bool stop = false;
+			unsigned int length_msg, pid, mid;
+			int length_header;
+		       
+			int offset = 0;
+			int size = occupiedSize;
+			while(!stop)
+			{
+				if((length_header = GoodBeginning(buffer+offset, size, length_msg, pid, mid)) != 0)
 				{
-				  *(msgptr+length_msg)='\0';
-
+					//cerr << "good beginning ";
+					//cerr.write(aBuffer+offset, keyword_min);
+					//cerr << endl;
+					if ( mid == 0 )
+					{
+							//std::cout << "Link connexion Msg from "<<pid<<"\n";
+							peer_pid = pid;
+							receivedSyncLinkMsg = true;
+							if( SyncLinkMsgSent() == false )
+							{
+								SendSyncLinkMsg();
+							}
+							offset += length_header + tag_end_size;
+							size =  occupiedSize - offset;
+					}
+//					else if(length_msg == 0)
+//					{		      
+//						//std::cout << "Empty Msg from "<<pid<<"\n";
+//						offset += length_header;
+//						size =  occupiedSize - offset;
+//					}
+					else if((unsigned int)size < length_header + length_msg + tag_end_size)
+					{
+						// TraceError( "wait more byte\n");
+						int total = (int)(length_header + length_msg + tag_end_size);
+						if ( total >= bufferSize )
+						{
+							TraceError( "buffer too small : new buffer allocation\n");
+							//allocation new buffer
+							bufferSize = (total+1023)&~1023; // bufferSize = total arrondi au kilo d'octet superieur
+							unsigned char* tmp_buffer = new unsigned char[bufferSize];
+							if(tmp_buffer)
+							{
+								memcpy(tmp_buffer, buffer+offset, size*sizeof(unsigned char));
+								offset = 0;
+								occupiedSize = size;
+								delete[] buffer;
+								buffer = tmp_buffer;
+							}			 
+						}
+						stop = true;
+					}
+					else
+					{
+						offset += length_header;
+						      		    		
+						unsigned char* msgptr =  (buffer+offset);
+						    
+						//verif end tag		     
+						if( memcmp(tag_end, (msgptr + length_msg), tag_end_size))
+						{
+							TraceError( "warning end tag\n");
+				// 			  TraceError( "[%d|%d]\n", *(msgptr + length_msg), *(msgptr + length_msg+1));
+				// 			  for(int i=0; i< length_msg; i++)
+				// 			    {
+				// 			      TraceError( "%c", *(msgptr+i));
+				// 			    }
+				// 			  TraceError( "\n");
+							//ignore message, search for new header after the detected header
+							size =  occupiedSize - offset;
+						}
+						else
+						{
+							offset += length_msg + tag_end_size;
+							size =  occupiedSize - offset;
 #ifdef _DEBUG
-				  if ( MsgSocket::Debug ) { fprintf( stderr, "Recv: %s\n", msgptr ); }
+							if ( Debug & DBG_RECV )
+							{
+								if ( length_msg != 0 )
+									fprintf( stderr, "MsgSocket::Recv: %s\n", msgptr );
+								else
+									fprintf( stderr, "MsgSocket::Recv: <empty>\n" );
+							}
 #endif
-
-				  callbackData.len = length_msg;
-				  callbackData.buffer =  msgptr;
-				  callbackData.origUdp = false;
-				  callbackData.pid = pid;
-				  callbackData.mid = mid;
-				  (*callbackReceive)(&callbackData);
+							mutex.EnterMutex();
+							if ( callbackReceive )
+							{
+								*(msgptr+length_msg)='\0';
+								callbackData.len = length_msg;
+								if ( length_msg != 0 )
+								{
+									callbackData.buffer =  msgptr;
+								}
+								else
+								{
+									callbackData.buffer =  NULL;
+								}
+								callbackData.origUdp = false;
+								callbackData.pid = pid;
+								callbackData.mid = mid;
+								(*callbackReceive)(&callbackData);
+							}
+							mutex.LeaveMutex();
+						}			  
+					}
 				}
-			      mutex.LeaveMutex();		      
-			    }
-			}			  
-		    }
+				else
+				{
+					//cerr << "Decalage\n";
+					int dec;
+					if(!MoveToMessage(buffer+offset, size, dec))
+					{
+						stop = true;
+						size -= dec;
+						offset += dec;
+					}
+					else
+					{
+						offset += dec;
+						size -= dec;
+					}
+				}
+			}
+			occupiedSize = size;
+			if ( occupiedSize != 0 )
+			{
+				memmove(buffer, buffer+offset, occupiedSize);
+			}
 		}
-	      else
-		{
-		  //cerr << "Decalage\n";
-		  int dec;
-		  if(!MoveToMessage(buffer+offset, size, dec))
-		    {
-		      stop = true;
-		      size -= dec;
-		      offset += dec;
-		    }
-		  else
-		    {
-		      offset += dec;
-		      size -= dec;
-		    }
-		}
-	    }
-	  occupiedSize = size;
-	  memmove(buffer, buffer+offset, occupiedSize);
+    }
+	catch(SocketException& e)
+	{
+		TraceError( "SocketException: %s %d\n", e.msg, e.err);
+		connected = false;
 	}
-    }
-  catch(SocketException& e)
-    {
-      TraceError( "SocketException: %s %d\n", e.msg, e.err);
-      connected = false;
-    }
 }
 
 void MsgSocket::AcceptConnection()
@@ -442,17 +553,6 @@ int MsgSocket::Send(int len, const char* buf)
 {
 	int TotalLen;
 
-  if ( buf != NULL )
-  {
-#ifdef _DEBUG
-	  if ( MsgSocket::Debug ) { fprintf( stderr, "Send: %s (%d)\n", buf, len ); }
-#endif
-  }
-  else
-  {
-	// TraceError( "MsgSocket::Send <null>\n");
-  }
-
   if(len > maxMessageSizeForTCP)
     {
       TraceError( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
@@ -462,7 +562,7 @@ int MsgSocket::Send(int len, const char* buf)
   protectSend.EnterMutex();
   try
     {
-	  TotalLen = PrepareBufferForBip( (char*)buffer, buf, len );
+	  TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, len );
 	  if ( TotalLen == -1 )
 	  {
 		  protectSend.LeaveMutex();
@@ -470,19 +570,28 @@ int MsgSocket::Send(int len, const char* buf)
 	  }
 
 	  // We complete the header
-	  WriteHeaderForBip( (char*)buffer, service_id, message_id );
+	  WriteHeaderForBip( (char*)SendBuffer, service_id, message_id );
 
 	  // Increase the number for the next message
 	  message_id++;
      
-      if ( (TotalLen = socket->Send(TotalLen, (char*)buffer)) == -1)
+      if ( (TotalLen = socket->Send(TotalLen, (char*)SendBuffer)) == -1)
 	  {
 		  TotalLen = -1;
 	  }
+
+#ifdef _DEBUG
+	  if ( Debug & DBG_SEND )
+	  {
+		  SendBuffer[TotalLen] = '\0';
+		  fprintf( stderr, "MsgSocket::Send: %s (%d)\n", SendBuffer, TotalLen );
+	  }
+#endif
+
       protectSend.LeaveMutex();
 	  return TotalLen;
     }
-  catch(SocketException& e)
+	catch(SocketException& e)
     {
       TraceError( "SocketException: %s %d\n", e.msg, e.err);
       connected = false;
@@ -493,24 +602,31 @@ int MsgSocket::Send(int len, const char* buf)
 
 int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 {
-	int TotalLen;
+  int TotalLen;
   
   protectSend.EnterMutex();
   try
     {
-		TotalLen = PrepareBufferForBipFromCuttedMsg( (char*)buffer, tab_length, tab_buf, nb_buf);
+		TotalLen = PrepareBufferForBipFromCuttedMsg( (char*)SendBuffer, tab_length, tab_buf, nb_buf);
 		if ( TotalLen == -1 )
 		{
 			protectSend.LeaveMutex();
 			return -1;
 		}
 		// We complete the header
-		WriteHeaderForBip( (char*)buffer, service_id, message_id );
+		WriteHeaderForBip( (char*)SendBuffer, service_id, message_id );
+
+#ifdef _DEBUG
+		if ( Debug & DBG_SEND )
+		{
+			TraceError( "MsgSocket::SendPreparedBuffer %s\n", SendBuffer );
+		}
+#endif
 
 		// Increase the number for the next message
 		++message_id;
      
-		if ( (TotalLen = socket->Send(TotalLen, (char*)buffer)) == -1)
+		if ( (TotalLen = socket->Send(TotalLen, (char*)SendBuffer)) == -1)
 		{
 			TotalLen = -1;
 		}
@@ -526,17 +642,15 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	}
 }
 
-int MsgSocket::SendPreparedBuffer(int len, char* buffer)
+int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 {
-  if ( buffer != NULL )
-  {
-	TraceError( "MsgSocket::Send %s\n", buffer);
-  }
-  else
-  {
-	TraceError( "MsgSocket::Send <null>\n");
-  }
-  if(len > maxMessageSizeForTCP)
+  if(l_buffer == NULL)
+    {
+      TraceError( "NULL buffer to prepare data to send\n", len, maxMessageSizeForTCP);
+      throw MsgSocketException("Message too big for TCP");
+   }
+
+   if(len > maxMessageSizeForTCP)
     {
       TraceError( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
       throw MsgSocketException("Message too big for TCP");
@@ -546,13 +660,18 @@ int MsgSocket::SendPreparedBuffer(int len, char* buffer)
   try
     {
 	  // Here we've got a full buffer and we can (must) write our header at the in at the beginning !
-	  WriteHeaderForBip(buffer, service_id, message_id );
-	  
+	  WriteHeaderForBip(l_buffer, service_id, message_id );
+
+		if ( Debug & DBG_SEND )
+		{
+			TraceError( "MsgSocket::SendPreparedBuffer %s\n", l_buffer );
+		}
+
 	  message_id++;
      
       //socket->Send(strlen(start_tag), start_tag);
       int res;
-      if((res = socket->Send(len, buffer)) != -1) 
+      if((res = socket->Send(len, l_buffer)) != -1) 
 	  {
 	      protectSend.LeaveMutex();
 		  return res;		
@@ -718,7 +837,8 @@ void MsgSocket::ReceiveUdpExchange()
 		  //cerr.write(aBuffer+offset, keyword_min);
 		  //cerr << endl;
 		  udpConnection.pid = pid;
-		  if(length_msg == 0)
+		  // REVIEW a changer pour UDP
+		  if(mid == 0)
 		    {
 		      peer_pid = pid;		  		      
 		      offset += length_header;		      
@@ -784,7 +904,10 @@ void MsgSocket::ReceiveUdpExchange()
 		}
 	    }
 	  occupiedSize = size;
-	  memmove(buffer, buffer+offset, occupiedSize);
+	  if ( occupiedSize != 0 )
+	  {
+		memmove(buffer, buffer+offset, occupiedSize);
+	  }
 	}
     }
   catch(SocketException& e)

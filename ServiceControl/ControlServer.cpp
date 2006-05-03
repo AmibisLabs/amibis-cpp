@@ -22,7 +22,7 @@ ControlServer::ControlServer(const char* service_name)
 {
   port = 0;
 
-  serviceId = ControlUtils::GenerateServiceId();
+  serviceId = ControlUtils::GeneratePeerId();
   TcpServer::SetServiceId(GetServiceId());
 
   TcpServer::SetTcpNoDelay(true);
@@ -296,7 +296,6 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
     {
       TraceError( "waited : controlQuery, received=%s\n", node->name);
     }
-  
 }
 
 void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answer)

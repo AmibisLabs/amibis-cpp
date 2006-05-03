@@ -146,6 +146,8 @@ public:
 
   bool SetTcpNoDelay(bool Set = true);
 
+  static int Errno();
+
 private:
 
   SocketKind socketType;

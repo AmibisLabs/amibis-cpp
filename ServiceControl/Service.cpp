@@ -35,7 +35,7 @@ void Service::Empty()
 
 bool Service::CheckProtocol( const char * Protocol )
 {
-	bool PreviousUnderscore;
+	int PreviousUnderscore;
 	int ProtocolLenght;
 
 	if ( Protocol == NULL )
@@ -48,7 +48,7 @@ bool Service::CheckProtocol( const char * Protocol )
 		return false;
 	}
 
-	PreviousUnderscore = false;
+	PreviousUnderscore = 0;
 	ProtocolLenght = -1;
 	for(;;)
 	{
@@ -59,16 +59,19 @@ bool Service::CheckProtocol( const char * Protocol )
 
 		if( Protocol[ProtocolLenght] == '_' )
 		{
-			if ( PreviousUnderscore )
+			PreviousUnderscore++;
+			if ( PreviousUnderscore > 2 )
 			{
-				// protocol must not have many underscore
+				// protocol must not more than 2 underscores
 				// Bad parameters
 				return false;
 			}
-			PreviousUnderscore = true;
 			continue;
 		}
 	}
+
+	if ( ProtocolLenght <= 0 )
+		return false;
 
 	return true;
 }

@@ -33,6 +33,9 @@ public:
 
   /** \brief Return a human readable exception type */
   const char* GetExceptionType();
+
+protected:
+  void SocketErrorCheck();
 };
 
 //////////// inline methods ////////////

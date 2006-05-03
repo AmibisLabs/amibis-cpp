@@ -39,8 +39,9 @@ TcpUdpClientServer::~TcpUdpClientServer()
 
 void TcpUdpClientServer::Create(int port_tcp, int port_udp)
 {
-  TcpServer::Create(port_tcp);
+	// REVIEW
   UdpExchange::Create(port_udp);
+  TcpServer::Create(port_tcp);
 }
 
 unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int port_udp)
@@ -48,8 +49,9 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
   TcpClient* tcpclient = new TcpClient();
   tcpclient->SetServiceId(GetServiceId());
   tcpclient->ConnectToServer(addr, port_tcp);
-  tcpclient->Send(0,NULL);
-  while(!tcpclient->ReceivedSyncEmptyMsg())
+  // REVIEW
+  // tcpclient->SendSyncLinkMsg(); => done in ConnectToServer
+  while(!tcpclient->ReceivedSyncLinkMsg())
     {
       Thread::Sleep(5);
     }

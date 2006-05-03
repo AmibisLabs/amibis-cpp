@@ -23,7 +23,7 @@
  *
  * \author Sebastien Pesnel
  */
-class TcpServer :public MsgSocket,   virtual public ComTools
+class TcpServer :public MsgSocket, virtual public ComTools
 {
  public:
   /** \brief Constructor 
