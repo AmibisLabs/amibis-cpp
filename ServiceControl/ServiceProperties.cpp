@@ -535,3 +535,23 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
 
 	return true;
 }
+
+ServiceProperties::operator char*()
+{
+	return (char *)ExportTXTRecord();
+}
+
+ServiceProperties::operator const char*()
+{
+	return (const char *)ExportTXTRecord();
+}
+
+ServiceProperties::operator unsigned char*()
+{
+	return (unsigned char *)ExportTXTRecord();
+}
+
+ServiceProperties::operator const unsigned char*()
+{
+	return (const unsigned char *)ExportTXTRecord();
+}

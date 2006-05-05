@@ -91,7 +91,6 @@ bool Event::Wait(unsigned long timer)
 			{
 				case WAIT_TIMEOUT:
 					continue;
-					break;
 
 				case WAIT_OBJECT_0:
 					return true;
@@ -112,4 +111,3 @@ bool Event::Wait(unsigned long timer)
 	}
 #endif
 }
-

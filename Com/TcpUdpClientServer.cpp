@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <System/Portage.h>
 #include <Com/TcpUdpClientServer.h>
+#include <ServiceControl/ServiceProperties.h>
 
 
 ClientConnection::ClientConnection(TcpClient* tcp_client, UdpConnection* udp_connect)
@@ -39,8 +40,17 @@ TcpUdpClientServer::~TcpUdpClientServer()
 
 void TcpUdpClientServer::Create(int port_tcp, int port_udp)
 {
-	// REVIEW
+
+  // REVIEW add support of UDP Port
   UdpExchange::Create(port_udp);
+
+  // Set UDP Port as property for the Sync Link paquet of the TCP Connection
+  ServiceProperties SrvProp;
+  char tmpc[512];
+  sprintf( tmpc, "%d", UdpExchange::GetUdpPort() );
+  SrvProp["UDP"] = tmpc;
+  TcpServer::SetSyncLinkData( SrvProp, SrvProp.GetTXTRecordLength() );
+
   TcpServer::Create(port_tcp);
 }
 
@@ -48,6 +58,25 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 {
   TcpClient* tcpclient = new TcpClient();
   tcpclient->SetServiceId(GetServiceId());
+
+  // Do we plan to use UDP ?
+  UdpConnection* udp_connect = NULL;
+  if(port_udp != 0)
+  {
+      // connection udp
+      udp_connect = new UdpConnection(addr, port_udp);
+      udp_connect->pid = tcpclient->GetPeerPid();
+	  // REVIEW : done by the TCP Port
+	    UdpExchange::Create(0);
+		// Set UDP Port as property for the Sync Link paquet of the TCP Connection
+		ServiceProperties SrvProp;
+		char tmpc[512];
+		sprintf( tmpc, "%d", UdpExchange::GetUdpPort() );
+		SrvProp["UDP"] = tmpc;
+		TcpServer::SetSyncLinkData( SrvProp, SrvProp.GetTXTRecordLength() );
+		tcpclient->SetSyncLinkData( SrvProp, SrvProp.GetTXTRecordLength() );
+  }
+
   tcpclient->ConnectToServer(addr, port_tcp);
   // REVIEW
   // tcpclient->SendSyncLinkMsg(); => done in ConnectToServer
@@ -57,17 +86,9 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
     }
   
   if(fct_callback)
-    tcpclient->SetCallbackReceive(fct_callback, userData1, userData2);      
- 
-      
-  UdpConnection* udp_connect = NULL;
-  if(port_udp != 0)
-    {
-      // connection udp
-      udp_connect = new UdpConnection(addr, port_udp);
-      udp_connect->pid = tcpclient->GetPeerPid();
-      UdpExchange::SendTo(0, NULL, udp_connect);
-    }
+    tcpclient->SetCallbackReceive(fct_callback, userData1, userData2);  
+
+
   ClientConnection* client_connect = new ClientConnection(tcpclient, udp_connect);
   
   listClient.Lock();

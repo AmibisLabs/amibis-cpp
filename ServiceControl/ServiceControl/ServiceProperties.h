@@ -162,6 +162,11 @@ public:
 
 	int GetTXTRecordLength();
 	const char * ExportTXTRecord();
+	
+	operator char*();
+	operator const char*();
+	operator unsigned char*();
+	operator const unsigned char*();
 
 	bool ImportTXTRecord( int RecordLength, const char * Record );
 

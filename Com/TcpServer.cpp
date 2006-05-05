@@ -228,6 +228,11 @@ void TcpServer::AcceptConnection(MsgSocket* sock)
   */
   
   // Init the socket
+  // REVIEW: Inherit my SyndLink data
+  if ( SyncLinkDataLength != 0 )
+  {
+	sock->SetSyncLinkData( SyncLinkData, SyncLinkDataLength );
+  }
   sock->SetCallbackReceive(callbackReceive, callbackData.userData1, callbackData.userData2);
   sock->SetTcpNoDelay(TcpNoDelayMode);
   sock->SetServiceId(GetServiceId());

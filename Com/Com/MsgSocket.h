@@ -314,6 +314,13 @@ class MsgSocket : public Thread
    */
   bool SetTcpNoDelay(bool Set = true);
 
+    // REVIEW 
+  int SetSyncLinkData( unsigned char * data, int length );
+  int GetSyncLinkData( unsigned char * data, int maxlength );
+  int GetPeerSyncLinkData( unsigned char * data, int maxlength );
+  int GetSyncLinkDataLength();
+  int GetPeerSyncLinkDataLength();
+
  protected:
   /** \brief Accept new TCP connection 
    *
@@ -344,6 +351,11 @@ class MsgSocket : public Thread
   Callback_Receive callbackReceive;/*!< callback call when messages arrive*/
   MsgSocketCallBackData callbackData; /*!< structure given to the callback methods */
 
+
+  unsigned char * SyncLinkData;
+  int SyncLinkDataLength;
+  unsigned char * PeerSyncLinkData;
+  int PeerSyncLinkDataLength;
 
  private:
   /** \brief Accept TCP Connection
@@ -396,8 +408,10 @@ class MsgSocket : public Thread
 		    unsigned int& pid, unsigned int& mid);
   //@}
 
-
 private:
+
+	// REVIEW : can only be done internaly
+  int SetPeerSyncLinkData( unsigned char * data, int length );
 
 	// let say that TcpServer Need to now these constant values
 	friend class TcpServer;
@@ -429,7 +443,7 @@ private:
   MsgSocketKind kind;
 
   unsigned char * SendBuffer;
-  Mutex protectSend; /*!< mutex to protect the call of Send method */
+  ReentrantMutex protectSend; /*!< mutex to protect the call of Send method */
 
   unsigned int service_id; /*!< id of the service */
   unsigned int message_id; /*!< message id (incremented after each Send)*/
@@ -484,6 +498,16 @@ inline bool MsgSocket::SyncLinkMsgSent() const { return sendSyncLinkMsg; }
 
 inline int MsgSocket::GetMaxMessageSizeForTCP()
 { return maxMessageSizeForTCP; }
+
+inline int MsgSocket::GetSyncLinkDataLength()
+{
+	return SyncLinkDataLength;
+}
+
+inline int MsgSocket::GetPeerSyncLinkDataLength()
+{
+	return PeerSyncLinkDataLength;
+}
 
 inline void MsgSocket::SetMaxMessageSizeForTCP(int max)
 {

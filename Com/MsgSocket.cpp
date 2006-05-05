@@ -65,7 +65,11 @@ MsgSocket::MsgSocket(Socket* s)
     kind(TCP_CLIENT_KIND),
     service_id(0), message_id(0), peer_pid(0),
     receivedSyncLinkMsg(false),
-	sendSyncLinkMsg(false)
+	sendSyncLinkMsg(false),
+	SyncLinkData(NULL),
+	SyncLinkDataLength(0),
+	PeerSyncLinkData(NULL),
+	PeerSyncLinkDataLength(0)
 {
   callbackReceive = NULL;
 
@@ -84,7 +88,11 @@ MsgSocket::MsgSocket(Socket::SocketKind type)
 	SendBuffer(NULL),
     service_id(0), message_id(0), peer_pid(0),
     receivedSyncLinkMsg(false),
-	sendSyncLinkMsg(false)
+	sendSyncLinkMsg(false),
+	SyncLinkData(NULL),
+	SyncLinkDataLength(0),
+	PeerSyncLinkData(NULL),
+	PeerSyncLinkDataLength(0)
 {
   callbackReceive = NULL; 
 
@@ -120,6 +128,144 @@ MsgSocket::~MsgSocket()
 		delete [] SendBuffer;
 		SendBuffer = NULL;
 	}
+
+	if ( SyncLinkData )
+	{
+		delete [] SyncLinkData;
+		SyncLinkData = NULL;
+	}
+
+	if ( PeerSyncLinkData )
+	{
+		delete [] PeerSyncLinkData;
+		PeerSyncLinkData = NULL;
+	}
+}
+
+int MsgSocket::SetSyncLinkData( unsigned char * data, int length )
+{
+	unsigned char * tmpc;
+
+	if ( data == NULL || length <= 0 )
+		return false;
+
+	protectSend.EnterMutex();
+
+	if ( receivedSyncLinkMsg == true || sendSyncLinkMsg == true )
+	{
+		// TOO LATE
+#ifdef _DEBUG
+		if ( Debug & DBG_LINKSYNC )
+		{
+			fprintf( stderr, "MsgSocket::SetSyncLinkData: connexion already open. Can not set SyncLink data.\n" );
+		}
+#endif
+		protectSend.LeaveMutex();
+		return false;
+	}
+
+	tmpc = new unsigned char[length];
+	if ( tmpc == NULL )
+	{
+#ifdef _DEBUG
+		if ( Debug & DBG_LINKSYNC )
+		{
+			fprintf( stderr, "MsgSocket::SetSyncLinkData: no more memory to set SyncLink data.\n" );
+		}
+#endif
+		protectSend.LeaveMutex();
+		return false;
+	}
+
+	if ( SyncLinkData != NULL )
+	{
+		// Free previous data...
+		delete [] SyncLinkData;
+	}
+
+	// Copy data and set Length
+	SyncLinkData = tmpc;
+	memmove( SyncLinkData, data, (size_t)length );
+	SyncLinkDataLength = length;
+
+	protectSend.LeaveMutex();
+	return true;
+}
+
+int MsgSocket::SetPeerSyncLinkData( unsigned char * data, int length )
+{
+	if ( data == NULL || length <= 0 )
+		return false;
+
+	protectSend.EnterMutex();
+
+	if ( PeerSyncLinkData != NULL )
+	{
+		// TOO LATE
+#ifdef _DEBUG
+		if ( Debug & DBG_LINKSYNC )
+		{
+			fprintf( stderr, "MsgSocket::SetPeerSyncLinkData: Peer SyncLink data already set.\n" );
+		}
+#endif
+		protectSend.LeaveMutex();
+		return false;
+	}
+
+	PeerSyncLinkData = new unsigned char[length];
+	if ( PeerSyncLinkData == NULL )
+	{
+#ifdef _DEBUG
+		if ( Debug & DBG_LINKSYNC )
+		{
+			fprintf( stderr, "MsgSocket::SetPeerSyncLinkData: no more memory to set SyncLink data.\n" );
+		}
+#endif
+		protectSend.LeaveMutex();
+		return false;
+	}
+
+	// Copy data and set Length
+	memmove( PeerSyncLinkData, data, (size_t)length );
+	PeerSyncLinkDataLength = length;
+
+	protectSend.LeaveMutex();
+	return true;
+}
+
+
+int MsgSocket::GetSyncLinkData( unsigned char * data, int maxlength )
+{
+	protectSend.EnterMutex();
+
+	if ( SyncLinkDataLength > maxlength )
+	{
+		protectSend.LeaveMutex();
+		return 0;
+	}
+
+	// Copy the data
+	memmove( data, SyncLinkData, (size_t)SyncLinkDataLength ); 
+
+	protectSend.LeaveMutex();
+	return SyncLinkDataLength;
+}
+
+int MsgSocket::GetPeerSyncLinkData( unsigned char * data, int maxlength )
+{
+	protectSend.EnterMutex();
+
+	if ( PeerSyncLinkData == NULL || PeerSyncLinkDataLength > maxlength )
+	{
+		protectSend.LeaveMutex();
+		return 0;
+	}
+
+	// Copy the data
+	memmove( data, SyncLinkData, (size_t)PeerSyncLinkDataLength );
+
+	protectSend.LeaveMutex();
+	return PeerSyncLinkDataLength;
 }
 
 int MsgSocket::PrepareBufferForBip(char * buf, const char * data, int datalen)
@@ -303,12 +449,19 @@ bool MsgSocket::SendSyncLinkMsg()
 
   try
     {
-	  TotalLen = PrepareBufferForBip( (char*)SendBuffer, "", 0 );
-	  if ( TotalLen == -1 )
-	  {
-		  protectSend.LeaveMutex();
-		  return false;
-	  }
+		if ( SyncLinkDataLength != 0 )
+		{
+			TotalLen = PrepareBufferForBip( (char*)SendBuffer, (const char*)SyncLinkData, SyncLinkDataLength );
+		}
+		else
+		{
+			TotalLen = PrepareBufferForBip( (char*)SendBuffer, "", 0 );
+		}
+		if ( TotalLen == -1 )
+		{
+			protectSend.LeaveMutex();
+			return false;
+		}
 
 	  // We complete the header with a message id = 0
 	  WriteHeaderForBip( (char*)SendBuffer, service_id, message_id );
@@ -323,10 +476,10 @@ bool MsgSocket::SendSyncLinkMsg()
 		}
 #endif
 
-      if ( (TotalLen = socket->Send(TotalLen, (char*)SendBuffer)) == -1)
-	  {
-		  TotalLen = -1;
-	  }
+		if ( (TotalLen = socket->Send(TotalLen, (char*)SendBuffer)) == -1)
+		{
+			TotalLen = -1;
+		}
 
 	  sendSyncLinkMsg = true;
       protectSend.LeaveMutex();
@@ -411,6 +564,13 @@ void MsgSocket::Receive()
 					//cerr << endl;
 					if ( mid == 0 )
 					{
+#ifdef _DEBUG
+							if ( Debug & DBG_LINKSYNC )
+							{
+								// buffer[offset+length_msg] = '\0';
+								fprintf( stderr, "MsgSocket::Receive: %.100s\n", buffer+offset );
+							}
+#endif
 							//std::cout << "Link connexion Msg from "<<pid<<"\n";
 							peer_pid = pid;
 							receivedSyncLinkMsg = true;
@@ -418,6 +578,12 @@ void MsgSocket::Receive()
 							{
 								SendSyncLinkMsg();
 							}
+							
+							if ( length_msg != 0 )
+							{
+								SetPeerSyncLinkData( (unsigned char*)(buffer+offset+length_header), length_msg );
+							}
+
 							offset += length_header + tag_end_size;
 							size =  occupiedSize - offset;
 					}

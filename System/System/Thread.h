@@ -82,12 +82,18 @@ public:
 #endif
 
 protected:
+	enum{ DEFAULT_THREAD_DESTRUCTOR_TIMEOUT = 1000 }; // 1 second
+
 	/** @brief Method executed in a thread.
 	 *
 	 * Overload this virtual function and provide your own
 	 * thread implementation.
 	 */
 	virtual void Run() = 0;
+
+private:
+	bool m_stopRequired; /*!< store if stop is required */
+	bool m_isRunning; /*!< state of the thread */
 	
 #ifdef WIN32
 	unsigned long	m_ThreadID;
@@ -95,13 +101,10 @@ protected:
 	
 	Event event;
 	
-	static unsigned long __stdcall s_run(LPVOID importobj);
+	static unsigned long __stdcall CallRun(void* ptr);
 #else
 
-private:
 	pthread_t m_thread; /*!< the Posix thread*/
-	bool m_stopRequired; /*!< store if stop is required */
-	bool m_isRunning; /*!< state of the thread */
 	
 	/** @brief static method executes in the Posix thread
 	 *
@@ -133,11 +136,7 @@ inline bool Thread::Running() const
 
 inline bool Thread::StopPending() const 
 { 
-#ifdef WIN32
-	return (m_ThreadID == 1); 
-#else
 	return m_stopRequired;
-#endif
 }
 
 

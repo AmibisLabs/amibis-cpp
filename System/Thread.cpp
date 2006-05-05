@@ -29,8 +29,10 @@ Thread::Thread(bool autostart)
 #ifdef WIN32
 	m_ThreadID = 0;
 	m_pThread  = NULL;
+	m_isRunning = false;	
+	m_stopRequired = false;
 	
-	Event event;
+	// Event event;
 #else
 	m_isRunning = false;	
 	m_stopRequired = false;
@@ -40,46 +42,31 @@ Thread::Thread(bool autostart)
 	if(pthread_cond_init(&condition, NULL) != 0)
 		throw "Error Condition Init";
 #endif
-	if (autostart) StartThread();
+	
+	if (autostart)
+		StartThread();
 }
 
 Thread::~Thread()
 {
-#ifdef WIN32
-	int timeout=100;
-	if ( m_pThread )
-	{
-		if (m_ThreadID>1)
-			StopThread();
-		else
-		{
-			while ((timeout--) && (m_ThreadID==1))
-				Sleep(10);
-			if (!timeout)
-			{
-				TraceError( "<Thread>  Destructor has timed out while waiting for thread to exit.\r\n");
-			}
-		}
-		CloseHandle( m_pThread );
-		m_pThread  = 0;	
-		m_ThreadID = 0;	
-	}
-#else
 	if(Running())
 	{
-		StopThread(1000);
+		StopThread(DEFAULT_THREAD_DESTRUCTOR_TIMEOUT);
 	}
-#endif
 }
 
 bool Thread::StartThread()
 {
 	// restart thread if already running
-	if (Running()) StopThread();
+	if (Running())
+		StopThread();
+
+	m_isRunning = false;	
+	m_stopRequired = false;
 
 #ifdef WIN32
 	m_ThreadID = 0;
-	m_pThread = CreateThread( NULL, 0, s_run, (LPVOID)this, 0, &m_ThreadID );
+	m_pThread = CreateThread( NULL, 0, CallRun, (void*)this, 0, &m_ThreadID );
 	return (m_pThread != NULL);
 #else
 	pthread_attr_t attr;
@@ -87,20 +74,31 @@ bool Thread::StartThread()
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
 	int rc = pthread_create(&m_thread, &attr, CallRun, this);
 	pthread_attr_destroy(&attr);
-	return rc == 0;
+	return (rc == 0);
 #endif
 }
 
-bool Thread::StopThread(int wait_ms )
+bool Thread::StopThread(int wait_ms)
 {
 #ifdef WIN32	
 	if (Running())
 	{
-		m_ThreadID = 1;
+		m_stopRequired = true;
+		if ( event.Wait(wait_ms) == false )
+		{
+			// Timeout !!!
+			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d)\n", m_ThreadID, wait_ms );
+		}
 
-		event.Wait(wait_ms);
+		// Close the Thread handle
+		CloseHandle( m_pThread );
+
+		m_ThreadID = 0;
+		m_pThread = NULL;
+		m_isRunning = false;	
+		m_stopRequired = false;
+
 	}
-	
 #else
 	pthread_mutex_lock(&mutex);
 	if (Running())
@@ -136,15 +134,22 @@ bool Thread::StopThread(int wait_ms )
 }
 
 #ifdef WIN32
-unsigned long __stdcall Thread::s_run(LPVOID importobj)
+unsigned long __stdcall Thread::CallRun(void* ptr)
 {
-	((Thread*)importobj)->event.Reset();
+	Thread* t = (Thread*)ptr;
 
-	((Thread*)importobj)->Run();
-	((Thread*)importobj)->m_ThreadID = 0;
-	((Thread*)importobj)->m_pThread = 0;
+	// Reset stat event
+	t->event.Reset();
+
+	// Do my job
+	t->Run();
+
+	// revert my data
+	t->m_ThreadID = 0;
+	t->m_pThread = 0;
 	
-	((Thread*)importobj)->event.Signal();
+	// signal, my job is over
+	t->event.Signal();
 	
 	return 0;
 }
