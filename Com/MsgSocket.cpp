@@ -868,11 +868,12 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
     {
 	  // Here we've got a full buffer and we can (must) write our header at the in at the beginning !
 	  WriteHeaderForBip(l_buffer, service_id, message_id );
-
+#ifdef _DEBUG
 		if ( Debug & DBG_SEND )
 		{
 			TraceError( "MsgSocket::SendPreparedBuffer %s\n", l_buffer );
 		}
+#endif
 
 	  message_id++;
      

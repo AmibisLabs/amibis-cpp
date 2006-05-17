@@ -57,7 +57,6 @@ void TcpUdpClientServer::Create(int port_tcp, int port_udp)
 void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, MsgSocket * MyMsgSocket )
 {
 	TcpUdpClientServer * pThis = (TcpUdpClientServer*)MsgData->userData1;
-    struct hostent *he;
 
 	if ( ((UdpExchange*)pThis)->GetUdpPort() == 0 )
 	{
@@ -83,12 +82,14 @@ void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, Ms
 			SimpleString ConnectedHost = MyMsgSocket->GetSocket()->GetConnectedHost();
 
 			int tmpudp = atoi(SrvProp["UDP"]);
-			udpConnection.addr.sin_family = AF_INET;
-			udpConnection.addr.sin_port = htons(tmpudp);
+			//REVIEW 
+			// udpConnection.addr.sin_family = AF_INET;
+			// udpConnection.addr.sin_port = htons(tmpudp);
 
-			he = Socket::GetHostByName(ConnectedHost.GetStr());
-			udpConnection.addr.sin_addr = *((struct in_addr*)he->h_addr);
-			memset(&(udpConnection.addr.sin_zero), 0, 8);
+			// he = Socket::GetHostByName(ConnectedHost.GetStr());
+			// udpConnection.addr.sin_addr = *((struct in_addr*)he->h_addr);
+			// memset(&(udpConnection.addr.sin_zero), 0, 8);
+			Socket::FillAddrIn(&udpConnection.addr, ConnectedHost.GetStr(), tmpudp );
 
 			pThis->AcceptConnection( udpConnection, true );
 		}
