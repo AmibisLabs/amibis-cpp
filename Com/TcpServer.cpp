@@ -229,10 +229,17 @@ void TcpServer::AcceptConnection(MsgSocket* sock)
   
   // Init the socket
   // REVIEW: Inherit my SyndLink data
+  mutex.EnterMutex();
   if ( SyncLinkDataLength != 0 )
   {
 	sock->SetSyncLinkData( SyncLinkData, SyncLinkDataLength );
   }
+  // If we have a fonction set to process LincSyncData, set it to the opened connection
+  if ( callbackSyncLinkFct )
+  {
+	sock->SetCallbackSyncLink( callbackSyncLinkFct, callbackSyncLinkData.userData1, callbackSyncLinkData.userData2 );
+  }
+  mutex.LeaveMutex();
   sock->SetCallbackReceive(callbackReceive, callbackData.userData1, callbackData.userData2);
   sock->SetTcpNoDelay(TcpNoDelayMode);
   sock->SetServiceId(GetServiceId());

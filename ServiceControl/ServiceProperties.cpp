@@ -167,6 +167,16 @@ const char * ServiceProperty::GetValue()
 	return (const char*)&Hash[2+NameLength];
 }
 
+ServiceProperty:: operator char*()
+{
+	return (char*)GetValue();
+}
+
+ServiceProperty:: operator const char*()
+{
+	return GetValue();
+}
+
 ServicePropertyNotify::ServicePropertyNotify() : ServiceProperty(), Container(NULL)
 {
 }

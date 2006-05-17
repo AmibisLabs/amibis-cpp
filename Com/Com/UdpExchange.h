@@ -167,6 +167,7 @@ inline ComTools* UdpExchange::Cast()
 
 inline void UdpExchange::SetServiceId(unsigned int pid)
 {  MsgSocket::SetServiceId(pid); }
+
 inline unsigned int UdpExchange::GetServiceId()
 {  return MsgSocket::GetServiceId(); }
 

@@ -3,6 +3,8 @@
 
 void SocketException::SocketErrorCheck()
 {
+#ifdef _DEBUG
+
 #ifdef WIN32
 	char * tmpc;
 	int tmpi = WSAGetLastError();
@@ -46,6 +48,8 @@ void SocketException::SocketErrorCheck()
 	}
 
 	fprintf( stderr, "%s\n", tmpc );
+#endif
+
 #endif
 }
 

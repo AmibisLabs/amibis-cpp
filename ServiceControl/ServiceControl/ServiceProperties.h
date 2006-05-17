@@ -103,6 +103,9 @@ public:
 
 	const char * GetValue();
 
+	operator char*();
+	operator const char*();
+
 protected:
 	// Total length of this Property (size included)
 	unsigned short Length;

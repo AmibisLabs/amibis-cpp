@@ -50,11 +50,15 @@ int UdpExchange::SendTo(int len, const char* buf, const char* addr, int port)
 {
   UdpConnection udp_connect;
 
+  //REVIEW
+  /*
   udp_connect.addr.sin_family = AF_INET;
   udp_connect.addr.sin_port = htons(port);
   if(!strcmp(addr, ""))  udp_connect.addr.sin_addr.s_addr = INADDR_ANY;    
   else udp_connect.addr.sin_addr.s_addr = inet_addr(addr);    
-  memset(&(udp_connect.addr.sin_zero), 0, 8);
+  memset(&(udp_connect.addr.sin_zero), 0, 8); */
+  if ( Socket::FillAddrIn( &udp_connect.addr, addr, port ) == false )
+	  return -1;	// Socket error
   
   return MsgSocket::SendTo(len, buf, &udp_connect);
 }

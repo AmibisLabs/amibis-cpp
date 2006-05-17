@@ -131,7 +131,8 @@ void Socket::Bind(const char* addr, int port)
 
   struct sockaddr_in my_addr;
   
-  my_addr.sin_family = AF_INET;
+  // REVIEW
+  /* my_addr.sin_family = AF_INET;
   my_addr.sin_port = htons(port);
 
   if(!strcmp(addr, ""))
@@ -142,7 +143,11 @@ void Socket::Bind(const char* addr, int port)
     {
       my_addr.sin_addr.s_addr = inet_addr(addr);
     }
-  memset(&(my_addr.sin_zero), 0, 8);
+  memset(&(my_addr.sin_zero), 0, 8); */
+  if ( FillAddrIn( &my_addr, addr, port ) == false )
+  {
+	  throw SocketException("bind");
+  }
   
   if( bind(descriptor, (struct sockaddr*)&my_addr, sizeof(struct sockaddr) ) == -1)
   {
@@ -203,35 +208,60 @@ Socket* Socket::Accept()
 	return NULL;
 }
 
+const SimpleString & Socket::GetConnectedHost()
+{
+	return ConnectedHost;
+}
+
+const struct sockaddr_in * Socket::GetAddrDest()
+{
+	return (const struct sockaddr_in *)&dest;
+}
+
+bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const char * name, int port)
+{
+	struct hostent *he;
+
+	if ( pAdd == NULL || name == NULL || port < 0 )
+		return false;
+
+    pAdd->sin_family = AF_INET;
+    pAdd->sin_port = htons(port);
+	if ( name[0] == '\0' )	// name == ""
+	{
+		// Brodcast
+		pAdd->sin_addr.s_addr = INADDR_ANY;
+	}
+	else
+	{
+		he = GetHostByName(name);
+		pAdd->sin_addr = *((struct in_addr*)he->h_addr);
+	}
+    memset(&(pAdd->sin_zero), 0, 8);
+
+	return true;
+}
+
 void Socket::Connect(const char* addr, int port)
 {
-  struct hostent *he;
-  he = GetHostByName(addr);
-      
   if(socketType == TCP)
     {
- 
       struct sockaddr_in the_addr;
-      the_addr.sin_family = AF_INET;
-      the_addr.sin_port = htons(port);
-      the_addr.sin_addr = *((struct in_addr*)he->h_addr);
-      //.s_addr = inet_addr(addr);
-      memset(&(the_addr.sin_zero), 0, 8);
-      
-      if(connect(descriptor, (struct sockaddr*)&the_addr,
-		   sizeof(struct sockaddr)) == -1)
+	  FillAddrIn(&the_addr, addr, port);
+
+      if(connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == -1)
 		{
 		throw SocketException("connect", Errno());
 		}
-
     }
   else /* UDP */
    {
-      dest.sin_family = AF_INET;
+      /*dest.sin_family = AF_INET;
       dest.sin_port = htons(port);
       dest.sin_addr = *((struct in_addr*)he->h_addr);
       //.s_addr = inet_addr(addr);
-      memset(&(dest.sin_zero), 0, 8);
+      memset(&(dest.sin_zero), 0, 8); */
+   	  FillAddrIn(&dest, addr, port);
     }
 }
 

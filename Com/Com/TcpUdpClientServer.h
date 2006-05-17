@@ -171,7 +171,12 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
   virtual ComTools* Cast();
 
 
+
  protected:
+
+	 // REVIEW
+  static void ProcessLyncSyncMsg(MsgSocketCallBackData*MsgData, MsgSocket * MyMsgSocket );
+
   /** \brief Call on source of UDP message
    *
    * Find the UdpConnection object associated to an UDP connection,

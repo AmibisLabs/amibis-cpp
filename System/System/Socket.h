@@ -22,6 +22,8 @@
 	typedef int SOCKET;
 #endif
 
+#include <System/SimpleString.h>
+
 /**
  * @class Socket Socket.h System/Socket.h
  * @brief Socket for tcp or udp communication.
@@ -141,12 +143,17 @@ public:
 
   static struct hostent* GetHostByName( const char* name );
   static struct hostent* gethostbyname( const char* name ) { return GetHostByName(name); };
+  static bool   FillAddrIn(struct sockaddr_in * pAdd, const char * name, int port);
 
   static void GetDnsNameSolvingOption();
 
   bool SetTcpNoDelay(bool Set = true);
 
   static int Errno();
+
+  // REVIEW
+  const SimpleString& GetConnectedHost();
+  const struct sockaddr_in * GetAddrDest();
 
 private:
 
@@ -156,6 +163,7 @@ private:
   enum DynamicNameSolvingType { OMISCIDNS_UNSET = 0, OMISCIDNS_USE_DNS_ONLY = 1, OMISCIDNS_USE_MDNS_NAME_SOLVING = 2 }; /*!< for future use : maybe we may apply bit operation */
   static DynamicNameSolvingType DynamicNameSolving;
   
+  SimpleString ConnectedHost;  /*!< a host name stored in case of TCP */
   struct sockaddr_in dest;  /*!< a destination stored in case of datagram */
 };
 

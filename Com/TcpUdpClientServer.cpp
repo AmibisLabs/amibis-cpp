@@ -9,6 +9,7 @@ ClientConnection::ClientConnection(TcpClient* tcp_client, UdpConnection* udp_con
   tcpClient = tcp_client; 
   udpConnection = udp_connect;
 }
+
 ClientConnection::~ClientConnection()
 { 
   delete tcpClient;
@@ -40,7 +41,6 @@ TcpUdpClientServer::~TcpUdpClientServer()
 
 void TcpUdpClientServer::Create(int port_tcp, int port_udp)
 {
-
   // REVIEW add support of UDP Port
   UdpExchange::Create(port_udp);
 
@@ -50,8 +50,49 @@ void TcpUdpClientServer::Create(int port_tcp, int port_udp)
   sprintf( tmpc, "%d", UdpExchange::GetUdpPort() );
   SrvProp["UDP"] = tmpc;
   TcpServer::SetSyncLinkData( SrvProp, SrvProp.GetTXTRecordLength() );
-
+  TcpServer::SetCallbackSyncLink( ProcessLyncSyncMsg, (void*)this, (void*)0 );
   TcpServer::Create(port_tcp);
+}
+
+void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, MsgSocket * MyMsgSocket )
+{
+	TcpUdpClientServer * pThis = (TcpUdpClientServer*)MsgData->userData1;
+    struct hostent *he;
+
+	if ( ((UdpExchange*)pThis)->GetUdpPort() == 0 )
+	{
+		// We do not care about UDP port...
+		return;
+	}
+
+	// Check if the data if Empty
+	if ( MsgData->len != 0 )
+	{
+		ServiceProperties SrvProp;
+		SrvProp.ImportTXTRecord( MsgData->len, (const char*)MsgData->buffer );
+
+		if ( SrvProp.IsDefined( "UDP" ) )
+		{
+			UdpConnection udpConnection;
+			udpConnection.pid = MsgData->pid;
+
+			// Ok, we have an UDP port at the oposite side
+			// Try to accept it
+			// udpConnection.SetAddr( (const struct sockaddr_in*)DestAddr );
+
+			SimpleString ConnectedHost = MyMsgSocket->GetSocket()->GetConnectedHost();
+
+			int tmpudp = atoi(SrvProp["UDP"]);
+			udpConnection.addr.sin_family = AF_INET;
+			udpConnection.addr.sin_port = htons(tmpudp);
+
+			he = Socket::GetHostByName(ConnectedHost.GetStr());
+			udpConnection.addr.sin_addr = *((struct in_addr*)he->h_addr);
+			memset(&(udpConnection.addr.sin_zero), 0, 8);
+
+			pThis->AcceptConnection( udpConnection, true );
+		}
+	}
 }
 
 unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int port_udp)
@@ -59,14 +100,16 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
   TcpClient* tcpclient = new TcpClient();
   tcpclient->SetServiceId(GetServiceId());
 
-  // Do we plan to use UDP ?
+  // REVIEW
+  // Do we plan to use UDP ? if yes, open first a UDP port for us
   UdpConnection* udp_connect = NULL;
-  if(port_udp != 0)
+  if ( port_udp != 0 )
   {
-      // connection udp
-      udp_connect = new UdpConnection(addr, port_udp);
-      udp_connect->pid = tcpclient->GetPeerPid();
-	  // REVIEW : done by the TCP Port
+		// connection udp
+		udp_connect = new UdpConnection(addr, port_udp);
+		udp_connect->pid = tcpclient->GetPeerPid();
+
+		// REVIEW : done by the TCP Port
 	    UdpExchange::Create(0);
 		// Set UDP Port as property for the Sync Link paquet of the TCP Connection
 		ServiceProperties SrvProp;
@@ -86,7 +129,7 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
     }
   
   if(fct_callback)
-    tcpclient->SetCallbackReceive(fct_callback, userData1, userData2);  
+    tcpclient->SetCallbackReceive(fct_callback, userData1, userData2);
 
 
   ClientConnection* client_connect = new ClientConnection(tcpclient, udp_connect);
@@ -155,22 +198,28 @@ void TcpUdpClientServer::SendToAll(int len, const char* buf, bool udp)
     }
 
   //send to all server where it is connected
-  listClient.Lock();
-  for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
-    {
-      if((listClient.GetCurrent())->tcpClient->IsConnected())
-	{	  
-	  if(udp && (listClient.GetCurrent())->udpConnection) UdpExchange::SendTo(len, buf, (listClient.GetCurrent())->udpConnection);
-	  else (listClient.GetCurrent())->tcpClient->SendToServer(len, buf);	  
-	}
-      else
-        {
-	   delete listClient.GetCurrent();
-	   listClient.RemoveCurrent();
-	}
-    }  
-  listClient.Unlock();
-  // TraceError( "out SendToAll\n");
+	listClient.Lock();
+	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
+	{
+		if((listClient.GetCurrent())->tcpClient->IsConnected())
+		{	  
+			if(udp && (listClient.GetCurrent())->udpConnection)
+			{
+				UdpExchange::SendTo(len, buf, (listClient.GetCurrent())->udpConnection);
+			}
+			else
+			{
+				(listClient.GetCurrent())->tcpClient->SendToServer(len, buf);	  
+			}
+		}
+		else
+		{
+			delete listClient.GetCurrent();
+			listClient.RemoveCurrent();
+		}
+	}  
+	listClient.Unlock();
+	// TraceError( "out SendToAll\n");
 }
 
 int TcpUdpClientServer::SendToPeer(int len, const char* buf, unsigned int pid, bool udp)
@@ -286,7 +335,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 	    {
 	      if(tcp_found->IsConnected())
 		{
-		  printf("Creation connection udp associe TcpServer\n");
+		  TraceError("Creation connection udp associe TcpServer\n");
 		  udp_found = new UdpConnection(udp_connect);
 		  UdpExchange::listUdpConnections.Add(udp_found);
 		}

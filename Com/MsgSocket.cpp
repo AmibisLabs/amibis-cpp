@@ -23,11 +23,13 @@ UdpConnection::UdpConnection(const UdpConnection& udp_connect)
 
 UdpConnection::UdpConnection(const char* an_addr, int port)
 {
-  addr.sin_family = AF_INET;
+//REVIEW
+/*	addr.sin_family = AF_INET;
   addr.sin_port = htons(port);
   if(!strcmp(an_addr, ""))  addr.sin_addr.s_addr = INADDR_ANY;    
   else addr.sin_addr.s_addr = inet_addr(an_addr);    
-  memset(&(addr.sin_zero), 0, 8);
+  memset(&(addr.sin_zero), 0, 8); */
+	Socket::FillAddrIn( &addr, an_addr, port );
 }
 
 void UdpConnection::SetAddr(const struct sockaddr_in* nv_addr)
@@ -69,7 +71,8 @@ MsgSocket::MsgSocket(Socket* s)
 	SyncLinkData(NULL),
 	SyncLinkDataLength(0),
 	PeerSyncLinkData(NULL),
-	PeerSyncLinkDataLength(0)
+	PeerSyncLinkDataLength(0),
+	callbackSyncLinkFct(NULL)
 {
   callbackReceive = NULL;
 
@@ -92,7 +95,8 @@ MsgSocket::MsgSocket(Socket::SocketKind type)
 	SyncLinkData(NULL),
 	SyncLinkDataLength(0),
 	PeerSyncLinkData(NULL),
-	PeerSyncLinkDataLength(0)
+	PeerSyncLinkDataLength(0),
+	callbackSyncLinkFct(NULL)
 {
   callbackReceive = NULL; 
 
@@ -423,6 +427,21 @@ void MsgSocket::SetCallbackReceive(Callback_Receive cr,
   mutex.LeaveMutex();
 }
 
+void MsgSocket::SetCallbackSyncLink(Callback_SyncLink cr, 
+				   void* user_data1, void* user_data2)
+{
+  mutex.EnterMutex();
+
+  callbackSyncLinkFct = cr;
+
+  callbackSyncLinkData.len = 0;
+  callbackSyncLinkData.buffer = NULL;
+  callbackSyncLinkData.userData1 = user_data1;
+  callbackSyncLinkData.userData2 = user_data2;
+
+  mutex.LeaveMutex();
+}
+
 bool MsgSocket::SendSyncLinkMsg()
 {
   int TotalLen;
@@ -552,7 +571,7 @@ void MsgSocket::Receive()
 			bool stop = false;
 			unsigned int length_msg, pid, mid;
 			int length_header;
-		       
+
 			int offset = 0;
 			int size = occupiedSize;
 			while(!stop)
@@ -571,8 +590,30 @@ void MsgSocket::Receive()
 								fprintf( stderr, "MsgSocket::Receive: %.100s\n", buffer+offset );
 							}
 #endif
-							//std::cout << "Link connexion Msg from "<<pid<<"\n";
 							peer_pid = pid;
+
+							mutex.EnterMutex();
+							if ( callbackSyncLinkFct )
+							{
+								*(buffer+offset+tag_size+length_msg)='\0';
+								callbackSyncLinkData.len = length_msg;
+								if ( length_msg != 0 )
+								{
+									callbackSyncLinkData.buffer =  buffer+offset+tag_size;
+								}
+								else
+								{
+									callbackSyncLinkData.buffer =  NULL;
+								}
+								callbackSyncLinkData.origUdp = false;
+								callbackSyncLinkData.pid = pid;
+								callbackSyncLinkData.mid = mid;
+
+								(*callbackSyncLinkFct)( &callbackSyncLinkData, this );
+							}
+							mutex.LeaveMutex();
+
+							//std::cout << "Link connexion Msg from "<<pid<<"\n";
 							receivedSyncLinkMsg = true;
 							if( SyncLinkMsgSent() == false )
 							{
@@ -968,8 +1009,6 @@ UdpConnection* MsgSocket::AcceptConnection(const UdpConnection& udp_connect, boo
   return NULL;
 }
 
-
-
 void MsgSocket::ReceiveUdpExchange()
 {
   try
@@ -1002,21 +1041,21 @@ void MsgSocket::ReceiveUdpExchange()
 		  //cerr << "good beginning ";
 		  //cerr.write(aBuffer+offset, keyword_min);
 		  //cerr << endl;
-		  udpConnection.pid = pid;
+	 	  udpConnection.pid = pid;
 		  // REVIEW a changer pour UDP
-		  if(mid == 0)
-		    {
-		      peer_pid = pid;		  		      
-		      offset += length_header;		      
-		      connection = AcceptConnection(udpConnection, true);
-		    }
-		  else if((unsigned int)size < length_header + length_msg + tag_end_size)
+	//	  if(mid == 0)
+	//	    {
+	//	      peer_pid = pid;		  		      
+	//	      offset += length_header;		      
+	//	      connection = AcceptConnection(udpConnection, true);
+	//	    }
+	//	  else
+			if((unsigned int)size < length_header + length_msg + tag_end_size)
 		    {
 		      stop = true;
 		    }		 		 
 		  else
 		    {
-		      
 		      connection = AcceptConnection(udpConnection, false);
 		      offset += length_header;
 		      unsigned char* msgptr =  (buffer+offset);

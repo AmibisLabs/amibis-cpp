@@ -121,6 +121,7 @@ class MsgSocket : public Thread
 
   /** \brief Callback for the message reception */
   typedef void (*Callback_Receive)(MsgSocketCallBackData*);
+  typedef void (*Callback_SyncLink)(MsgSocketCallBackData*,MsgSocket *);
 
   /** \brief Kind of use of a MsgSocket object */
   typedef enum MsgSocketKind
@@ -178,9 +179,10 @@ class MsgSocket : public Thread
    * \param user_data1 pointer on data (will be found in the callback parameter)
    * \param user_data2 pointer on data (will be found in the callback parameter)
    */
-  void SetCallbackReceive(Callback_Receive cr, 
-			  void* user_data1, void* user_data2 = NULL);
+  void SetCallbackReceive(Callback_Receive cr, void* user_data1, void* user_data2 = NULL);
 #endif /* RAVI_INTERFACE */
+
+   void SetCallbackSyncLink(Callback_SyncLink cr, void* user_data1 = NULL, void* user_data2 = NULL);
 
   /** \brief method call when the Thread is started
    *
@@ -291,7 +293,6 @@ class MsgSocket : public Thread
    */
   bool SyncLinkMsgSent() const;
 
-  
   // TO COMMENT
 	bool SendSyncLinkMsg();
 
@@ -321,7 +322,8 @@ class MsgSocket : public Thread
   int GetSyncLinkDataLength();
   int GetPeerSyncLinkDataLength();
 
- protected:
+protected:
+
   /** \brief Accept new TCP connection 
    *
    * method called by TCP server when it accepts new connection.
@@ -329,7 +331,6 @@ class MsgSocket : public Thread
    * Default Implementation : Close the connection.
    * \param s object created with the new accepted TCP connection */
   virtual void AcceptConnection(MsgSocket* s);
-
 
   /** \brief Accept new UDP connection 
    *
@@ -351,7 +352,8 @@ class MsgSocket : public Thread
   Callback_Receive callbackReceive;/*!< callback call when messages arrive*/
   MsgSocketCallBackData callbackData; /*!< structure given to the callback methods */
 
-
+  Callback_SyncLink callbackSyncLinkFct;/*!< callback call when messages arrive*/
+  MsgSocketCallBackData callbackSyncLinkData;
   unsigned char * SyncLinkData;
   int SyncLinkDataLength;
   unsigned char * PeerSyncLinkData;
@@ -450,13 +452,14 @@ private:
 
   unsigned int peer_pid; /*!< id of the connected service */
 
-  UdpConnection udpConnection;
-
   bool receivedSyncLinkMsg;
   bool sendSyncLinkMsg;
 
   int maxMessageSizeForTCP;
   int maxBIPMessageSize;
+
+protected:
+  UdpConnection udpConnection;
 };
 
 ///////// inline methods ////////////////
