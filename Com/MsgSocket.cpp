@@ -586,8 +586,8 @@ void MsgSocket::Receive()
 #ifdef _DEBUG
 							if ( Debug & DBG_LINKSYNC )
 							{
-								// buffer[offset+length_msg] = '\0';
-								fprintf( stderr, "MsgSocket::Receive: %.100s\n", buffer+offset );
+								// buffer[offset+offset+length_msg+tag_size] = '\0';
+								fprintf( stderr, "MsgSocket::Receive: %s\n", buffer+offset );
 							}
 #endif
 							peer_pid = pid;

@@ -285,15 +285,6 @@ int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
 		if((res = recv(descriptor, (char*)buf, len, 0)) == -1)
 		{
 			res = Errno();
-#ifdef WIN32
-			if ( res == WSAECONNRESET )
-			{
-				// Connection close
-			}
-#else
-			// REVIEW
-			fprintf( stderr, "Here we may need some *nix code...\n" );
-#endif
 			throw SocketException("recv_sock_stream", res );
 		}
     }
