@@ -354,7 +354,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
     }
   if(!udp_found)
   {
-	  TraceError( "UDP connection Refused from peer %u\n", udp_connect.pid);
+	  TraceError( "UDP connection Refused or not initialise from peer %u\n", udp_connect.pid);
   }
 
   UdpExchange::listUdpConnections.Unlock();

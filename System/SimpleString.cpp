@@ -8,12 +8,12 @@
 	#define snprintf _snprintf
 #endif
 
-SimpleString::StringData SimpleString::StringData::EmptyString("");
+SimpleString::StringData SimpleString::StringData::EmptyStringData("");
 
-SimpleString::StringData* SimpleString::StringData::GetEmptyString()
+SimpleString::StringData* SimpleString::StringData::GetEmptyStringData()
 {
-	EmptyString.AddReference(); 
-	return &EmptyString;
+	EmptyStringData.AddReference(); 
+	return &EmptyStringData;
 }
 
 SimpleString::StringData::StringData()
@@ -155,21 +155,23 @@ bool SimpleString::StringData::ChangeData(const char* str)
 
 ///////////////////////////////////////////////////////
 
+const SimpleString SimpleString::EmptyString("");
+
 SimpleString::SimpleString()
 { 
-	stringData = StringData::GetEmptyString();
+	stringData = StringData::GetEmptyStringData();
 }
 
 SimpleString::SimpleString(const char* str)
 { 
 	if(str) stringData = new StringData(str);
-	else stringData = StringData::GetEmptyString();
+	else stringData = StringData::GetEmptyStringData();
 }
 
 SimpleString::SimpleString(const char* str1, const char* str2)
 { 
 	if(str1 == (const char*)NULL && str2 == (const char*)NULL)
-		stringData = StringData::GetEmptyString();
+		stringData = StringData::GetEmptyStringData();
 	else
 		stringData = new StringData(str1, str2);
 }
@@ -208,7 +210,7 @@ SimpleString& SimpleString::operator= (const char* str)
 {
 	if(str == NULL){
 		DestroyStringData();
-		stringData = StringData::GetEmptyString();
+		stringData = StringData::GetEmptyStringData();
 	}else if(!stringData->ChangeData(str))
 	{
 		DestroyStringData();

@@ -249,7 +249,6 @@ void TcpServer::AcceptConnection(MsgSocket* sock)
   listConnections.Add(sock);
   listConnections.Unlock();
 
-
   // Send empty message information
   sock->SendSyncLinkMsg();
 }

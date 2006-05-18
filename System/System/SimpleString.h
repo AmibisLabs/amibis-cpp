@@ -84,7 +84,7 @@ class SimpleString
 		 * return an object StringData containing an empty string : "".
 		 * Add a reference on this object.
 		 */
-		static StringData* GetEmptyString();
+		static StringData* GetEmptyStringData();
 	private:	
 		/** \brief set the buffer value 
 		 *
@@ -96,7 +96,7 @@ class SimpleString
 		AtomicCounter nbReference; /*!< number of reference on the buffer */
 		char* data; /*!< the character buffer */
 		unsigned int length;/*!< the length of the string */
-		static StringData EmptyString; /*!< object StringData for empty string "" */
+		static StringData EmptyStringData; /*!< object StringData for empty string "" */
 	};
 
 public:
@@ -163,6 +163,9 @@ public:
 	
 
 	static const char * Latin1ToUTF8( const char *src );
+
+	// REVIEW
+	static const SimpleString EmptyString;
 
 #ifndef RAVI_INTERFACE	
 	/** @brief Extract a string of  this string

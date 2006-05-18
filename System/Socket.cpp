@@ -171,6 +171,7 @@ Socket* Socket::Accept()
 	int nReady;
 	int MaxDesc = 0;	// Maximal descriptor for the select function
 
+	// REVIEW : a revoir...
 	struct sockaddr_in the_addr;
 	int size = sizeof(struct sockaddr_in);
 	SOCKET new_fd;
@@ -210,6 +211,32 @@ Socket* Socket::Accept()
 
 const SimpleString & Socket::GetConnectedHost()
 {
+	struct hostent *he;
+	struct sockaddr_in addr;
+	int namelen = sizeof(struct sockaddr_in);
+
+	if ( descriptor < 0 || socketType != SocketKind::TCP ) // All kind of errors
+		return SimpleString::EmptyString;
+
+	if ( ConnectedHost.GetLength() == 0 )
+	{
+		// Try to get the peername
+		if ( getpeername( descriptor, (sockaddr*)&addr, &namelen ) == -1 )
+		{
+			return SimpleString::EmptyString;
+		}
+
+		// Ok, let's get the name of the connected host
+		
+		he = gethostbyaddr((char *) &addr.sin_addr, 4, AF_INET);
+		if ( he == NULL )
+		{
+			return SimpleString::EmptyString;
+		}
+
+		ConnectedHost = he->h_name;
+	}
+
 	return ConnectedHost;
 }
 
