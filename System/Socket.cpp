@@ -215,7 +215,7 @@ const SimpleString & Socket::GetConnectedHost()
 	struct sockaddr_in addr;
 	int namelen = sizeof(struct sockaddr_in);
 
-	if ( descriptor < 0 || socketType != SocketKind::TCP ) // All kind of errors
+	if ( descriptor < 0 || socketType != Socket::SocketKind::TCP ) // All kind of errors
 		return SimpleString::EmptyString;
 
 	if ( ConnectedHost.GetLength() == 0 )
