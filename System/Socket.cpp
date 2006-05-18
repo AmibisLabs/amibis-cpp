@@ -213,7 +213,7 @@ const SimpleString & Socket::GetConnectedHost()
 {
 	struct hostent *he;
 	struct sockaddr_in addr;
-	int namelen = sizeof(struct sockaddr_in);
+	socklen_t namelen = sizeof(struct sockaddr_in);
 
 	if ( descriptor < 0 || socketType != Socket::SocketKind::TCP ) // All kind of errors
 		return SimpleString::EmptyString;
