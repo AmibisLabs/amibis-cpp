@@ -312,6 +312,24 @@ Service::Service( const char * eName, const char * eProtocol, TransportProtocol 
 	}
 }
 
+SimpleString Service::ToString()
+{
+	SimpleString Generate(Name);
+/*  Generate += ".";
+	Generate += Protocol;
+	Generate += ".";
+	Generate += Transport;
+	Generate += ".";
+	Generate += Domain; */
+	Generate += " on port ";
+	Generate += Port;
+	Generate += " of host ";
+	Generate += HostName;;
+
+	return Generate;
+}
+
+
 RegisterService::RegisterService( const char * FullName, uint16_t ePort, bool AutoRegister )
 	: Service( FullName, ePort )
 {

@@ -25,8 +25,9 @@ ControlClient::ControlClient(unsigned int serviceId)
   
   XMLTreeParser::StartThread();
   
-  callback = NULL;
-  userDataPtr = NULL;
+  // By default, I will process the ConrolFlow by myself
+  callback = ControlClient::CtrlEventProcess;
+  userDataPtr = this;
 }
 
 ControlClient::~ControlClient()

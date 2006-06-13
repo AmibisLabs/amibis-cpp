@@ -10,6 +10,8 @@
 #ifndef _SERVICE_H_
 #define _SERVICE_H_
 
+#include <System/SimpleString.h>
+
 #ifdef RAVI_INTERFACE
 typedef int uint16_t;
 typedef int uint32_t;
@@ -52,6 +54,8 @@ public:
 
 	uint16_t Port;									// On which port the service is running
 	char HostName[ServiceField];					// On which host the service is running
+
+	SimpleString ToString();						// print a human readable description of service
 };
 
 /**
