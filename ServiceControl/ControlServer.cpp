@@ -488,7 +488,7 @@ void ControlServer::RefreshLock(){
 
 void ControlServer::Connect(const SimpleString& host, int port, bool tcp, InOutputAttribut* ioa)
 {
-#if ! defined DEBUG && ! defined _DEBUG
+#if defined DEBUG || defined _DEBUG
   fprintf(stderr, "in ControlServer::Connect (%s:%d", host.GetStr(), port);
   if(tcp) fprintf(stderr, " [TCP] "); else fprintf(stderr, " [UDP] ");
   fprintf(stderr, "%s\n", ioa->GetName().GetStr());
@@ -496,7 +496,7 @@ void ControlServer::Connect(const SimpleString& host, int port, bool tcp, InOutp
 }
 void ControlServer::ModifVariable(int length, const unsigned char* buffer, int status, VariableAttribut* va)
 {
-#if ! defined DEBUG && ! defined _DEBUG
+#if defined DEBUG && defined _DEBUG
   fprintf( stderr, "in ControlServer::ModifVariable %s New Value= %s\n", 
   	va->GetName().GetStr(), (const char*)buffer);  
 #endif
@@ -603,10 +603,6 @@ ValueListener* ControlServer::FindValueListener(VariableAttribut* var)
 	}	
 	return vl;
 }
-
-
-
-
 
 //////////////: VALUE LISTENER //////////////
 ValueListener::ValueListener(VariableAttribut* v, unsigned int pid)

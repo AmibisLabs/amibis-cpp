@@ -12,46 +12,47 @@ SimpleString::StringData SimpleString::StringData::EmptyStringData("");
 
 SimpleString::StringData* SimpleString::StringData::GetEmptyStringData()
 {
-	EmptyStringData.AddReference(); 
+	// EmptyStringData.AddReference(); 
 	return &EmptyStringData;
 }
 
 SimpleString::StringData::StringData()
 {
-	Protect.EnterMutex();
+	Lock();
 
 	data = NULL; 
 	length = 0;
-	nbReference = NULL;
+	nbReferences = NULL;
 
-	Protect.LeaveMutex();
+	Unlock();
 }
 
 int SimpleString::StringData::AddReference()
 {
 	int res;
-	Protect.EnterMutex();
+
+	Lock();
 	
 	if ( nbReferences == NULL )
 	{
-		nbReferences = new AtomicCounter(1);
+		nbReferences = new MutexedCounter(1);
 		res = 1;
 	}
 	else
 	{
-		res = ++nbReferences;
+		res = ++(*nbReferences);
 	}
 
-	Protect.LeaveMutex();
+	Unlock();
 
 	return res;
 }
 
 SimpleString::StringData::StringData(const char* str)
 {
-	Protect.EnterMutex();
+	Lock();
 
-	data = NULL; 
+	data = NULL;
 	length = 0;
 	nbReferences = NULL;
 	
@@ -60,46 +61,58 @@ SimpleString::StringData::StringData(const char* str)
 	// Create a new AtomicCounter for all these buffer
 	AddReference(); 
 
-	Protect.LeaveMutex();
+	Unlock();
 }
 
-SimpleString::StringData::StringData(const StringData& to_copy)
+SimpleString::StringData& SimpleString::StringData::operator=(const StringData& Right)
 {
-	Protect.EnterMutex();
-	to_copy.Protect.EnterMutex();
+	StringData& TheOther = (StringData&)Right;
 
-	data = to_copy.data;
-	length = to_copy.length;
-	nbReferences = to_copy.nbReferences;
+	Lock();
+	TheOther.Lock();
+
+	data = Right.data;
+	length = Right.length;
+	nbReferences = Right.nbReferences;
 	
 	// Add references to the shared atomic counter
 	AddReference();
 
-	to_copy.Protect.LeaveMutex();
-	Protect.LeaveMutex();
+	TheOther.Unlock();
+	Unlock();
+
+	return (*this);
+}
+
+SimpleString::StringData::StringData(const StringData& to_copy)
+{
+	operator=(to_copy);
 }
 
 SimpleString::StringData::StringData(const StringData& base, int begin, int end)
 {
-	Protect.EnterMutex();
-	base.Protect.EnterMutex();
+	StringData& TheOther = (StringData&)base;
+
+	Lock();
+	TheOther.Lock();
 
 	data = NULL;
 	nbReferences = NULL;
+
 	length = end-begin;
 	data = new char[length + 1];
-	memcpy(data, base.GetDataPtr()+begin, length);
+	memcpy(data, TheOther.GetDataPtr()+begin, length);
 	*(data+length) = '\0';
 
 	AddReference();
 
-	base.Protect.LeaveMutex();
-	Protect.LeaveMutex();
+	TheOther.Unlock();
+	Unlock();
 }
 
 SimpleString::StringData::StringData(const char* str1, const char* str2)
 {
-	Protect.EnterMutex();
+	Lock();
 
 	data = NULL;
 	length = 0;
@@ -115,24 +128,38 @@ SimpleString::StringData::StringData(const char* str1, const char* str2)
 	
 	AddReference();
 
-	Protect.LeaveMutex();
+	Unlock();
 }
 
 SimpleString::StringData::~StringData()
 {
-	Protect.EnterMutex();
+	Lock();
 
-	if (data) delete data;
+	if (data)
+	{
+		delete data;
+	}
 	data = NULL;
+	if ( nbReferences )
+	{
+		delete nbReferences;
+	}
+	nbReferences = NULL;
 
-	Protect.LeaveMutex();
+	Unlock();
 }
 
 void SimpleString::StringData::SetData(const char* str)
 {
-	if (data) delete data;
+	Lock();
+
+	if (data)
+	{
+		delete data;
+	}
 	
-	if(str){
+	if(str)
+	{
 		// data = strdup(str);
 		length = (unsigned int)strlen(str);
 		data = new char[length+1];
@@ -141,11 +168,15 @@ void SimpleString::StringData::SetData(const char* str)
 		data = NULL;
 		length = 0;
 	}
+
+	Unlock();
 }
 
 bool SimpleString::StringData::ChangeData(const char* str)
 {
-	if(nbReference == 1)
+	Lock();
+
+	if(*nbReferences == 1)
 	{
 		if(str == NULL)
 		{
@@ -172,39 +203,12 @@ bool SimpleString::StringData::ChangeData(const char* str)
 			{
 				strcpy(data, str);
 			}
-#if 0
-			if ( data == NULL )
-			{
-				data = new char[length+1];
-				if ( data == NULL )
-				{
-					length = 0;
-				}
-				else
-				{
-					strcpy(data, str);
-				}
-			}
-			else
-			{
-
-				char * datatmp = (char *)realloc(data, length+1);
-				if ( datatmp == NULL )
-				{
-					delete data;
-					data = NULL;
-					length = 0;
-				}
-				else
-				{
-					data = datatmp;
-					strcpy(data, str);
-				}
-			}
-#endif
 		}
+		Unlock();
 		return true;
 	}
+
+	Unlock();
 	return false;
 }
 
@@ -213,39 +217,53 @@ bool SimpleString::StringData::ChangeData(const char* str)
 
 const SimpleString SimpleString::EmptyString("");
 
+void SimpleString::CopyStringData(StringData* to_copy)
+{
+	if ( to_copy == StringData::GetEmptyStringData() )
+	{
+		stringData = new StringData(*to_copy);
+	}
+	else
+	{
+		to_copy->AddReference();
+		stringData = to_copy;
+	}
+}
+
 SimpleString::SimpleString()
 { 
-	stringData = StringData::GetEmptyStringData();
+	CopyStringData( StringData::GetEmptyStringData() );
 }
 
 SimpleString::SimpleString(const char* str)
 { 
-	if ( str )
+	if ( str && str[0] != '\0' )
 	{
 		stringData = new StringData(str);
 	}
 	else
 	{
-		stringData = StringData::GetEmptyStringData();
+		CopyStringData( StringData::GetEmptyStringData() );
 	}
 }
 
 SimpleString::SimpleString(const char* str1, const char* str2)
 { 
 	if(str1 == (const char*)NULL && str2 == (const char*)NULL)
-		stringData = StringData::GetEmptyStringData();
+		CopyStringData(StringData::GetEmptyStringData());
 	else
 		stringData = new StringData(str1, str2);
 }
 
 SimpleString::SimpleString(const SimpleString& to_copy)
 {
-	stringData = to_copy.stringData;
-	stringData->AddReference();
+	CopyStringData(StringData::GetEmptyStringData());
 }
 
 SimpleString::SimpleString(StringData* sd)
-{ stringData = sd; }
+{
+	CopyStringData(sd);
+}
 
 SimpleString::~SimpleString()
 {
@@ -254,24 +272,28 @@ SimpleString::~SimpleString()
 
 void SimpleString::DestroyStringData()
 {
-	delete stringData;
+	if ( stringData->RemoveReference() <= 0 )
+	{
+        delete stringData;
+	}
 	stringData = NULL;
 }
 
 SimpleString& SimpleString::operator= (const SimpleString& str)
 {
 	DestroyStringData();
-	stringData = str.stringData;
-	stringData->AddReference();
+	CopyStringData( str.stringData );
 	return *this;
 }
 
 SimpleString& SimpleString::operator= (const char* str)
 {
-	if(str == NULL){
+	if(str == NULL)
+	{
 		DestroyStringData();
-		stringData = StringData::GetEmptyStringData();
-	}else if(!stringData->ChangeData(str))
+		CopyStringData( StringData::GetEmptyStringData() );
+	}
+	else if(!stringData->ChangeData(str))
 	{
 		DestroyStringData();
 		stringData = new StringData(str);
@@ -282,81 +304,97 @@ SimpleString& SimpleString::operator= (const char* str)
 
 void SimpleString::Append(const char* str)
 {
-	if(str != NULL){
+	if(str != NULL)
+	{
 		StringData* tmp = new StringData(GetStr(), str);
 		DestroyStringData();
-		stringData = tmp;
+		CopyStringData( tmp );
 	}
 }
 
-void SimpleString::Append(const SimpleString& str){
+void SimpleString::Append(const SimpleString& str)
+{
 	Append(str.GetStr());
 }
 
-
 char SimpleString::operator[](int i) const
-{ return *(stringData->GetDataPtr()+i);}
-
-char& SimpleString::operator[](int i)
 {
-	if(stringData->GetNbReference() != 1){
-		
-		StringData* tmp = new StringData(*stringData);
-		DestroyStringData();
-		stringData = tmp;
+	if ( i >= (int)stringData->GetLength() )
+	{
+		throw "SimpleString::out of bound";
 	}
 	return *(stringData->GetDataPtr()+i);
 }
 
-SimpleString& SimpleString::operator+= (const char* str){
+char& SimpleString::operator[](int i)
+{
+	if(stringData->GetNbReference() != 1)
+	{
+		StringData* tmp = new StringData(*stringData);
+		DestroyStringData();
+		CopyStringData( tmp );
+	}
+	return *(stringData->GetDataPtr()+i);
+}
+
+SimpleString& SimpleString::operator+= (const char* str)
+{
 	Append(str);
 	return *this;
 }
 
-SimpleString& SimpleString::operator+= (const SimpleString& str){
+SimpleString& SimpleString::operator+= (const SimpleString& str)
+{
 	Append(str);
 	return *this;
 }
 
-SimpleString& SimpleString::operator+= (int i){
+SimpleString& SimpleString::operator+= (int i)
+{
 	char tmp[20];
 	snprintf(tmp, 20, "%d", i);
 	Append(tmp);
 	return *this;
 }
 
-SimpleString& SimpleString::operator+= (long l){
+SimpleString& SimpleString::operator+= (long l)
+{
 	char tmp[20];
 	snprintf(tmp, 20, "%li", l);
 	Append(tmp);
 	return *this;
 }
 
-SimpleString& SimpleString::operator+= (double d){
+SimpleString& SimpleString::operator+= (double d)
+{
 	char tmp[30];
 	snprintf(tmp, 30, "%lf", d);
 	Append(tmp);
 	return *this;
 }
 
-SimpleString SimpleString::SubString(int begin, int end){
+SimpleString SimpleString::SubString(int begin, int end)
+{
 	StringData* sd = new StringData(GetStr(), begin, end);
 	return SimpleString(sd);
 }
 
-SimpleString operator+(const SimpleString& str1, const SimpleString& str2){
+SimpleString operator+(const SimpleString& str1, const SimpleString& str2)
+{
 	if(str1.GetStr() == NULL) return SimpleString(str2);
 	if(str2.GetStr() == NULL) return SimpleString(str1);
 	return SimpleString(str1.GetStr(), str2.GetStr());
 }
 
-SimpleString operator+(const char* str1, const SimpleString& str2){
+SimpleString operator+(const char* str1, const SimpleString& str2)
+{
 	if(str1 == NULL) return SimpleString(str2);
 	if(str2.GetStr() == NULL) return SimpleString(str1);
 	return SimpleString(str1, str2.GetStr());
 }
 
-SimpleString operator+(const SimpleString& str1, const char* str2){
+SimpleString operator+(const SimpleString& str1, const char* str2)
+{
 	if(str1.GetStr() == NULL) return SimpleString(str2);
 	if(str2 == NULL) return SimpleString(str1);
 	return SimpleString(str1.GetStr(), str2);

@@ -6,7 +6,7 @@
 #define __SIMPLE_STRING_H__
 
 #include <string.h>
-#include <System/AtomicCounter.h>
+#include <System/MutexedCounter.h>
 
 /**
  * @class SimpleString  SimpleString.h  System/SimpleString.h
@@ -60,6 +60,7 @@ class SimpleString
 		 * \return the number of reference existing yet
 		 */
 		int RemoveReference();
+
 		/** \return the number of reference on the string */
 		int GetNbReference();
 		
@@ -88,6 +89,10 @@ class SimpleString
 		 */
 		static StringData* GetEmptyStringData();
 
+		void Lock(); // Lock my Protect mutex
+		void Unlock(); // Unlock my Protect mutex
+
+		StringData& operator=(const StringData& Right);
 
 	private:	
 		/** \brief set the buffer value 
@@ -97,11 +102,11 @@ class SimpleString
 		 */
 		void SetData(const char* b);
 
-	protected:
 		// Protect acces to the internal members
 		ReentrantMutex Protect;
 
-		AtomicCounter * nbReferences; /*!< number of reference on the buffer */
+	protected:
+		MutexedCounter * nbReferences; /*!< number of reference on the buffer */
 		char * data; /*!< the character buffer */
 		unsigned int length;/*!< the length of the string */
 		static StringData EmptyStringData; /*!< object StringData for empty string "" */
@@ -193,6 +198,8 @@ private:
 	 */
 	void DestroyStringData();
 
+	void CopyStringData(StringData* to_copy);
+
 	StringData* stringData; /*!< pointer on the object containing the characters*/
 };
 
@@ -210,11 +217,21 @@ SimpleString operator+(const SimpleString& str1, const char* str2);
 
 #ifndef RAVI_INTERFACE
 
+inline void SimpleString::StringData::Lock()
+{
+	Protect.EnterMutex();
+}
+
+inline void SimpleString::StringData::Unlock()
+{
+	Protect.LeaveMutex();
+}
+
 inline int SimpleString::StringData::RemoveReference()
 { return --(*nbReferences); }
 
 inline int SimpleString::StringData::GetNbReference()
-{ return nbReferences; }
+{ return *nbReferences; }
 
 inline char* SimpleString::StringData::GetDataPtr() const
 { return data; }

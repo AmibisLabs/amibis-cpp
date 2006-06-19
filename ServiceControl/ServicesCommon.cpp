@@ -10,22 +10,22 @@
 #include <ServiceControl/ServicesCommon.h>
 
 
-const char * CommonServiceValues::DefaultDomain = "_bip_dev._tcp";
+const char * CommonServiceValues::DefaultDomain = "_bip._tcp";
 
 char * CommonServiceValues::OmiscidServiceDnsSdType = (char*)NULL; // help for debug
 
 // We need to initialise OmiscidServiceDnsSdType from environment variable
-class OmiscidServiceDnsSdTypeInitClass
+class OmiscidServiceDnsSdTypeInitClass : CommonServiceValues
 {
 public:
 	OmiscidServiceDnsSdTypeInitClass()
 	{
 		char * Option = getenv( "OMISCID_WORKING_DOMAIN" );
-		if ( Option == NULL )
+		if ( Option == NULL || strcmp( Option, (char*)DefaultDomain ) == 0 )
 		{
-			CommonServiceValues::OmiscidServiceDnsSdType = (char*)CommonServiceValues::DefaultDomain;
+			OmiscidServiceDnsSdType = (char*)DefaultDomain;
 			#ifdef _DEBUG
-				fprintf( stderr, "OMISCID_WORKING_DOMAIN not defined. Use '%s'.\n", CommonServiceValues::DefaultDomain );
+				fprintf( stderr, "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain );
 			#endif
 			return;
 		}
@@ -34,23 +34,26 @@ public:
 		size_t size = strlen( Option );
 		char tmpdomain[128];
 
-		if ( size >= 50 )
+		if ( size >= RegtypeLength )
 		{
-			CommonServiceValues::OmiscidServiceDnsSdType = (char*)CommonServiceValues::DefaultDomain;
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long. Use '%s' instead.\n", CommonServiceValues::DefaultDomain );
+			OmiscidServiceDnsSdType = (char*)CommonServiceValues::DefaultDomain;
+			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long (%d max). Use '%s' instead.\n", RegtypeLength-1, DefaultDomain );
 			return;
 		}
 
 		if ( sscanf( Option, "_bip_%[^.]._tcp", tmpdomain) != 1 )
 		{
-			CommonServiceValues::OmiscidServiceDnsSdType = (char*)CommonServiceValues::DefaultDomain;
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", CommonServiceValues::DefaultDomain );
+			OmiscidServiceDnsSdType = (char*)DefaultDomain;
+			fprintf( stderr, "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain );
 			return;
 		}
 
-		CommonServiceValues::OmiscidServiceDnsSdType = new char[size+1];
-
+		OmiscidServiceDnsSdType = new char[size+1];
 		strcpy( CommonServiceValues::OmiscidServiceDnsSdType, Option );
+
+		#ifdef _DEBUG
+			fprintf( stderr, "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType );
+		#endif
 	};
 
 	~OmiscidServiceDnsSdTypeInitClass()

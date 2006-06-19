@@ -52,7 +52,7 @@ unsigned int ControlUtils::GeneratePeerId()
   res += (0x0000FFFF & random());
 #endif
 
-  return res;
+  return res << 8;
 }
 
 int ControlUtils::StrToInt(const unsigned char* buffer, int len)

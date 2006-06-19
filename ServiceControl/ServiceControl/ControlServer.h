@@ -338,10 +338,6 @@ public:
   SimpleList<unsigned int> listListener; /*!< the list of listener for this variable */
 };
 
-
-
-
-
 ////////////// inline methods //////////////
 #ifndef RAVI_INTERFACE
 
@@ -355,7 +351,10 @@ inline void ControlServer::SetServiceName(const char* service_name)
 
 
 inline int ControlServer::ProcessMessages()
-{ return XMLTreeParser::ProcessMessages(); }
+{
+	return XMLTreeParser::ProcessMessages();
+}
+
 inline bool ControlServer::WaitForMessage(unsigned long timer)
 { return XMLTreeParser::WaitForMessage(timer); }
 
