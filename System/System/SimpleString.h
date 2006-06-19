@@ -48,8 +48,10 @@ class SimpleString
 
 		/** \return the pointer on the buffer of characters */
 		char* GetDataPtr() const;
+
 		/** \return the length of the string */
 		unsigned int GetLength() const;
+
 		/** \brief add one reference to the string 
 		 * \return the number of reference
 		 */
@@ -85,6 +87,8 @@ class SimpleString
 		 * Add a reference on this object.
 		 */
 		static StringData* GetEmptyStringData();
+
+
 	private:	
 		/** \brief set the buffer value 
 		 *
@@ -93,8 +97,12 @@ class SimpleString
 		 */
 		void SetData(const char* b);
 
-		AtomicCounter nbReference; /*!< number of reference on the buffer */
-		char* data; /*!< the character buffer */
+	protected:
+		// Protect acces to the internal members
+		ReentrantMutex Protect;
+
+		AtomicCounter * nbReferences; /*!< number of reference on the buffer */
+		char * data; /*!< the character buffer */
 		unsigned int length;/*!< the length of the string */
 		static StringData EmptyStringData; /*!< object StringData for empty string "" */
 	};
@@ -202,14 +210,11 @@ SimpleString operator+(const SimpleString& str1, const char* str2);
 
 #ifndef RAVI_INTERFACE
 
-inline int SimpleString::StringData::AddReference()
-{ return ++nbReference; }
-
 inline int SimpleString::StringData::RemoveReference()
-{ return --nbReference; }
+{ return --(*nbReferences); }
 
 inline int SimpleString::StringData::GetNbReference()
-{ return nbReference; }
+{ return nbReferences; }
 
 inline char* SimpleString::StringData::GetDataPtr() const
 { return data; }

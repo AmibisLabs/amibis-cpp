@@ -129,6 +129,7 @@ public:
 		};
 
 		static char * OmiscidServiceDnsSdType;
+		static const char * DefaultDomain;
 };
 
 #endif /* _SERVICES_COMMON_H_ */

@@ -1,15 +1,15 @@
 /**
- * @file AtomicCounter.h
- * @brief Definition of AtomicCounter class
+ * @file Counter.h
+ * @brief Definition of Mutexed Counter class
  */
 
-#ifndef _ATOMIC_COUNTER_H_
-#define _ATOMIC_COUNTER_H_
+#ifndef _MUTEXED_COUNTER_H_
+#define _MUTEXED_COUNTER_H_
 
 #include <System/Mutex.h>
 
 /**
- * @class AtomicCounter AtomicCounter.h System/AtomicCounter.h
+ * @class MutexedCounter MutexedCounter.h System/MutexedCounter.h
  * @brief Counter with access protected by mutex.
  *
  * Can be incremented, decremented and, of course, accessed.
@@ -17,13 +17,13 @@
  * @author Dominique Vaufreydaz
  * @author Sebastien Pesnel
  */
-class AtomicCounter
+class MutexedCounter
 {
 public:
 	/** @brief Constructor
 	 * @param init_value [in] the initial value for the counter (0 by default).
 	 */
-	AtomicCounter(int init_value = 0);
+	MutexedCounter(int init_value = 0);
 	
 #ifndef RAVI_INTERFACE	
 	/** @name Operators */
@@ -52,4 +52,4 @@ private:
 	int counter; /*!< the integer used to store the counter value*/
 };
 
-#endif /* _ATOMIC_COUNTER_H_ */
+#endif /* _MUTEXED_COUNTER_H_ */

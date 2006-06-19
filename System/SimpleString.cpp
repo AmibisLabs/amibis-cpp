@@ -18,47 +18,92 @@ SimpleString::StringData* SimpleString::StringData::GetEmptyStringData()
 
 SimpleString::StringData::StringData()
 {
+	Protect.EnterMutex();
+
 	data = NULL; 
 	length = 0;
+	nbReference = NULL;
+
+	Protect.LeaveMutex();
+}
+
+int SimpleString::StringData::AddReference()
+{
+	int res;
+	Protect.EnterMutex();
 	
-	AddReference();
+	if ( nbReferences == NULL )
+	{
+		nbReferences = new AtomicCounter(1);
+		res = 1;
+	}
+	else
+	{
+		res = ++nbReferences;
+	}
+
+	Protect.LeaveMutex();
+
+	return res;
 }
 
 SimpleString::StringData::StringData(const char* str)
 {
+	Protect.EnterMutex();
+
 	data = NULL; 
 	length = 0;
+	nbReferences = NULL;
 	
 	SetData(str);
 	
-	AddReference();
+	// Create a new AtomicCounter for all these buffer
+	AddReference(); 
+
+	Protect.LeaveMutex();
 }
 
 SimpleString::StringData::StringData(const StringData& to_copy)
 {
-	data = NULL;
-	length = 0;
+	Protect.EnterMutex();
+	to_copy.Protect.EnterMutex();
+
+	data = to_copy.data;
+	length = to_copy.length;
+	nbReferences = to_copy.nbReferences;
 	
-	SetData(to_copy.GetDataPtr());
-	
+	// Add references to the shared atomic counter
 	AddReference();
+
+	to_copy.Protect.LeaveMutex();
+	Protect.LeaveMutex();
 }
 
-SimpleString::StringData::StringData(const StringData& base, int begin, 
-                       int end)
+SimpleString::StringData::StringData(const StringData& base, int begin, int end)
 {
+	Protect.EnterMutex();
+	base.Protect.EnterMutex();
+
 	data = NULL;
+	nbReferences = NULL;
 	length = end-begin;
 	data = new char[length + 1];
 	memcpy(data, base.GetDataPtr()+begin, length);
 	*(data+length) = '\0';
+
 	AddReference();
+
+	base.Protect.LeaveMutex();
+	Protect.LeaveMutex();
 }
 
 SimpleString::StringData::StringData(const char* str1, const char* str2)
 {
+	Protect.EnterMutex();
+
 	data = NULL;
 	length = 0;
+	nbReferences = NULL;
 	
 	int l1 = (int)strlen(str1);
 	int l2 = (int)strlen(str2);
@@ -69,12 +114,18 @@ SimpleString::StringData::StringData(const char* str1, const char* str2)
 	*(data+length) = '\0';
 	
 	AddReference();
+
+	Protect.LeaveMutex();
 }
 
 SimpleString::StringData::~StringData()
 {
+	Protect.EnterMutex();
+
 	if (data) delete data;
 	data = NULL;
+
+	Protect.LeaveMutex();
 }
 
 void SimpleString::StringData::SetData(const char* str)
@@ -98,7 +149,10 @@ bool SimpleString::StringData::ChangeData(const char* str)
 	{
 		if(str == NULL)
 		{
-			if (data) delete data;
+			if (data)
+			{
+				delete data;
+			}
 			data = NULL;
 			length = 0;
 		}
@@ -166,8 +220,14 @@ SimpleString::SimpleString()
 
 SimpleString::SimpleString(const char* str)
 { 
-	if(str) stringData = new StringData(str);
-	else stringData = StringData::GetEmptyStringData();
+	if ( str )
+	{
+		stringData = new StringData(str);
+	}
+	else
+	{
+		stringData = StringData::GetEmptyStringData();
+	}
 }
 
 SimpleString::SimpleString(const char* str1, const char* str2)
@@ -194,11 +254,9 @@ SimpleString::~SimpleString()
 
 void SimpleString::DestroyStringData()
 {
-	if(stringData->RemoveReference() <= 0)
-		delete stringData;
+	delete stringData;
 	stringData = NULL;
 }
-
 
 SimpleString& SimpleString::operator= (const SimpleString& str)
 {
