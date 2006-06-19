@@ -1,7 +1,7 @@
 #include <System/MutexedCounter.h>
 
 
-AtomicCounter::AtomicCounter(int init_value)
+MutexedCounter::MutexedCounter(int init_value)
 {
 	mutex.EnterMutex();
 	counter = init_value;
@@ -9,7 +9,7 @@ AtomicCounter::AtomicCounter(int init_value)
 }
 	
 	
-int AtomicCounter::operator++()
+int MutexedCounter::operator++()
 {
 	mutex.EnterMutex();
 	++counter;
@@ -17,7 +17,7 @@ int AtomicCounter::operator++()
 	return counter;
 }
 
-int AtomicCounter::operator++(int)
+int MutexedCounter::operator++(int)
 {
 	mutex.EnterMutex();
 	int val = counter++;	
@@ -25,7 +25,7 @@ int AtomicCounter::operator++(int)
 	return val;
 }
 
-int AtomicCounter::operator--()
+int MutexedCounter::operator--()
 {
 	mutex.EnterMutex();
 	--counter;
@@ -33,7 +33,7 @@ int AtomicCounter::operator--()
 	return counter;
 }
 
-int AtomicCounter::operator--(int)
+int MutexedCounter::operator--(int)
 {
 	mutex.EnterMutex();	
 	int val = counter--;
@@ -41,10 +41,10 @@ int AtomicCounter::operator--(int)
 	return val;
 }
 
-AtomicCounter::operator int() const
+MutexedCounter::operator int() const
 { return counter; }
 
-int AtomicCounter::operator=(int value)
+int MutexedCounter::operator=(int value)
 {
   mutex.EnterMutex();
   counter = value;
