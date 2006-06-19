@@ -82,8 +82,10 @@ void SimpleString::StringData::SetData(const char* str)
 	if (data) delete data;
 	
 	if(str){
-		data = strdup(str);
-		length = (unsigned int)strlen(data);
+		// data = strdup(str);
+		length = (unsigned int)strlen(str);
+		data = new char[length+1];
+		memcpy( data, str, length+1 ); // +1 for the '\0'
 	}else{
 		data = NULL;
 		length = 0;
