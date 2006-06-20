@@ -388,9 +388,14 @@ InOutputAttribut* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOut
   //std::cerr << "ControlClient::ProcessOutputDescription : Not Yet Implemented\n"; 
   if(!node || (strcmp((const char*)node->name, InOutputAttribut::output_str.GetStr())!=0)) return NULL;
   InOutputAttribut* outattr = NULL;
-  if(output_attr) outattr = output_attr;
-  else outattr = new InOutputAttribut("", InOutputAttribut::OUTPUT);
-
+  if(output_attr)
+  {
+	  outattr = output_attr;
+  }
+  else
+  {
+	  outattr = new InOutputAttribut("", InOutputAttribut::OUTPUT);
+  }
   outattr->ExtractDataFromXml(node);
 
   return outattr;

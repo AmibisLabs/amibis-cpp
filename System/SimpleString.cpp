@@ -221,11 +221,12 @@ const SimpleString SimpleString::EmptyString("");
 
 void SimpleString::CopyStringData(StringData* to_copy)
 {
+/*
 	if ( to_copy == StringData::GetEmptyStringData() )
 	{
 		stringData = new StringData(*to_copy);
 	}
-	else
+	else */
 	{
 		to_copy->AddReference();
 		stringData = to_copy;
@@ -259,7 +260,7 @@ SimpleString::SimpleString(const char* str1, const char* str2)
 
 SimpleString::SimpleString(const SimpleString& to_copy)
 {
-	CopyStringData(StringData::GetEmptyStringData());
+	CopyStringData(to_copy.stringData);
 }
 
 SimpleString::SimpleString(StringData* sd)

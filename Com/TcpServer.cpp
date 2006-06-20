@@ -308,9 +308,9 @@ void TcpServer::SetServiceId(unsigned int pid)
 	// Check validity of a service Id
 	if ( (pid & ControlUtils::CONNECTOR_ID) == 0 )
 	{
-		pid = pid | 0xffffff01;
+		// pid = pid | 0xffffff01;
 #ifdef DEBUG
-		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpServer. Value changes to 1 (PeerId = %x)\n", pid );
+//		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpServer. Value changes to 1 (PeerId = %x)\n", pid );
 #endif
 	}
 	MsgSocket::SetServiceId(pid); 
