@@ -4,6 +4,8 @@
 #include <System/Portage.h>
 #include <System/SimpleException.h>
 
+using namespace Omiscid;
+
 SimpleException::SimpleException(const char* m, int i) 
 {
 	TraceError( "%s : %d\n", m, i );
@@ -46,4 +48,9 @@ SimpleException::~SimpleException()
 void SimpleException::Display()
 {
   TraceError( "SimpleException: %s (%d)\n", msg, err);
+}
+
+const char* SimpleException::GetExceptionType() 
+{
+	return "SimpleException";
 }

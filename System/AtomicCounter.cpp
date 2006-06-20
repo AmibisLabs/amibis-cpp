@@ -1,5 +1,6 @@
 #include <System/AtomicCounter.h>
 
+using namespace Omiscid;
 
 AtomicCounter::AtomicCounter(int init_value)
 {
@@ -7,7 +8,6 @@ AtomicCounter::AtomicCounter(int init_value)
 	counter = init_value;
 	mutex.LeaveMutex();
 }
-	
 	
 int AtomicCounter::operator++()
 {

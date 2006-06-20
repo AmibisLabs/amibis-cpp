@@ -10,16 +10,19 @@
 #ifndef _SERVICE_H_
 #define _SERVICE_H_
 
+#include <System/Portage.h>
 #include <System/SimpleString.h>
 
+#if 0
 #ifdef RAVI_INTERFACE
 typedef int uint16_t;
 typedef int uint32_t;
 #endif
+#endif
 
 #include <ServiceControl/ServiceProperties.h>
 
-
+namespace Omiscid {
 
 /**
  * @class Service Service.h ServiceControl/Service.h
@@ -81,5 +84,7 @@ private:
 
 	static void FUNCTION_CALL_TYPE DnsRegisterReply( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context );
 };
+
+} // namespace Omiscid
 
 #endif /* _SERVICE_H_ */

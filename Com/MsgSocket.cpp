@@ -12,6 +12,8 @@
 #include <Com/MsgSocketException.h>
 #include <Com/MsgSocket.h>
 
+using namespace Omiscid;
+
 UdpConnection::UdpConnection()
 {}
 
@@ -1124,4 +1126,96 @@ void MsgSocket::ReceiveUdpExchange()
 }
 
 unsigned short MsgSocket::GetPortNb()
-{ return socket->GetPortNb(); }
+{
+	return socket->GetPortNb();
+}
+
+const struct sockaddr_in* UdpConnection::getAddr() const
+{
+	return &addr; 
+}
+
+bool UdpConnection::operator==(const UdpConnection& udp_connect) const
+{
+	return !memcmp(&addr, udp_connect.getAddr(), sizeof(struct sockaddr));
+}
+
+Socket* MsgSocket::GetSocket()
+{
+	return socket; 
+}
+
+bool MsgSocket::IsConnected() const 
+{
+	return connected;
+}
+
+void MsgSocket::SetServiceId(unsigned int pid)
+{
+	service_id = pid; 
+}
+
+unsigned int MsgSocket::GetServiceId() const
+{
+	return service_id; 
+}
+
+unsigned int MsgSocket::GetPeerPid() const
+{
+	return peer_pid; 
+}
+
+bool MsgSocket::ReceivedSyncLinkMsg()
+{
+	bool tmpb;
+	protectSend.EnterMutex();
+	tmpb = receivedSyncLinkMsg;
+	protectSend.LeaveMutex();
+	return tmpb;
+}
+
+bool MsgSocket::SyncLinkMsgSent() const 
+{
+	return sendSyncLinkMsg; 
+}
+
+int MsgSocket::GetMaxMessageSizeForTCP()
+{
+	return maxMessageSizeForTCP; 
+}
+
+int MsgSocket::GetSyncLinkDataLength()
+{
+	return SyncLinkDataLength;
+}
+
+int MsgSocket::GetPeerSyncLinkDataLength()
+{
+	return PeerSyncLinkDataLength;
+}
+
+void MsgSocket::SetMaxMessageSizeForTCP(int max)
+{
+	if ( max <= 0 )
+		return;
+
+	if ( max > TCP_BUFFER_SIZE-1 )
+	{
+		maxMessageSizeForTCP = TCP_BUFFER_SIZE-1;
+	}
+	else
+	{
+		maxMessageSizeForTCP = max;
+	}
+	maxBIPMessageSize = maxMessageSizeForTCP - tag_size - tag_end_size;
+}
+
+bool MsgSocket::operator==(unsigned int peer_id) const
+{
+	return peer_pid == peer_id; 
+}
+
+bool MsgSocket::SetTcpNoDelay(bool Set)
+{
+	return socket->SetTcpNoDelay(Set);
+}

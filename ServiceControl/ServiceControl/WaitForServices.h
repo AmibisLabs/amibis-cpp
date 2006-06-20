@@ -10,6 +10,7 @@
 #ifndef _WAIT_FOR_SERVICES_H_
 #define _WAIT_FOR_SERVICES_H_
 
+#include <System/Portage.h>
 #include <System/Socket.h>
 #include <System/Thread.h>
 #include <System/Mutex.h>
@@ -19,6 +20,8 @@
 #ifndef WIN32
 #include <sys/time.h>
 #endif
+
+namespace Omiscid {
 
 typedef bool (* IsServiceValidForMe)(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData);
 
@@ -85,5 +88,7 @@ protected:
 
 	ServiceProperties ServicesUsed;
 };
+
+} // namespace Omiscid
 
 #endif /* _WAIT_FOR_SERVICES_H_ */

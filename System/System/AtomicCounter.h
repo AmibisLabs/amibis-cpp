@@ -6,7 +6,10 @@
 #ifndef _ATOMIC_COUNTER_H_
 #define _ATOMIC_COUNTER_H_
 
+#include <System/Portage.h>
 #include <System/Mutex.h>
+
+namespace Omiscid {
 
 /**
  * @class AtomicCounter AtomicCounter.h System/AtomicCounter.h
@@ -25,7 +28,6 @@ public:
 	 */
 	AtomicCounter(int init_value = 0);
 	
-#ifndef RAVI_INTERFACE	
 	/** @name Operators */
 	//@{
 	/** @brief prefix increment operator*/
@@ -46,10 +48,12 @@ public:
 	/** @brief Set the counter value to 'value' */
 	int operator=(int value);
 	//@}
-#endif /* RAVI_INTERFACE */
+
 private:
 	ReentrantMutex mutex; /*!< the mutex to protect the access */
 	int counter; /*!< the integer used to store the counter value*/
 };
+
+} // namespace Omiscid
 
 #endif /* _ATOMIC_COUNTER_H_ */

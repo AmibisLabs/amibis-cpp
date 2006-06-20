@@ -6,7 +6,9 @@
 
 #include <sys/timeb.h>
 
-int gettimeofday(struct timeval * tv,struct timezone * tz )
+using namespace Omiscid;
+
+int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 {
 	struct _timeb tb;
 	_ftime(&tb);

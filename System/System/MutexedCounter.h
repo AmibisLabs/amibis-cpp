@@ -6,7 +6,10 @@
 #ifndef _MUTEXED_COUNTER_H_
 #define _MUTEXED_COUNTER_H_
 
+#include <System/Portage.h>
 #include <System/Mutex.h>
+
+namespace Omiscid {
 
 /**
  * @class MutexedCounter MutexedCounter.h System/MutexedCounter.h
@@ -25,7 +28,6 @@ public:
 	 */
 	MutexedCounter(int init_value = 0);
 	
-#ifndef RAVI_INTERFACE	
 	/** @name Operators */
 	//@{
 	/** @brief prefix increment operator*/
@@ -46,10 +48,12 @@ public:
 	/** @brief Set the counter value to 'value' */
 	int operator=(int value);
 	//@}
-#endif /* RAVI_INTERFACE */
+
 private:
 	ReentrantMutex mutex; /*!< the mutex to protect the access */
 	int counter; /*!< the integer used to store the counter value*/
 };
+
+} // namespace Omiscid
 
 #endif /* _MUTEXED_COUNTER_H_ */

@@ -6,16 +6,9 @@
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
-#ifndef WIN32
-	#include <pthread.h>
-#else
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif /* WIN32 */
+#include <System/Portage.h>
+
+namespace Omiscid {
 
 /**
  * @class Mutex Mutex.h System/Mutex.h
@@ -91,6 +84,6 @@ private:
 #endif /* WIN32 */
 };
 
-
+} // namespace Omiscid
 
 #endif /* _MUTEX_H_ */

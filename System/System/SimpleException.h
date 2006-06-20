@@ -7,6 +7,8 @@
 
 #include <System/Portage.h>
 
+namespace Omiscid {
+
 /**
  * @class SimpleException SimpleException.h System/SimpleException.h
  * @brief Exception raised by the object of the PRIMA system library
@@ -51,12 +53,6 @@ public:
   int err; /*!< error number (for example value returned by errno)*/
 };
 
-/////////// inline methods //////////////
-#ifndef RAVI_INTERFACE
-
-inline const char* SimpleException::GetExceptionType() 
-{ return "SimpleException"; }
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* __SIMPLE_EXCEPTION_H__ */

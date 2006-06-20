@@ -6,13 +6,15 @@
 #ifndef TCPUDPCLIENTSERVER_H
 #define TCPUDPCLIENTSERVER_H
 
+#include <System/Portage.h>
+#include <System/SimpleList.h>
+#include <System/Mutex.h>
 #include <Com/TcpServer.h>
 #include <Com/TcpClient.h>
 #include <Com/UdpExchange.h>
 #include <Com/MsgManager.h>
 
-#include <System/SimpleList.h>
-#include <System/Mutex.h>
+namespace Omiscid {
 
 /** 
  * @class ClientConnection TcpUdpClientServer.h Com/TcpUdpClientServer.h
@@ -209,30 +211,6 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
 };
 
 
-//---------- INLINE METHODS ---------------------
-#ifndef RAVI_INTERFACE
-
-inline unsigned int ClientConnection::GetPeerPid() const
-{
-  return tcpClient->GetPeerPid();
-}
-
-inline unsigned short TcpUdpClientServer::GetUdpPort()
-{ return UdpExchange::GetUdpPort(); }
-inline unsigned short TcpUdpClientServer::GetTcpPort()
-{ return TcpServer::GetTcpPort(); }
-
-inline unsigned int TcpUdpClientServer::GetServiceId()
-{ return TcpServer::GetServiceId(); }
-
-inline void TcpUdpClientServer::LinkToMsgManager(MsgManager* msgManager)
-{
-  SetCallBackOnRecv((MsgSocket::Callback_Receive)MsgManager::CumulMessage, msgManager);
-}
-
-inline int TcpUdpClientServer::GetMaxMessageSizeForTCP()
-{ return TcpServer::GetMaxMessageSizeForTCP(); }
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* TCPUDPCLIENTSERVER_H */

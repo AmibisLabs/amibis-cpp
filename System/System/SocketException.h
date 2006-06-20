@@ -6,7 +6,10 @@
 #ifndef SOCKET_EXCEPTION_H 
 #define SOCKET_EXCEPTION_H 
 
+#include <System/Portage.h>
 #include <System/SimpleException.h>
+
+namespace Omiscid {
 
 /**
  * @class SocketException SocketException.h System/SocketException.h
@@ -38,12 +41,6 @@ protected:
   void SocketErrorCheck();
 };
 
-//////////// inline methods ////////////
-#ifndef RAVi_INTERFACE
-
-inline const char* SocketException::GetExceptionType()
-{ return "SocketException"; };
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* SOCKET_EXCEPTION_H */

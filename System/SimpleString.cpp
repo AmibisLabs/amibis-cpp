@@ -8,6 +8,8 @@
 	#define snprintf _snprintf
 #endif
 
+using namespace Omiscid;
+
 SimpleString::StringData SimpleString::StringData::EmptyStringData("");
 
 SimpleString::StringData* SimpleString::StringData::GetEmptyStringData()
@@ -379,25 +381,107 @@ SimpleString SimpleString::SubString(int begin, int end)
 	return SimpleString(sd);
 }
 
-SimpleString operator+(const SimpleString& str1, const SimpleString& str2)
+SimpleString Omiscid::operator+(const SimpleString& str1, const SimpleString& str2)
 {
 	if(str1.GetStr() == NULL) return SimpleString(str2);
 	if(str2.GetStr() == NULL) return SimpleString(str1);
 	return SimpleString(str1.GetStr(), str2.GetStr());
 }
 
-SimpleString operator+(const char* str1, const SimpleString& str2)
+SimpleString Omiscid::operator+(const char* str1, const SimpleString& str2)
 {
 	if(str1 == NULL) return SimpleString(str2);
 	if(str2.GetStr() == NULL) return SimpleString(str1);
 	return SimpleString(str1, str2.GetStr());
 }
 
-SimpleString operator+(const SimpleString& str1, const char* str2)
+SimpleString Omiscid::operator+(const SimpleString& str1, const char* str2)
 {
 	if(str1.GetStr() == NULL) return SimpleString(str2);
 	if(str2 == NULL) return SimpleString(str1);
 	return SimpleString(str1.GetStr(), str2);
+}
+
+void SimpleString::StringData::Lock()
+{
+	Protect.EnterMutex();
+}
+
+void SimpleString::StringData::Unlock()
+{
+	Protect.LeaveMutex();
+}
+
+int SimpleString::StringData::RemoveReference()
+{
+	return --(*nbReferences); 
+}
+
+int SimpleString::StringData::GetNbReference()
+{
+	return *nbReferences; 
+}
+
+char* SimpleString::StringData::GetDataPtr() const
+{
+	return data; 
+}
+
+unsigned int SimpleString::StringData::GetLength() const
+{
+	return length;
+}
+
+bool SimpleString::StringData::Equals(const char* str) const
+{
+	return strcmp(str, data) == 0; 
+}
+
+bool SimpleString::StringData::Equals(const StringData& sd) const
+{
+	return (this == &sd) || Equals(sd.GetDataPtr()); 
+}
+
+bool SimpleString::StringData::NotEquals(const char* str) const
+{
+	return strcmp(str, data) != 0; 
+}
+
+bool SimpleString::StringData::NotEquals(const StringData& sd) const
+{
+	return (this != &sd) || NotEquals(sd.GetDataPtr()); 
+}
+
+//----------------------------------------------//
+
+const char* SimpleString::GetStr() const
+{
+	return (const char*)stringData->GetDataPtr(); 
+}
+
+unsigned int SimpleString::GetLength() const
+{
+	return stringData->GetLength(); 
+}
+
+bool SimpleString::operator==(const SimpleString& str) const
+{
+	return stringData->Equals(*(str.stringData)); 
+}
+
+bool SimpleString::operator==(const char* str) const
+{
+	return stringData->Equals(str); 
+}
+
+bool SimpleString::operator!=(const SimpleString& str) const
+{
+	return stringData->NotEquals(*(str.stringData)); 
+}
+
+bool SimpleString::operator!=(const char* str) const
+{
+	return stringData->NotEquals(str); 
 }
 
 #define TAILLE_BUFFER 64*1024*1024

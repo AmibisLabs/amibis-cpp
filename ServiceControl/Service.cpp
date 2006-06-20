@@ -15,6 +15,7 @@
 #include <netinet/in.h> //htons
 #endif
 
+using namespace Omiscid;
 
 void Service::Init()
 {

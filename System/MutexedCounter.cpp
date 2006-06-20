@@ -1,5 +1,6 @@
 #include <System/MutexedCounter.h>
 
+using namespace Omiscid;
 
 MutexedCounter::MutexedCounter(int init_value)
 {

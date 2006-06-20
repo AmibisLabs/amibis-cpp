@@ -9,6 +9,8 @@
 
 #include <ServiceControl/OmiscidServices.h>
 
+using namespace Omiscid;
+
 void RegisterOmiscidService::Init( bool AutoRegister )
 {
 	if ( AutoRegister )

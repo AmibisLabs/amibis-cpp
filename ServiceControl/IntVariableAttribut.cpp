@@ -3,6 +3,8 @@
 
 #include <ServiceControl/VariableAttribut.h>
 
+using namespace Omiscid;
+
 IntVariableAttribut::IntVariableAttribut(VariableAttribut* va,
 					 int value)
 {
@@ -18,3 +20,18 @@ void IntVariableAttribut::SetIntValue( int value )
     ControlUtils::IntToStr(integerValue, variableAttribut->GetValueStr()); 
   }
 }
+
+int IntVariableAttribut::GetIntValue() const
+{
+	return integerValue;
+}
+
+void IntVariableAttribut::Incr()
+{
+	SetIntValue(integerValue + 1); 
+}
+
+void IntVariableAttribut::Decr()
+{
+	SetIntValue(integerValue - 1);
+} 

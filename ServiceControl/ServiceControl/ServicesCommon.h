@@ -10,62 +10,20 @@
 #ifndef _SERVICES_COMMON_H_
 #define _SERVICES_COMMON_H_
 
-#ifdef WIN32
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif
+#include <System/Portage.h>
+#include <System/Socket.h>
+#include <System/SimpleString.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <System/Socket.h>
-#include <System/SimpleString.h>
 
 #include <dns_sd.h>
 
-/*! \def FUNCTION_CALL_TYPE
- *	\brief DNS-SD callbacks type (WIN32 specific).
- *
- *	As WIN32 plateform supports many function call types, we must use the right
- *	one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
- *	the callback type is __stdcall.	On other plateform, this define is empty.
- */
-/*! \def strcasecmp
- *	\brief Wrapper for the unix strcasecmp function (WIN32 only).
- *
- */
-/*! \def strncasecmp
- *	\brief Wrapper for the unix strncasecmp function (WIN32 only).
- *
- */
-#ifdef WIN32
-	#define FUNCTION_CALL_TYPE __stdcall
-	/*! \def DEBUG
-	 *	\brief Define the gcc like debug symbol (WIN32 only).
-     *
-	 *	In order to have portable DEBUG support, we need to define a common
-	 *	debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
-	 */
-	#ifdef _DEBUG
-		#define DEBUG
-	#endif
-	#define strcasecmp stricmp
-	#define strncasecmp strnicmp
-#else
-	#define FUNCTION_CALL_TYPE
-	#include <sys/socket.h>
-	#define strcasecmp strcasecmp
-	#define strncasecmp strncasecmp
-
-	typedef int SOCKET;
-	#define SOCKET_ERROR (-1)
-#endif
 
 #include <System/SimpleException.h>
+
+namespace Omiscid {
 
 /*! \class ServiceException
  *  \brief The mother class of all exceptions of the PRIMA Service Package.
@@ -74,7 +32,7 @@
  *  package. All derived classes must define their own exception type (const char*)
  *  by rewriting the virtual function ServiceException#GetExceptionType.
  */
-class ServiceException : public SimpleException
+	class ServiceException : public SimpleException
 {
  public:
   /** \brief Constructor 
@@ -131,5 +89,7 @@ public:
 		static char * OmiscidServiceDnsSdType;
 		static const char * DefaultDomain;
 };
+
+} // namespace Omiscid
 
 #endif /* _SERVICES_COMMON_H_ */

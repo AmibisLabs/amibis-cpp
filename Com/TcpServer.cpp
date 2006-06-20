@@ -1,9 +1,11 @@
-#include <Com/TcpServer.h>
-
 #include <System/Portage.h>
 #include <System/Socket.h>
+#include <Com/TcpServer.h>
+#include <ServiceControl/ControlUtils.h>
 
 #include <stdio.h>
+
+using namespace Omiscid;
 
 TcpServer::TcpServer()
   : MsgSocket(Socket::TCP), TcpNoDelayMode(false)
@@ -302,21 +304,31 @@ int TcpServer::GetListPeerId(SimpleList<unsigned int>& list_peer)
 }
 
 void TcpServer::SetServiceId(unsigned int pid)
-{  
-  MsgSocket::SetServiceId(pid); 
-  
-  listConnections.Lock();
-  for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-    {
-      if(listConnections.GetCurrent()->IsConnected())
-	listConnections.GetCurrent()->SetServiceId(pid);
-      else
+{
+	// Check validity of a service Id
+	if ( (pid & ControlUtils::CONNECTOR_ID) == 0 )
 	{
-	  delete listConnections.GetCurrent();
-	  listConnections.RemoveCurrent();
+		pid = pid | 0xffffff01;
+#ifdef DEBUG
+		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpServer. Value changes to 1 (PeerId = %x)\n", pid );
+#endif
 	}
-    }
-  listConnections.Unlock();
+	MsgSocket::SetServiceId(pid); 
+  
+	listConnections.Lock();
+	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+	{
+		if( listConnections.GetCurrent()->IsConnected() )
+		{
+			listConnections.GetCurrent()->SetServiceId(pid);
+		}
+		else
+		{
+			delete listConnections.GetCurrent();
+			listConnections.RemoveCurrent();
+		}
+	}
+	listConnections.Unlock();
 }
 
 void TcpServer::SetMaxMessageSizeForTCP(int max)
@@ -377,4 +389,33 @@ bool TcpServer::SetTcpNoDelay(bool Set)
 	listConnections.Unlock();
 
 	return ReturnCode;
+}
+
+ComTools* TcpServer::Cast()
+{
+	return dynamic_cast<ComTools*>(this); 
+}
+
+unsigned int TcpServer::GetServiceId()
+{
+	return MsgSocket::GetServiceId(); 
+}
+
+unsigned short TcpServer::GetTcpPort()
+{
+	return MsgSocket::GetPortNb(); 
+}
+
+int TcpServer::GetMaxMessageSizeForTCP()
+{
+	return MsgSocket::GetMaxMessageSizeForTCP(); 
+}
+
+bool TcpServer::IsStillConnected(unsigned int peer_id)
+{ 
+  bool res = false;
+  listConnections.Lock();
+  res = FindClientFromId(peer_id) != NULL; 
+  listConnections.Unlock();
+  return res;
 }

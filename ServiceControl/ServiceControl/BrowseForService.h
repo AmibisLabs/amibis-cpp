@@ -10,10 +10,13 @@
 #ifndef _BROWSE_FOR_SERVICE_H_
 #define _BROWSE_FOR_SERVICE_H_
 
+#include <System/Portage.h>
 #include <System/Thread.h>
-#include <dns_sd.h>
 #include <ServiceControl/Service.h>
 
+#include <dns_sd.h>
+
+namespace Omiscid {
 
 typedef void  (FUNCTION_CALL_TYPE *BrowseCallBack) ( Service& NewService, DNSServiceFlags flags, unsigned int UserData );
 
@@ -39,5 +42,7 @@ protected:
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context );
 };
+
+} // namespace Omiscid
 
 #endif /* _BROWSE_FOR_SERVICE_H_ */

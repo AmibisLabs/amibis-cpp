@@ -8,11 +8,12 @@
 #ifndef CONTROL_CLIENT_H
 #define CONTROL_CLIENT_H
 
+#include <System/Portage.h>
 #include <System/SimpleList.h>
-
 #include <Com/TcpClient.h>
-
 #include <ServiceControl/XMLTreeParser.h>
+
+namespace Omiscid {
 
 class VariableAttribut;
 class InOutputAttribut;
@@ -155,7 +156,6 @@ class ControlClient : public TcpClient, public XMLTreeParser
   void DisplayIn_OutputName();
   //@}
 
-#ifndef RAVI_INTERFACE
   /** \name Accss to list of attribute by kind */
   //@{
   /** \brief Access to the list of variable name */
@@ -179,7 +179,6 @@ class ControlClient : public TcpClient, public XMLTreeParser
   SimpleList<InOutputAttribut*>& GetIn_OutputList();
   //@}
 
-#endif /* RAVI_INTERFACE */
   
   /** \brief Process Control Event
    *
@@ -311,43 +310,6 @@ class ControlClient : public TcpClient, public XMLTreeParser
   void* userDataPtr; /*!< pointer on data for the callback */
 };
 
-#ifndef RAVI_INTERFACE
-
-inline void ControlClient::DisplayVariableName()
-{DisplayListName(listVariableName, "Variable Name :");}
-inline void ControlClient::DisplayOutputName()
-{DisplayListName(listOutputName, "Output Name :");}
-inline void ControlClient::DisplayInputName()
-{DisplayListName(listInputName, "Input Name :");}
-inline void ControlClient::DisplayIn_OutputName()
-{DisplayListName(listInOutputName, "In_Output Name :");}
-
-
-inline SimpleList<SimpleString>& ControlClient::GetVariableNameList()
-{ return listVariableName;}
-inline SimpleList<VariableAttribut*>& ControlClient::GetVariableList()
-{ return listVariableAttr;}
-inline SimpleList<SimpleString>& ControlClient::GetInputNameList()
-{ return listInputName; }
-inline SimpleList<InOutputAttribut*>& ControlClient::GetInputList()
-{ return listInputAttr; }
-inline SimpleList<SimpleString>& ControlClient::GetOutputNameList()
-{ return listOutputName; }
-inline SimpleList<InOutputAttribut*>& ControlClient::GetOutputList()
-{ return listOutputAttr; }
-inline SimpleList<SimpleString>& ControlClient::GetIn_OutputNameList()
-{ return listInOutputName; }
-inline SimpleList<InOutputAttribut*>& ControlClient::GetIn_OutputList()
-{ return listInOutputAttr; }
-
-
-inline void ControlClient::SetCtrlEventListener(CtrlEventListener fct, void* user_ptr)
-{
-  callback = fct;
-  userDataPtr = user_ptr;
-}
-
-
-#endif /* RAVI_INTERFACE*/
+} // namespace Omiscid
 
 #endif /* CONTROL_CLIENT_H */

@@ -1,5 +1,7 @@
 #include <System/MultipleReferencedData.h>
 
+using namespace Omiscid;
+
 MultipleReferencedData::MultipleReferencedData(MethodForRelease method_for_release)
 {
   methodForRelease = method_for_release;
@@ -29,4 +31,19 @@ void MultipleReferencedData::ReleaseData(MultipleReferencedData* multiple_refere
 	  method_for_release(multiple_referenced_data);
 	}
     }
+}
+
+void MultipleReferencedData::AddRef()
+{
+	NbCurrentRef++; 
+}
+
+void MultipleReferencedData::RemoveRef()
+{
+	NbCurrentRef--; 
+}
+
+bool MultipleReferencedData::IsStillUseful() const
+{
+	return NbCurrentRef > 0; 
 }

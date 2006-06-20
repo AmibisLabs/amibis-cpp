@@ -8,16 +8,10 @@
 #ifndef ATTRIBUT_H
 #define ATTRIBUT_H
 
-#ifdef WIN32
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif
-
+#include <System/Portage.h>
 #include <System/SimpleString.h>
+
+namespace Omiscid {
 
 /**
  * @class Attribut Attribut.h ServiceControl/Attribut.h
@@ -130,42 +124,6 @@ class Attribut
   SimpleString formatDescription;
 };
 
-//////////// inline methods ////////////
-#ifndef RAVI_INTERFACE
-
-inline const SimpleString& Attribut::GetName() const
-{ return name; }
-inline const SimpleString& Attribut::GetDescription() const
-{ return description;}
-
-inline const char* Attribut::GetNameCh() const { return name.GetStr(); }
-inline const char* Attribut::GetDescriptionCh() const { return description.GetStr();}
-
-inline void Attribut::SetName(const char* str){ name = str; }
-inline void Attribut::SetDescription(const char* str){ description = str; }
-inline void Attribut::SetName(const SimpleString& str){ name = str; }
-inline void Attribut::SetDescription(const SimpleString& str){ description = str; }
-
-inline void Attribut::GenerateHeaderDescription(const SimpleString& type,
-						const SimpleString& name,
-						SimpleString& str,
-						bool end)
-{
-  str = str + "<"+ type + " name=\"" + name;
-  if(end) str = str + "\"/>";
-  else  str = str + "\">";
-}
-
-inline const SimpleString& Attribut::GetFormatDescription() const
-{ return formatDescription; }
-inline const char* Attribut::GetFormatDescriptionCh() const
-{ return formatDescription.GetStr(); }
-
-inline void Attribut::SetFormatDescription(const SimpleString& str)
-{ formatDescription = str; }
-inline void Attribut::SetFormatDescription(const char* str)
-{ formatDescription = str; }
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /** ATTRIBUT_H */

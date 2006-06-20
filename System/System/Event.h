@@ -5,16 +5,9 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
-#ifndef WIN32
-	#include <pthread.h>
-#else
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif /* WIN32 */
+#include <System/Portage.h>
+
+namespace Omiscid {
 
 /** 
  * @class Event Event.h System/Event.h
@@ -56,5 +49,7 @@ private:
 	pthread_mutex_t mutex; /*!< mutex to protect the access to the condition */
 #endif
 };
+
+} // namespace Omiscid
 
 #endif /* _EVENT_H_ */

@@ -8,14 +8,15 @@
 #ifndef CONTROL_SERVER_H
 #define CONTROL_SERVER_H
 
+#include <System/Portage.h>
 #include <System/SimpleList.h>
-
 #include <Com/TcpServer.h>
-
 #include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/IntVariableAttribut.h>
 #include <ServiceControl/OmiscidServices.h>
+
+namespace Omiscid {
 
 class VariableAttribut;
 
@@ -338,48 +339,6 @@ public:
   SimpleList<unsigned int> listListener; /*!< the list of listener for this variable */
 };
 
-////////////// inline methods //////////////
-#ifndef RAVI_INTERFACE
-
-inline unsigned int ControlServer::GetServiceId() const
-{ return serviceId; }
-inline void ControlServer::DisplayServiceId() const
-{ printf("%u\n", serviceId);}
-
-inline void ControlServer::SetServiceName(const char* service_name)
-{ serviceName = service_name; }
-
-
-inline int ControlServer::ProcessMessages()
-{
-	return XMLTreeParser::ProcessMessages();
-}
-
-inline bool ControlServer::WaitForMessage(unsigned long timer)
-{ return XMLTreeParser::WaitForMessage(timer); }
-
-
-inline void ControlServer::DisplayServiceGlobalShortDescription()
-{
-  SimpleString str;
-  GenerateGlobalShortDescription(str);
-  printf("%s\n", str.GetStr());
-}
-
-inline ControlServer::STATUS ControlServer::GetStatus() const
-{ return (STATUS)statusIntVariable->GetIntValue(); }
-
-inline void ControlServer::SetStatus(STATUS s)
-{ statusIntVariable->SetIntValue((int)s); }
-
-inline const char* ControlServer::GetServiceName()
-{ return serviceName.GetStr(); }
-inline const char* ControlServer::GetServiceNameRegistered()
-{ 
-  if(registerDnsSd) return registerDnsSd->RegisteredName.GetStr();
-  else return "";
-}
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /** CONTROL_SERVER_H */

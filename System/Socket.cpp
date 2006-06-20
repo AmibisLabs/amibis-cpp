@@ -3,9 +3,6 @@
 #include <sys/types.h>
 
 #ifdef WIN32
-
-#include <Winsock2.h>
-
 #define MSG_NOSIGNAL 0
 #define socklen_t int
 
@@ -34,6 +31,10 @@
 
 #define BACKLOG 5
 
+using namespace Omiscid;
+
+namespace Omiscid {
+
 // We need to initialise Windows socket subsystem
 class OmiscidSocketInitClass
 {
@@ -57,6 +58,8 @@ private:
 };
 
 static OmiscidSocketInitClass OmiscidSocketInitClassInitialisationObject;
+
+} // namespace Omiscid
 
 // Static members of the Socket class
 Socket::DynamicNameSolvingType Socket::DynamicNameSolving = Socket::OMISCIDNS_UNSET;

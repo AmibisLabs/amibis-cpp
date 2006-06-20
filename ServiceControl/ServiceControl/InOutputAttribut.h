@@ -8,13 +8,14 @@
 #ifndef INOUTPUT_ATTRIBUT_H
 #define INOUTPUT_ATTRIBUT_H
 
+#include <System/Portage.h>
+#include <System/SimpleList.h>
+#include <Com/ComTools.h>
 #include <ServiceControl/Attribut.h>
 
-#include <System/SimpleList.h>
-
-#include <Com/ComTools.h>
-
 #include <libxml/parser.h>
+
+namespace Omiscid {
 
 /**
  * @class InOutputAttribut InOutputAttribut.h ServiceControl/InOutputAttribut.h
@@ -113,35 +114,6 @@ class InOutputAttribut : public Attribut
   SimpleList<unsigned int> listPeerId; /*!< list of connected peer */
 };
 
-///////// inline methods ///////////
-#ifndef RAVI_INTERFACE
-
-inline bool InOutputAttribut::IsAnInput() const
-{ return kindOfInput == INPUT; }
-inline bool InOutputAttribut::IsAnOutput() const
-{ return kindOfInput == OUTPUT; }
-inline bool InOutputAttribut::IsAnInOutput() const
-{ return kindOfInput == IN_OUTPUT; }
-
-inline void InOutputAttribut::SetKindOfInput(KIND kind_of_input)
-{ kindOfInput = kind_of_input; }
-inline void InOutputAttribut::SetComTool(ComTools* com_tool)
-{ comTool = com_tool; }
-
-inline int InOutputAttribut::GetTcpPort() const
-{ return comTool == NULL ? tcpPort : comTool->GetTcpPort(); }
-inline int InOutputAttribut::GetUdpPort() const
-{ return comTool == NULL ? udpPort : comTool->GetUdpPort(); }
-
-inline void InOutputAttribut::GenerateConnectAnswer(SimpleString& str)
-{ GenerateLongDescription(str); }
-
-inline void InOutputAttribut::SetTcpPort(unsigned short port)
-{ tcpPort = port; }
-inline void InOutputAttribut::SetUdpPort(unsigned short port)
-{ udpPort = port; }
-inline void InOutputAttribut::AddPeer(unsigned int peer_id)
-{ listPeerId.Add(peer_id); }
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /** INOUTPUT_ATTRIBUT_H */

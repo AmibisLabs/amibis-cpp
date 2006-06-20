@@ -1,25 +1,11 @@
 #include <ServiceControl/ControlUtils.h>
+
 #include <stdlib.h>
 #include <time.h>
 
-#ifdef WIN32
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#else
-	#include <sys/time.h>
-#endif
+using namespace Omiscid;
 
-#ifdef WIN32
-	#include <System/Portage.h>
-	#include <process.h>
-#else
-	#include <sys/types.h>
-	#include <unistd.h>
-#endif
+namespace Omiscid {
 
 class OmiscidRandomInitClass
 {
@@ -39,20 +25,32 @@ public:
 
 static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
 
+}
+
 unsigned int ControlUtils::GeneratePeerId()
 {
-  struct timeval t;    
-  gettimeofday(&t, NULL);
+	struct timeval t;    
+	unsigned int res;
 
-  unsigned int res = t.tv_sec << 16;
+	gettimeofday(&t, NULL);
+
+	// Hope we will go out
+	for(;;)
+	{
+		res = t.tv_sec << 16;
 
 #ifdef WIN32
-  res += (0x0000FFFF & rand());
+		res += (0x0000FFFF & rand());
 #else
-  res += (0x0000FFFF & random());
+		res += (0x0000FFFF & random());
 #endif
 
-  return res << 8;
+		// Do we manage to generate a good service id
+		if ( (res & SERVICE_PEERID) != 0 )
+		{
+			return res & SERVICE_PEERID;
+		}
+	}
 }
 
 int ControlUtils::StrToInt(const unsigned char* buffer, int len)

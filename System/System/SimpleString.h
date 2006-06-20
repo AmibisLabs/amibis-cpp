@@ -5,8 +5,11 @@
 #ifndef __SIMPLE_STRING_H__
 #define __SIMPLE_STRING_H__
 
+#include <System/Portage.h>
 #include <string.h>
 #include <System/MutexedCounter.h>
+
+namespace Omiscid {
 
 /**
  * @class SimpleString  SimpleString.h  System/SimpleString.h
@@ -180,13 +183,11 @@ public:
 	// REVIEW
 	static const SimpleString EmptyString;
 
-#ifndef RAVI_INTERFACE	
 	/** @brief Extract a string of  this string
 	 * \param begin index of the first character included in the result string
 	 * \param end index of the first excluded character
 	 */
 	SimpleString SubString(int begin, int end);
-#endif /*RAVI_INTERFACE*/
 
 protected:
 	SimpleString(StringData*); /*!< used by SubString*/
@@ -204,75 +205,10 @@ private:
 };
 
 
-#ifndef RAVI_INTERFACE
-
 SimpleString operator+(const SimpleString& str1, const SimpleString& str2);
 SimpleString operator+(const char* str1, const SimpleString& str2);
 SimpleString operator+(const SimpleString& str1, const char* str2);
 
-#endif /* RAVI_INTERFACE */
-
-
-/////////////// inline methods /////////////
-
-#ifndef RAVI_INTERFACE
-
-inline void SimpleString::StringData::Lock()
-{
-	Protect.EnterMutex();
-}
-
-inline void SimpleString::StringData::Unlock()
-{
-	Protect.LeaveMutex();
-}
-
-inline int SimpleString::StringData::RemoveReference()
-{ return --(*nbReferences); }
-
-inline int SimpleString::StringData::GetNbReference()
-{ return *nbReferences; }
-
-inline char* SimpleString::StringData::GetDataPtr() const
-{ return data; }
-
-inline unsigned int SimpleString::StringData::GetLength() const
-{ return length;}
-
-inline bool SimpleString::StringData::Equals(const char* str) const
-{ return strcmp(str, data) == 0; }
-
-inline bool SimpleString::StringData::Equals(const StringData& sd) const
-{ return (this == &sd) || Equals(sd.GetDataPtr()); }
-
-inline bool SimpleString::StringData::NotEquals(const char* str) const
-{ return strcmp(str, data) != 0; }
-
-inline bool SimpleString::StringData::NotEquals(const StringData& sd) const
-{ return (this != &sd) || NotEquals(sd.GetDataPtr()); }
-
-	
-//----------------------------------------------//
-
-inline const char* SimpleString::GetStr() const
-{ return (const char*)stringData->GetDataPtr(); }
-
-inline unsigned int SimpleString::GetLength() const
-{ return stringData->GetLength(); }
-
-inline bool SimpleString::operator==(const SimpleString& str) const
-{ return stringData->Equals(*(str.stringData)); }
-
-inline bool SimpleString::operator==(const char* str) const
-{ return stringData->Equals(str); }
-
-inline bool SimpleString::operator!=(const SimpleString& str) const
-{ return stringData->NotEquals(*(str.stringData)); }
-
-inline bool SimpleString::operator!=(const char* str) const
-{ return stringData->NotEquals(str); }
-
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* __SIMPLE_STRING_H__ */

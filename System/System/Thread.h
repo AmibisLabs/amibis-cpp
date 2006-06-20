@@ -7,18 +7,10 @@
 #ifndef _THREAD_H_
 #define _THREAD_H_
 
-#ifndef WIN32
-	#include <pthread.h>
-#else
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif
-
+#include <System/Portage.h>
 #include <System/Event.h>
+
+namespace Omiscid {
 
 /**
  * @class Thread Thread.h System/Thread.h
@@ -125,20 +117,7 @@ private:
 
 };
 
-inline bool Thread::Running() const 
-{ 
-#ifdef WIN32
-	return (m_pThread != 0); 
-#else
-	return m_isRunning;
-#endif
-}
-
-inline bool Thread::StopPending() const 
-{ 
-	return m_stopRequired;
-}
-
+} // namespace Omiscid
 
 #endif /*  _THREAD_H_ */
 

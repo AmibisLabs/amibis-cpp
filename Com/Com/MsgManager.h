@@ -6,8 +6,12 @@
 #ifndef MSGMANAGER_HH
 #define MSGMANAGER_HH
 
+#include <System/Portage.h>
 #include <System/SimpleList.h>
 #include <System/Event.h>
+#include <System/Socket.h>
+
+namespace Omiscid {
 
 class MsgSocketCallBackData;
 class MsgSocket;
@@ -133,11 +137,6 @@ private:
 
 };
 
-////////// inline functions ///////////
-inline bool MsgManager::HasMessages()
-{
-  return GetNbMessages() != 0;
-}
-
+} // namespace Omiscid
 
 #endif /** MSGMANAGER_HH */

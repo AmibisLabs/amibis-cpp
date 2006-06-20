@@ -3,6 +3,7 @@
 #include <Com/TcpUdpClientServer.h>
 #include <ServiceControl/ServiceProperties.h>
 
+using namespace Omiscid;
 
 ClientConnection::ClientConnection(TcpClient* tcp_client, UdpConnection* udp_connect)
 { 
@@ -144,6 +145,15 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 
 void TcpUdpClientServer::SetServiceId(unsigned int pid)
 {
+	// Check validity of a service Id
+	if ( (pid & ControlUtils::CONNECTOR_ID) == 0 )
+	{
+		pid = pid | 0xffffff01;
+#ifdef DEBUG
+		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpUdpClientServer. Value changes to 1 (PeerId = %x)\n", pid );
+#endif
+	}
+
   TcpServer::SetServiceId(pid);
   UdpExchange::SetServiceId(pid);
 
@@ -426,4 +436,34 @@ ClientConnection* TcpUdpClientServer::FindClientConnectionFromId(unsigned int pi
       }
     }
   return NULL;
+}
+
+unsigned int ClientConnection::GetPeerPid() const
+{
+  return tcpClient->GetPeerPid();
+}
+
+unsigned short TcpUdpClientServer::GetUdpPort()
+{
+	return UdpExchange::GetUdpPort(); 
+}
+
+unsigned short TcpUdpClientServer::GetTcpPort()
+{
+	return TcpServer::GetTcpPort(); 
+}
+
+unsigned int TcpUdpClientServer::GetServiceId()
+{
+	return TcpServer::GetServiceId(); 
+}
+
+void TcpUdpClientServer::LinkToMsgManager(MsgManager* msgManager)
+{
+  SetCallBackOnRecv((MsgSocket::Callback_Receive)MsgManager::CumulMessage, msgManager);
+}
+
+int TcpUdpClientServer::GetMaxMessageSizeForTCP()
+{
+	return TcpServer::GetMaxMessageSizeForTCP();
 }

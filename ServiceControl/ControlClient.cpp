@@ -1,17 +1,16 @@
-#include <ServiceControl/ControlClient.h>
-
-#include <Com/MsgManager.h>
-#include <System/Portage.h>
 #include <System/SocketException.h>
-
-#include <ServiceControl/VariableAttribut.h>
+#include <Com/MsgManager.h>
+#include <ServiceControl/ControlClient.h>
 #include <ServiceControl/InOutputAttribut.h>
+#include <ServiceControl/VariableAttribut.h>
 
 #ifdef _DEBUG
 #define TIME_TO_WAIT_ANSWER 500000
 #else
 #define TIME_TO_WAIT_ANSWER 5000
 #endif
+
+using namespace Omiscid;
 
 ControlClient::ControlClient(unsigned int serviceId)
   : TcpClient(), id(1)
@@ -548,3 +547,68 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg, void* ptr)
     }
 }
 
+void ControlClient::DisplayVariableName()
+{
+	DisplayListName(listVariableName, "Variable Name :");
+}
+
+void ControlClient::DisplayOutputName()
+{
+	DisplayListName(listOutputName, "Output Name :");
+}
+
+void ControlClient::DisplayInputName()
+{
+	DisplayListName(listInputName, "Input Name :");
+}
+
+void ControlClient::DisplayIn_OutputName()
+{
+	DisplayListName(listInOutputName, "In_Output Name :");
+}
+
+SimpleList<SimpleString>& ControlClient::GetVariableNameList()
+{
+	return listVariableName;
+}
+
+SimpleList<VariableAttribut*>& ControlClient::GetVariableList()
+{
+	return listVariableAttr;
+}
+
+SimpleList<SimpleString>& ControlClient::GetInputNameList()
+{ 
+	return listInputName;
+}
+
+SimpleList<InOutputAttribut*>& ControlClient::GetInputList()
+{
+	return listInputAttr; 
+}
+
+SimpleList<SimpleString>& ControlClient::GetOutputNameList()
+{
+	return listOutputName;
+}
+
+SimpleList<InOutputAttribut*>& ControlClient::GetOutputList()
+{
+	return listOutputAttr; 
+}
+
+SimpleList<SimpleString>& ControlClient::GetIn_OutputNameList()
+{
+	return listInOutputName; 
+}
+
+SimpleList<InOutputAttribut*>& ControlClient::GetIn_OutputList()
+{
+	return listInOutputAttr;
+}
+
+void ControlClient::SetCtrlEventListener(CtrlEventListener fct, void* user_ptr)
+{
+  callback = fct;
+  userDataPtr = user_ptr;
+}

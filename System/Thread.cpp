@@ -20,6 +20,9 @@
 #endif
 
 #include <errno.h>
+
+using namespace Omiscid;
+
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
@@ -176,3 +179,18 @@ void Thread::Sleep(int nb_ms)
 	usleep(nb_ms*1000);	
 #endif
 }
+
+bool Thread::Running() const 
+{ 
+#ifdef WIN32
+	return (m_pThread != 0); 
+#else
+	return m_isRunning;
+#endif
+}
+
+bool Thread::StopPending() const 
+{ 
+	return m_stopRequired;
+}
+

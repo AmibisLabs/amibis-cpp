@@ -7,6 +7,7 @@
  *  \date    2004-2005
  */
 
+#include <System/Socket.h>
 #include <ServiceControl/BrowseForService.h>
 
 #ifndef WIN32
@@ -16,6 +17,8 @@
 #ifdef __APPLE__
 #include <sys/select.h>
 #endif
+
+using namespace Omiscid;
 
 BrowseForService::BrowseForService()
 {
@@ -85,7 +88,7 @@ void FUNCTION_CALL_TYPE BrowseForService::SearchCallBackDNSServiceBrowseReply( D
 
 void BrowseForService::Run()
 {
-	timeval timeout;
+	::timeval timeout;
 	fd_set fds;
 	int nReady;
 	int MaxDesc = 0;	// Maximal descriptor for the select function

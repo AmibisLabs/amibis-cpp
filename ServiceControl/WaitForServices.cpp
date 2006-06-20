@@ -13,6 +13,8 @@
 #include <netinet/in.h> // for ntohs
 #endif /* ndef WIN32 */
 
+using namespace Omiscid;
+
 SearchService::SearchService()
 {
 	IsResolved = false;

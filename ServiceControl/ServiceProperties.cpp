@@ -9,6 +9,8 @@
 
 #include <ServiceControl/ServiceProperties.h>
 
+using namespace Omiscid;
+
 /*! \brief Empty a property.
  *
  *	This function empty a property. The #Length is set to 1 (just the byte containing

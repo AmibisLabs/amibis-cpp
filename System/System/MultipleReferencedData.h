@@ -6,7 +6,11 @@
 #ifndef __MULTIPLED_REFERENCED_DATA_H__
 #define __MULTIPLED_REFERENCED_DATA_H__
 
+#include <System/Portage.h>
 #include <System/AtomicCounter.h>
+
+namespace Omiscid {
+
 /**
  * @class MultipleReferencedData MultipleReferencedData.h System/MultipleReferencedData.h
  * @brief Container for data with multiple references
@@ -61,18 +65,6 @@ class MultipleReferencedData
 };
 
 
-#ifndef RAVI_INTERFACE
-
-//////////////// inline methods : CMultimediaBuffer /////
-inline void MultipleReferencedData::AddRef()
-{ NbCurrentRef++; }
-
-inline void MultipleReferencedData::RemoveRef()
-{ NbCurrentRef--; }
-
-inline bool MultipleReferencedData::IsStillUseful() const
-{ return NbCurrentRef > 0; }
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* __MULTIPLED_REFERENCED_DATA_H__ */

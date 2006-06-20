@@ -13,6 +13,8 @@
 
 #include <errno.h>
 
+using namespace Omiscid;
+
 Event::Event()
 {
 #ifndef WIN32

@@ -6,23 +6,10 @@
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
 
-#ifdef WIN32
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-	#include <Winsock2.h>
-#else
-	#include <sys/types.h>
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	typedef int SOCKET;
-#endif
-
+#include <System/Portage.h>
 #include <System/SimpleString.h>
+
+namespace Omiscid {
 
 /**
  * @class Socket Socket.h System/Socket.h
@@ -167,5 +154,6 @@ private:
   struct sockaddr_in dest;  /*!< a destination stored in case of datagram */
 };
 
+} // namespace Omiscid
 
 #endif /** __SOCKET_H__ */

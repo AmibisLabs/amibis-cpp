@@ -4,6 +4,7 @@
 #include <Com/Message.h>
 #include <Com/MsgSocket.h>
 
+using namespace Omiscid;
 
 MsgManager::MsgManager(unsigned int max)
   : maxMessage(max)
@@ -122,3 +123,9 @@ bool MsgManager::WaitForMessage(unsigned long timer)
     }
   return true;
 }
+
+bool MsgManager::HasMessages()
+{
+  return GetNbMessages() != 0;
+}
+

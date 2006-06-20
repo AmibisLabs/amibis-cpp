@@ -1,5 +1,7 @@
 #include <System/SimpleListException.h>
 
+using namespace Omiscid;
+
   
 SimpleListException::SimpleListException(const char* m)
  : SimpleException(m, -1)
@@ -9,3 +11,7 @@ SimpleListException::SimpleListException(const SimpleListException& ExceptionToC
  : SimpleException(ExceptionToCopy)
 {}
 
+const char* SimpleListException::GetExceptionType()
+{
+	return "SimpleListException"; 
+};

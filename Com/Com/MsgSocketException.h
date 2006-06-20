@@ -6,7 +6,10 @@
 #ifndef MSGSOCKET_EXCEPTION_H 
 #define MSGSOCKET_EXCEPTION_H 
 
+#include <System/Portage.h>
 #include <System/SimpleException.h>
+
+namespace Omiscid {
 
 /**
  * @class MsgSocketException MsgSocketException.h Com/MsgSocketException.h
@@ -30,12 +33,6 @@ public:
   const char* GetExceptionType();
 };
 
-//////////// inline methods ///////////////
-#ifndef RAVI_INTERFACE
-
-inline const char* MsgSocketException::GetExceptionType()
-{ return "MsgSocketException"; };
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* MSGSOCKET_EXCEPTION_H */

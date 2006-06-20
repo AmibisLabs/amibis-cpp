@@ -1,6 +1,8 @@
 #include <System/SocketException.h>
 #include <System/Socket.h>
 
+using namespace Omiscid;
+
 void SocketException::SocketErrorCheck()
 {
 #ifdef _DEBUG
@@ -68,3 +70,8 @@ SocketException::SocketException(const SocketException& ExceptionToCopy)
 
 SocketException::~SocketException() 
 {}
+
+const char* SocketException::GetExceptionType()
+{
+	return "SocketException"; 
+};

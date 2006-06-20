@@ -8,7 +8,10 @@
 #ifndef __INTVARIABLEATTRIBUT_H__
 #define __INTVARIABLEATTRIBUT_H__
 
+#include <Com/ComTools.h>
 #include <ServiceControl/ControlUtils.h>
+
+namespace Omiscid {
 
 class VariableAttribut;
 
@@ -55,15 +58,6 @@ class IntVariableAttribut{
   int integerValue;
 };
 
-#ifndef RAVI_INTERFACE
-
-inline int IntVariableAttribut::GetIntValue() const
-{ return integerValue; }
-
-inline void IntVariableAttribut::Incr(){ SetIntValue(integerValue + 1); }
-
-inline void IntVariableAttribut::Decr(){ SetIntValue(integerValue - 1); } 
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* __INTVARIABLEATTRIBUT_H__ */

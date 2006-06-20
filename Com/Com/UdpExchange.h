@@ -7,11 +7,13 @@
 #ifndef UDP_EXCHANGE_H
 #define UDP_EXCHANGE_H
 
+#include <System/Portage.h>
 #include <System/SimpleList.h>
-
+#include <System/Mutex.h>
 #include <Com/MsgSocket.h>
 #include <Com/ComTools.h>
-#include <System/Mutex.h>
+
+namespace Omiscid {
 
 /**
  * @class UdpExchange UdpExchange.h Com/UdpExchange.h
@@ -27,7 +29,7 @@
  *
  * \author Sebastien Pesnel
  */
-class UdpExchange : public MsgSocket, virtual public ComTools
+class UdpExchange : public Omiscid::MsgSocket, virtual public Omiscid::ComTools
 {
  public:
   /**\brief Default Constructor 
@@ -159,26 +161,6 @@ class UdpExchange : public MsgSocket, virtual public ComTools
   bool RemoveConnectionWithId( unsigned int pid);
 };
 
-/////// inline methods /////////////
-#ifndef RAVI_INTERFACE
-
-inline ComTools* UdpExchange::Cast()
-{ return dynamic_cast<ComTools*>(this); }
-
-inline void UdpExchange::SetServiceId(unsigned int pid)
-{  MsgSocket::SetServiceId(pid); }
-
-inline unsigned int UdpExchange::GetServiceId()
-{  return MsgSocket::GetServiceId(); }
-
-inline int UdpExchange::SendTo(int len, const char* buf, UdpConnection* ptr)
-{
-  return MsgSocket::SendTo(len, buf, ptr);
-}
-
-inline unsigned short UdpExchange::GetUdpPort()
-{ return MsgSocket::GetPortNb(); }
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* UDP_EXCHANGE_H */

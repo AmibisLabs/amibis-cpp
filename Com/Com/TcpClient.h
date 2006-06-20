@@ -6,8 +6,12 @@
 #ifndef TCP_CLIENT_H 
 #define TCP_CLIENT_H 
 
-#include <Com/MsgSocket.h>
+#include <System/Portage.h>
 #include <Com/ComTools.h>
+#include <Com/MsgSocket.h>
+#include <ServiceControl/ControlUtils.h>
+
+namespace Omiscid {
 
 /**
  * @class TcpClient TcpClient.h Com/TcpClient.h
@@ -83,38 +87,6 @@ class TcpClient : public MsgSocket, public ComTools
   virtual ComTools* Cast();
 };
 
-//-------- INLINE METHODS ------------
-#ifndef RAVI_INTERFACE
-
-inline ComTools* TcpClient::Cast()
-{ return dynamic_cast<ComTools*>(this); }
-
-
-inline void TcpClient::SetServiceId(unsigned int pid)
-{  MsgSocket::SetServiceId(pid); }
-inline unsigned int TcpClient::GetServiceId()
-{  return MsgSocket::GetServiceId(); }
-
-inline unsigned int TcpClient::GetPeerId() const
-{ return MsgSocket::GetPeerPid(); }
-
-
-inline int TcpClient::GetListPeerId(SimpleList<unsigned int>& listId)
-{
-  unsigned int pid = MsgSocket::GetPeerPid();
-  if(pid != 0)
-    {
-      listId.Add(pid);
-      return 1;
-    }
-  return 0;
-}
-
-inline int TcpClient::GetMaxMessageSizeForTCP()
-{ return MsgSocket::GetMaxMessageSizeForTCP(); }
-inline void TcpClient::SetMaxMessageSizeForTCP(int max)
-{ MsgSocket::SetMaxMessageSizeForTCP(max); }
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /** TCP_CLIENT_H */

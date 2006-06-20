@@ -6,9 +6,12 @@
 #ifndef TCP_SERVER_H
 #define TCP_SERVER_H
 
+#include <System/Portage.h>
 #include <System/SimpleList.h>
 #include <Com/MsgSocket.h>
 #include <Com/ComTools.h>
+
+namespace Omiscid {
 
 /**
  * @class TcpServer  TcpServer.h  Com/TcpServer.h
@@ -82,7 +85,6 @@ class TcpServer :public MsgSocket, virtual public ComTools
    */
   int SendToAllClients(int len, const char* buf);
 
-#ifndef RAVI_INTERFACE
   /** \brief Send a cutted message to one client.
    *
    * Send a message in several part (on TCP) by using the BIP protocol
@@ -106,7 +108,6 @@ class TcpServer :public MsgSocket, virtual public ComTools
    * \param nb_buf [in] the number of buffer to send : the number of buffer in the array
    */
   int SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf);
-#endif
 
   /**\brief Current number of connections
    *
@@ -190,31 +191,6 @@ class TcpServer :public MsgSocket, virtual public ComTools
    bool SetTcpNoDelay(bool Set = true);
 };
 
-/////////// inline methods /////////////////
-#ifndef RAVI_INTERFACE
-
-inline ComTools* TcpServer::Cast()
-{ return dynamic_cast<ComTools*>(this); }
-
-
-inline unsigned int TcpServer::GetServiceId()
-{  return MsgSocket::GetServiceId(); }
-
-inline unsigned short TcpServer::GetTcpPort()
-{  return MsgSocket::GetPortNb(); }
-
-inline int TcpServer::GetMaxMessageSizeForTCP()
-{ return MsgSocket::GetMaxMessageSizeForTCP(); }
-
-inline bool TcpServer::IsStillConnected(unsigned int peer_id)
-{ 
-  bool res = false;
-  listConnections.Lock();
-  res = FindClientFromId(peer_id) != NULL; 
-  listConnections.Unlock();
-  return res;
-}
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* TCP_SERVER_H */

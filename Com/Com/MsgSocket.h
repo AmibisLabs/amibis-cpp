@@ -7,19 +7,11 @@
 #ifndef MSGSOCKET_H
 #define MSGSOCKET_H
 
-#ifdef WIN32
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif
-
-#include <System/SimpleString.h>
+#include <System/Portage.h>
 #include <System/Thread.h>
-#include <System/Mutex.h>
 #include <System/Socket.h>
+
+namespace Omiscid {
 
 #define TCP_BUFFER_SIZE (1<<16)+1 // 64ko
 #define UDP_MAX_MSG_SIZE 1024
@@ -106,7 +98,7 @@ class MsgSocket : public Thread
 {
  public:
 
-#ifdef _DEBUG
+#ifdef DEBUG
 
 	 enum {
 		 DBG_NONE		= 0x000000000,
@@ -173,14 +165,12 @@ class MsgSocket : public Thread
    */
   void InitForUdpExchange(int port);
 
-#ifndef RAVI_INTERFACE
   /** \brief define callback function called in receive 
    * \param cr the callback call on receive message
    * \param user_data1 pointer on data (will be found in the callback parameter)
    * \param user_data2 pointer on data (will be found in the callback parameter)
    */
   void SetCallbackReceive(Callback_Receive cr, void* user_data1, void* user_data2 = NULL);
-#endif /* RAVI_INTERFACE */
 
    void SetCallbackSyncLink(Callback_SyncLink cr, void* user_data1 = NULL, void* user_data2 = NULL);
 
@@ -224,7 +214,6 @@ class MsgSocket : public Thread
   static int PrepareBufferForBip(char * buf, const char * data, int datalen);
   static int WriteHeaderForBip(char * buf, int service_id, int message_id );
 
-#ifndef RAVI_INTERFACE
   static int PrepareBufferForBipFromCuttedMsg(char * buf, int* tab_length, const char** tab_buf, int nb_buf);
 
   /** \brief Send a message in several part (on TCP) by using the BIP protocol
@@ -237,7 +226,6 @@ class MsgSocket : public Thread
    * \return the number of byte send (byte of data + tag) (-1 if error occured)
    */
   int SendCuttedMsg(int* tab_len, const char** tab_buf, int nb_buf);
-#endif
 
   /** Send a message (on UDP) by using BIP protocol
    * \param len [in] number of byte to send
@@ -270,6 +258,7 @@ class MsgSocket : public Thread
    * Define the id used by the BIP protocol to identifies peer in message exchange
    */
   void SetServiceId(unsigned int pid);
+
   /** \brief Access to the service Id 
    * \return the service id */
   unsigned int GetServiceId() const;
@@ -462,80 +451,6 @@ protected:
   UdpConnection udpConnection;
 };
 
-///////// inline methods ////////////////
-#ifndef RAVI_INTERFACE
-
-inline const struct sockaddr_in* UdpConnection::getAddr() const
-{  return &addr; }
-
-inline bool UdpConnection::operator==(const UdpConnection& udp_connect) const
-{
-  return !memcmp(&addr, udp_connect.getAddr(), sizeof(struct sockaddr));
-}
-
-inline Socket* MsgSocket::GetSocket()
-{ return socket; }
-
-
-inline bool MsgSocket::IsConnected() const 
-{ return connected;}
-
-inline void MsgSocket::SetServiceId(unsigned int pid)
-{ service_id = pid; }
-inline unsigned int MsgSocket::GetServiceId() const
-{ return service_id; }
-
-inline unsigned int MsgSocket::GetPeerPid() const
-{ return peer_pid; }
-
-inline bool MsgSocket::ReceivedSyncLinkMsg()
-{
-	bool tmpb;
-	protectSend.EnterMutex();
-	tmpb = receivedSyncLinkMsg;
-	protectSend.LeaveMutex();
-	return tmpb;
-}
-
-inline bool MsgSocket::SyncLinkMsgSent() const { return sendSyncLinkMsg; }
-
-inline int MsgSocket::GetMaxMessageSizeForTCP()
-{ return maxMessageSizeForTCP; }
-
-inline int MsgSocket::GetSyncLinkDataLength()
-{
-	return SyncLinkDataLength;
-}
-
-inline int MsgSocket::GetPeerSyncLinkDataLength()
-{
-	return PeerSyncLinkDataLength;
-}
-
-inline void MsgSocket::SetMaxMessageSizeForTCP(int max)
-{
-	if ( max < 0 )
-		return;
-
-	if ( max > TCP_BUFFER_SIZE-1 )
-	{
-		maxMessageSizeForTCP = TCP_BUFFER_SIZE-1;
-	}
-	else
-	{
-		maxMessageSizeForTCP = max;
-	}
-	maxBIPMessageSize = maxMessageSizeForTCP - tag_size - tag_end_size;
-}
-
-inline bool MsgSocket::operator==(unsigned int peer_id) const
-{ return peer_pid == peer_id; }
-
-inline bool MsgSocket::SetTcpNoDelay(bool Set)
-{
-	return socket->SetTcpNoDelay(Set);
-}
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /** MSGSOCKET_HH */

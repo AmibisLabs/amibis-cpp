@@ -8,23 +8,17 @@
 #ifndef XMLTREEPARSER_H
 #define XMLTREEPARSER_H
 
-#ifdef WIN32
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif
-
+#include <System/Portage.h>
 #include <System/Event.h>
 #include <System/Thread.h>
 #include <System/Mutex.h>
 #include <System/SimpleList.h>
+#include <System/SimpleString.h>
 
 #include <libxml/tree.h>
 
-#include <System/SimpleString.h>	
+
+namespace Omiscid {
 
 class MsgSocketCallBackData;
 
@@ -101,9 +95,7 @@ class XMLMessage
    */
   static void DisplayNode(xmlNodePtr node, FILE* fout);
 
-#ifndef RAVI_INTERFACE
   static SimpleString ExtractTextContent(xmlNodePtr node);
-#endif //__RAVI_INTERFACE__
 };
 
 /**
@@ -214,16 +206,6 @@ class XMLTreeParser : public Thread
 
 
 
-// ------------ INLINE METHODS --------------
-
-
-#ifndef RAVI_INTERFACE
-
-inline bool XMLTreeParser::HasMessages()
-{
-  return GetNbMessages() != 0;
-}
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /** XMLTREEPARSER_H */

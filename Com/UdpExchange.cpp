@@ -1,9 +1,11 @@
-#include <Com/UdpExchange.h>
-
 #include <System/Portage.h>
 #include <System/Socket.h>
+#include <Com/UdpExchange.h>
+#include <ServiceControl/ControlUtils.h>
 
 #include <stdio.h>
+
+using namespace Omiscid;
 
 UdpExchange::UdpExchange()
 : MsgSocket(Socket::UDP)
@@ -160,4 +162,37 @@ bool UdpExchange::RemoveConnectionWithId(unsigned int pid)
 	}
     }
   return false;
+}
+
+void UdpExchange::SetServiceId(unsigned int pid)
+{
+	// Check validity of a service Id
+	if ( (pid & ControlUtils::CONNECTOR_ID) == 0 )
+	{
+		pid = pid | 0xffffff01;
+#ifdef DEBUG
+		fprintf( stderr, "Warning: ConnectorId could not be 0 for UdpExchange. Value changes to 1 (PeerId = %x)\n", pid );
+#endif
+	}
+	MsgSocket::SetServiceId(pid);
+}
+
+ComTools* UdpExchange::Cast()
+{
+	return dynamic_cast<ComTools*>(this);
+}
+
+unsigned int UdpExchange::GetServiceId()
+{
+	return MsgSocket::GetServiceId();
+}
+
+int UdpExchange::SendTo(int len, const char* buf, UdpConnection* ptr)
+{
+  return MsgSocket::SendTo(len, buf, ptr);
+}
+
+unsigned short UdpExchange::GetUdpPort()
+{
+	return MsgSocket::GetPortNb();
 }

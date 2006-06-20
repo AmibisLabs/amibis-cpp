@@ -6,7 +6,11 @@
 #ifndef COM_TOOLS_H
 #define COM_TOOLS_H
 
+#include <System/Portage.h>
 #include <System/SimpleList.h>
+
+namespace Omiscid {
+
 /**
  * @class ComTools ComTools.h Com/ComTools.h
  * \brief Interface the communication tools
@@ -48,5 +52,7 @@ class ComTools
    */
   virtual ComTools* Cast() = 0;
 };
+
+} // namespace Omiscid
 
 #endif /* COM_TOOLS_H */

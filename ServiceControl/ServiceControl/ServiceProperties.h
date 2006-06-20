@@ -10,7 +10,10 @@
 #ifndef _SERVICE_PROPERTIES_H_
 #define _SERVICE_PROPERTIES_H_
 
+#include <System/Portage.h>
 #include <ServiceControl/ServicesCommon.h>
+
+namespace Omiscid {
 
 /*! \class ServicePropertiesException
  *	\brief Exception for service properties managment.
@@ -190,6 +193,8 @@ protected:
 	int MaxProperties;
 	ServicePropertyNotify * Properties;
 };
+
+} // namespace Omiscid
 
 #endif /* _SERVICE_PROPERTIES_H_ */
 

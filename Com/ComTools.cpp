@@ -1,5 +1,7 @@
 #include <Com/ComTools.h>
 
+using namespace Omiscid;
+
 // test commit
 
 unsigned short ComTools::GetTcpPort()

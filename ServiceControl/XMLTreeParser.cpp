@@ -3,29 +3,33 @@
 #include <Com/Message.h>
 #include <Com/MsgSocket.h> 
 
-
 // include the parser in the file
 #include <libxml/parser.h>
 
-class TrickToInitXmlParser
+using namespace Omiscid;
+
+namespace Omiscid {
+
+class OmiscidInitXmlParser
 {
 public:
-	TrickToInitXmlParser()
+	OmiscidInitXmlParser()
 	{
 		// Just call the xmlInitParser
 		//xmlInitParser();
 		LIBXML_TEST_VERSION
 	};
 	
-	~TrickToInitXmlParser()
+	~OmiscidInitXmlParser()
 	{
 		xmlCleanupParser();
 	};
 };
 
 // Create a static object to initialise before any run
-static TrickToInitXmlParser JustATrickToInitXmlParser;
+static OmiscidInitXmlParser OmiscidInstanceToInitXmlParser;
 
+} // namespace Omiscid
 
 ////////////////////////////////////////////////////////////////
 XMLMessage::XMLMessage()
@@ -258,4 +262,9 @@ void XMLTreeParser::Run()
     }
 
 	TraceError( "ThreadWasAskedToDie\n" );
+}
+
+bool XMLTreeParser::HasMessages()
+{
+  return GetNbMessages() != 0;
 }

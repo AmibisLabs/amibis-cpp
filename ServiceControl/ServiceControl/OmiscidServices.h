@@ -10,8 +10,11 @@
 #ifndef _OMiSCID_SERVICES_H_
 #define _OMiSCID_SERVICES_H_
 
+#include <System/Portage.h>
 #include <ServiceControl/Service.h>
 #include <ServiceControl/WaitForServices.h>
+
+namespace Omiscid {
 
 /** 
  * @class RegisterOmiscidService OmiscidServices.h ServiceControl/OmiscidServices.h
@@ -35,10 +38,12 @@ public:
 	WaitForOmiscidServices();
 	virtual ~WaitForOmiscidServices(void);
 
-	inline int NeedService( const char * eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
+	int NeedService( const char * eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
 	{
 		return WaitForServices::NeedService( eName, OmiscidServiceDnsSdType, eCallBack, eUserData );
 	}
 };
+
+} // namespace Omiscid
 
 #endif /* _OMiSCID_SERVICES_H_ */

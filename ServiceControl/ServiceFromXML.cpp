@@ -2,6 +2,8 @@
 #include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/VariableAttribut.h>
 
+using namespace Omiscid;
+
 ServiceFromXML::ServiceFromXML(const char* file_name)
 {
   XMLTreeParser xmlTreeParser;

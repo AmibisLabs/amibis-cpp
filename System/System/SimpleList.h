@@ -7,8 +7,11 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
+#include <System/Portage.h>
 #include <System/Mutex.h>
 #include <System/SimpleListException.h>
+
+namespace Omiscid {
 
 template <typename TYPE> class SimpleList;
 
@@ -385,7 +388,7 @@ bool SimpleList<TYPE>::IsNotEmpty() const
 { return Head != NULL; }
 
 template <typename TYPE>
-inline TYPE SimpleList<TYPE>::ExtractFirst()
+TYPE SimpleList<TYPE>::ExtractFirst()
 {
   if(IsEmpty())
     throw SimpleListException("SimpleList<TYPE>::ExtractFirst : Forbidden when the list is empty");
@@ -453,5 +456,7 @@ bool MutexedSimpleList<TYPE>::Unlock()
 {
 	return mutex.LeaveMutex();
 }
+
+} // namespace Omiscid
 
 #endif // !defined _LIST_H_

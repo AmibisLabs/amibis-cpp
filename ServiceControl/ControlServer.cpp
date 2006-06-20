@@ -1,20 +1,16 @@
+#include <System/Socket.h>
+#include <System/SocketException.h>
 #include <ServiceControl/ControlServer.h>
+#include <ServiceControl/ControlUtils.h>
+#include <ServiceControl/OmiscidServices.h>
+#include <ServiceControl/VariableAttribut.h>
 
 #ifndef WIN32
 #include <sys/time.h>
 #include <unistd.h>
 #endif
 
-#include <System/Portage.h>
-#include <System/Socket.h>
-#include <System/SocketException.h>
-#include <ServiceControl/VariableAttribut.h>
-
-
-#include <ServiceControl/ControlUtils.h>
-
-
-#include <ServiceControl/OmiscidServices.h>
+using namespace Omiscid;
 
 
 ControlServer::ControlServer(const char* service_name)
@@ -622,7 +618,70 @@ void ValueListener::AddListener(unsigned int listener_id)
 }
 
 void ValueListener::RemoveListener(unsigned int listener_id)
-{ listListener.Remove(listener_id); }
+{ 
+	listListener.Remove(listener_id); 
+}
 
 bool ValueListener::HasListener() const
-{ return listListener.GetNumberOfElements() != 0; }
+{
+	return listListener.GetNumberOfElements() != 0; 
+}
+
+unsigned int ControlServer::GetServiceId() const
+{
+	return serviceId; 
+}
+
+void ControlServer::DisplayServiceId() const
+{
+	printf("%u\n", serviceId);
+}
+
+void ControlServer::SetServiceName(const char* service_name)
+{
+	serviceName = service_name;
+}
+
+int ControlServer::ProcessMessages()
+{
+	return XMLTreeParser::ProcessMessages();
+}
+
+bool ControlServer::WaitForMessage(unsigned long timer)
+{
+	return XMLTreeParser::WaitForMessage(timer); 
+}
+
+void ControlServer::DisplayServiceGlobalShortDescription()
+{
+  SimpleString str;
+  GenerateGlobalShortDescription(str);
+  printf("%s\n", str.GetStr());
+}
+
+ControlServer::STATUS ControlServer::GetStatus() const
+{
+	return (STATUS)statusIntVariable->GetIntValue(); 
+}
+
+void ControlServer::SetStatus(STATUS s)
+{
+	statusIntVariable->SetIntValue((int)s); 
+}
+
+const char* ControlServer::GetServiceName()
+{
+	return serviceName.GetStr(); 
+}
+
+const char* ControlServer::GetServiceNameRegistered()
+{ 
+  if ( registerDnsSd )
+  {
+	  return registerDnsSd->RegisteredName.GetStr();
+  }
+  else
+  {
+	  return "";
+  }
+}

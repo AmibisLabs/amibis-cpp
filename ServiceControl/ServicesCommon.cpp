@@ -9,10 +9,13 @@
 
 #include <ServiceControl/ServicesCommon.h>
 
+using namespace Omiscid;
 
 const char * CommonServiceValues::DefaultDomain = "_bip._tcp";
 
 char * CommonServiceValues::OmiscidServiceDnsSdType = (char*)NULL; // help for debug
+
+namespace Omiscid {
 
 // We need to initialise OmiscidServiceDnsSdType from environment variable
 class OmiscidServiceDnsSdTypeInitClass : CommonServiceValues
@@ -67,6 +70,8 @@ public:
 };
 
 static OmiscidServiceDnsSdTypeInitClass OmiscidServiceDnsSdTypeInitClassInitialisationObject;
+
+} // namespace Omiscid
 
 ServiceException::ServiceException( const char * Message )
   : SimpleException(Message)

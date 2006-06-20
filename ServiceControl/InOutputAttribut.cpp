@@ -3,6 +3,8 @@
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 
+using namespace Omiscid;
+
 const SimpleString InOutputAttribut::input_str = "input";
 const SimpleString InOutputAttribut::output_str = "output";
 const SimpleString InOutputAttribut::in_output_str = "inoutput";
@@ -193,4 +195,59 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 	  }
 	}
     }
+}
+
+bool InOutputAttribut::IsAnInput() const
+{
+	return kindOfInput == INPUT; 
+}
+
+bool InOutputAttribut::IsAnOutput() const
+{
+	return kindOfInput == OUTPUT; 
+}
+
+bool InOutputAttribut::IsAnInOutput() const
+{
+	return kindOfInput == IN_OUTPUT; 
+}
+
+void InOutputAttribut::SetKindOfInput(KIND kind_of_input)
+{
+	kindOfInput = kind_of_input; 
+}
+
+void InOutputAttribut::SetComTool(ComTools* com_tool)
+{
+	comTool = com_tool; 
+}
+
+int InOutputAttribut::GetTcpPort() const
+{
+	return comTool == NULL ? tcpPort : comTool->GetTcpPort(); 
+}
+
+int InOutputAttribut::GetUdpPort() const
+{
+	return comTool == NULL ? udpPort : comTool->GetUdpPort(); 
+}
+
+void InOutputAttribut::GenerateConnectAnswer(SimpleString& str)
+{
+	GenerateLongDescription(str); 
+}
+
+void InOutputAttribut::SetTcpPort(unsigned short port)
+{
+	tcpPort = port; 
+}
+
+void InOutputAttribut::SetUdpPort(unsigned short port)
+{
+	udpPort = port; 
+}
+
+void InOutputAttribut::AddPeer(unsigned int peer_id)
+{
+	listPeerId.Add(peer_id); 
 }

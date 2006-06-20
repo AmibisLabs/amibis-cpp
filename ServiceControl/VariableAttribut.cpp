@@ -2,6 +2,8 @@
 #include <ServiceControl/VariableAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 
+using namespace Omiscid;
+
 const SimpleString VariableAttribut::access_read_str = "read";
 const SimpleString VariableAttribut::access_readwrite_str = "readWrite";
 const SimpleString VariableAttribut::access_readwritebeforeinit_str = "readWriteBeforeInit";
@@ -174,4 +176,80 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
     }
     
   SetValueStr(tmp_value.GetStr());
+}
+
+void VariableAttribut::SetType(const char* t)
+{
+	type = t; 
+}
+
+void VariableAttribut::SetType(const SimpleString& str)
+{
+	type = str; 
+}
+
+void VariableAttribut::SetAccess(VariableAttribut::Access a)
+{
+	access = a;
+}
+
+void VariableAttribut::SetAccessRead()
+{
+	access = read;
+}
+
+void VariableAttribut::SetAccessReadWrite()
+{
+	access = read_write;
+}
+
+void VariableAttribut::SetAccessReadWriteBeforeInit()
+{
+	access = read_write_before_init;
+}
+
+void VariableAttribut::SetDefaultValue(const SimpleString& str)
+{
+	defaultValue = str;
+}
+
+void VariableAttribut::SetDefaultValue(const char* str)
+{
+	defaultValue = str;
+}
+
+SimpleString& VariableAttribut::GetValueStr()
+{
+	return valueStr; 
+}
+
+const char* VariableAttribut::GetValueCh()
+{
+	return valueStr.GetStr(); 
+}
+
+SimpleString& VariableAttribut::GetType()
+{
+	return type; 
+}
+
+VariableAttribut::Access VariableAttribut::GetAccess() 
+{
+	return access; 
+}
+
+SimpleString& VariableAttribut::GetDefaultValue()
+{
+	return defaultValue;
+}
+
+bool VariableAttribut::CanBeModified(ControlServer::STATUS status) const
+{ 
+	return (access == read_write || (access == read_write_before_init && status != ControlServer::STATUS_RUNNING)); 
+}
+
+void VariableAttribut::SetCallbackValueChanged(SignalValueChanged callback, void* user_data_ptr)
+{ 
+	callbackValue = callback;
+	userDataPtr = user_data_ptr;
 }

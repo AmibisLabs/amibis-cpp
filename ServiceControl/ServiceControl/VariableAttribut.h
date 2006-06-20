@@ -8,9 +8,13 @@
 #ifndef VARIABLE_ATTRIBUT_H 
 #define VARIABLE_ATTRIBUT_H 
 
+#include <System/Portage.h>
 #include <ServiceControl/Attribut.h>
 #include <ServiceControl/ControlServer.h>
+
 #include <libxml/parser.h>
+
+namespace Omiscid {
 
 /**
  * @class VariableAttribut VariableAttribut.h ServiceControl/VariableAttribut.h
@@ -91,13 +95,11 @@ class VariableAttribut : public Attribut
    */
   bool CanBeModified(ControlServer::STATUS status) const;
 
-#ifndef RAVI_INTERFACE
   /** @brief Associate a SimpleString to a kind of access.
    * @param accesskind [in] access kind that we want to change in SimpleString
    * @return the associated SimpleString
    */
   static const SimpleString& AccessToStr(VariableAttribut::Access accesskind);
-#endif /* RAVI_INTERFACE */
 
   /** @name XML Generation */
   //@{
@@ -164,45 +166,6 @@ class VariableAttribut : public Attribut
   void* userDataPtr; /*!< the pointer on data given to the callback */
 };
 
-//////// inline methods /////////
-#ifndef RAVI_INTERFACE
-
-inline void VariableAttribut::SetType(const char* t)
-{ type = t; }
-inline void VariableAttribut::SetType(const SimpleString& str)
-{ type = str; }
-inline void VariableAttribut::SetAccess(VariableAttribut::Access a)
-{ access = a;}
-inline void VariableAttribut::SetAccessRead()
-{ access = read;}
-inline void VariableAttribut::SetAccessReadWrite()
-{ access = read_write;}
-inline void VariableAttribut::SetAccessReadWriteBeforeInit()
-{ access = read_write_before_init;}
-inline void VariableAttribut::SetDefaultValue(const SimpleString& str)
-{ defaultValue = str;}
-inline void VariableAttribut::SetDefaultValue(const char* str)
-{ defaultValue = str;}
-
-
-inline SimpleString& VariableAttribut::GetValueStr()
-{ return valueStr; }
-inline const char* VariableAttribut::GetValueCh()
-{ return valueStr.GetStr(); }
-inline SimpleString& VariableAttribut::GetType(){ return type; }
-inline VariableAttribut::Access VariableAttribut::GetAccess() 
-{ return access; }
-inline SimpleString& VariableAttribut::GetDefaultValue()
-{ return defaultValue;}
-
-inline bool VariableAttribut::CanBeModified(ControlServer::STATUS status) const
-{ return (access == read_write || (access == read_write_before_init && status != ControlServer::STATUS_RUNNING)); }
-
-inline void VariableAttribut::SetCallbackValueChanged(SignalValueChanged callback, void* user_data_ptr)
-{ 
-	callbackValue = callback;
-	userDataPtr = user_data_ptr;
-}
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /** VARIABLE_ATTRIBUT_H */

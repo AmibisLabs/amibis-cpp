@@ -6,7 +6,10 @@
 #ifndef __SIMPLE_LIST_EXCEPTION_H__
 #define __SIMPLE_LIST_EXCEPTION_H__
 
+#include <System/Portage.h>
 #include <System/SimpleException.h>
+
+namespace Omiscid {
 
 /**
  * @class SimpleListException SimpleListException.h System/SimpleListException.h
@@ -28,12 +31,6 @@ public:
   const char* GetExceptionType();
 };
 
-//////////// inline methods ///////////////
-#ifndef RAVI_INTERFACE
-
-inline const char* SimpleListException::GetExceptionType()
-{ return "SimpleListException"; };
-
-#endif /* RAVI_INTERFACE */
+} // namespace Omiscid
 
 #endif /* __SIMPLE_LIST_EXCEPTION_H__ */

@@ -6,6 +6,10 @@
 #ifndef MESSAGE_HH
 #define MESSAGE_HH
 
+#include <System/Portage.h>
+
+namespace Omiscid {
+
 /**
  * @class Message Message.h Com/Message.h 
  * @brief Group Data  about a received message
@@ -61,20 +65,6 @@ public:
   char* realBuffer; 
 };
 
-///// inline methods /////////
-inline char* Message::GetBuffer() 
-{ return buffer; }
-
-inline int Message::GetLength()
-{ return len;}
-
-inline bool Message::GetOrigUdp()
-{ return origUdp; }
-
-inline unsigned int Message::GetPid() const
-{ return pid; }
-
-inline unsigned int Message::GetMid() const
-{ return mid; }
+} // namespace Omiscid
 
 #endif /** MESSAGE_HH */
