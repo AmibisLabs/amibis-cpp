@@ -16,6 +16,8 @@ using namespace Omiscid;
 ControlServer::ControlServer(const char* service_name)
   : serviceName(service_name)
 {
+  localConnectorId = 0;
+
   port = 0;
 
   serviceId = ControlUtils::GeneratePeerId();
@@ -398,7 +400,7 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 	      else 
 		{
 		  TraceError( "in connect query : unused tag :\n");
-#if defined DEBUG || defined _DEBUG
+#if defined DEBUG
 		  XMLMessage::DisplayNode(cur_node, stderr);
 #endif
 		}
@@ -484,7 +486,7 @@ void ControlServer::RefreshLock(){
 
 void ControlServer::Connect(const SimpleString& host, int port, bool tcp, InOutputAttribut* ioa)
 {
-#if defined DEBUG || defined _DEBUG
+#if defined DEBUG
   fprintf(stderr, "in ControlServer::Connect (%s:%d", host.GetStr(), port);
   if(tcp) fprintf(stderr, " [TCP] "); else fprintf(stderr, " [UDP] ");
   fprintf(stderr, "%s\n", ioa->GetName().GetStr());
@@ -492,7 +494,7 @@ void ControlServer::Connect(const SimpleString& host, int port, bool tcp, InOutp
 }
 void ControlServer::ModifVariable(int length, const unsigned char* buffer, int status, VariableAttribut* va)
 {
-#if defined DEBUG && defined _DEBUG
+#if defined DEBUG
   fprintf( stderr, "in ControlServer::ModifVariable %s New Value= %s\n", 
   	va->GetName().GetStr(), (const char*)buffer);  
 #endif
@@ -509,10 +511,21 @@ VariableAttribut* ControlServer::AddVariable(const char* name)
 
 InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_tool, InOutputAttribut::KIND kind_of_input)
 {
+  unsigned int ConnectorId;
+
   InOutputAttribut* ioa = new InOutputAttribut(name, com_tool, kind_of_input);
   if ( com_tool )
   {
-	  com_tool->SetServiceId(GetServiceId());
+	  // Incr number for the Connector
+	  localConnectorId++;
+	  if ( (localConnectorId & ControlUtils::SERVICE_PEERID) != 0 )
+	  {
+		  fprintf( stderr, "Too many connector (>127). Unexpected features may appear\n." );
+	  }
+
+	  ConnectorId = localConnectorId & ControlUtils::CONNECTOR_ID;
+
+	  com_tool->SetServiceId( GetServiceId() | ConnectorId );
   }
   
 //   // Add input into the list of Properties...

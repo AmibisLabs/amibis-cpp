@@ -64,6 +64,9 @@ void InOutputAttribut::GenerateLongDescription(SimpleString& str)
       str = str + "<udp>"+tmp+"</udp>";
     }
 
+	sprintf( tmp, "%x", comTool->GetServiceId() );
+	str = str + "<peerid>" + tmp+ "</peerid>";
+
   AddTagDescriptionToStr(str);
   
   str = str + "<peers>";

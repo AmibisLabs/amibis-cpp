@@ -27,7 +27,7 @@ public:
 		if ( Option == NULL || strcmp( Option, (char*)DefaultDomain ) == 0 )
 		{
 			OmiscidServiceDnsSdType = (char*)DefaultDomain;
-			#ifdef _DEBUG
+			#ifdef DEBUG
 				fprintf( stderr, "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain );
 			#endif
 			return;
@@ -54,7 +54,7 @@ public:
 		OmiscidServiceDnsSdType = new char[size+1];
 		strcpy( CommonServiceValues::OmiscidServiceDnsSdType, Option );
 
-		#ifdef _DEBUG
+		#ifdef DEBUG
 			fprintf( stderr, "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType );
 		#endif
 	};

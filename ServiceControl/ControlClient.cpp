@@ -358,7 +358,7 @@ VariableAttribut* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 {
   if(!node || (strcmp((const char*)node->name, "variable") !=0 )) return NULL;
   
-#if defined DEBUG || defined _DEBUG
+#if defined DEBUG
   // XMLMessage::DisplayNode(node, stderr);
 #endif
   

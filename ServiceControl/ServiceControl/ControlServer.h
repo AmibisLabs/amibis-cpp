@@ -280,6 +280,8 @@ class ControlServer : public TcpServer, public XMLTreeParser
   int port; /*!< number of the control port */
   char* hostname[HOST_NAME_MAX_SIZE]; /*<! name of the host */
   unsigned int serviceId; /*<! service identifier */
+  unsigned int localConnectorId;	 
+
   SimpleString serviceName; /*<! service name */
 
   IntVariableAttribut* statusIntVariable; /*!< default variable structure for the variable status combined with the status value */

@@ -412,7 +412,7 @@ void Socket::GetDnsNameSolvingOption()
 	if ( Option == NULL )
 	{
 		DynamicNameSolving = OMISCIDNS_USE_DNS_ONLY;
-		#ifdef _DEBUG
+		#ifdef DEBUG
 			fprintf( stderr, "OMISCIDNS_USE_DNS_ONLY found. Use DNS for name solving.\n" );
 		#endif
 		return;
@@ -420,7 +420,7 @@ void Socket::GetDnsNameSolvingOption()
 
 	DynamicNameSolving = OMISCIDNS_USE_MDNS_NAME_SOLVING;
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	fprintf( stderr, "OMISCIDNS_USE_MDNS_NAME_SOLVING found. Use mDNS for name solving." );
 #endif
 }

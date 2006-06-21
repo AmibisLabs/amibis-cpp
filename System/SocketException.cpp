@@ -5,7 +5,7 @@ using namespace Omiscid;
 
 void SocketException::SocketErrorCheck()
 {
-#ifdef _DEBUG
+#ifdef DEBUG
 
 #ifdef WIN32
 	char * tmpc;

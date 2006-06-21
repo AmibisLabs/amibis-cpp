@@ -54,7 +54,7 @@ const int MsgSocket::len_size = 8;
 const int MsgSocket::tag_end_size = (const int)strlen(MsgSocket::tag_end);
 const int MsgSocket::tag_size = (const int)(strlen(tag_start1) + 1 + MsgSocket::pid_size + 1 + MsgSocket::mid_size + 1 + MsgSocket::len_size + strlen(tag_start2));
 
-#ifdef _DEBUG
+#ifdef DEBUG
 
 unsigned int MsgSocket::Debug = MsgSocket::DBG_NONE;
 
@@ -160,7 +160,7 @@ int MsgSocket::SetSyncLinkData( unsigned char * data, int length )
 	if ( receivedSyncLinkMsg == true || sendSyncLinkMsg == true )
 	{
 		// TOO LATE
-#ifdef _DEBUG
+#ifdef DEBUG
 		if ( Debug & DBG_LINKSYNC )
 		{
 			fprintf( stderr, "MsgSocket::SetSyncLinkData: connexion already open. Can not set SyncLink data.\n" );
@@ -173,7 +173,7 @@ int MsgSocket::SetSyncLinkData( unsigned char * data, int length )
 	tmpc = new unsigned char[length];
 	if ( tmpc == NULL )
 	{
-#ifdef _DEBUG
+#ifdef DEBUG
 		if ( Debug & DBG_LINKSYNC )
 		{
 			fprintf( stderr, "MsgSocket::SetSyncLinkData: no more memory to set SyncLink data.\n" );
@@ -208,7 +208,7 @@ int MsgSocket::SetPeerSyncLinkData( unsigned char * data, int length )
 	if ( PeerSyncLinkData != NULL )
 	{
 		// TOO LATE
-#ifdef _DEBUG
+#ifdef DEBUG
 		if ( Debug & DBG_LINKSYNC )
 		{
 			fprintf( stderr, "MsgSocket::SetPeerSyncLinkData: Peer SyncLink data already set.\n" );
@@ -221,7 +221,7 @@ int MsgSocket::SetPeerSyncLinkData( unsigned char * data, int length )
 	PeerSyncLinkData = new unsigned char[length];
 	if ( PeerSyncLinkData == NULL )
 	{
-#ifdef _DEBUG
+#ifdef DEBUG
 		if ( Debug & DBG_LINKSYNC )
 		{
 			fprintf( stderr, "MsgSocket::SetPeerSyncLinkData: no more memory to set SyncLink data.\n" );
@@ -452,7 +452,7 @@ bool MsgSocket::SendSyncLinkMsg()
 
   if ( SyncLinkMsgSent() )
   {
-#ifdef _DEBUG
+#ifdef DEBUG
 	  if ( Debug & DBG_LINKSYNC )
 	  {
 		  fprintf( stderr, "SendSyncLinkMsg: warning SyncLinkMsg already sent.\n" );
@@ -489,7 +489,7 @@ bool MsgSocket::SendSyncLinkMsg()
 
 	  message_id++;
 
-#ifdef _DEBUG
+#ifdef DEBUG
 		if ( Debug & DBG_LINKSYNC )
 		{
 			SendBuffer[TotalLen] = '\0';
@@ -585,7 +585,7 @@ void MsgSocket::Receive()
 					//cerr << endl;
 					if ( mid == 0 )
 					{
-#ifdef _DEBUG
+#ifdef DEBUG
 							if ( Debug & DBG_LINKSYNC )
 							{
 								// buffer[offset+offset+length_msg+tag_size] = '\0';
@@ -680,7 +680,7 @@ void MsgSocket::Receive()
 						{
 							offset += length_msg + tag_end_size;
 							size =  occupiedSize - offset;
-#ifdef _DEBUG
+#ifdef DEBUG
 							if ( Debug & DBG_RECV )
 							{
 								if ( length_msg != 0 )
@@ -789,7 +789,7 @@ int MsgSocket::Send(int len, const char* buf)
 		  TotalLen = -1;
 	  }
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	  if ( Debug & DBG_SEND )
 	  {
 		  SendBuffer[TotalLen] = '\0';
@@ -825,7 +825,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 		// We complete the header
 		WriteHeaderForBip( (char*)SendBuffer, service_id, message_id );
 
-#ifdef _DEBUG
+#ifdef DEBUG
 		if ( Debug & DBG_SEND )
 		{
 			TraceError( "MsgSocket::SendPreparedBuffer %s\n", SendBuffer );
@@ -870,7 +870,7 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
     {
 	  // Here we've got a full buffer and we can (must) write our header at the in at the beginning !
 	  WriteHeaderForBip(l_buffer, service_id, message_id );
-#ifdef _DEBUG
+#ifdef DEBUG
 		if ( Debug & DBG_SEND )
 		{
 			TraceError( "MsgSocket::SendPreparedBuffer %s\n", l_buffer );

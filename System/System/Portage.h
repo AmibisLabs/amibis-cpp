@@ -1,14 +1,6 @@
 #ifndef PORTAGE_H
 #define PORTAGE_H
 
-#if defined _DEBUG && ! defined DEBUG
-#define DEBUG	// let Visual Studio be gcc -g compliant
-#endif
-
-#if defined _WIN32 && ! defined WIN32
-#define WIN32	// WIN32 is more interesting for us
-#endif
-
 /*! \def FUNCTION_CALL_TYPE
  *	\brief DNS-SD callbacks type (WIN32 specific).
  *
@@ -42,9 +34,14 @@
 	 *	In order to have portable DEBUG support, we need to define a common
 	 *	debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
 	 */
-	#ifdef _DEBUG
-		#define DEBUG
+	#if defined _DEBUG && ! defined DEBUG
+		#define DEBUG	// let Visual Studio be gcc -g compliant
 	#endif
+
+	#if defined _WIN32 && ! defined WIN32
+		#define WIN32	// WIN32 is more interesting for us
+	#endif
+
 	#define strcasecmp stricmp
 	#define strncasecmp strnicmp
 #else
@@ -70,7 +67,7 @@
 namespace Omiscid {
 
 // Ugly for the moment
-#if defined DEBUG || defined _DEBUG
+#if defined DEBUG
 	// in debug mode, we plan to trace every thing
 	inline int TraceError(char * format, ... )
 	{
