@@ -67,6 +67,8 @@ class InOutputAttribut : public Attribut
   int GetTcpPort() const; /*!< Access to port number for TCP */
   int GetUdpPort() const; /*!< Access to port number for UDP */
 
+  unsigned int GetPeerId(); /*!< Will return either the comtool peerid either the local one for distant usage */
+
   const SimpleList<unsigned int>& GetListPeerId(); /*!< Access to the list of connected peer */
   //@}
 
@@ -108,9 +110,11 @@ class InOutputAttribut : public Attribut
   KIND kindOfInput; /*!< 0 if input, 1 of output, 2 if input/output*/
 
   ComTools* comTool; /*!< the pointer on the tool of communication associated to this input or output object */
+unsigned int peerId; /*!< needed in case of distant usage, because we do not have a comtool */
 
   unsigned short tcpPort; /*!< port number for TCP */
   unsigned short udpPort; /*!< port number for UDP */
+
   SimpleList<unsigned int> listPeerId; /*!< list of connected peer */
 };
 

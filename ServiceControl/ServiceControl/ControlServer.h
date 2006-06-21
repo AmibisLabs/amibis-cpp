@@ -14,7 +14,7 @@
 #include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/IntVariableAttribut.h>
-#include <ServiceControl/OmiscidServices.h>
+#include <ServiceControl/OmiscidServicesTools.h>
 
 namespace Omiscid {
 
@@ -49,6 +49,13 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @param service_name the name for the service. It will be registered with this name.
    */
   ControlServer(const char* service_name = "Control");
+
+    /** @brief Constructor
+   *
+   * Define a Service ID for this service.
+   * @param service_name the name for the service. It will be registered with this name.
+   */
+   ControlServer(const SimpleString& service_name);
 
   /** @brief Destructor */
   virtual ~ControlServer();  
@@ -260,7 +267,11 @@ class ControlServer : public TcpServer, public XMLTreeParser
 
   void RefreshLock();
   
- private:   
+ private:
+  /** @brief Only one function for all constructors
+   */
+	void InitInstance();
+
   /** @brief Add a peer interested in variable modification
    * @param var the intersting variable for the peer
    * @param listener_id the peer id

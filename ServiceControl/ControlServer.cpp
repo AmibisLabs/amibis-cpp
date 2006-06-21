@@ -2,7 +2,7 @@
 #include <System/SocketException.h>
 #include <ServiceControl/ControlServer.h>
 #include <ServiceControl/ControlUtils.h>
-#include <ServiceControl/OmiscidServices.h>
+#include <ServiceControl/OmiscidServicesTools.h>
 #include <ServiceControl/VariableAttribut.h>
 
 #ifndef WIN32
@@ -12,9 +12,7 @@
 
 using namespace Omiscid;
 
-
-ControlServer::ControlServer(const char* service_name)
-  : serviceName(service_name)
+void ControlServer::InitInstance()
 {
   localConnectorId = 0;
 
@@ -42,8 +40,6 @@ ControlServer::ControlServer(const char* service_name)
   status_variable->SetAccess(VariableAttribut::read);
   statusIntVariable = new IntVariableAttribut(status_variable, (int)STATUS_BEGIN);
 
-
-  
   va = AddVariable("number of inoutputs");  
   va->SetType("integer");
   va->SetAccess(VariableAttribut::read);
@@ -55,6 +51,18 @@ ControlServer::ControlServer(const char* service_name)
   lockIntVariable = new IntVariableAttribut(va, 0);
 
   registerDnsSd = NULL;
+}
+
+ControlServer::ControlServer(const char* service_name)
+  : serviceName(service_name)
+{
+	InitInstance();
+}
+
+ControlServer::ControlServer(const SimpleString& service_name)
+  :	serviceName( service_name.GetStr() )
+{
+	InitInstance();
 }
 
 ControlServer::~ControlServer()

@@ -7,7 +7,7 @@
  *  \date    2004-2005
  */
 
-#include <ServiceControl/OmiscidServices.h>
+#include <ServiceControl/OmiscidServicesTools.h>
 
 using namespace Omiscid;
 

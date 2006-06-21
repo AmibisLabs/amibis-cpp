@@ -338,13 +338,22 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
       {
       	SimpleString name((const char*)attr_name->children->content);
 	
-      	if(strcmp(node_name,"variable") == 0)    listVariableName.Add(name);
+      	if(strcmp(node_name,"variable") == 0)
+		{
+			listVariableName.Add(name);
+		}
       	else if(strcmp(node_name, InOutputAttribut::input_str.GetStr())==0)
-	  listInputName.Add(name);
+		{
+			listInputName.Add(name);
+		}
       	else if(strcmp(node_name, InOutputAttribut::output_str.GetStr())==0)
-	 listOutputName.Add(name);
+		{
+			listOutputName.Add(name);
+		}
       	else if(strcmp(node_name, InOutputAttribut::in_output_str.GetStr())==0)
-	listInOutputName.Add(name);
+		{
+			listInOutputName.Add(name);
+		}
      	else
 		{
 			TraceError( "unwaited tag : %s\n", node_name);

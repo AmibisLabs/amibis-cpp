@@ -1,22 +1,34 @@
 
 
-#ifndef __OMISCIDSERVICE_H__
-#define __OMISCIDSERVICE_H__
+#ifndef __OMISCID_SERVICE_H__
+#define __OMISCID_SERVICE_H__
 
 #include <System/Portage.h>
+#include <System/SimpleString.h>
+#include <ServiceControl/ControlServer.h>
 
 namespace Omiscid {
+
+class OmiscidServiceRegistry;
 
 /**
  * @author Patrick Reignier (UJF/Gravir)
  *
  */
-public BipService
+class OmiscidService : protected ControlServer
 {
+	// Ok, let's say, this cdlass is the only able to construct OmiscidService
+	friend class OmiscidServiceRegistry;
+
+private:
+	OmiscidService(const SimpleString& ServiceName);
+
+	// Every one can destroy an OmiscidService
+public:
+	~OmiscidService();
 
 #if 0
-
-    /** Variable for Read Access*/
+	    /** Variable for Read Access*/
     public static final String READ = "read";
     /** Variable for Read and Write Access*/
     public static final String READ_WRITE = "read_write";
@@ -45,11 +57,13 @@ public BipService
 	public void addConnectorListener(String connectorName,
 									BipMessageListener msgListener) throws UnknownBipConnector;
 
+#endif
 	/**
 	 * Starts the corresponding service
 	 */
-	public void start();
+	void Start();
 
+#if 0
 	/**
 	 * Stops the bip service : closes all the connections and unregisters the service
 	 */
@@ -220,10 +234,9 @@ public BipService
      */
     public void connectTo(String localConnector, BipServiceProxy proxy, String remoteConnector)
     		throws UnknownBipConnector, IncorrectConnectorType;
-
-#endif // #if 0
+#endif
 };
 
 } // namespace Omiscid
 
-#endif  // __OMISCIDSERVICE_H__
+#endif  // __OMISCID_SERVICE_H__
