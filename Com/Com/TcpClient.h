@@ -9,7 +9,6 @@
 #include <System/Portage.h>
 #include <Com/ComTools.h>
 #include <Com/MsgSocket.h>
-// #include <ServiceControl/ControlUtils.h>
 
 namespace Omiscid {
 
