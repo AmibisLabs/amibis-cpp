@@ -63,7 +63,11 @@ class ComTools
    */
   static unsigned int GeneratePeerId();
 
-  static SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key);
+  /** @brief Gestion of Magic paquet
+   *
+   */
+  static const SimpleString MagicUdp;
+  static SimpleString * ValueFromKey(SimpleString& array, SimpleString& key);
 };
 
 } // namespace Omiscid

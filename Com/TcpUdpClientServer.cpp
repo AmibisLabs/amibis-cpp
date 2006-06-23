@@ -67,9 +67,8 @@ void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, Ms
 	if ( MsgData->len != 0 )
 	{
 		// Ok, we've got the Linc Data
-		SimpleString tmpBuf = SimpleString((const char*)MsgData->buffer);
-		SimpleString updPort = SimpleString("udp-port");
-		SimpleString * UDPPort = ValueFromKey( tmpBuf, updPort );
+		SimpleString tmpBuf((const char*)MsgData->buffer);
+		SimpleString * UDPPort = ValueFromKey( tmpBuf, (SimpleString)MagicUdp );
 
 		if ( UDPPort != 0 )
 		{
@@ -117,7 +116,7 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 	    UdpExchange::Create(0);
 		// Set UDP Port as property for the Sync Link paquet of the TCP Connection
 		char * tmpc = new char[512];
-		sprintf( tmpc, "udp-port:%d", UdpExchange::GetUdpPort() );
+		sprintf( tmpc, "%s:%d", MagicUdp.GetStr(), UdpExchange::GetUdpPort() );
 		int tmpi = (int)strlen(tmpc);
 		TcpServer::SetSyncLinkData( (unsigned char*)tmpc, tmpi );
 		tcpclient->SetSyncLinkData( (unsigned char*)tmpc, tmpi );

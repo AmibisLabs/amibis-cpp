@@ -67,6 +67,8 @@ unsigned int ComTools::GeneratePeerId()
 	}
 }
 
+const SimpleString ComTools::MagicUdp("udp-port");
+
 SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key)
 {
    unsigned int klen = key.GetLength();    // key length

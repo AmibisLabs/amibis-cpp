@@ -45,7 +45,7 @@ def primaInit(env,commandLineTargets,arguments,options=[]):
   env.Append(LIBPATH = [os.path.join(ARGUMENTS.get("svideo"),"lib")])
  if "debug" in ARGUMENTS :
   primaMessage("compiling in debug mode")
-  env.Append(CPPFLAGS = ["-g","-Wall"])
+  env.Append(CXXFLAGS = ["-g","-Wall"])
 
 ######################################
 ### Command to build a ravi module ###
@@ -100,6 +100,9 @@ def primaDotInFileTarget(env, target, mapping):
   output += env.Command(target,target+".in","sed %s $SOURCE > $TARGET && chmod 755 $TARGET" % replacements)
  return output
 
+##############################################
+### Command to map file ###
+##############################################
 def primaMapping():
  if "prefix" in ARGUMENTS:
   return {
