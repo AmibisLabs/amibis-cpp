@@ -14,4 +14,3 @@ const char* MsgSocketException::GetExceptionType()
 {
 	return "MsgSocketException";
 };
-

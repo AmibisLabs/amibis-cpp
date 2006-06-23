@@ -193,4 +193,3 @@ bool Thread::StopPending() const
 { 
 	return m_stopRequired;
 }
-

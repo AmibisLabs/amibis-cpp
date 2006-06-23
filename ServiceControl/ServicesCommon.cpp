@@ -79,8 +79,9 @@ ServiceException::ServiceException( const char * Message )
 
 ServiceException::ServiceException(const ServiceException& ExceptionToCopy)
   : SimpleException(ExceptionToCopy)
-{}
+{
+}
 
 ServiceException::~ServiceException( )
-{}
-
+{
+}

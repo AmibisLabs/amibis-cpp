@@ -487,4 +487,3 @@ bool Socket::SetTcpNoDelay(bool Set)
 #endif
 	return true;
 }
-

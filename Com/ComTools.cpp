@@ -14,4 +14,5 @@ unsigned short ComTools::GetUdpPort()
 }
 
 ComTools::~ComTools()
-{}
+{
+}

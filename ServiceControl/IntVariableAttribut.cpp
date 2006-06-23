@@ -34,4 +34,4 @@ void IntVariableAttribut::Incr()
 void IntVariableAttribut::Decr()
 {
 	SetIntValue(integerValue - 1);
-} 
+}

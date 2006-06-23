@@ -1,5 +1,3 @@
-
-
 #include <System/Portage.h>
 
 #ifdef WIN32
