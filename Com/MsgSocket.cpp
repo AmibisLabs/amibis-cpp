@@ -63,8 +63,8 @@ unsigned int MsgSocket::Debug = MsgSocket::DBG_NONE;
 MsgSocket::MsgSocket(Socket* s)
   : socket(s),    
     bufferSize(TCP_BUFFER_SIZE), buffer(NULL), occupiedSize(0),
-	SendBuffer(NULL),
     connected(true),
+	SendBuffer(NULL),
     start_tag(NULL), buffer_udp_send(NULL),
     kind(TCP_CLIENT_KIND),
     service_id(0), message_id(0), peer_pid(0),
