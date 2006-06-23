@@ -105,7 +105,8 @@ hToInstall += ['			; # end of the previous print line
 
 &PrintHeaders( 'ServiceControl' );
 
-print $SConstruct '
+print $SConstruct ']
+
 binToInstall += primaDotInFileTarget(env, "Com/primacom-config", primaMapping())
 binToInstall += primaDotInFileTarget(env, "System/primasystem-config", primaMapping())
 binToInstall += primaDotInFileTarget(env, "ServiceControl/primacontrol-config", primaMapping())
