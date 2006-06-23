@@ -1,5 +1,7 @@
 #include <Com/ComTools.h>
 
+#include <stdlib.h>
+
 using namespace Omiscid;
 
 // test commit
