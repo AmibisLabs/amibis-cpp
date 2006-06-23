@@ -159,6 +159,10 @@ def primaCheckLibs(conf,libs=[]):
    if "svideo" == lib:
     if not conf.CheckLibWithHeader("svideo","svideotools/VideoClient.h","CXX"):
      missing += ["svideo"]
+   elif "dns_sd" == lib:
+    if not conf.CheckCXXHeader("dns_sd.h") or \
+       not conf.CheckLib([None, "dns_sd"], "DNSServiceRegister"):
+     missing += ["dns_sd"]
    elif "xml2" == lib:
     if not conf.CheckLibWithHeader("xml2","libxml/tree.h","CXX"):
      missing += ["xml2"]
