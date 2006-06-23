@@ -16,16 +16,6 @@ namespace Omiscid {
 class ControlUtils
 {
 public:
-	enum PeerMasks { SERVICE_PEERID = 0xffffff00, CONNECTOR_ID = 0x000000ff };
-
-  /** @brief Generation of service id
-   *
-   * The generated value is composed of 2 bytes created by using the 
-   * current time and 2 other bytes obtained by using a random generator
-   * @return a value that can be used as service Id
-   */
-  static unsigned int GeneratePeerId();
-
   /** @brief Change an integer in string
    *
    * @param value [in] the value to change into string

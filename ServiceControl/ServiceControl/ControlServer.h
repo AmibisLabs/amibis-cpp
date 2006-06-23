@@ -10,6 +10,7 @@
 
 #include <System/Portage.h>
 #include <System/SimpleList.h>
+#include <Com/ComTools.h>
 #include <Com/TcpServer.h>
 #include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/InOutputAttribut.h>

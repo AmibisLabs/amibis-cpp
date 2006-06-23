@@ -146,7 +146,7 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 void TcpUdpClientServer::SetServiceId(unsigned int pid)
 {
 	// Check validity of a service Id
-	if ( (pid & ControlUtils::CONNECTOR_ID) == 0 )
+	if ( (pid & ComTools::CONNECTOR_ID) == 0 )
 	{
 		// pid = pid | 0xffffff01;
 #ifdef DEBUG

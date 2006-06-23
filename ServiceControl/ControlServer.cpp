@@ -18,7 +18,7 @@ void ControlServer::InitInstance()
 
   port = 0;
 
-  serviceId = ControlUtils::GeneratePeerId();
+  serviceId = ComTools::GeneratePeerId();
   TcpServer::SetServiceId(GetServiceId());
 
   TcpServer::SetTcpNoDelay(true);
@@ -526,12 +526,12 @@ InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_too
   {
 	  // Incr number for the Connector
 	  localConnectorId++;
-	  if ( (localConnectorId & ControlUtils::SERVICE_PEERID) != 0 )
+	  if ( (localConnectorId & ComTools::SERVICE_PEERID) != 0 )
 	  {
 		  fprintf( stderr, "Too many connector (>127). Unexpected features may appear\n." );
 	  }
 
-	  ConnectorId = localConnectorId & ControlUtils::CONNECTOR_ID;
+	  ConnectorId = localConnectorId & ComTools::CONNECTOR_ID;
 
 	  com_tool->SetServiceId( GetServiceId() | ConnectorId );
   }

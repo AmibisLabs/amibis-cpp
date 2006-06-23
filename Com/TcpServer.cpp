@@ -306,7 +306,7 @@ int TcpServer::GetListPeerId(SimpleList<unsigned int>& list_peer)
 void TcpServer::SetServiceId(unsigned int pid)
 {
 	// Check validity of a service Id
-	if ( (pid & ControlUtils::CONNECTOR_ID) == 0 )
+	if ( (pid & ComTools::CONNECTOR_ID) == 0 )
 	{
 		// pid = pid | 0xffffff01;
 #ifdef DEBUG
