@@ -68,7 +68,9 @@ void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, Ms
 	{
 		// Ok, we've got the Linc Data
 		SimpleString tmpBuf((const char*)MsgData->buffer);
-		SimpleString * UDPPort = ValueFromKey( tmpBuf, (SimpleString)MagicUdp );
+		SimpleString tmpUdp = MagicUdp;
+
+		SimpleString * UDPPort = ValueFromKey( tmpBuf, tmpUdp );
 
 		if ( UDPPort != 0 )
 		{
