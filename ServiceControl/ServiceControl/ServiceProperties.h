@@ -197,4 +197,3 @@ protected:
 } // namespace Omiscid
 
 #endif /* _SERVICE_PROPERTIES_H_ */
-

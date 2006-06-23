@@ -205,7 +205,6 @@ class XMLTreeParser : public Thread
 };
 
 
-
 } // namespace Omiscid
 
 #endif /** XMLTREEPARSER_H */
