@@ -8,6 +8,7 @@
 
 #include <System/Portage.h>
 #include <System/SimpleList.h>
+#include <System/SimpleString.h>
 
 namespace Omiscid {
 
@@ -61,6 +62,8 @@ class ComTools
    * @return a value that can be used as service Id
    */
   static unsigned int GeneratePeerId();
+
+  static SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key);
 };
 
 } // namespace Omiscid

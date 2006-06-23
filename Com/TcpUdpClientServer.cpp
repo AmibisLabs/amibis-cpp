@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <System/Portage.h>
 #include <Com/TcpUdpClientServer.h>
-#include <ServiceControl/ServiceProperties.h>
 
 using namespace Omiscid;
 
@@ -45,12 +44,10 @@ void TcpUdpClientServer::Create(int port_tcp, int port_udp)
   // REVIEW add support of UDP Port
   UdpExchange::Create(port_udp);
 
-  // Set UDP Port as property for the Sync Link paquet of the TCP Connection
-  ServiceProperties SrvProp;
-  char tmpc[512];
-  sprintf( tmpc, "%d", UdpExchange::GetUdpPort() );
-  SrvProp["UDP"] = tmpc;
-  TcpServer::SetSyncLinkData( SrvProp, SrvProp.GetTXTRecordLength() );
+  char * tmpc = new char[512];
+  sprintf( tmpc, "UDP:%d", UdpExchange::GetUdpPort() );
+  TcpServer::SetSyncLinkData( (unsigned char*)tmpc, (int)strlen(tmpc) );
+  delete tmpc;
   TcpServer::SetCallbackSyncLink( ProcessLyncSyncMsg, (void*)this, (void*)0 );
   TcpServer::Create(port_tcp);
 }
@@ -68,10 +65,10 @@ void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, Ms
 	// Check if the data if Empty
 	if ( MsgData->len != 0 )
 	{
-		ServiceProperties SrvProp;
-		SrvProp.ImportTXTRecord( MsgData->len, (const char*)MsgData->buffer );
+		// Ok, we've got the Linc Data
+		SimpleString * UDPPort = ValueFromKey( SimpleString((const char*)MsgData->buffer), SimpleString("udp-port") );
 
-		if ( SrvProp.IsDefined( "UDP" ) )
+		if ( UDPPort != 0 )
 		{
 			UdpConnection udpConnection;
 			udpConnection.pid = MsgData->pid;
@@ -82,7 +79,7 @@ void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, Ms
 
 			SimpleString ConnectedHost = MyMsgSocket->GetSocket()->GetConnectedHost();
 
-			int tmpudp = atoi(SrvProp["UDP"]);
+			int tmpudp = atoi( UDPPort->GetStr() );
 			//REVIEW 
 			// udpConnection.addr.sin_family = AF_INET;
 			// udpConnection.addr.sin_port = htons(tmpudp);
@@ -93,6 +90,8 @@ void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, Ms
 			Socket::FillAddrIn(&udpConnection.addr, ConnectedHost.GetStr(), tmpudp );
 
 			pThis->AcceptConnection( udpConnection, true );
+
+			delete UDPPort;
 		}
 	}
 }
@@ -114,12 +113,12 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 		// REVIEW : done by the TCP Port
 	    UdpExchange::Create(0);
 		// Set UDP Port as property for the Sync Link paquet of the TCP Connection
-		ServiceProperties SrvProp;
-		char tmpc[512];
-		sprintf( tmpc, "%d", UdpExchange::GetUdpPort() );
-		SrvProp["UDP"] = tmpc;
-		TcpServer::SetSyncLinkData( SrvProp, SrvProp.GetTXTRecordLength() );
-		tcpclient->SetSyncLinkData( SrvProp, SrvProp.GetTXTRecordLength() );
+		char * tmpc = new char[512];
+		sprintf( tmpc, "udp-port:%d", UdpExchange::GetUdpPort() );
+		int tmpi = (int)strlen(tmpc);
+		TcpServer::SetSyncLinkData( (unsigned char*)tmpc, tmpi );
+		tcpclient->SetSyncLinkData( (unsigned char*)tmpc, tmpi );
+		delete tmpc;
   }
 
   tcpclient->ConnectToServer(addr, port_tcp);
@@ -364,7 +363,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
     }
   if(!udp_found)
   {
-	  TraceError( "UDP connection Refused or not initialise from peer %u\n", udp_connect.pid);
+	  TraceError( "UDP connection Refused or not initialise from peer %x\n", udp_connect.pid);
   }
 
   UdpExchange::listUdpConnections.Unlock();

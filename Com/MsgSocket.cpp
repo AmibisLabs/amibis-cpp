@@ -191,7 +191,7 @@ int MsgSocket::SetSyncLinkData( unsigned char * data, int length )
 
 	// Copy data and set Length
 	SyncLinkData = tmpc;
-	memmove( SyncLinkData, data, (size_t)length );
+	memcpy( SyncLinkData, data, (size_t)length );
 	SyncLinkDataLength = length;
 
 	protectSend.LeaveMutex();

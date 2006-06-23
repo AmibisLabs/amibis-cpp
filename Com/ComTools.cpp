@@ -66,3 +66,92 @@ unsigned int ComTools::GeneratePeerId()
 		}
 	}
 }
+
+SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key)
+{
+   unsigned int klen = key.GetLength();    // key length
+   unsigned int len  = array.GetLength (); // remaining characters
+   unsigned int idx  = 0;                   // index of the current character
+   unsigned int idx_start = 0;              // index of the first data character
+
+   line_start:
+
+     if (len < klen + 1)
+	 {
+		 goto eat_line;
+	 }
+
+     // check if key matches the line head
+     if (key != array.SubString(idx, idx + klen))
+	 {
+		 goto eat_line;
+	 }
+     idx += klen; len -= klen;
+
+     // check if a colon follows immediately
+     if (array[idx] != ':')
+	 {
+		 goto eat_line;
+	 }
+     idx += 1; len -= 1;
+
+   eat_spaces:
+
+     if (len == 0)
+	 {
+		 return NULL;
+	 }
+
+     switch (array[idx])
+	 {
+       case ' ':
+       case '\t':
+         idx += 1; len -= 1;
+         goto eat_spaces;
+     
+	   default:
+         break;
+     }
+     idx_start = idx;
+     idx += 1; len -= 1;
+
+   eat_data:
+
+     if (len == 0)
+	 {
+		 goto data_eaten;
+	 }
+
+     switch (array[idx])
+	 {
+       case '\r':
+       case '\n':
+         goto data_eaten;
+       default:
+         idx += 1; len -= 1;
+         goto eat_data;
+     }
+
+   data_eaten:
+     return new SimpleString( array.SubString(idx_start, idx) );
+
+   eat_line:
+
+     if (len == 0)
+	 {
+		 return NULL;
+	 }
+
+     switch (array[idx])
+	 {
+       case '\n':
+         idx += 1; len -= 1;
+         goto line_start;
+
+       default:
+         idx += 1; len -= 1;
+         goto eat_line;
+     }
+
+	 return NULL;
+}

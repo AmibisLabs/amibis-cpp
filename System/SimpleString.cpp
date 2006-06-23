@@ -450,7 +450,7 @@ bool SimpleString::StringData::NotEquals(const char* str) const
 
 bool SimpleString::StringData::NotEquals(const StringData& sd) const
 {
-	return (this != &sd) || NotEquals(sd.GetDataPtr()); 
+	return (this != &sd) && NotEquals(sd.GetDataPtr()); 
 }
 
 //----------------------------------------------//
