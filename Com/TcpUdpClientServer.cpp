@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <System/Portage.h>
 #include <Com/TcpUdpClientServer.h>
@@ -66,7 +67,9 @@ void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, Ms
 	if ( MsgData->len != 0 )
 	{
 		// Ok, we've got the Linc Data
-		SimpleString * UDPPort = ValueFromKey( SimpleString((const char*)MsgData->buffer), SimpleString("udp-port") );
+		SimpleString tmpBuf = SimpleString((const char*)MsgData->buffer);
+		SimpleString updPort = SimpleString("udp-port");
+		SimpleString * UDPPort = ValueFromKey( tmpBuf, updPort );
 
 		if ( UDPPort != 0 )
 		{
