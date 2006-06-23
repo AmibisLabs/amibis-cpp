@@ -52,12 +52,12 @@
 
 	#include <sys/types.h>
 	#include <sys/socket.h>
+	#include <sys/time.h>
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
 	typedef int SOCKET;
 	#define SOCKET_ERROR (-1)
 
-	#include <sys/types.h>
 	#include <unistd.h>
 #endif
 
