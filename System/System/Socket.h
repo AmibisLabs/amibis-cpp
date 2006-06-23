@@ -9,6 +9,10 @@
 #include <System/Portage.h>
 #include <System/SimpleString.h>
 
+#ifndef WIN32
+#include <netdb.h>
+#endif
+
 namespace Omiscid {
 
 /**
