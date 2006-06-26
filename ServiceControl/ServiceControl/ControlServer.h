@@ -88,15 +88,6 @@ class ControlServer : public TcpServer, public XMLTreeParser
    */
   bool StartServer();
 
-    /**
-   * @brief Launch a server for the control and Register the service.
-   *
-   * Launch a Tcp Server on a free port.
-   * Register the service (DNS-SD)
-   * @return true if the tcp server is correctly launched and the service registered
-   */
-  bool StopServer();
-
   /** @brief Message processing in a thread.
    *
    * run a thread where queries to the server are processed. In this case, the user don't need 

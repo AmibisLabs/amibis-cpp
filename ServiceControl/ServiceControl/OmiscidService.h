@@ -27,13 +27,18 @@ private:
 public:
 	~OmiscidService();
 
+	/**
+	 * Starts the corresponding service
+	 */
+	void Start();
+
 #if 0
 	    /** Variable for Read Access*/
-    public static final String READ = "read";
+    public static final SimpleString READ = "read";
     /** Variable for Read and Write Access*/
-    public static final String READ_WRITE = "read_write";
+    public static final SimpleString READ_WRITE = "read_write";
     /** Object for Read-Write Access before init */
-    public static final String READ_WRITE_BEFORE_INIT = "read_write_before_init";
+    public static final SimpleString READ_WRITE_BEFORE_INIT = "read_write_before_init";
 
 
 	/**
@@ -44,8 +49,8 @@ public:
 	 * @throws ConnectorAlreadyExisting thrown if we try to recreate an already existing connector
 	 * @throws IOException thrown if there is an error in the tcp socket creation
 	 */
-	public void addConnector(String connectorName,
-			                 String connectorDescription,
+	public void addConnector(SimpleString connectorName,
+			                 SimpleString connectorDescription,
 			                 InOutputKind connectorKind) throws ConnectorAlreadyExisting, IOException;
 
 	/**
@@ -54,20 +59,8 @@ public:
 	 * @param msgListener the object that will handle messages sent to this connector
 	 * @throws UnknownBipConnector thrown if the service has not declared this connector
 	 */
-	public void addConnectorListener(String connectorName,
+	public void addConnectorListener(SimpleString connectorName,
 									BipMessageListener msgListener) throws UnknownBipConnector;
-
-#endif
-	/**
-	 * Starts the corresponding service
-	 */
-	void Start();
-
-#if 0
-	/**
-	 * Stops the bip service : closes all the connections and unregisters the service
-	 */
-	public void stop() ;
 
 
 	/**
@@ -79,9 +72,9 @@ public:
 	 * @param msg the message to send
 	 * @param pid peer id : the identification of the client that must receive the message
 	 * @throws UnknownBipConnector thrown if the service has not declared this connector
-	 * @see BipService#sendToOneClient(String, byte[], BipServiceProxy)
+	 * @see BipService#sendToOneClient(SimpleString, byte[], BipServiceProxy)
 	 */
-	public void sendToOneClient(String connectorName, byte[] msg, int pid)
+	public void sendToOneClient(SimpleString connectorName, byte[] msg, int pid)
 	           throws UnknownBipConnector;
 
 	/**
@@ -91,9 +84,9 @@ public:
 	 * @param msg the message to send
 	 * @param bipServiceProxy : the proxy of the remote service
 	 * @throws UnknownBipConnector thrown if the service has not declared this connector
-	 * @see BipService#sendToOneClient(String, byte[], int)
+	 * @see BipService#sendToOneClient(SimpleString, byte[], int)
 	 */
-	public void sendToOneClient(String connectorName, byte[] msg, BipServiceProxy bipServiceProxy)
+	public void sendToOneClient(SimpleString connectorName, byte[] msg, BipServiceProxy bipServiceProxy)
 	           throws UnknownBipConnector;
 
 
@@ -104,7 +97,7 @@ public:
 	 * @throws UnknownBipService thrown if serviceId is not a declared service
 	 * @throws UnknownBipConnector thrown if the service has not declared this connector
 	 */
-	public void sendToAllClients(String connectorName, byte[] msg)
+	public void sendToAllClients(SimpleString connectorName, byte[] msg)
 				throws UnknownBipConnector;
 
 	/**
@@ -114,7 +107,7 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-	public void setVariableValue(String varName, String varValue)
+	public void setVariableValue(SimpleString varName, SimpleString varValue)
 				throws UnknownBipVariable ;
 
 	/**
@@ -124,7 +117,7 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-	public String getVariableValue(String varName)
+	public SimpleString getVariableValue(SimpleString varName)
 				throws UnknownBipVariable ;
 
 	/**
@@ -138,7 +131,7 @@ public:
 	 * @throws VariableAlreadyExisting thrown if a variable with the same
 	 * name has already been declated
 	 */
-	public void addVariable(String varName, String type, String accessType)
+	public void addVariable(SimpleString varName, SimpleString type, SimpleString accessType)
 			throws VariableAlreadyExisting ;
 
 	/**
@@ -147,7 +140,7 @@ public:
 	 * @param varDescription the description
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 */
-	public void setVariableDescription(String varName, String varDescription)
+	public void setVariableDescription(SimpleString varName, SimpleString varDescription)
 			throws UnknownBipVariable ;
 
 	/**
@@ -157,17 +150,17 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-	public String getVariableDescription(String varName)
+	public SimpleString getVariableDescription(SimpleString varName)
 			throws UnknownBipVariable ;
 
 	/**
 	 * Returns the variable access type
 	 * @param varName the variable name
-	 * @return the access type (String version)
+	 * @return the access type (SimpleString version)
 	 * @throws UnknownBipVariable thrown if the variable has not been decladed
 	 * @see BipService#addVariable
 	 */
-	public String getVariableAccessType(String varName)
+	public SimpleString getVariableAccessType(SimpleString varName)
 			throws UnknownBipVariable ;
 
 	/**
@@ -177,7 +170,7 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
 	 */
-	public String getVariableType(String varName)
+	public SimpleString getVariableType(SimpleString varName)
 			throws UnknownBipVariable ;
 
 	/**
@@ -187,7 +180,7 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
 	 */
-	public void addVariableChangeListener(String varName, final BipVariableChangeListener listener)
+	public void addVariableChangeListener(SimpleString varName, final BipVariableChangeListener listener)
 			throws UnknownBipVariable ;
 
 	/**
@@ -197,7 +190,7 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
 	 */
-	public void removeVariableChangeListener(String varName, VariableChangeListener listener)
+	public void removeVariableChangeListener(SimpleString varName, VariableChangeListener listener)
 			throws UnknownBipVariable ;
 
 	/**
@@ -206,7 +199,7 @@ public:
 	 * @param listener the connector listener
 	 * @throws UnknownBipConnector the connector does not exist
 	 */
-	public void removeConnectorListener(String connector, BipMessageListener listener) throws UnknownBipConnector ;
+	public void removeConnectorListener(SimpleString connector, BipMessageListener listener) throws UnknownBipConnector ;
 
     /**
      * Finds a list of services on the network. The research is based on the service names (as registered in DNS_SD)
@@ -214,14 +207,14 @@ public:
      * @return the list of associated services proxy
      * @see BipServiceProxy
      */
-    public HashMap<String, BipServiceProxy> findServices(String[] services, OmiscidServiceFilter[] filters) ;
+    public HashMap<SimpleString, BipServiceProxy> findServices(SimpleString[] services, OmiscidServiceFilter[] filters) ;
 
     /**
      * Finds a service on the network. The research is based on the service names (as registered in DNS_SD)
      * @param service the service name
      * @return the service Proxy
      */
-    public BipServiceProxy findService(String service, OmiscidServiceFilter filters) ;
+    public BipServiceProxy findService(SimpleString service, OmiscidServiceFilter filters) ;
 
     /**
      * Connects a local connector to a remote connector of a remote service
@@ -232,7 +225,7 @@ public:
      * @throws IncorrectConnectorType thrown if the coonnectors cannot connect : for instance : trying to connect an input
      * connector on another input connector.
      */
-    public void connectTo(String localConnector, BipServiceProxy proxy, String remoteConnector)
+    public void connectTo(SimpleString localConnector, BipServiceProxy proxy, SimpleString remoteConnector)
     		throws UnknownBipConnector, IncorrectConnectorType;
 #endif
 };
