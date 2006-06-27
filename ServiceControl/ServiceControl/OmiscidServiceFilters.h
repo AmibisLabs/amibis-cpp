@@ -16,7 +16,7 @@ namespace Omiscid {
 class OmiscidServiceFilter
 {
 public:
-	virtual bool IsGoodService() = NULL;
+	virtual bool IsGoodService() = 0;
 };
 
 class OmiscidServiceFilters
