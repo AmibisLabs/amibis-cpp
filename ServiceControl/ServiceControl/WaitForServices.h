@@ -23,7 +23,7 @@
 
 namespace Omiscid {
 
-typedef bool (* IsServiceValidForMe)(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData);
+typedef bool (FUNCTION_CALL_TYPE *IsServiceValidForMe)(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData);
 
 class WaitForServices;
 
@@ -81,7 +81,7 @@ protected:
 	Mutex ThreadSafeSection;
 	Mutex mutexServicesUsed;
 
-	enum { MaxSearchServices = 10 };
+	enum SEARCHLIMITS { MaxSearchServices = 10 };
 
 	int NbSearchServices;
 	SearchService SearchServices[MaxSearchServices];

@@ -485,17 +485,16 @@ bool SimpleString::operator!=(const char* str) const
 	return stringData->NotEquals(str); 
 }
 
-#define TAILLE_BUFFER 64*1024*1024
 
-static char Latin1ToUTF8Buffer[TAILLE_BUFFER]; // 64 Ko, pas mal...
-
-// WARNING : No multithread-support...
-const char * SimpleString::Latin1ToUTF8( const char *src )
+bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int TailleBuffer )
 {
-	const char * parse = src;
+	const char * parse = Src;
 	int res;
 
-	for( res=0; res < TAILLE_BUFFER; parse++, res++ )
+	if ( parse == NULL )
+		return false;
+
+	for( res=0; res < TailleBuffer; parse++, res++ )
 	{
 		if ( *parse == '\0' )
 		{
@@ -509,9 +508,9 @@ const char * SimpleString::Latin1ToUTF8( const char *src )
 		}
 		else
 		{
-			if ( res+1 >= (TAILLE_BUFFER+1) )
+			if ( res+1 >= (TailleBuffer+1) )
 			{
-				return NULL;
+				return false;
 			}
 
 			Latin1ToUTF8Buffer[res]   = (char)0xc3;
@@ -519,13 +518,11 @@ const char * SimpleString::Latin1ToUTF8( const char *src )
 		}
 	}
 
-	if ( res >= TAILLE_BUFFER )
-		return NULL;
+	if ( res >= TailleBuffer )
+		return false;
 
-	return Latin1ToUTF8Buffer;
+	return true;
 }
-
-#undef TAILLE_BUFFER
 
 #ifdef WIN32
 	#undef snprintf

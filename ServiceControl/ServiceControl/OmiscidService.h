@@ -12,7 +12,7 @@ namespace Omiscid {
 class OmiscidServiceRegistry;
 
 /**
- * @author Patrick Reignier (UJF/Gravir)
+ * @author Dominique Vaufreydaz
  *
  */
 class OmiscidService : protected ControlServer

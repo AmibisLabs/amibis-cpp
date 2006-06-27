@@ -42,7 +42,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
 {
  public:
   /** @brief Values for the variable 'status' that gives the state of the service */
-  typedef enum{STATUS_BEGIN = 0, STATUS_INIT = 1, STATUS_RUNNING = 2} STATUS;
+  enum STATUS {STATUS_BEGIN = 0, STATUS_INIT = 1, STATUS_RUNNING = 2};
 
   /** @brief Constructor
    *
@@ -66,7 +66,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * If the service is already registered, it will not change the published data.
    * @param service_name [in] the name for the service registration
    */
-  void SetServiceName(const char* service_name);
+  bool SetServiceName(const char* service_name);
 
   /** @brief get the name of the service.
    * @return the service name
@@ -264,7 +264,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    *
    * Callback given to the variable attribut object
    */
-  static void ValueChanged(VariableAttribut* var, void* userData);
+  static void FUNCTION_CALL_TYPE ValueChanged(VariableAttribut* var, void* userData);
 
   void RefreshLock();
   

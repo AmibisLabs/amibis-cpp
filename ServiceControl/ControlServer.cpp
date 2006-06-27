@@ -163,7 +163,8 @@ bool ControlServer::StartServer()
 
     if(registerDnsSd->IsRegistered())
 	{
-		TraceError( "registered ok\n");
+		TraceError( "registered as '%s' ok\n", registerDnsSd->RegisteredName );
+		serviceName = registerDnsSd->RegisteredName;
 		// Copy back Properties from RegisterDnsSd to parent, so this object
 		Properties.ImportTXTRecord( registerDnsSd->Properties.GetTXTRecordLength(), registerDnsSd->Properties.ExportTXTRecord() );
 	}
@@ -265,7 +266,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 		  // TraceError( " process io : %s \n", (*it)->name.GetStr());
 		  ProcessInOutputQuery(cur_node, str);
 		}
-	      else if(strcmp(name, "variable") == 0)
+	      else if(strcmp(name, VariableAttribut::variable_str.GetStr()) == 0)
 		{
 		  ProcessVariableQuery(cur_node, msg->pid,  str);		 
 		}
@@ -551,7 +552,7 @@ InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_too
 
 ////////////// LISTENER ////////////////////////
 
-void ControlServer::ValueChanged(VariableAttribut* var, void* user_data)
+void FUNCTION_CALL_TYPE ControlServer::ValueChanged(VariableAttribut* var, void* user_data)
 {	
 //	TraceError( "in ControlServer::ValueChanged : Not Yet Implemented\n");
 //	TraceError( "value changed for %s\n", var->GetNameCh());
@@ -658,9 +659,15 @@ void ControlServer::DisplayServiceId() const
 	printf("%u\n", serviceId);
 }
 
-void ControlServer::SetServiceName(const char* service_name)
+bool ControlServer::SetServiceName(const char* service_name)
 {
+	if ( registerDnsSd && registerDnsSd->IsRegistered() )
+	{
+		return false;
+	}
+
 	serviceName = service_name;
+	return true;
 }
 
 int ControlServer::ProcessMessages()

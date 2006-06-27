@@ -42,7 +42,7 @@ class ControlClient : public TcpClient, public XMLTreeParser
 {
  public:
   /** \brief Event listener type */
-  typedef void (*CtrlEventListener)(XMLMessage*, void*);
+  typedef void (FUNCTION_CALL_TYPE *CtrlEventListener)(XMLMessage*, void*);
  
   /** \brief Constructor
    * \param serviceId [in] the id of the service associated to this object
@@ -189,7 +189,7 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * \param msg the message containing the ControlEvent
    * \param ptr pointer on a ControlClient object
    */
-  static void CtrlEventProcess(XMLMessage* msg, void* ptr);
+  static void FUNCTION_CALL_TYPE CtrlEventProcess(XMLMessage* msg, void* ptr);
 
  protected:
   /** \brief Process a message from a ControlServer

@@ -91,7 +91,7 @@ void MsgManager::ProcessAMessage(Message* msg)
 }
 
 
-void MsgManager::CumulMessage(MsgSocketCallBackData* cd)
+void FUNCTION_CALL_TYPE MsgManager::CumulMessage(MsgSocketCallBackData* cd)
 {
   if(cd->userData1)
     {
@@ -107,8 +107,7 @@ void MsgManager::CumulMessage(MsgSocketCallBackData* cd)
 
 void MsgManager::LinkToMsgSocketObject(MsgSocket* ms)
 {
-  ms->SetCallbackReceive(MsgManager::CumulMessage, 
-			this, NULL);
+  ms->SetCallbackReceive(MsgManager::CumulMessage, this, NULL);
 }
 
 bool MsgManager::WaitForMessage(unsigned long timer)

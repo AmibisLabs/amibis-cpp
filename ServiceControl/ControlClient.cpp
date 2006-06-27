@@ -4,7 +4,7 @@
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/VariableAttribut.h>
 
-#ifdef _DEBUG
+#ifdef DEBUG
 #define TIME_TO_WAIT_ANSWER 500000
 #else
 #define TIME_TO_WAIT_ANSWER 5000
@@ -338,7 +338,7 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
       {
       	SimpleString name((const char*)attr_name->children->content);
 	
-      	if(strcmp(node_name,"variable") == 0)
+		if(strcmp(node_name,VariableAttribut::variable_str.GetStr()) == 0)
 		{
 			listVariableName.Add(name);
 		}
@@ -365,7 +365,7 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 VariableAttribut* ControlClient::ProcessVariableDescription(xmlNodePtr node, 
 							    VariableAttribut* var_attr)
 {
-  if(!node || (strcmp((const char*)node->name, "variable") !=0 )) return NULL;
+  if(!node || (strcmp((const char*)node->name, VariableAttribut::variable_str.GetStr()) !=0 )) return NULL;
   
 #if defined DEBUG
   // XMLMessage::DisplayNode(node, stderr);
@@ -527,8 +527,7 @@ void ControlClient::ProcessAMessage(XMLMessage* msg)
 	}
 }
 
-
-void ControlClient::CtrlEventProcess(XMLMessage* msg, void* ptr)
+void FUNCTION_CALL_TYPE ControlClient::CtrlEventProcess(XMLMessage* msg, void* ptr)
 {
   ControlClient* ctrl_client = (ControlClient*)ptr;
 
@@ -539,7 +538,7 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg, void* ptr)
   for(; current != NULL; current = current->next)
     {
       const char* cur_name = (const char*)current->name;
-      if(strcmp(cur_name, "variable")==0)
+      if(strcmp(cur_name, VariableAttribut::variable_str.GetStr())==0)
 	{
 	  xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", current);
 	  VariableAttribut* va = ctrl_client->FindVariable((const char*)attr_name->children->content);

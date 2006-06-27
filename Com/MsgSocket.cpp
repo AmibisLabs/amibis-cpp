@@ -56,7 +56,7 @@ const int MsgSocket::tag_size = (const int)(strlen(tag_start1) + 1 + MsgSocket::
 
 #ifdef DEBUG
 
-unsigned int MsgSocket::Debug = MsgSocket::DBG_NONE;
+MsgSocket::DEBUGFLAGS MsgSocket::Debug = MsgSocket::DBG_NONE;
 
 #endif
 

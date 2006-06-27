@@ -27,7 +27,7 @@ void ServiceFromXML::InitServiceFromXml(xmlNodePtr root_node)
       if (cur_node->type == XML_ELEMENT_NODE)
 	{	  
 	  const char* cur_name = (const char*)cur_node->name;
-	  if(strcmp(cur_name, "variable") == 0)
+	  if(strcmp(cur_name, VariableAttribut::variable_str.GetStr()) == 0)
 	    {
 	      ProcessVariableAttribut(cur_node);
 	    }

@@ -183,7 +183,7 @@ class XMLTreeParser : public Thread
    * The user parameters will be present in the MsgSocketCallBackData object.
    * @param cd a MsgSocketCallBackData object who contains the pointer define by user, and the new message buffer.
    */
-  static void CumulMessage(MsgSocketCallBackData* cd);
+  static void FUNCTION_CALL_TYPE CumulMessage(MsgSocketCallBackData* cd);
 
   /** @brief Loop where message are processed when they arrive.
    *

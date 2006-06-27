@@ -22,7 +22,8 @@ namespace Omiscid {
 class MultipleReferencedData
 {
  public:
-  typedef void (*MethodForRelease)(MultipleReferencedData*);
+  typedef void (FUNCTION_CALL_TYPE *MethodForRelease)(MultipleReferencedData*);
+
  public: 
   /** @brief Constructor 
    * @see Init */

@@ -150,7 +150,7 @@ xmlDocPtr XMLTreeParser::ParseMessage(int length, unsigned char* buffer)
 }
 
  
-void XMLTreeParser::CumulMessage(MsgSocketCallBackData* cd)
+void FUNCTION_CALL_TYPE XMLTreeParser::CumulMessage(MsgSocketCallBackData* cd)
 {
   if(cd->userData1)
     {

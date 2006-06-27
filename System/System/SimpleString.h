@@ -178,7 +178,7 @@ public:
 	//@}
 	
 
-	static const char * Latin1ToUTF8( const char *src );
+	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int TailleBuffer );
 
 	// REVIEW
 	static const SimpleString EmptyString;

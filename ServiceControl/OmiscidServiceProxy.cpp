@@ -31,19 +31,19 @@ SimpleList<SimpleString>& OmiscidServiceProxy::GetVariables()
 	return GetVariableNameList();
 }
 
-	/**
-	 * Returns the list of connectors (input type)
-	 * @return the list of connectors
-	 */
+/**
+	* Returns the list of connectors (input type)
+	* @return the list of connectors
+	*/
 SimpleList<SimpleString>& OmiscidServiceProxy::GetInputConnectors()
 {
 	return GetInputNameList();
 }
 
-    /**
-     * Returns the list of connectors (output type)
-     * @return the list of connectors
-     */
+/**
+    * Returns the list of connectors (output type)
+    * @return the list of connectors
+    */
 SimpleList<SimpleString>& OmiscidServiceProxy::GetOutputConnectors()
 {
 	return GetOutputNameList();

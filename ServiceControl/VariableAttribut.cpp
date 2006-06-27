@@ -8,6 +8,8 @@ const SimpleString VariableAttribut::access_read_str = "read";
 const SimpleString VariableAttribut::access_readwrite_str = "readWrite";
 const SimpleString VariableAttribut::access_readwritebeforeinit_str = "readWriteBeforeInit";
 
+const SimpleString VariableAttribut::variable_str = "variable";
+
 VariableAttribut::VariableAttribut()
 {
   access = read;  
@@ -44,12 +46,12 @@ const SimpleString& VariableAttribut::AccessToStr(Access a)
 
 void VariableAttribut::GenerateShortDescription(SimpleString& str)
 {
-  GenerateHeaderDescription("variable", GetName(), str);
+  GenerateHeaderDescription(variable_str, GetName(), str);
 }
 
 void VariableAttribut::GenerateLongDescription(SimpleString& str)
 {
-  GenerateHeaderDescription("variable", GetName(), str, false);
+  GenerateHeaderDescription(variable_str, GetName(), str, false);
 
   str += "<value>";
   PutAValueInCData(GetValueStr().GetStr(), str);
@@ -69,7 +71,7 @@ void VariableAttribut::GenerateLongDescription(SimpleString& str)
 
 void VariableAttribut::GenerateValueMessage(SimpleString& str)
 {
-  GenerateHeaderDescription("variable", GetName(), str, false);
+  GenerateHeaderDescription(variable_str, GetName(), str, false);
 
   str += "<value>";
   PutAValueInCData(GetValueStr().GetStr(), str);

@@ -53,7 +53,7 @@ void TcpUdpClientServer::Create(int port_tcp, int port_udp)
   TcpServer::Create(port_tcp);
 }
 
-void TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, MsgSocket * MyMsgSocket )
+void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, MsgSocket * MyMsgSocket )
 {
 	TcpUdpClientServer * pThis = (TcpUdpClientServer*)MsgData->userData1;
 

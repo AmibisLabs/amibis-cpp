@@ -100,23 +100,24 @@ class MsgSocket : public Thread
 
 #ifdef DEBUG
 
-	 enum {
+	 enum DEBUGFLAGS
+	 {
 		 DBG_NONE		= 0x000000000,
 		 DBG_LINKSYNC	= 0x000000001,
 		 DBG_RECV		= 0x000000002,
 		 DBG_SEND		= 0x000000004,
 		 DBG_ALL		= 0xffffffff
 	 };
-	 static unsigned int Debug;
+	 static DEBUGFLAGS Debug;
 
 #endif
 
   /** \brief Callback for the message reception */
-  typedef void (*Callback_Receive)(MsgSocketCallBackData*);
-  typedef void (*Callback_SyncLink)(MsgSocketCallBackData*,MsgSocket *);
+  typedef void (FUNCTION_CALL_TYPE *Callback_Receive)(MsgSocketCallBackData*);
+  typedef void (FUNCTION_CALL_TYPE *Callback_SyncLink)(MsgSocketCallBackData*,MsgSocket *);
 
   /** \brief Kind of use of a MsgSocket object */
-  typedef enum MsgSocketKind
+  enum MsgSocketKind
     {
       NONE_KIND = -1,
       TCP_CLIENT_KIND = 0, /*!< for TCP connection : client side */

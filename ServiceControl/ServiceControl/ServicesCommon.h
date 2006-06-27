@@ -68,11 +68,11 @@ public:
 		*	This enum is used to define the control protocol used by the service. Supported protocols
 		*	are TCP and UDP.
 		*/
-		typedef enum {
+		enum TransportProtocol{
 			UNKNOWN = 0,		/*!< set when the transport protocol is undefined or unsupported. */
 			TCP = Socket::UDP,  /*!< set when the service uses TCP. It is defined in Socket.h using the usual SOCK_STEAM value. */
 			UDP = Socket::TCP	/*!< set when the service uses UCP. It is defined in Socket.h using the usual SOCK_DGRAM value. */
-		} TransportProtocol;
+		};
 
 		/*! \enum SizeOfBuffers
 		*	\brief Defines length of service information.

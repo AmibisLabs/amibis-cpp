@@ -177,7 +177,7 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
  protected:
 
 	 // REVIEW
-  static void ProcessLyncSyncMsg(MsgSocketCallBackData*MsgData, MsgSocket * MyMsgSocket );
+  static void FUNCTION_CALL_TYPE ProcessLyncSyncMsg(MsgSocketCallBackData*MsgData, MsgSocket * MyMsgSocket );
 
   /** \brief Call on source of UDP message
    *

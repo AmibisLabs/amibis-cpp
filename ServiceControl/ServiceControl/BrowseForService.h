@@ -18,7 +18,7 @@
 
 namespace Omiscid {
 
-typedef void  (FUNCTION_CALL_TYPE *BrowseCallBack) ( Service& NewService, DNSServiceFlags flags, unsigned int UserData );
+typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( Service& NewService, DNSServiceFlags flags, unsigned int UserData );
 
 class BrowseForService : public Thread
 {

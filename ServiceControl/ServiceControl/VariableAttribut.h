@@ -31,14 +31,16 @@ class VariableAttribut : public Attribut
 {
  public:
   /** @brief Callback called when the value changed */
-  typedef void (*SignalValueChanged)(VariableAttribut* var, void* user_ptr);
+  typedef void (FUNCTION_CALL_TYPE *SignalValueChanged)(VariableAttribut* var, void* user_ptr);
  
   /** @brief Access Kind */
-  typedef enum{read /*!< read only access  the user cannot change the value through the ControlServer */, 
+  enum Access
+  {
+	  read /*!< read only access  the user cannot change the value through the ControlServer */, 
 		 read_write /*!< read write access  : the user can change the value through the ControlServer*/, 
 		 read_write_before_init /*!< the user can change the value through the ControlServer only 
 					  when the status is different than ControlServer::STATUS_RUNNING */
-		 } Access;
+		 } ;
 
  public:
   /** @name Constructor */
@@ -147,11 +149,15 @@ class VariableAttribut : public Attribut
   /** \brief Extract data from a XML node.
    *
    * Extract attribute 'name', and child node.
-   * \param node A node of service description with the tag "variable"
+   * \param node A node of service description with the tag VariableAttribut::variable_str
    */
   void ExtractDataFromXml(xmlNodePtr node);
+
+  /**  \brief to parse/generate XML data.
+   */
+  static const SimpleString variable_str;
  
- protected:
+protected:
   SimpleString type; /*!< type of the variable */
   SimpleString defaultValue; /*!< default value*/
   Access access; /*!< kind of access.*/

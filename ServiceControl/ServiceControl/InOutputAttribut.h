@@ -31,7 +31,7 @@ class InOutputAttribut : public Attribut
   static const SimpleString output_str; /*!< String associated to the kind OUTPUT*/
   static const SimpleString in_output_str; /*!< String associated to the kind IN_OUTPUT*/
 
-  typedef enum{INPUT=0, OUTPUT=1, IN_OUTPUT = 2} KIND;
+  enum KIND {INPUT=0, OUTPUT=1, IN_OUTPUT = 2};
  public:
   /** \name Constructors */
   //@{

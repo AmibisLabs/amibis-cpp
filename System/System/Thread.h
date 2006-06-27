@@ -74,7 +74,7 @@ public:
 #endif
 
 protected:
-	enum{ DEFAULT_THREAD_DESTRUCTOR_TIMEOUT = 1000 }; // 1 second
+	enum TIMEOUTS { DEFAULT_THREAD_DESTRUCTOR_TIMEOUT = 1000 }; // 1 second
 
 	/** @brief Method executed in a thread.
 	 *

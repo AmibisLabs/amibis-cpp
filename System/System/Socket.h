@@ -23,7 +23,7 @@ class Socket
 {
 public:
   /** \brief Socket Kind */
-  typedef enum SocketKind { SOCKET_KIND_UNDEFINED = -1, TCP = SOCK_STREAM, UDP = SOCK_DGRAM};
+  enum SocketKind { SOCKET_KIND_UNDEFINED = -1, TCP = SOCK_STREAM, UDP = SOCK_DGRAM};
 
 public:
   /** @brief Constructor.

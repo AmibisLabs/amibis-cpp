@@ -90,7 +90,7 @@ public:
    * @param ptr pointer on a MsgSocketCallBackData object
    * @see MsgSocketCallBackData
    */
-  static void CumulMessage(MsgSocketCallBackData* ptr);
+  static void FUNCTION_CALL_TYPE CumulMessage(MsgSocketCallBackData* ptr);
   
   /** @brief Set the callback method of a MasgSocket object
    *
