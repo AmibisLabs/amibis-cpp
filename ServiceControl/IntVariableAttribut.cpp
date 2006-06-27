@@ -1,37 +1,40 @@
 
 #include <ServiceControl/IntVariableAttribut.h>
 
+#include <System/SimpleString.h>
 #include <ServiceControl/VariableAttribut.h>
 
 using namespace Omiscid;
 
-IntVariableAttribut::IntVariableAttribut(VariableAttribut* va,
-					 int value)
+IntVariableAttribut::IntVariableAttribut(VariableAttribut* va, int value)
 {
-  variableAttribut = va;
-  integerValue = value + 1;
-  SetIntValue(value);
+  VariableAtt = va;
+  SetValue(value);
 }
 
-void IntVariableAttribut::SetIntValue( int value )
+void IntVariableAttribut::SetValue( int value )
 {
-  if(integerValue != value){
-    integerValue = value;
-    ControlUtils::IntToStr(integerValue, variableAttribut->GetValueStr()); 
+  if(IntegerValue != value)
+  {
+	  SimpleString TmpValue;
+	
+	  IntegerValue = value;
+	  TmpValue += IntegerValue;
+	  VariableAtt->SetValueStr(TmpValue); 
   }
 }
 
-int IntVariableAttribut::GetIntValue() const
+int IntVariableAttribut::GetValue() const
 {
-	return integerValue;
+	return IntegerValue;
 }
 
 void IntVariableAttribut::Incr()
 {
-	SetIntValue(integerValue + 1); 
+	SetValue(IntegerValue + 1); 
 }
 
 void IntVariableAttribut::Decr()
 {
-	SetIntValue(integerValue - 1);
+	SetValue(IntegerValue - 1);
 }

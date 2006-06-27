@@ -8,7 +8,7 @@
 #ifndef ATTRIBUT_H
 #define ATTRIBUT_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleString.h>
 
 namespace Omiscid {

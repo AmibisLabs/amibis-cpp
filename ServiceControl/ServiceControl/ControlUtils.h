@@ -8,7 +8,7 @@
 #ifndef CONTROL_UTILS_H
 #define CONTROL_UTILS_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleString.h>
 
 namespace Omiscid {

@@ -1,4 +1,4 @@
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <ServiceControl/VariableAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 

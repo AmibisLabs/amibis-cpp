@@ -6,7 +6,7 @@
 #include <arpa/inet.h>
 #endif
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Socket.h>
 #include <System/SocketException.h>
 #include <Com/MsgSocketException.h>

@@ -7,7 +7,7 @@
 #ifndef MSGSOCKET_H
 #define MSGSOCKET_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Thread.h>
 #include <System/Socket.h>
 

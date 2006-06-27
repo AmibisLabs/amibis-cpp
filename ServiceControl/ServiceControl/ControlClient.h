@@ -8,7 +8,7 @@
 #ifndef CONTROL_CLIENT_H
 #define CONTROL_CLIENT_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
 #include <Com/TcpClient.h>
 #include <ServiceControl/XMLTreeParser.h>

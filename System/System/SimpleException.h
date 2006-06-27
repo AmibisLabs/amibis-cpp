@@ -5,7 +5,7 @@
 #ifndef __SIMPLE_EXCEPTION_H__
 #define __SIMPLE_EXCEPTION_H__ 
 
-#include <System/Portage.h>
+#include <System/Config.h>
 
 namespace Omiscid {
 

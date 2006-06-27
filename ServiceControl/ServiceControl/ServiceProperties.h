@@ -10,7 +10,7 @@
 #ifndef _SERVICE_PROPERTIES_H_
 #define _SERVICE_PROPERTIES_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <ServiceControl/ServicesCommon.h>
 
 namespace Omiscid {

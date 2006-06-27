@@ -5,9 +5,10 @@
 #ifndef __SIMPLE_STRING_H__
 #define __SIMPLE_STRING_H__
 
-#include <System/Portage.h>
-#include <string.h>
+#include <System/Config.h>
 #include <System/MutexedCounter.h>
+
+#include <string.h>
 
 namespace Omiscid {
 
@@ -177,7 +178,6 @@ public:
 	SimpleString& operator= (const SimpleString& str);
 	//@}
 	
-
 	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int TailleBuffer );
 
 	// REVIEW

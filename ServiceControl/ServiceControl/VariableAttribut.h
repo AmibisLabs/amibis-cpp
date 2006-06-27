@@ -8,7 +8,7 @@
 #ifndef VARIABLE_ATTRIBUT_H 
 #define VARIABLE_ATTRIBUT_H 
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <ServiceControl/Attribut.h>
 #include <ServiceControl/ControlServer.h>
 

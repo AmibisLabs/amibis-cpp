@@ -10,7 +10,7 @@
 #ifndef _OMiSCID_SERVICES_H_
 #define _OMiSCID_SERVICES_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <ServiceControl/Service.h>
 #include <ServiceControl/WaitForServices.h>
 

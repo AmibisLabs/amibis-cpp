@@ -6,7 +6,7 @@
 #ifndef _MUTEX_H_
 #define _MUTEX_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 
 namespace Omiscid {
 

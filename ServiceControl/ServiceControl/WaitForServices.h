@@ -10,7 +10,7 @@
 #ifndef _WAIT_FOR_SERVICES_H_
 #define _WAIT_FOR_SERVICES_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Socket.h>
 #include <System/Thread.h>
 #include <System/Mutex.h>

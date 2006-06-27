@@ -6,7 +6,7 @@
 #ifndef TCPUDPCLIENTSERVER_H
 #define TCPUDPCLIENTSERVER_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
 #include <System/Mutex.h>
 #include <Com/TcpServer.h>

@@ -6,7 +6,7 @@
 #ifndef MSGSOCKET_EXCEPTION_H 
 #define MSGSOCKET_EXCEPTION_H 
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleException.h>
 
 namespace Omiscid {

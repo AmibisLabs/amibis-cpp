@@ -6,7 +6,7 @@
 #ifndef MSGMANAGER_HH
 #define MSGMANAGER_HH
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
 #include <System/Event.h>
 #include <System/Socket.h>

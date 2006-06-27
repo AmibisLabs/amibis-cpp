@@ -5,10 +5,11 @@
  * @date 2004-2005
  */
 
-#ifndef __INT_VARIABLE_ATTRIBUT_H__
-#define __INT_VARIABLE_ATTRIBUT_H__
+#ifndef __STRING_VARIABLE_ATTRIBUT_H__
+#define __STRING_VARIABLE_ATTRIBUT_H__
 
 #include <System/Config.h>
+#include <System/SimpleString.h>
 #include <Com/ComTools.h>
 #include <ServiceControl/ControlUtils.h>
 
@@ -23,42 +24,34 @@ class VariableAttribut;
  * The methods enable to manipulate the integer value, and to modify the
  * description automatically.
  *
- * @author Sebastien Pesnel
+ * @author Vaufreydaz Dominique
  */
-class IntVariableAttribut{
+class StringVariableAttribut{
  public:
   /** @brief Constructor
    * @param va the description object
    * @param value the initial value for the integer
    */
-  IntVariableAttribut(VariableAttribut* va, int value);
+  StringVariableAttribut(VariableAttribut* va, SimpleString value);
 
   /** @brief Read access to the integer value
    * @return the integer value */
-  int GetValue() const;
+  SimpleString GetValue() const;
   
   /** @brief Write access to the integer value
    *
    * Change the integer value, and also the description for the service
    * @param value the new value for the integer
    */
-  void SetValue( int value );
+  void SetValue( SimpleString value );
   
-  /** @brief Increment the  integer value
-   * @see SetValue*/
-  void Incr();
-
-  /** @brief Decrement the  integer value
-   * @see SetValue*/
-  void Decr();
-
  private:
   /** the integer description */
   VariableAttribut* VariableAtt;
   /** @brief the integer value */
-  int IntegerValue;
+  SimpleString StringValue;
 };
 
 } // namespace Omiscid
 
-#endif /* __INT_VARIABLE_ATTRIBUT_H__ */
+#endif /* __STRING_VARIABLE_ATTRIBUT_H__ */

@@ -6,7 +6,7 @@
 #ifndef _ATOMIC_COUNTER_H_
 #define _ATOMIC_COUNTER_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Mutex.h>
 
 namespace Omiscid {

@@ -3,7 +3,7 @@
 #ifndef __OMISCID_SERVICE_REGISTRY_H__
 #define __OMISCID_SERVICE_REGISTRY_H__
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleString.h>
 #include <ServiceControl/OmiscidService.h>
 

@@ -1,4 +1,5 @@
 #include <Com/ComTools.h>
+#include <System/Portage.h>
 
 #include <stdlib.h>
 
@@ -36,6 +37,8 @@ public:
 #endif
 	};
 };
+
+do peerid !
 
 static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
 

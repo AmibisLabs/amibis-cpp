@@ -6,7 +6,7 @@
 #ifndef TCP_CLIENT_H 
 #define TCP_CLIENT_H 
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <Com/ComTools.h>
 #include <Com/MsgSocket.h>
 

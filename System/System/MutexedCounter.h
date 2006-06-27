@@ -6,7 +6,7 @@
 #ifndef _MUTEXED_COUNTER_H_
 #define _MUTEXED_COUNTER_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Mutex.h>
 
 namespace Omiscid {

@@ -1,7 +1,7 @@
 #ifndef SERVICE_FROM_XML_H
 #define SERVICE_FROM_XML_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <ServiceControl/ControlServer.h>
 
 namespace Omiscid {

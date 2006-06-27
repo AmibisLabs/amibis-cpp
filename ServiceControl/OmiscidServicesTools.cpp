@@ -8,6 +8,7 @@
  */
 
 #include <ServiceControl/OmiscidServicesTools.h>
+#include <System/Portage.h>
 
 using namespace Omiscid;
 
@@ -38,20 +39,7 @@ RegisterOmiscidService::RegisterOmiscidService( const char * ServiceName, const 
 
 void RegisterOmiscidService::SetOwner()
 {
-#ifdef WIN32
-	DWORD len;
-	char UserName[512];
-
-	len = sizeof( UserName );
-
-	GetUserName( UserName, &len );
-	Properties["owner"] = UserName;
-#else
-	if( getenv("LOGNAME") == NULL )
-		return;
-	Properties["owner"] = getenv("LOGNAME");
-	// alternatively we could use getpwuid( geteuid() );
-#endif
+	Properties["owner"] = GetLoggedUser().GetStr();
 }
 
 WaitForOmiscidServices::WaitForOmiscidServices()

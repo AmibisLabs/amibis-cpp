@@ -8,7 +8,7 @@
 #ifndef XMLTREEPARSER_H
 #define XMLTREEPARSER_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Event.h>
 #include <System/Thread.h>
 #include <System/Mutex.h>

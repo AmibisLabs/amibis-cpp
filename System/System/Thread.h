@@ -7,7 +7,7 @@
 #ifndef _THREAD_H_
 #define _THREAD_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Event.h>
 
 namespace Omiscid {

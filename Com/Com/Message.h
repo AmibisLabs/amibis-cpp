@@ -6,7 +6,7 @@
 #ifndef MESSAGE_HH
 #define MESSAGE_HH
 
-#include <System/Portage.h>
+#include <System/Config.h>
 
 namespace Omiscid {
 

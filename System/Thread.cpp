@@ -4,7 +4,7 @@
 
 
 #include <System/Thread.h>
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <stdio.h>
 
 #ifndef WIN32

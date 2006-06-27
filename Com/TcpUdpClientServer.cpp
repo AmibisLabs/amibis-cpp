@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <Com/TcpUdpClientServer.h>
 
 using namespace Omiscid;

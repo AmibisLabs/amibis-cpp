@@ -6,7 +6,7 @@
 #ifndef __MULTIPLED_REFERENCED_DATA_H__
 #define __MULTIPLED_REFERENCED_DATA_H__
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/AtomicCounter.h>
 
 namespace Omiscid {

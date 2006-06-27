@@ -9,6 +9,10 @@
 
 #include <ServiceControl/ServiceProperties.h>
 
+#ifdef WIN32
+#pragma warning(disable : 4312)
+#endif	// WIN32
+
 using namespace Omiscid;
 
 /*! \brief Empty a property.

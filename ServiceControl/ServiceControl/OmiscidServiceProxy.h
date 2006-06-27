@@ -3,8 +3,9 @@
 #ifndef __OMISCID_SERVICE_PROXY_H__
 #define __OMISCID_SERVICE_PROXY_H__
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
+#include <System/SimpleString.h>
 #include <ServiceControl/ControlClient.h>
 
 namespace Omiscid {

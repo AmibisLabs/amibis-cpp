@@ -485,7 +485,6 @@ bool SimpleString::operator!=(const char* str) const
 	return stringData->NotEquals(str); 
 }
 
-
 bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int TailleBuffer )
 {
 	const char * parse = Src;

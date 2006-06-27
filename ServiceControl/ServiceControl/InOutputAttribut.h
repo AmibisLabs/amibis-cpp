@@ -8,7 +8,7 @@
 #ifndef INOUTPUT_ATTRIBUT_H
 #define INOUTPUT_ATTRIBUT_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
 #include <Com/ComTools.h>
 #include <ServiceControl/Attribut.h>
@@ -29,7 +29,7 @@ class InOutputAttribut : public Attribut
  public:
   static const SimpleString input_str; /*!< String associated to the kind INPUT*/
   static const SimpleString output_str; /*!< String associated to the kind OUTPUT*/
-  static const SimpleString in_output_str; /*!< String associated to the kind IN_OUTPUT*/
+  static const SimpleString inoutput_str; /*!< String associated to the kind IN_OUTPUT*/
 
   enum KIND {INPUT=0, OUTPUT=1, IN_OUTPUT = 2};
  public:

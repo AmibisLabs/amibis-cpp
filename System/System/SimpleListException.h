@@ -6,7 +6,7 @@
 #ifndef __SIMPLE_LIST_EXCEPTION_H__
 #define __SIMPLE_LIST_EXCEPTION_H__
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleException.h>
 
 namespace Omiscid {

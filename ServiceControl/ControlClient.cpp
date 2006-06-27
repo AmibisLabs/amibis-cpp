@@ -246,7 +246,7 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const char* in_output_
 	}
     }
 
-  SimpleString requete = "<"+InOutputAttribut::in_output_str+" name=\"" + SimpleString(in_output_name) + "\"/>";
+  SimpleString requete = "<"+InOutputAttribut::inoutput_str+" name=\"" + SimpleString(in_output_name) + "\"/>";
   XMLMessage* msg = QueryToServer(requete);
   if(msg)
     {
@@ -350,7 +350,7 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 		{
 			listOutputName.Add(name);
 		}
-      	else if(strcmp(node_name, InOutputAttribut::in_output_str.GetStr())==0)
+      	else if(strcmp(node_name, InOutputAttribut::inoutput_str.GetStr())==0)
 		{
 			listInOutputName.Add(name);
 		}
@@ -412,7 +412,7 @@ InOutputAttribut* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOut
 InOutputAttribut* ControlClient::ProcessIn_OutputDescription(xmlNodePtr node, InOutputAttribut* in_output_attr)
 {
   //std::cerr << "ControlClient::ProcessIn_OutputDescription : Not Yet Implemented\n"; 
-  if(!node || (strcmp((const char*)node->name, InOutputAttribut::in_output_str.GetStr())!=0)) 
+  if(!node || (strcmp((const char*)node->name, InOutputAttribut::inoutput_str.GetStr())!=0)) 
   	return NULL;
   InOutputAttribut* in_outattr = NULL;
   if(in_output_attr) in_outattr = in_output_attr;

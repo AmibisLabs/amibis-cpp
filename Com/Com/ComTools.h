@@ -6,7 +6,7 @@
 #ifndef COM_TOOLS_H
 #define COM_TOOLS_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
 

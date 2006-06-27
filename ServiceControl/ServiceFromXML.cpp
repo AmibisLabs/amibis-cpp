@@ -33,7 +33,7 @@ void ServiceFromXML::InitServiceFromXml(xmlNodePtr root_node)
 	    }
 	  else if((strcmp(cur_name,  InOutputAttribut::input_str.GetStr()) == 0) ||
 		  (strcmp(cur_name,  InOutputAttribut::output_str.GetStr()) == 0) ||
-		  (strcmp(cur_name,  InOutputAttribut::in_output_str.GetStr()) == 0))
+		  (strcmp(cur_name,  InOutputAttribut::inoutput_str.GetStr()) == 0))
 	    {
 	      ProcessInOutputAttribut(cur_node);
 	    }

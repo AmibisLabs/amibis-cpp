@@ -10,7 +10,7 @@
 #ifndef _SERVICES_COMMON_H_
 #define _SERVICES_COMMON_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Socket.h>
 #include <System/SimpleString.h>
 

@@ -8,7 +8,7 @@
 #ifndef CONTROL_SERVER_H
 #define CONTROL_SERVER_H
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
 #include <Com/ComTools.h>
 #include <Com/TcpServer.h>
@@ -16,6 +16,7 @@
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/IntVariableAttribut.h>
 #include <ServiceControl/OmiscidServicesTools.h>
+#include <ServiceControl/StringVariableAttribut.h>
 
 namespace Omiscid {
 
@@ -300,6 +301,8 @@ class ControlServer : public TcpServer, public XMLTreeParser
   IntVariableAttribut* nbvarIntVariable; /*!< variable structure for integer to manage the number of variable */
   IntVariableAttribut* nbioIntVariable; /*!< variable structure for integer to manage the number of inputs/outputs */
   IntVariableAttribut* lockIntVariable; /*!< variable structure for integer to manage the lock state */
+  StringVariableAttribut* NameVariable; /*!< variable structure for exporting the name of this service */
+  StringVariableAttribut* OwnerVariable; /*!< variable structure for exporting the name of this service */
 
   SimpleList<InOutputAttribut*> listInOutput; /*!< list of inputs and outputs */
    

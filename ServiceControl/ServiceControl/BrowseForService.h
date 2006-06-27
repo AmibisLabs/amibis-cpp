@@ -10,7 +10,7 @@
 #ifndef _BROWSE_FOR_SERVICE_H_
 #define _BROWSE_FOR_SERVICE_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Thread.h>
 #include <ServiceControl/Service.h>
 

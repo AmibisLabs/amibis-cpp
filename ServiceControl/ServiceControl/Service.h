@@ -10,7 +10,7 @@
 #ifndef _SERVICE_H_
 #define _SERVICE_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleString.h>
 
 #if 0

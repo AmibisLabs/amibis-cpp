@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 
@@ -7,7 +7,7 @@ using namespace Omiscid;
 
 const SimpleString InOutputAttribut::input_str = "input";
 const SimpleString InOutputAttribut::output_str = "output";
-const SimpleString InOutputAttribut::in_output_str = "inoutput";
+const SimpleString InOutputAttribut::inoutput_str = "inoutput";
 
 InOutputAttribut::InOutputAttribut()
 {
@@ -153,10 +153,10 @@ const SimpleString& InOutputAttribut::KindToStr() const
       return output_str;
       break;
     case IN_OUTPUT:      
-      return in_output_str;
+      return inoutput_str;
       break;
     }
-  return in_output_str;
+  return inoutput_str;
 }
 
 void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)

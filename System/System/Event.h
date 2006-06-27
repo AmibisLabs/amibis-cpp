@@ -5,7 +5,7 @@
 #ifndef _EVENT_H_
 #define _EVENT_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 
 namespace Omiscid {
 

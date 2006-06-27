@@ -5,7 +5,7 @@
 #ifndef __RECYCLE_LIST_H__
 #define __RECYCLE_LIST_H__
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/SimpleList.h>
 
 namespace Omiscid {

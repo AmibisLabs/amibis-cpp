@@ -7,7 +7,7 @@
 #ifndef _LIST_H_
 #define _LIST_H_
 
-#include <System/Portage.h>
+#include <System/Config.h>
 #include <System/Mutex.h>
 #include <System/SimpleListException.h>
 
