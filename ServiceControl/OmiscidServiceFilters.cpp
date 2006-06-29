@@ -215,4 +215,4 @@ static OmiscidServiceFilter and(OmiscidServiceFilter... filters) {
 }
 */
 
-#endif
+#endif // 0
