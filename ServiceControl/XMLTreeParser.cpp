@@ -259,11 +259,11 @@ void XMLTreeParser::Run()
 		}
 		catch(...)
 		{
-			TraceError( "ExceptionRaisedFromDown\n" );
+			TraceError( "XMLTreeParser::Run: ExceptionRaisedFromDown\n" );
 		}
     }
 
-	TraceError( "ThreadWasAskedToDie\n" );
+	// TraceError( "ThreadWasAskedToDie\n" );
 }
 
 bool XMLTreeParser::HasMessages()

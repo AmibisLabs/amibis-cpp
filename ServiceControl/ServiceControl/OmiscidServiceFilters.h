@@ -1,10 +1,10 @@
 
-
 #ifndef __OMISCID_SERVICE_FILTERS_H__
 #define __OMISCID_SERVICE_FILTERS_H__
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
+#include <System/SimpleList.h>
 #include <ServiceControl/OmiscidServiceProxy.h>
 
 namespace Omiscid {
@@ -15,24 +15,54 @@ namespace Omiscid {
  */
 class OmiscidServiceFilter
 {
+protected:
+	OmiscidServiceFilter() {};
+
 public:
-	virtual bool IsGoodService() = 0;
+	virtual bool IsAGoodService(OmiscidServiceProxy& SP) = 0;
 };
 
-class OmiscidServiceFilters
+class OmiscidCascadeServiceFilters : public OmiscidServiceFilter,
+									 public SimpleList<OmiscidServiceFilter*>
 {
 public:
-	bool IsGoodService();
+	OmiscidCascadeServiceFilters();
+	~OmiscidCascadeServiceFilters();
+
+	virtual bool IsAGoodService(OmiscidServiceProxy& SP);
+
+	void Empty();
+
+	void operator=( OmiscidServiceFilter* Filter );
+	void operator+=( OmiscidServiceFilter* Filter );
 };
 
+/**
+ * Utility class. Provides some {@link OmiscidServiceFilter} creators for
+ * classical requirements.
+ */
+namespace OmiscidServiceFilters {
 
-class OmiscidServiceFilterName
-{
-public:
-	OmiscidServiceFilterName(SimpleString& Name);
+	/**
+	* Tests whether the service name (with possible trailing dnssd number
+	* removed).
+	*
+	* @param nameRegexp
+	* @return
+	*/
+	OmiscidServiceFilter * NameIs(SimpleString Name, bool CaseInsensitive = false);
 
-	virtual bool IsGoodService();
-};
+	/**
+	* Tests whether the service owner
+	*
+	* @param String
+	* @return
+	*/
+	OmiscidServiceFilter * OwnerIs(SimpleString Name, bool CaseInsensitive = false);
+
+
+}	// namespace OmiscidFilters
+
 
 } // namespace Omiscid
 

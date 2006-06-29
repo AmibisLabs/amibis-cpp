@@ -65,13 +65,13 @@ static OmiscidSocketInitClass OmiscidSocketInitClassInitialisationObject;
 Socket::DynamicNameSolvingType Socket::DynamicNameSolving = Socket::OMISCIDNS_UNSET;
 
 Socket::Socket()
-: socketType(SOCKET_KIND_UNDEFINED), descriptor(-1)
+: socketType(SOCKET_KIND_UNDEFINED), descriptor(SOCKET_ERROR)
 {}
 
 Socket::Socket(SocketKind type)
-  : socketType(type), descriptor(-1)
+  : socketType(type), descriptor(SOCKET_ERROR)
 {
-  if((descriptor = socket(AF_INET, type, 0)) == -1)
+  if((descriptor = socket(AF_INET, type, 0)) == SOCKET_ERROR)
     {
       throw SocketException("socket", Errno());
     }
@@ -79,7 +79,7 @@ Socket::Socket(SocketKind type)
 
 Socket::~Socket()
 {
-  if(descriptor != -1) Close();
+  if(descriptor != SOCKET_ERROR) Close();
  
 }
 
@@ -98,7 +98,7 @@ void Socket::SetDescriptor(SOCKET descr)
   int t;
   int size = sizeof(int);
 
-  if(getsockopt(descriptor, SOL_SOCKET,SO_TYPE , (char*)&t, (socklen_t*)&size) == -1)
+  if(getsockopt(descriptor, SOL_SOCKET,SO_TYPE , (char*)&t, (socklen_t*)&size) == SOCKET_ERROR)
     {
       throw SocketException("getsockopt", Errno());
     }
@@ -152,7 +152,7 @@ void Socket::Bind(const char* addr, int port)
 	  throw SocketException("bind");
   }
   
-  if( bind(descriptor, (struct sockaddr*)&my_addr, sizeof(struct sockaddr) ) == -1)
+  if( bind(descriptor, (struct sockaddr*)&my_addr, sizeof(struct sockaddr) ) == SOCKET_ERROR)
   {
 	  throw SocketException("bind");
   }
@@ -162,7 +162,7 @@ void Socket::Bind(const char* addr, int port)
 void Socket::Listen()
 {
   int res;
-  if((res = listen(descriptor, BACKLOG)) == -1)
+  if((res = listen(descriptor, BACKLOG)) == SOCKET_ERROR)
     throw SocketException("listen", Errno());
 }
 
@@ -224,7 +224,7 @@ const SimpleString & Socket::GetConnectedHost()
 	if ( ConnectedHost.GetLength() == 0 )
 	{
 		// Try to get the peername
-		if ( getpeername( descriptor, (sockaddr*)&addr, &namelen ) == -1 )
+		if ( getpeername( descriptor, (sockaddr*)&addr, &namelen ) == SOCKET_ERROR )
 		{
 			return SimpleString::EmptyString;
 		}
@@ -279,7 +279,7 @@ void Socket::Connect(const char* addr, int port)
       struct sockaddr_in the_addr;
 	  FillAddrIn(&the_addr, addr, port);
 
-      if(connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == -1)
+      if(connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == SOCKET_ERROR)
 		{
 		throw SocketException("connect", Errno());
 		}
@@ -304,7 +304,7 @@ void Socket::Close()
   shutdown(descriptor, SHUT_RDWR);
   close(descriptor);
 #endif
-  descriptor = -1;
+  descriptor = SOCKET_ERROR;
 }
 
 int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
@@ -312,7 +312,7 @@ int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
   int res = 0;
   if(socketType == TCP)
     {
-		if((res = recv(descriptor, (char*)buf, len, 0)) == -1)
+		if((res = recv(descriptor, (char*)buf, len, 0)) == SOCKET_ERROR)
 		{
 			res = Errno();
 			throw SocketException("recv_sock_stream", res );
@@ -325,7 +325,7 @@ int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
       struct sockaddr_in* fromptr = (pfrom)? pfrom : &from;
       int from_len = sizeof(struct sockaddr);
       if((res = recvfrom(descriptor, (char*)buf, len, 0,
-		  (struct sockaddr*)fromptr, (socklen_t*)&from_len)) == -1)
+		  (struct sockaddr*)fromptr, (socklen_t*)&from_len)) == SOCKET_ERROR)
 	{
 	  throw SocketException("recv_sock_dgram", Errno());
 	}
@@ -340,7 +340,7 @@ int Socket::Send(int len, const char* buf)
   if(socketType == TCP)
     {
       
-      if((res = send(descriptor, buf, len, socket_send_flag)) == -1)
+      if((res = send(descriptor, buf, len, socket_send_flag)) == SOCKET_ERROR)
 	{
 	   throw SocketException("send_sock_stream", Errno());
 	}
@@ -348,7 +348,7 @@ int Socket::Send(int len, const char* buf)
   else
     {
       if((res = sendto(descriptor, buf, len, socket_send_flag,
-			 (struct sockaddr*)&dest, sizeof(struct sockaddr))) == -1)
+			 (struct sockaddr*)&dest, sizeof(struct sockaddr))) == SOCKET_ERROR)
 	{
 	  throw SocketException("send_sock_dgram", Errno());
 	}
@@ -362,7 +362,7 @@ int Socket::SendTo(int len, const char* buf, struct sockaddr_in* adest)
   int res;
   
   if((res = sendto(descriptor, buf, len, socket_send_flag,
-		   (struct sockaddr*)adest, sizeof(struct sockaddr))) == -1)
+		   (struct sockaddr*)adest, sizeof(struct sockaddr))) == SOCKET_ERROR)
     {
       throw SocketException("send_sock_dgram", Errno());
     }
@@ -372,18 +372,23 @@ int Socket::SendTo(int len, const char* buf, struct sockaddr_in* adest)
 
 bool Socket::Select()
 {
-	// To do, change it to non full blocking mode....
-  fd_set readfds;
+	// Done, change it to non full blocking mode....
+	fd_set readfds;
 
-  FD_ZERO(&readfds);
-  FD_SET(descriptor, &readfds);
+	timeval timeout;
 
-  if(::select((int)descriptor+1, &readfds, NULL, NULL, NULL) == -1)
-    {
-      throw SocketException("select", Errno());
-    }
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 100000;	// 100 ms
 
-  return FD_ISSET(descriptor, &readfds);
+	FD_ZERO(&readfds);
+	FD_SET(descriptor, &readfds);
+
+	if(::select((int)descriptor+1, &readfds, NULL, NULL, &timeout) == SOCKET_ERROR)
+	{
+		throw SocketException("select", Errno());
+	}
+
+	return FD_ISSET(descriptor, &readfds);
 }
 
 unsigned short Socket::GetPortNb()
@@ -460,7 +465,7 @@ hostent* Socket::GetHostByName( const char* name )
 
 bool Socket::SetTcpNoDelay(bool Set)
 {
-	if ( descriptor == -1 || socketType != TCP )
+	if ( descriptor == SOCKET_ERROR || socketType != TCP )
 	{
 		return false;
 	}

@@ -578,6 +578,7 @@ void MsgSocket::Receive()
 			int size = occupiedSize;
 			while(!stop)
 			{
+				length_msg = pid = mid = 0;
 				if((length_header = GoodBeginning(buffer+offset, size, length_msg, pid, mid)) != 0)
 				{
 					//cerr << "good beginning ";

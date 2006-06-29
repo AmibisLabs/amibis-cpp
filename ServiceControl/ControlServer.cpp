@@ -67,6 +67,12 @@ void ControlServer::InitInstance()
 	va->SetDescription("Login which launches this service");
 	OwnerVariable = new StringVariableAttribut( va, "none" );
 
+	va = AddVariable("peerid");
+	va->SetType("hexadecimal");
+	va->SetAccess(VariableAttribut::read);
+	va->SetDescription("PeerId of this service");
+	PeerIdVariable = new StringVariableAttribut( va, "00000000" );
+
 	registerDnsSd = NULL;
 }
 
@@ -87,38 +93,44 @@ ControlServer::~ControlServer()
 	if(statusIntVariable != NULL)
 	{
 		delete statusIntVariable;
+		statusIntVariable = NULL;
 	}
-	statusIntVariable = NULL;
 
 	if(nbvarIntVariable != NULL)
 	{
 		delete nbvarIntVariable;
+		nbvarIntVariable = NULL;
 	}
-	nbvarIntVariable = NULL;
 
 	if(nbioIntVariable != NULL)
 	{
 		delete nbioIntVariable;
+		nbioIntVariable = NULL;
 	}
-	nbioIntVariable = NULL;
 
 	if(lockIntVariable != NULL)
 	{
 		delete lockIntVariable;
+		lockIntVariable = NULL;
 	}
-	lockIntVariable = NULL;
 
 	if(NameVariable != NULL)
 	{
 		delete NameVariable;
+		NameVariable = NULL;
 	}
-	NameVariable = NULL;
 
 	if(OwnerVariable != NULL)
 	{
 		delete OwnerVariable;
+		OwnerVariable = NULL;
 	}
-	OwnerVariable = NULL;
+
+	if ( PeerIdVariable != NULL )
+	{
+		delete PeerIdVariable;
+		PeerIdVariable = NULL;
+	}
 
   for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
     {
@@ -152,7 +164,7 @@ bool ControlServer::StartServer()
       Create(0);
       
       port = GetSocket()->GetPortNb();
-      GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
+      // GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
       
  
 	  // creer les infos pour le Champ TXT
@@ -217,6 +229,7 @@ bool ControlServer::StartServer()
       char tmp_peerid[10];
       sprintf(tmp_peerid, "%08x",  GetServiceId());        
       registerDnsSd->Properties["id"]= tmp_peerid;
+	  PeerIdVariable->SetValue( tmp_peerid );
 
       registerDnsSd->Register();
 

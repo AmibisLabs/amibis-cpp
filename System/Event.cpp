@@ -1,16 +1,5 @@
 #include <System/Event.h>
 
-#ifndef WIN32
-	#include <sys/time.h>
-#else
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif /* WIN32 */
-
 #include <errno.h>
 
 using namespace Omiscid;

@@ -67,13 +67,26 @@ public:
      * @return the peer id
      */
     unsigned int GetPeerId() ;
-
-    /**
+	
+	/**
+     * The Peer Id of the remote bip service
+     * @return the peer id
+     */
+    SimpleString GetName() ;
+	
+	/**
      * Sets the new value of a remote variable
      * @param varName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-    bool setVariableValue(SimpleString varName, SimpleString value);
+    bool SetVariableValue(const SimpleString varName, const SimpleString value);
+
+	/**
+     * Gets the value of a remote variable
+     * @param varName the name of the remote variable
+     * @param value the value (SimpleString format)
+     */
+    bool GetVariableValue(const SimpleString varName, SimpleString& value);
 
 private:
 	SimpleString HostName;

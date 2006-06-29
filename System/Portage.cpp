@@ -3,8 +3,50 @@
 #ifdef WIN32
 
 #include <sys/timeb.h>
+#include <math.h>
+
+#endif
 
 using namespace Omiscid;
+
+namespace Omiscid {
+
+class OmiscidRandomInitClass
+{
+public:
+	OmiscidRandomInitClass()
+	{
+		RandomInit();
+	};
+
+};
+
+} // namespace Omiscid
+
+static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
+
+#ifdef WIN32
+
+int Omiscid::random()
+{
+	int result;
+	int i;
+
+	if ( RAND_MAX <= 32767 )	// 16 bits generator
+	{
+		short * where = (short*)&result;
+		for( i = 0; i < (sizeof(result)/sizeof(short)); i++ )
+		{
+			where[i] = (short)rand();
+		}
+	}
+	else							// >32 nits generator
+	{
+		result = rand();
+	}
+
+	return result;
+}
 
 int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 {
@@ -17,11 +59,22 @@ int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 	return 0;
 }
 
+#define MAX_LOGIN_LEN 512
+
 #endif // WIN32
 
+
+void Omiscid::RandomInit()
+{
+		struct timeval t;    
+		gettimeofday(&t, NULL);
+
 #ifdef WIN32
-#define MAX_LOGIN_LEN 512
-#endif
+		srand(t.tv_sec ^ t.tv_usec);
+#else	// WIN32
+		srandom(t.tv_sec ^ t.tv_usec);
+#endif	// WIN32
+}
 
 SimpleString Omiscid::GetLoggedUser()
 {
@@ -36,7 +89,7 @@ SimpleString Omiscid::GetLoggedUser()
 
 	// init data
 	UserName[0] = '\0';
-	len = MAX_LOGIN_LEN;
+	len = MAX_LOGIN_LEN-1;
 
 	GetUserName( UserName, &len );
 	Login = UserName;
@@ -50,5 +103,3 @@ SimpleString Omiscid::GetLoggedUser()
 
 	return Login;
 }
-
-

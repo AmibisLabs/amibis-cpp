@@ -1,5 +1,6 @@
 #include <System/SocketException.h>
 #include <System/Socket.h>
+#include <System/SimpleString.h>
 
 using namespace Omiscid;
 
@@ -8,7 +9,7 @@ void SocketException::SocketErrorCheck()
 #ifdef DEBUG
 
 #ifdef WIN32
-	char * tmpc;
+	SimpleString tmpc;
 	int tmpi = WSAGetLastError();
 	switch( tmpi )
 	{
@@ -45,11 +46,13 @@ void SocketException::SocketErrorCheck()
 			break;
 
 		default:
-			fprintf( stderr, "UNK ERROR (%u)\n", tmpi );
+			tmpc  = "UNK ERROR (";
+			tmpc += tmpi;
+			tmpc += ")\n";
 			return;
 	}
 
-	fprintf( stderr, "%s\n", tmpc );
+	fprintf( stderr, "%s\n", tmpc.GetStr() );
 #endif
 
 #endif

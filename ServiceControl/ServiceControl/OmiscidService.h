@@ -7,9 +7,23 @@
 #include <System/SimpleString.h>
 #include <ServiceControl/ControlServer.h>
 
+#include <ServiceControl/OmiscidServiceFilters.h>
+#include <ServiceControl/OmiscidServicesTools.h>
+#include <ServiceControl/OmiscidServiceProxy.h>
+
 namespace Omiscid {
 
 class OmiscidServiceRegistry;
+
+class OmiscidServiceData
+{
+public:
+	OmiscidServiceData();
+	~OmiscidServiceData();
+
+	OmiscidCascadeServiceFilters FilterList;
+	OmiscidServiceProxy * Proxy;
+};
 
 /**
  * @author Dominique Vaufreydaz
@@ -31,6 +45,13 @@ public:
 	 * Starts the corresponding service
 	 */
 	void Start();
+
+	/**
+     * Finds a service on the network. The research is based on the service names (as registered in DNS_SD)
+     * @param service the service name
+     * @return the service Proxy
+     */
+    static OmiscidServiceProxy * FindService(OmiscidServiceFilter * filter) ;
 
 #if 0
 	    /** Variable for Read Access*/
@@ -208,13 +229,6 @@ public:
      * @see BipServiceProxy
      */
     public HashMap<SimpleString, BipServiceProxy> findServices(SimpleString[] services, OmiscidServiceFilter[] filters) ;
-
-    /**
-     * Finds a service on the network. The research is based on the service names (as registered in DNS_SD)
-     * @param service the service name
-     * @return the service Proxy
-     */
-    public BipServiceProxy findService(SimpleString service, OmiscidServiceFilter filters) ;
 
     /**
      * Connects a local connector to a remote connector of a remote service

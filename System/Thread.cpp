@@ -4,20 +4,9 @@
 
 
 #include <System/Thread.h>
-#include <System/Config.h>
-#include <stdio.h>
+#include <System/Portage.h>
 
-#ifndef WIN32
-	#include <unistd.h>
-	#include <sys/time.h>
-#else
-	#ifdef USE_AFX
-		#include "StdAfx.h"
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
-#endif
+#include <stdio.h>
 
 #include <errno.h>
 
@@ -141,6 +130,9 @@ unsigned long __stdcall Thread::CallRun(void* ptr)
 {
 	Thread* t = (Thread*)ptr;
 
+	// init thread random generator
+	RandomInit();
+
 	// Reset stat event
 	t->event.Reset();
 
@@ -153,6 +145,7 @@ unsigned long __stdcall Thread::CallRun(void* ptr)
 	
 	// signal, my job is over
 	t->event.Signal();
+	// TraceError( "ThreadSignaled\n" );
 	
 	return 0;
 }
@@ -160,6 +153,10 @@ unsigned long __stdcall Thread::CallRun(void* ptr)
 void* Thread::CallRun(void* ptr)
 {
 	Thread* t = (Thread*)ptr;
+
+	// init thread random generator
+	RandomInit();
+
 	t->m_isRunning = true;
 	t->Run();
 	pthread_mutex_lock(&(t->mutex));

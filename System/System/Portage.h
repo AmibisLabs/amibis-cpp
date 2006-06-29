@@ -11,7 +11,13 @@ namespace Omiscid {
 // Time function port under Windows
 int gettimeofday(struct timeval*tv,struct timezone*tz ); // tz is ignored on windows plateforms
 
+// random port
+int random();
+
 #endif	// ifdef WIN32
+
+// RandomInit()
+void RandomInit();
 
 // Retrieve the logged username
 SimpleString GetLoggedUser();

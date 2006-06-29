@@ -18,10 +18,10 @@ char * CommonServiceValues::OmiscidServiceDnsSdType = (char*)NULL; // help for d
 namespace Omiscid {
 
 // We need to initialise OmiscidServiceDnsSdType from environment variable
-class OmiscidServiceDnsSdTypeInitClass : CommonServiceValues
+class OmiscidDnsSdTypeInitClass : CommonServiceValues
 {
 public:
-	OmiscidServiceDnsSdTypeInitClass()
+	OmiscidDnsSdTypeInitClass()
 	{
 		char * Option = getenv( "OMISCID_WORKING_DOMAIN" );
 		if ( Option == NULL || strcmp( Option, (char*)DefaultDomain ) == 0 )
@@ -59,7 +59,7 @@ public:
 		#endif
 	};
 
-	~OmiscidServiceDnsSdTypeInitClass()
+	~OmiscidDnsSdTypeInitClass()
 	{
 		if ( CommonServiceValues::OmiscidServiceDnsSdType != (char*)CommonServiceValues::DefaultDomain )
 		{
@@ -69,7 +69,7 @@ public:
 	}
 };
 
-static OmiscidServiceDnsSdTypeInitClass OmiscidServiceDnsSdTypeInitClassInitialisationObject;
+static OmiscidDnsSdTypeInitClass OmiscidServiceDnsSdTypeInitClassInitialisationObject;
 
 } // namespace Omiscid
 

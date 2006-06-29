@@ -15,7 +15,7 @@ OmiscidServiceProxy::OmiscidServiceProxy( SimpleString& eHostName, int eControlP
 	{
 		throw "OmiscidServiceProxy failed";
 	}
-	UpdateDescription();
+	// UpdateDescription();
 }
 
 OmiscidServiceProxy::~OmiscidServiceProxy()
@@ -79,10 +79,18 @@ SimpleString OmiscidServiceProxy::GetHostName()
 	return HostName;
 }
 
-
 unsigned int OmiscidServiceProxy::GetControlPort()
 {
 	return ControlPort;
+}
+
+SimpleString OmiscidServiceProxy::GetName()
+{
+	SimpleString ServiceName;
+
+	GetVariableValue( "name", ServiceName );
+
+	return ServiceName;
 }
 
 /**
@@ -98,7 +106,7 @@ unsigned int OmiscidServiceProxy::GetPeerId()
      * @param varName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool OmiscidServiceProxy::setVariableValue(SimpleString varName, SimpleString value)
+bool OmiscidServiceProxy::SetVariableValue(const SimpleString varName, const SimpleString value)
 {
 	VariableAttribut * pVar = FindVariable(varName.GetStr());
 	if ( pVar == NULL )
@@ -112,5 +120,27 @@ bool OmiscidServiceProxy::setVariableValue(SimpleString varName, SimpleString va
 	}
 
 	pVar->SetValueStr( value );
+	return true;
+}
+
+	/**
+     * Gets the value of a remote variable
+     * @param varName the name of the remote variable
+     * @param value the value (SimpleString format)
+     */
+bool OmiscidServiceProxy::GetVariableValue(const SimpleString varName, SimpleString& value)
+{
+	VariableAttribut * pVar = FindVariable(varName.GetStr());
+	if ( pVar == NULL )
+	{
+		pVar = QueryVariableDescription( varName.GetStr() );
+	}
+	if ( pVar == NULL )
+	{
+		// Not found
+		return false;
+	}
+
+	value = pVar->GetValueStr();
 	return true;
 }

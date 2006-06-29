@@ -20,54 +20,13 @@ ComTools::~ComTools()
 {
 }
 
-namespace Omiscid {
-
-class OmiscidRandomInitClass
-{
-public:
-	OmiscidRandomInitClass()
-	{
-		struct timeval t;    
-		gettimeofday(&t, NULL);
-
-#ifdef WIN32
-		srand(t.tv_sec ^ t.tv_usec);
-#else
-		srandom(t.tv_sec ^ t.tv_usec);
-#endif
-	};
-};
-
-do peerid !
-
-static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
-
-} // namespace Omiscid
-
 unsigned int ComTools::GeneratePeerId()
 {
-	struct timeval t;    
 	unsigned int res;
 
-	gettimeofday(&t, NULL);
+	res = random();
 
-	// Hope we will go out
-	for(;;)
-	{
-		res = t.tv_sec << 16;
-
-#ifdef WIN32
-		res += (0x0000FFFF & rand());
-#else
-		res += (0x0000FFFF & random());
-#endif
-
-		// Do we manage to generate a good service id
-		if ( (res & SERVICE_PEERID) != 0 )
-		{
-			return res & SERVICE_PEERID;
-		}
-	}
+	return (res & SERVICE_PEERID);
 }
 
 const SimpleString ComTools::MagicUdp("udp-port");
