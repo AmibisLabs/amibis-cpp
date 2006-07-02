@@ -134,7 +134,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @param kind_of_input [in] define if it is input or output or inoutput
    * @return a new InOutputAttribut object (will be deleted by the controlServer)
    */
-  InOutputAttribut* AddInOutput(const char* name, ComTools* com_tool, InOutputAttribut::KIND kind_of_input);
+  InOutputAttribut* AddInOutput(const char* name, ComTools* com_tool, InOutputKind kind_of_input);
   
   /**
    * @brief Create a new variable to export.

@@ -12,7 +12,7 @@ const SimpleString VariableAttribut::variable_str = "variable";
 
 VariableAttribut::VariableAttribut()
 {
-  access = read;  
+  access = ReadAccess;  
   
   callbackValue = NULL;
   userDataPtr = NULL;
@@ -21,7 +21,7 @@ VariableAttribut::VariableAttribut()
 VariableAttribut::VariableAttribut(const SimpleString& a_name)
   : Attribut(a_name)
 {
-  access = read; 
+  access = ReadAccess; 
   
   callbackValue = NULL;
   userDataPtr = NULL;
@@ -30,16 +30,16 @@ VariableAttribut::VariableAttribut(const SimpleString& a_name)
 VariableAttribut::VariableAttribut(const char* a_name)
   : Attribut(a_name)
 {
-  access = read; 
+  access = ReadAccess; 
   
   callbackValue = NULL;
   userDataPtr = NULL;
 }
 
-const SimpleString& VariableAttribut::AccessToStr(Access a)
+const SimpleString& VariableAttribut::AccessToStr(VariableAccess a)
 {
-  if(a == read) return access_read_str;
-  if(a == read_write) return access_readwrite_str;
+  if(a == ReadAccess) return access_read_str;
+  if(a == ReadWriteAccess) return access_readwrite_str;
   else return access_readwritebeforeinit_str;
 }
 
@@ -190,24 +190,24 @@ void VariableAttribut::SetType(const SimpleString& str)
 	type = str; 
 }
 
-void VariableAttribut::SetAccess(VariableAttribut::Access a)
+void VariableAttribut::SetAccess(VariableAccess a)
 {
 	access = a;
 }
 
 void VariableAttribut::SetAccessRead()
 {
-	access = read;
+	access = ReadAccess;
 }
 
 void VariableAttribut::SetAccessReadWrite()
 {
-	access = read_write;
+	access = ReadWriteAccess;
 }
 
 void VariableAttribut::SetAccessReadWriteBeforeInit()
 {
-	access = read_write_before_init;
+	access = ReadWriteBeforeInitAccess;
 }
 
 void VariableAttribut::SetDefaultValue(const SimpleString& str)
@@ -235,7 +235,7 @@ SimpleString& VariableAttribut::GetType()
 	return type; 
 }
 
-VariableAttribut::Access VariableAttribut::GetAccess() 
+VariableAccess VariableAttribut::GetAccess() 
 {
 	return access; 
 }
@@ -247,7 +247,7 @@ SimpleString& VariableAttribut::GetDefaultValue()
 
 bool VariableAttribut::CanBeModified(ControlServer::STATUS status) const
 { 
-	return (access == read_write || (access == read_write_before_init && status != ControlServer::STATUS_RUNNING)); 
+	return (access == ReadWriteAccess || (access == ReadWriteBeforeInitAccess && status != ControlServer::STATUS_RUNNING)); 
 }
 
 void VariableAttribut::SetCallbackValueChanged(SignalValueChanged callback, void* user_data_ptr)

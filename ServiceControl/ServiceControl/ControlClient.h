@@ -141,7 +141,7 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * @param name [in] the inoutput name 
    * @return NULL if the inoutput is not found, else a pointer on a structure with the data about the inoutput
    */
-  InOutputAttribut* FindIn_Output(const char* name);
+  InOutputAttribut* FindInOutput(const char* name);
   //@}
 
   /** @name Display Name of known attributes */
@@ -153,7 +153,7 @@ class ControlClient : public TcpClient, public XMLTreeParser
   /*! Display the input names on the standard output */
   void DisplayInputName();
   /*! Display the inoutput names on the standard output */
-  void DisplayIn_OutputName();
+  void DisplayInOutputName();
   //@}
 
   /** \name Accss to list of attribute by kind */
@@ -174,9 +174,9 @@ class ControlClient : public TcpClient, public XMLTreeParser
   SimpleList<InOutputAttribut*>& GetOutputList();
 
   /** \brief Access to the list of inoutput name */
-  SimpleList<SimpleString>& GetIn_OutputNameList();
+  SimpleList<SimpleString>& GetInOutputNameList();
   /** \brief Access to the list of inoutput object */
-  SimpleList<InOutputAttribut*>& GetIn_OutputList();
+  SimpleList<InOutputAttribut*>& GetInOutputList();
   //@}
 
   
@@ -264,9 +264,10 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * \return a structure with the data. It is in_output_attr if in_output_attr is non null, 
    * else return a pointer to a new allocated struture
    */
-  InOutputAttribut* ProcessIn_OutputDescription(xmlNodePtr node, InOutputAttribut* in_output_attr);
+  InOutputAttribut* ProcessInOutputDescription(xmlNodePtr node, InOutputAttribut* in_output_attr);
+
   /** \brief Extract input/output/inoutput description from a message*/
-  void ProcessInOutputDescription(xmlNodePtr node, InOutputAttribut* io_attr);
+  // void ProcessInOutputDescription(xmlNodePtr node, InOutputAttribut* io_attr);
   //@}
 
   /** \brief Display the names from a list on the standard output

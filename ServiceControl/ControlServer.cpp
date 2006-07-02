@@ -32,44 +32,44 @@ void ControlServer::InitInstance()
 	nbvarIntVariable = NULL;
 	va = AddVariable("number of variables");
 	va->SetType("integer");
-	va->SetAccess(VariableAttribut::read);
+	va->SetAccess(ReadAccess);
 	va->SetDescription("Gives the number of declared variables");
 	va->SetFormatDescription("decimal representation");
 	nbvarIntVariable = new IntVariableAttribut(va, 1);
 
 	VariableAttribut* status_variable = AddVariable("status");
 	status_variable->SetType("integer");
-	status_variable->SetAccess(VariableAttribut::read);
+	status_variable->SetAccess(ReadAccess);
 	statusIntVariable = new IntVariableAttribut(status_variable, (int)STATUS_BEGIN);
 
 	va = AddVariable("number of inoutputs");  
 	va->SetType("integer");
-	va->SetAccess(VariableAttribut::read);
+	va->SetAccess(ReadAccess);
 	va->SetDescription("Gives the number of declared inputs/outputs");
 	va->SetFormatDescription("decimal representation");
 	nbioIntVariable = new IntVariableAttribut(va, 0);
 
 	va = AddVariable("lock");
 	va->SetType("integer");
-	va->SetAccess(VariableAttribut::read_write);
+	va->SetAccess(ReadWriteAccess);
 	va->SetDescription("Use for locking access");
 	lockIntVariable = new IntVariableAttribut(va, 0);
 
 	va = AddVariable("name");
 	va->SetType("string");
-	va->SetAccess(VariableAttribut::read);
+	va->SetAccess(ReadAccess);
 	va->SetDescription("Registered name of this service");
 	NameVariable = new StringVariableAttribut( va, "" );
 
 	va = AddVariable("owner");
 	va->SetType("string");
-	va->SetAccess(VariableAttribut::read);
+	va->SetAccess(ReadAccess);
 	va->SetDescription("Login which launches this service");
 	OwnerVariable = new StringVariableAttribut( va, "none" );
 
 	va = AddVariable("peerid");
 	va->SetType("hexadecimal");
-	va->SetAccess(VariableAttribut::read);
+	va->SetAccess(ReadAccess);
 	va->SetDescription("PeerId of this service");
 	PeerIdVariable = new StringVariableAttribut( va, "00000000" );
 
@@ -591,7 +591,7 @@ VariableAttribut* ControlServer::AddVariable(const char* name)
   return va;
 }
 
-InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_tool, InOutputAttribut::KIND kind_of_input)
+InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_tool, InOutputKind kind_of_input)
 {
   unsigned int ConnectorId;
 

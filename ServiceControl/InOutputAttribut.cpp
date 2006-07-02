@@ -12,12 +12,12 @@ const SimpleString InOutputAttribut::inoutput_str = "inoutput";
 InOutputAttribut::InOutputAttribut()
 {
   comTool = NULL;
-  kindOfInput = INPUT;
+  kindOfInput = AnInput;
   peerId = 0;
   tcpPort = 0; udpPort = 0;
 }
 InOutputAttribut::InOutputAttribut(const SimpleString& a_name, ComTools* com_tool,
-				   KIND kind_of_input)
+				   InOutputKind kind_of_input)
   : Attribut(a_name)
 {  
   comTool = com_tool;
@@ -27,7 +27,7 @@ InOutputAttribut::InOutputAttribut(const SimpleString& a_name, ComTools* com_too
 }
 
 InOutputAttribut::InOutputAttribut(const char* a_name, ComTools* com_tool,
-				   KIND kind_of_input)
+				   InOutputKind kind_of_input)
   : Attribut(a_name)
 {
   kindOfInput = kind_of_input;
@@ -36,7 +36,7 @@ InOutputAttribut::InOutputAttribut(const char* a_name, ComTools* com_tool,
   tcpPort = 0; udpPort = 0;
 }
 
-InOutputAttribut::InOutputAttribut(const char* a_name, KIND kind_of_input)
+InOutputAttribut::InOutputAttribut(const char* a_name, InOutputKind kind_of_input)
   : Attribut(a_name)
 {
   kindOfInput = kind_of_input;
@@ -146,13 +146,13 @@ const SimpleString& InOutputAttribut::KindToStr() const
 {
   switch(kindOfInput)
     {
-    case INPUT:
+    case AnInput:
       return input_str;
       break;
-    case OUTPUT:
+    case AnOutput:
       return output_str;
       break;
-    case IN_OUTPUT:      
+    case AnInOutput:      
       return inoutput_str;
       break;
     }
@@ -218,20 +218,20 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 
 bool InOutputAttribut::IsAnInput() const
 {
-	return kindOfInput == INPUT; 
+	return kindOfInput == AnInput; 
 }
 
 bool InOutputAttribut::IsAnOutput() const
 {
-	return kindOfInput == OUTPUT; 
+	return kindOfInput == AnOutput; 
 }
 
 bool InOutputAttribut::IsAnInOutput() const
 {
-	return kindOfInput == IN_OUTPUT; 
+	return kindOfInput == AnInOutput; 
 }
 
-void InOutputAttribut::SetKindOfInput(KIND kind_of_input)
+void InOutputAttribut::SetKindOfInput(InOutputKind kind_of_input)
 {
 	kindOfInput = kind_of_input; 
 }
@@ -239,6 +239,11 @@ void InOutputAttribut::SetKindOfInput(KIND kind_of_input)
 void InOutputAttribut::SetComTool(ComTools* com_tool)
 {
 	comTool = com_tool; 
+}
+
+ComTools * InOutputAttribut::GetComTool()
+{
+	return comTool; 
 }
 
 int InOutputAttribut::GetTcpPort() const

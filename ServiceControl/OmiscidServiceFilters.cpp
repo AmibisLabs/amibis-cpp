@@ -3,10 +3,8 @@
 #include <ServiceControl/OmiscidServiceFilters.h>
 
 using namespace Omiscid;
-using namespace Omiscid::OmiscidServiceFilters;
 
 namespace Omiscid {
-namespace OmiscidServiceFilters {
 
 /**
 * Tests whether a service has the good name
@@ -14,14 +12,17 @@ namespace OmiscidServiceFilters {
 class ServiceNameIs : public OmiscidServiceFilter
 {
 public:
-	ServiceNameIs(SimpleString& Name, bool CaseInsensitive = false);
+	ServiceNameIs(SimpleString& Name, bool CaseInsensitive = false, bool OnlyPrefix = false);
 
-	bool IsAGoodService(OmiscidServiceProxy& SP);
+	virtual bool IsAGoodService(OmiscidServiceProxy& SP);
+	virtual OmiscidServiceFilter * Duplicate();
 
 private:
 	SimpleString Name;
 	bool CaseInsensitive;
+	bool OnlyPrefix;
 };
+
 
 /**
 * Tests whether a service has the good owner
@@ -32,19 +33,35 @@ public:
 	ServiceOwnerIs(SimpleString& Owner, bool CaseInsensitive = false);
 
 	bool IsAGoodService(OmiscidServiceProxy& SP);
+	virtual OmiscidServiceFilter * Duplicate();
 
 private:
 	SimpleString Owner;
 	bool CaseInsensitive;
 };
 
-} // namespace OmiscidServiceFilters 
+/**
+* Tests whether a service has the good owner
+*/
+class ServiceHostIs : public OmiscidServiceFilter
+{
+public:
+	ServiceHostIs(SimpleString& Hostname);
+
+	bool IsAGoodService(OmiscidServiceProxy& SP);
+	virtual OmiscidServiceFilter * Duplicate();
+
+private:
+	SimpleString Hostname;
+};
+
 } // namespace Omiscid
 
-ServiceNameIs::ServiceNameIs(SimpleString& Name, bool CaseInsensitive)
+ServiceNameIs::ServiceNameIs(SimpleString& Name, bool CaseInsensitive, bool OnlyPrefix)
 {
-	this->Name = Name;
+	this->Name			  = Name;
 	this->CaseInsensitive = CaseInsensitive;
+	this->OnlyPrefix	  = OnlyPrefix;
 }
 
 bool ServiceNameIs::IsAGoodService(OmiscidServiceProxy& SP)
@@ -52,11 +69,27 @@ bool ServiceNameIs::IsAGoodService(OmiscidServiceProxy& SP)
 	SimpleString ServiceName;
 	ServiceName = SP.GetName();
 
-	if ( CaseInsensitive )
+	if ( OnlyPrefix )
 	{
-		return (strcasecmp(Name.GetStr(), ServiceName.GetStr()) == 0);
+		if ( CaseInsensitive )
+		{
+			return (strncasecmp(Name.GetStr(), ServiceName.GetStr(), Name.GetLength()) == 0);
+		}
+		return (strncmp(Name.GetStr(), ServiceName.GetStr(), Name.GetLength()) == 0); 
 	}
-	return (Name == ServiceName);
+	else
+	{
+		if ( CaseInsensitive )
+		{
+			return (strcasecmp(Name.GetStr(), ServiceName.GetStr()) == 0);
+		}
+		return (Name == ServiceName);
+	}
+}
+
+OmiscidServiceFilter * ServiceNameIs::Duplicate()
+{
+	return new ServiceNameIs( Name, CaseInsensitive, OnlyPrefix );
 }
 
 ServiceOwnerIs::ServiceOwnerIs(SimpleString& Owner, bool CaseInsensitive)
@@ -80,16 +113,45 @@ bool ServiceOwnerIs::IsAGoodService(OmiscidServiceProxy& SP)
 	return (Owner == ServiceOwner);
 }
 
+OmiscidServiceFilter * ServiceOwnerIs::Duplicate()
+{
+	return new ServiceOwnerIs( Owner, CaseInsensitive );
+}
+
+ServiceHostIs::ServiceHostIs(SimpleString& Hostname)
+{
+	this->Hostname = Hostname;
+}
+
+bool ServiceHostIs::IsAGoodService(OmiscidServiceProxy& SP)
+{
+	SimpleString ServiceHostname = SP.GetHostName();
+
+	return (strncasecmp(Hostname.GetStr(), ServiceHostname.GetStr(), Hostname.GetLength()) == 0);
+}
+
+OmiscidServiceFilter * ServiceHostIs::Duplicate()
+{
+	return new ServiceHostIs( Hostname );
+}
+
 /**
 * Tests whether the service name (with possible trailing dnssd number
 * removed).
 *
-* @param nameRegexp
+* @param String
 * @return
 */
-OmiscidServiceFilter * Omiscid::OmiscidServiceFilters::NameIs(SimpleString Name, bool CaseInsensitive)
+OmiscidServiceFilter * Omiscid::NameIs(SimpleString Name, bool CaseInsensitive)
 {
-	return new ServiceNameIs(Name, CaseInsensitive); // @@@( \(\d+\))?@@@
+	// Ask to find the full name of the service
+	return new ServiceNameIs(Name, CaseInsensitive, false );
+}
+
+OmiscidServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensitive)
+{
+	// Ask to find the full name of the service
+	return new ServiceNameIs(Name, CaseInsensitive, true );
 }
 
 /**
@@ -98,10 +160,22 @@ OmiscidServiceFilter * Omiscid::OmiscidServiceFilters::NameIs(SimpleString Name,
 * @param String
 * @return
 */
-OmiscidServiceFilter * Omiscid::OmiscidServiceFilters::OwnerIs(SimpleString Name, bool CaseInsensitive)
+OmiscidServiceFilter * Omiscid::OwnerIs(SimpleString Name, bool CaseInsensitive)
 {
-	return new ServiceOwnerIs(Name, CaseInsensitive); // @@@( \(\d+\))?@@@
+	return new ServiceOwnerIs(Name, CaseInsensitive);
 }
+
+/**
+* Tests whether the service hostname
+*
+* @param String
+* @return
+*/
+OmiscidServiceFilter * Omiscid::HostPrefixIs(SimpleString Hostname)
+{
+	return new ServiceHostIs(Hostname);
+}
+
 
 OmiscidCascadeServiceFilters::OmiscidCascadeServiceFilters()
 {
@@ -110,17 +184,6 @@ OmiscidCascadeServiceFilters::OmiscidCascadeServiceFilters()
 OmiscidCascadeServiceFilters::~OmiscidCascadeServiceFilters()
 {
 	Empty();
-}
-
-void OmiscidCascadeServiceFilters::operator=( OmiscidServiceFilter* Filter )
-{
-	Empty();
-	Add( Filter );
-}
-
-void OmiscidCascadeServiceFilters::operator+=( OmiscidServiceFilter* Filter )
-{
-	Add( Filter );
 }
 
 void OmiscidCascadeServiceFilters::Empty()
@@ -142,6 +205,25 @@ bool OmiscidCascadeServiceFilters::IsAGoodService(OmiscidServiceProxy& SP)
 		}
 	}
 	return true;
+}
+
+OmiscidServiceFilter * OmiscidCascadeServiceFilters::Duplicate()
+{
+	// Create a copy
+	OmiscidCascadeServiceFilters * Copy = new OmiscidCascadeServiceFilters();
+	if ( Copy == NULL )
+	{
+		return NULL;
+	}
+
+	// Duplicate all child into the copy
+	for( First(); NotAtEnd(); Next() )
+	{
+		Copy->Add( GetCurrent()->Duplicate() );
+	}
+
+	// Return the copy
+	return Copy;
 }
 
 #if 0

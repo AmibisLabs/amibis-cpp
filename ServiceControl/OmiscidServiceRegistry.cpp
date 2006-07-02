@@ -9,7 +9,7 @@ using namespace Omiscid;
 	* @param serviceName the name of the service as it will appear in DNS-SD
 	* @return the bip service. All access to the service will be through this object
 	*/
-OmiscidService * OmiscidServiceRegistry::Register( const SimpleString& ServiceName )
+OmiscidService * OmiscidServiceRegistry::Create( const SimpleString& ServiceName )
 {
 	OmiscidService * NewOmiscidService = new OmiscidService(ServiceName);
 
@@ -22,7 +22,7 @@ OmiscidService * OmiscidServiceRegistry::Register( const SimpleString& ServiceNa
 	* @return the bip service. All access to the service will be through this object
 	* -------------------            Not implemented yet         -----------
 	*/
-OmiscidService * OmiscidServiceRegistry::RegisterFromXML( SimpleString XmlDesc )
+OmiscidService * OmiscidServiceRegistry::CreateFromXML( SimpleString XmlDesc )
 {
 	return NULL;
 }

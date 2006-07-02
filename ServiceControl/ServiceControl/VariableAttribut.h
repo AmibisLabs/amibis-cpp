@@ -16,6 +16,15 @@
 
 namespace Omiscid {
 
+  /** @brief VariableAccess Kind */
+typedef enum VariableAccess
+{
+	  ReadAccess /*!< read only access  the user cannot change the value through the ControlServer */, 
+  	  ReadWriteAccess /*!< read write access  : the user can change the value through the ControlServer*/, 
+	  ReadWriteBeforeInitAccess /*!< the user can change the value through the ControlServer only 
+				  when the status is different than ControlServer::STATUS_RUNNING */
+ } ;
+
 /**
  * @class VariableAttribut VariableAttribut.h ServiceControl/VariableAttribut.h
  * @brief Class to manage the variable of a service.
@@ -32,15 +41,6 @@ class VariableAttribut : public Attribut
  public:
   /** @brief Callback called when the value changed */
   typedef void (FUNCTION_CALL_TYPE *SignalValueChanged)(VariableAttribut* var, void* user_ptr);
- 
-  /** @brief Access Kind */
-  enum Access
-  {
-	  read /*!< read only access  the user cannot change the value through the ControlServer */, 
-		 read_write /*!< read write access  : the user can change the value through the ControlServer*/, 
-		 read_write_before_init /*!< the user can change the value through the ControlServer only 
-					  when the status is different than ControlServer::STATUS_RUNNING */
-		 } ;
 
  public:
   /** @name Constructor */
@@ -63,7 +63,7 @@ class VariableAttribut : public Attribut
   SimpleString& GetValueStr();
   const char* GetValueCh();
   SimpleString& GetDefaultValue();
-  Access GetAccess();
+  VariableAccess GetAccess();
   //@}
 
 
@@ -73,7 +73,7 @@ class VariableAttribut : public Attribut
   void SetType(const SimpleString& str);
   void SetDefaultValue(const SimpleString&);
   void SetDefaultValue(const char* str);
-  void SetAccess(VariableAttribut::Access);
+  void SetAccess(VariableAccess);
   void SetAccessRead();
   void SetAccessReadWrite();
   void SetAccessReadWriteBeforeInit();
@@ -101,7 +101,7 @@ class VariableAttribut : public Attribut
    * @param accesskind [in] access kind that we want to change in SimpleString
    * @return the associated SimpleString
    */
-  static const SimpleString& AccessToStr(VariableAttribut::Access accesskind);
+  static const SimpleString& AccessToStr(VariableAccess accesskind);
 
   /** @name XML Generation */
   //@{
@@ -160,7 +160,7 @@ class VariableAttribut : public Attribut
 protected:
   SimpleString type; /*!< type of the variable */
   SimpleString defaultValue; /*!< default value*/
-  Access access; /*!< kind of access.*/
+  VariableAccess access; /*!< kind of access.*/
   SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
 
   static const SimpleString access_read_str; /*<! SimpleString representation for 'read' access (used in XML description)*/

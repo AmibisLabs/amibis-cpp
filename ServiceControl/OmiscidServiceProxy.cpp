@@ -55,7 +55,7 @@ SimpleList<SimpleString>& OmiscidServiceProxy::GetOutputConnectors()
      */
 SimpleList<SimpleString>& OmiscidServiceProxy::GetInputOutputConnectors()
 {
-	return GetIn_OutputNameList();
+	return GetInOutputNameList();
 }
 
     /**
@@ -106,20 +106,15 @@ unsigned int OmiscidServiceProxy::GetPeerId()
      * @param varName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool OmiscidServiceProxy::SetVariableValue(const SimpleString varName, const SimpleString value)
+bool OmiscidServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleString Value)
 {
-	VariableAttribut * pVar = FindVariable(varName.GetStr());
+	VariableAttribut * pVar = FindVariable(VarName.GetStr());
 	if ( pVar == NULL )
 	{
-		pVar = QueryVariableDescription( varName.GetStr() );
-	}
-	if ( pVar == NULL )
-	{
-		// Not found
 		return false;
 	}
 
-	pVar->SetValueStr( value );
+	pVar->SetValueStr( Value );
 	return true;
 }
 
@@ -128,19 +123,72 @@ bool OmiscidServiceProxy::SetVariableValue(const SimpleString varName, const Sim
      * @param varName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool OmiscidServiceProxy::GetVariableValue(const SimpleString varName, SimpleString& value)
+bool OmiscidServiceProxy::GetVariableValue(const SimpleString VarName, SimpleString& Value)
 {
-	VariableAttribut * pVar = FindVariable(varName.GetStr());
+	VariableAttribut * pVar = FindVariable(VarName.GetStr());
 	if ( pVar == NULL )
 	{
-		pVar = QueryVariableDescription( varName.GetStr() );
+		return false;
+	}
+
+	Value = pVar->GetValueStr();
+	return true;
+}
+
+// Utility functions
+VariableAttribut * OmiscidServiceProxy::FindVariable( SimpleString VarName )
+{
+	VariableAttribut * pVar = ControlClient::FindVariable(VarName.GetStr());
+	if ( pVar == NULL )
+	{
+		pVar = ControlClient::QueryVariableDescription( VarName.GetStr() );
 	}
 	if ( pVar == NULL )
 	{
 		// Not found
-		return false;
+		TraceError( "Variable '%s' not found\n", VarName.GetStr() );
+		return NULL;
 	}
+	return pVar;
+}
 
-	value = pVar->GetValueStr();
-	return true;
+InOutputAttribut * OmiscidServiceProxy::FindConnector( SimpleString ConnectortName )
+{
+	InOutputAttribut * pAtt;
+	bool FirstTry;
+
+	for(FirstTry = true;;)
+	{
+		pAtt = ControlClient::FindInput( ConnectortName.GetStr() );
+		if ( pAtt )
+		{
+			// We've got it
+			return pAtt;
+		}
+		pAtt = ControlClient::FindOutput( ConnectortName.GetStr() );
+		if ( pAtt )
+		{
+			// idem
+			return pAtt;
+		}
+		pAtt = ControlClient::FindInOutput( ConnectortName.GetStr() );
+		if ( pAtt )
+		{
+			// idem
+			return pAtt;
+		}
+		// Here, we do not get the connector, if it is the first time, we first try to update
+		// the omiscid service description, if not, we exit without finding the connector
+		if ( FirstTry == false )
+		{
+			// exit the loop
+			break;
+		}
+		// Update the description and loop one more time
+		UpdateDescription();
+		FirstTry = false;
+	}
+	// Here we did not find the connector
+	TraceError( "Connector '%s' not found\n", ConnectortName.GetStr() );
+	return NULL;
 }

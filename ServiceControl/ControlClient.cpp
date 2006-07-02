@@ -235,7 +235,7 @@ InOutputAttribut* ControlClient::QueryOutputDescription(const char* output_name)
 
 InOutputAttribut* ControlClient::QueryInOutputDescription(const char* in_output_name)
 {
-  InOutputAttribut* in_output_attr = FindIn_Output(in_output_name);
+  InOutputAttribut* in_output_attr = FindInOutput(in_output_name);
   bool name_in_list = true;
   if(!in_output_attr)
     {
@@ -253,7 +253,7 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const char* in_output_
       InOutputAttribut* attr = NULL;
       if(msg->GetRootNode()->children != NULL)
 	{
-	  attr = ProcessIn_OutputDescription(msg->GetRootNode()->children, in_output_attr);
+	  attr = ProcessInOutputDescription(msg->GetRootNode()->children, in_output_attr);
 	}
       if(!in_output_attr && attr) listInOutputAttr.Add(attr);
       else if(in_output_attr && !attr)
@@ -386,7 +386,7 @@ InOutputAttribut* ControlClient::ProcessInputDescription(xmlNodePtr node, InOutp
   if(!node || (strcmp((const char*)node->name, InOutputAttribut::input_str.GetStr())!=0)) return NULL;
   InOutputAttribut* inattr = NULL;
   if(input_attr) inattr = input_attr;
-  else inattr = new InOutputAttribut("", InOutputAttribut::INPUT);
+  else inattr = new InOutputAttribut("", AnInput);
 
   inattr->ExtractDataFromXml(node);
 
@@ -403,20 +403,20 @@ InOutputAttribut* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOut
   }
   else
   {
-	  outattr = new InOutputAttribut("", InOutputAttribut::OUTPUT);
+	  outattr = new InOutputAttribut("", AnOutput);
   }
   outattr->ExtractDataFromXml(node);
 
   return outattr;
 }
-InOutputAttribut* ControlClient::ProcessIn_OutputDescription(xmlNodePtr node, InOutputAttribut* in_output_attr)
+InOutputAttribut* ControlClient::ProcessInOutputDescription(xmlNodePtr node, InOutputAttribut* in_output_attr)
 {
-  //std::cerr << "ControlClient::ProcessIn_OutputDescription : Not Yet Implemented\n"; 
+  //std::cerr << "ControlClient::ProcessInOutputDescription : Not Yet Implemented\n"; 
   if(!node || (strcmp((const char*)node->name, InOutputAttribut::inoutput_str.GetStr())!=0)) 
   	return NULL;
   InOutputAttribut* in_outattr = NULL;
   if(in_output_attr) in_outattr = in_output_attr;
-  else in_outattr = new InOutputAttribut("", InOutputAttribut::IN_OUTPUT);
+  else in_outattr = new InOutputAttribut("", AnInOutput);
 
   in_outattr->ExtractDataFromXml(node);
 
@@ -470,7 +470,7 @@ InOutputAttribut* ControlClient::FindOutput(const char* name)
     }
   return NULL;
 }
-InOutputAttribut* ControlClient::FindIn_Output(const char* name)
+InOutputAttribut* ControlClient::FindInOutput(const char* name)
 {
   for(listInOutputAttr.First(); listInOutputAttr.NotAtEnd(); 
       listInOutputAttr.Next())
@@ -575,9 +575,9 @@ void ControlClient::DisplayInputName()
 	DisplayListName(listInputName, "Input Name :");
 }
 
-void ControlClient::DisplayIn_OutputName()
+void ControlClient::DisplayInOutputName()
 {
-	DisplayListName(listInOutputName, "In_Output Name :");
+	DisplayListName(listInOutputName, "InOutput Name :");
 }
 
 SimpleList<SimpleString>& ControlClient::GetVariableNameList()
@@ -610,12 +610,12 @@ SimpleList<InOutputAttribut*>& ControlClient::GetOutputList()
 	return listOutputAttr; 
 }
 
-SimpleList<SimpleString>& ControlClient::GetIn_OutputNameList()
+SimpleList<SimpleString>& ControlClient::GetInOutputNameList()
 {
 	return listInOutputName; 
 }
 
-SimpleList<InOutputAttribut*>& ControlClient::GetIn_OutputList()
+SimpleList<InOutputAttribut*>& ControlClient::GetInOutputList()
 {
 	return listInOutputAttr;
 }

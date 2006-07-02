@@ -32,6 +32,10 @@ WaitForServices::WaitForServices()
 {
 	NbSearchServices = 0;
 	NbServicesReady = 0;
+
+	// Reset my event
+	AllFound.Reset();
+
 	StartThread();
 }
 
@@ -276,6 +280,11 @@ void WaitForServices::Run()
 			}
 		}
 
+		if ( NbServicesReady == NbSearchServices )
+		{
+			AllFound.Signal();
+		}
+
 		ThreadSafeSection.LeaveMutex();
 	}
 }
@@ -283,17 +292,31 @@ void WaitForServices::Run()
 
 bool WaitForServices::WaitAll( unsigned int DelayMax )
 {
-	unsigned int LocalDelay = 0;
-	while ( NbServicesReady != NbSearchServices )
+	return AllFound.Wait( DelayMax );
+#if 0
+	if ( DelayMax == 0 )
 	{
-		if ( LocalDelay >= DelayMax )
+		// INFINITE wait
+		while ( NbServicesReady != NbSearchServices )
 		{
-			return false;
+			Sleep( 10 );
 		}
-		Sleep( 10 );
-		LocalDelay += 10;
+	}
+	else
+	{
+		unsigned int LocalDelay = 0;
+		while ( NbServicesReady != NbSearchServices )
+		{
+			if ( LocalDelay >= DelayMax )
+			{
+				return false;
+			}
+			Sleep( 10 );
+			LocalDelay += 10;
+		}
 	}
 	return true;
+#endif
 }
 
 int WaitForServices::GetNbOfSearchedServices()

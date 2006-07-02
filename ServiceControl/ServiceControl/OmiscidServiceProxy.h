@@ -25,34 +25,34 @@ public:
 	 * Returns the list of variables
 	 * @return the list of variables
 	 */
-	SimpleList<SimpleString>& GetVariables() ;
+	SimpleList<SimpleString>& GetVariables();
 
 	/**
 	 * Returns the list of connectors (input type)
 	 * @return the list of connectors
 	 */
-	SimpleList<SimpleString>& GetInputConnectors() ;
+	SimpleList<SimpleString>& GetInputConnectors();
 
     /**
      * Returns the list of connectors (output type)
      * @return the list of connectors
      */
-    SimpleList<SimpleString>& GetOutputConnectors() ;
+    SimpleList<SimpleString>& GetOutputConnectors();
 
     /**
      * Returns the list of connectors (input-output type)
      * @return the list of connectors
      */
-    SimpleList<SimpleString>& GetInputOutputConnectors() ;
-
-    /**
-     * Updates the local view of a remote bip service :
+    SimpleList<SimpleString>& GetInputOutputConnectors();
+	
+	/**
+     * Updates the local view of a remote Omiscid service :
      * <ul>
      * <li> the list of variables
      * <li> the list of connectors
      * </ul>
      */
-    void UpdateDescription() ;
+    void UpdateDescription();
 
     /**
      * Host name where the remote service is located
@@ -66,7 +66,7 @@ public:
      * The Peer Id of the remote bip service
      * @return the peer id
      */
-    unsigned int GetPeerId() ;
+    unsigned int GetPeerId();
 	
 	/**
      * The Peer Id of the remote bip service
@@ -91,6 +91,10 @@ public:
 private:
 	SimpleString HostName;
 	unsigned int ControlPort;
+
+	// Internal Utility function
+	VariableAttribut * FindVariable( SimpleString VarName );
+	InOutputAttribut * FindConnector( SimpleString InOutputName );
 };
 
 } // namespace Omiscid

@@ -17,6 +17,8 @@
 
 namespace Omiscid {
 
+typedef enum InOutputKind { AnInput = 0, AnOutput=1, AnInOutput = 2};
+
 /**
  * @class InOutputAttribut InOutputAttribut.h ServiceControl/InOutputAttribut.h
  * @brief Class to manage the input or output of a service.
@@ -27,11 +29,10 @@ namespace Omiscid {
 class InOutputAttribut : public Attribut
 {
  public:
-  static const SimpleString input_str; /*!< String associated to the kind INPUT*/
-  static const SimpleString output_str; /*!< String associated to the kind OUTPUT*/
-  static const SimpleString inoutput_str; /*!< String associated to the kind IN_OUTPUT*/
+  static const SimpleString input_str; /*!< String associated to the kind AnInput*/
+  static const SimpleString output_str; /*!< String associated to the kind AnOutput*/
+  static const SimpleString inoutput_str; /*!< String associated to the kind AnInOutput*/
 
-  enum KIND {INPUT=0, OUTPUT=1, IN_OUTPUT = 2};
  public:
   /** \name Constructors */
   //@{
@@ -41,29 +42,29 @@ class InOutputAttribut : public Attribut
   /** @brief Constructor 
    * @param a_name name for the input/output
    * @param com_tool Communication tool assciated to the input/output
-   * @param kind_of_input define if the object is INPUT, OUTPUT or IN_OUTPUT
+   * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const SimpleString& a_name, ComTools* com_tool, KIND kind_of_input);  
+  InOutputAttribut(const SimpleString& a_name, ComTools* com_tool, InOutputKind kind_of_input);  
 
   /** @brief Constructor 
    * @param a_name name for the input/output
    * @param com_tool Communication tool assciated to the input/output
-   * @param kind_of_input define if the object is INPUT, OUTPUT or IN_OUTPUT
+   * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const char* a_name, ComTools* com_tool, KIND kind_of_input);
+  InOutputAttribut(const char* a_name, ComTools* com_tool, InOutputKind kind_of_input);
 
   /** @brief Constructor 
    * @param a_name name for the input/output
-   * @param kind_of_input define if the object is INPUT, OUTPUT or IN_OUTPUT
+   * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const char* a_name, KIND kind_of_input);
+  InOutputAttribut(const char* a_name, InOutputKind kind_of_input);
   //@}
 
   /** \name Read Accessors */
   //@{
-  bool IsAnInput() const; /*!< test if the object kind is INPUT*/
-  bool IsAnOutput() const; /*!< test if the object kind is OUTPUT*/
-  bool IsAnInOutput() const; /*!< test if the object kind is IN_OUTPUT*/
+  bool IsAnInput() const; /*!< test if the object kind is AnInput*/
+  bool IsAnOutput() const; /*!< test if the object kind is AnOutput*/
+  bool IsAnInOutput() const; /*!< test if the object kind is AnInOutput*/
   int GetTcpPort() const; /*!< Access to port number for TCP */
   int GetUdpPort() const; /*!< Access to port number for UDP */
 
@@ -74,14 +75,17 @@ class InOutputAttribut : public Attribut
 
   /** \name Write Accessors */
   //@{
-  void SetKindOfInput(KIND kind_of_input); /*!< Change the kind of the object */
+  void SetKindOfInput(InOutputKind kind_of_input); /*!< Change the kind of the object */
+  
   void SetComTool(ComTools* com_tool); /*!< define the comunication tool associated to the input/output */
+  ComTools * GetComTool();			   /*!< retrieve the comunication tool associated to the input/output */
   //@}
 
   /** \name Write Accessor for data storage when request to controlServer
    *
    * Methods use by the ControlClient class.
    */
+public:
   //@{
   void SetTcpPort(unsigned short port);
   void SetUdpPort(unsigned short port);
@@ -107,7 +111,7 @@ class InOutputAttribut : public Attribut
   void ExtractDataFromXml(xmlNodePtr node);
 
  protected:
-  KIND kindOfInput; /*!< 0 if input, 1 of output, 2 if input/output*/
+  InOutputKind kindOfInput; /*!< 0 if input, 1 of output, 2 if input/output*/
 
   ComTools* comTool; /*!< the pointer on the tool of communication associated to this input or output object */
 unsigned int peerId; /*!< needed in case of distant usage, because we do not have a comtool */

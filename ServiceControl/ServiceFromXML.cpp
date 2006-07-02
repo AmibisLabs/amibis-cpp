@@ -57,13 +57,16 @@ void ServiceFromXML::ProcessVariableAttribut(xmlNodePtr node)
 
 void ServiceFromXML::ProcessInOutputAttribut(xmlNodePtr node)
 {
-  InOutputAttribut::KIND kind_of_input = InOutputAttribut::IN_OUTPUT;
+  InOutputKind kind_of_input = AnInOutput;
   const char* node_name = (const char*)node->name;
   if (strcmp(node_name,  InOutputAttribut::input_str.GetStr()) == 0)
-    kind_of_input = InOutputAttribut::INPUT;
+  {
+    kind_of_input = AnInput;
+  }
   else if (strcmp(node_name,  InOutputAttribut::output_str.GetStr()) == 0)
-    kind_of_input = InOutputAttribut::OUTPUT;
- 
+  {
+    kind_of_input = AnOutput;
+  }
   
   xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", node);
   if(attr_name)

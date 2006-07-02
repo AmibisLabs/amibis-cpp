@@ -12,6 +12,7 @@
 
 #include <System/Config.h>
 #include <System/Socket.h>
+#include <System/Event.h>
 #include <System/Thread.h>
 #include <System/Mutex.h>
 #include <System/AtomicCounter.h>
@@ -63,7 +64,7 @@ public:
 	int NeedService( const char * eName, const char * eType, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 
 	/* DelayMax en milliseconds*/
-	bool WaitAll(unsigned int DelayMax = (unsigned int)0xffffffff );
+	bool WaitAll(unsigned int DelayMax = 0 );
 
 	int GetNbOfSearchedServices();
 	  //int GetNbOfAvailableServices();
@@ -78,6 +79,7 @@ protected:
 
 
 	AtomicCounter NbServicesReady;
+	Event AllFound;
 	Mutex ThreadSafeSection;
 	Mutex mutexServicesUsed;
 

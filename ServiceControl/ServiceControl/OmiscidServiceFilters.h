@@ -20,6 +20,7 @@ protected:
 
 public:
 	virtual bool IsAGoodService(OmiscidServiceProxy& SP) = 0;
+	virtual OmiscidServiceFilter * Duplicate() = 0;
 };
 
 class OmiscidCascadeServiceFilters : public OmiscidServiceFilter,
@@ -29,40 +30,57 @@ public:
 	OmiscidCascadeServiceFilters();
 	~OmiscidCascadeServiceFilters();
 
+// Abstracted function
 	virtual bool IsAGoodService(OmiscidServiceProxy& SP);
+	virtual OmiscidServiceFilter * Duplicate();
 
 	void Empty();
-
-	void operator=( OmiscidServiceFilter* Filter );
-	void operator+=( OmiscidServiceFilter* Filter );
 };
 
 /**
- * Utility class. Provides some {@link OmiscidServiceFilter} creators for
+ * Utility functions. Provides some {@link OmiscidServiceFilter} creators for
  * classical requirements.
  */
-namespace OmiscidServiceFilters {
 
-	/**
-	* Tests whether the service name (with possible trailing dnssd number
-	* removed).
-	*
-	* @param nameRegexp
-	* @return
-	*/
-	OmiscidServiceFilter * NameIs(SimpleString Name, bool CaseInsensitive = false);
+/**
+* Tests whether the service name (with possible trailing dnssd number
+* removed).
+*
+* @param nameRegexp
+* @return
+*/
+OmiscidServiceFilter * NameIs(SimpleString Name, bool CaseInsensitive = false);
 
-	/**
-	* Tests whether the service owner
-	*
-	* @param String
-	* @return
-	*/
-	OmiscidServiceFilter * OwnerIs(SimpleString Name, bool CaseInsensitive = false);
+/**
+* Tests whether the service name (with possible trailing dnssd number
+* removed).
+*
+* @param nameRegexp
+* @return
+*/
+OmiscidServiceFilter * NamePrefixIs(SimpleString Name, bool CaseInsensitive = false);
 
+/**
+* Tests whether the service owner
+*
+* @param String
+* @return
+*/
+OmiscidServiceFilter * OwnerIs(SimpleString Name, bool CaseInsensitive = false);
 
-}	// namespace OmiscidFilters
+/**
+* Tests whether the service hostname
+*
+* @param String
+* @return
+*/
+OmiscidServiceFilter * HostPrefixIs(SimpleString Hostname);
 
+#if 0
+To do :
+- Variable Filter
+- InOutput filters
+#endif
 
 } // namespace Omiscid
 
