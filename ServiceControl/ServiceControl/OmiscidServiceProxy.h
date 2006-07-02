@@ -6,6 +6,9 @@
 #include <System/Config.h>
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
+
+#include <Com/TcpUdpClientServer.h>
+
 #include <ServiceControl/ControlClient.h>
 
 namespace Omiscid {
@@ -87,6 +90,12 @@ public:
      * @param value the value (SimpleString format)
      */
     bool GetVariableValue(const SimpleString varName, SimpleString& value);
+
+	/**
+     * Gets the connection points of a remote connector
+     * @param value the value (SimpleString format)
+     */
+	bool GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection );
 
 private:
 	SimpleString HostName;

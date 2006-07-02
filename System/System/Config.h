@@ -70,8 +70,8 @@
 namespace Omiscid {
 
 // Ugly for the moment
-#if defined DEBUG
-	// in debug mode, we plan to trace every thing
+#ifdef OMISCID_TRACE_ENABLE
+	// in tracer mode, we plan to trace every thing
 	inline int TraceError(char * format, ... )
 	{
 	   va_list args;
@@ -81,7 +81,7 @@ namespace Omiscid {
 	   return 0;
 	}
 #else
-	// in release mode, we do not print nothing
+	// in other mode, we do not print nothing
 	inline int TraceError(...)
 	{
 	   return 0;

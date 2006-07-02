@@ -1,8 +1,29 @@
-#include <System/Config.h>
+
 #include <ServiceControl/VariableAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 
 using namespace Omiscid;
+
+
+VariableAttributCallback::VariableAttributCallback()
+{
+	callbackValue = NULL;
+	userDataPtr   = NULL;
+}
+
+VariableAttributCallback::VariableAttributCallback(VariableAttributCallback&ToCopy)
+{
+	operator=(ToCopy);
+}
+
+VariableAttributCallback& VariableAttributCallback::operator=(VariableAttributCallback&ToCopy)
+{
+	callbackValue = ToCopy.callbackValue;
+	userDataPtr	  = ToCopy.userDataPtr;
+
+	return *this;
+}
+
 
 const SimpleString VariableAttribut::access_read_str = "read";
 const SimpleString VariableAttribut::access_readwrite_str = "readWrite";
@@ -13,27 +34,18 @@ const SimpleString VariableAttribut::variable_str = "variable";
 VariableAttribut::VariableAttribut()
 {
   access = ReadAccess;  
-  
-  callbackValue = NULL;
-  userDataPtr = NULL;
 }
 
 VariableAttribut::VariableAttribut(const SimpleString& a_name)
   : Attribut(a_name)
 {
   access = ReadAccess; 
-  
-  callbackValue = NULL;
-  userDataPtr = NULL;
 }
 
 VariableAttribut::VariableAttribut(const char* a_name)
   : Attribut(a_name)
 {
   access = ReadAccess; 
-  
-  callbackValue = NULL;
-  userDataPtr = NULL;
 }
 
 const SimpleString& VariableAttribut::AccessToStr(VariableAccess a)
@@ -111,13 +123,19 @@ void VariableAttribut::Display()
 
 void VariableAttribut::SetValueStr(const char* value_str){
   valueStr = value_str; 
-  if(callbackValue) callbackValue(this, userDataPtr);
+  if(CallbackData.callbackValue)
+  {
+	  CallbackData.callbackValue(this, CallbackData.userDataPtr);
+  }
 }
 
 void  VariableAttribut::SetValueStr(const SimpleString& value_str)
 {
   valueStr = value_str; 
-  if(callbackValue) callbackValue(this, userDataPtr);
+  if(CallbackData.callbackValue)
+  {
+	  CallbackData.callbackValue(this, CallbackData.userDataPtr);
+  }
 }
 
 
@@ -164,9 +182,9 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 	  {
 	    SimpleString content = XMLMessage::ExtractTextContent(cur_node->children);
 	    if(content == "read") SetAccessRead();
-	    else if(content == "read_write")
+	    else if(content == access_readwrite_str)
 	      SetAccessReadWrite();
-	    else if(content =="read_write_before_init")
+	    else if(content == access_readwritebeforeinit_str )
 	      SetAccessReadWriteBeforeInit();
 	    else 
 	      {
@@ -252,6 +270,11 @@ bool VariableAttribut::CanBeModified(ControlServer::STATUS status) const
 
 void VariableAttribut::SetCallbackValueChanged(SignalValueChanged callback, void* user_data_ptr)
 { 
-	callbackValue = callback;
-	userDataPtr = user_data_ptr;
+	CallbackData.callbackValue = callback;
+	CallbackData.userDataPtr = user_data_ptr;
+}
+
+VariableAttributCallback VariableAttribut::GetCallbackData()
+{
+	return CallbackData;
 }

@@ -23,7 +23,25 @@ typedef enum VariableAccess
   	  ReadWriteAccess /*!< read write access  : the user can change the value through the ControlServer*/, 
 	  ReadWriteBeforeInitAccess /*!< the user can change the value through the ControlServer only 
 				  when the status is different than ControlServer::STATUS_RUNNING */
- } ;
+ };
+
+class VariableAttribut;
+
+  /** @brief Callback called when the value changed */
+typedef void (FUNCTION_CALL_TYPE *SignalValueChanged)(VariableAttribut* var, void* user_ptr);
+
+class VariableAttributCallback
+{
+public:
+	VariableAttributCallback();
+	VariableAttributCallback(VariableAttributCallback&ToCopy);
+
+	VariableAttributCallback& operator=(VariableAttributCallback&ToCopy);
+
+	SignalValueChanged callbackValue; /*!< the callback method to call when the value changed */
+	void* userDataPtr; /*!< the pointer on data given to the callback */
+};
+
 
 /**
  * @class VariableAttribut VariableAttribut.h ServiceControl/VariableAttribut.h
@@ -38,10 +56,6 @@ typedef enum VariableAccess
  */
 class VariableAttribut : public Attribut
 {
- public:
-  /** @brief Callback called when the value changed */
-  typedef void (FUNCTION_CALL_TYPE *SignalValueChanged)(VariableAttribut* var, void* user_ptr);
-
  public:
   /** @name Constructor */
   //@{
@@ -153,6 +167,8 @@ class VariableAttribut : public Attribut
    */
   void ExtractDataFromXml(xmlNodePtr node);
 
+  VariableAttributCallback GetCallbackData();
+
   /**  \brief to parse/generate XML data.
    */
   static const SimpleString variable_str;
@@ -168,8 +184,7 @@ protected:
   static const SimpleString access_readwritebeforeinit_str; /*<! SimpleString representation for 'read-write before init' 
 							     access (used in XML description)*/
  private:
-  SignalValueChanged callbackValue; /*!< the callback method to call when the value changed */
-  void* userDataPtr; /*!< the pointer on data given to the callback */
+	VariableAttributCallback CallbackData; /*!< the callback method to call when the value changed */
 };
 
 } // namespace Omiscid

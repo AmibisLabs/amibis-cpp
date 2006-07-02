@@ -67,7 +67,7 @@ SimpleList<SimpleString>& OmiscidServiceProxy::GetInputOutputConnectors()
      */
 void OmiscidServiceProxy::UpdateDescription()
 {
-	QueryGlobalDescription();
+	QueryDetailedDescription();
 }
 
     /**
@@ -135,6 +135,22 @@ bool OmiscidServiceProxy::GetVariableValue(const SimpleString VarName, SimpleStr
 	return true;
 }
 
+bool OmiscidServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection )
+{
+	InOutputAttribut * pAtt = FindConnector( Connector );
+	if ( pAtt == NULL )
+	{
+		TraceError( "Could not find connector nammed '%s'\n", Connector.GetStr() );
+		return false;
+	}
+
+	Connection.TcpPort = pAtt->GetTcpPort();
+	Connection.UdpPort = pAtt->GetUdpPort();
+	Connection.Type	   = pAtt->GetType();
+
+	return true;
+}
+
 // Utility functions
 VariableAttribut * OmiscidServiceProxy::FindVariable( SimpleString VarName )
 {
@@ -192,3 +208,4 @@ InOutputAttribut * OmiscidServiceProxy::FindConnector( SimpleString ConnectortNa
 	TraceError( "Connector '%s' not found\n", ConnectortName.GetStr() );
 	return NULL;
 }
+

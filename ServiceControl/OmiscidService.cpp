@@ -2,6 +2,7 @@
 
 #include <ServiceControl/OmiscidService.h>
 
+#include <Com/MsgManager.h>
 #include <Com/TcpUdpClientServer.h>
 #include <ServiceControl/WaitForServices.h>
 
@@ -10,9 +11,19 @@ using namespace Omiscid;
 
 namespace Omiscid {
 
+class OmiscidServiceSearchData
+{
+public:
+	OmiscidServiceSearchData();
+	~OmiscidServiceSearchData();
+
+	OmiscidCascadeServiceFilters FilterList;
+	OmiscidServiceProxy * Proxy;
+};
+
 bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData)
 {
-	OmiscidServiceData * MyData = (OmiscidServiceData *)UserData;
+	OmiscidServiceSearchData * MyData = (OmiscidServiceSearchData *)UserData;
 
 	SimpleString Host(hosttarget);
 
@@ -38,12 +49,12 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 
 } // namespace Omiscid
 
-OmiscidServiceData::OmiscidServiceData()
+OmiscidServiceSearchData::OmiscidServiceSearchData()
 {
 	Proxy = NULL;
 }
 
-OmiscidServiceData::~OmiscidServiceData()
+OmiscidServiceSearchData::~OmiscidServiceSearchData()
 {
 }
 
@@ -348,26 +359,81 @@ bool OmiscidService::ConnectTo(SimpleString LocalConnector, OmiscidServiceProxy&
 		return false;
 	}
 
-	// ServiceProxy.
-
-	if ( pAtt->IsAnOutput() )	// can be Input, InOutput, but not Output
+	ConnectionInfos Connection;
+	if ( ServiceProxy.GetConnectionInfos( RemoteConnector, Connection ) == false )
 	{
-		TraceError( "Could not send data on an simple output connector.\n" );
+		// TraceError already done in GetConnectionInfos
 		return false;
 	}
 
+	// Check compatibility
+	switch( pAtt->GetType() )
+	{
+		case AnInput:
+			// Can connect only on output and inoutput
+			if ( Connection.Type == AnInput )
+			{
+				TraceError( "Cound not connect local input connector '%s' to another input connector '%s'\n", LocalConnector.GetStr(), RemoteConnector.GetStr() );
+				return false;
+			}
+			break;
+
+		case AnOutput:
+			// Can connect only on input and inoutput
+			if ( Connection.Type == AnOutput )
+			{
+				TraceError( "Cound not connect local output connector '%s' to another output connector '%s'\n", LocalConnector.GetStr(), RemoteConnector.GetStr() );
+				return false;
+			}
+			break;
+
+		default:	// inoutput ans other
+			// Can connect to every thing
+			break;
+
+	}
+
+	// Ok, here we go
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
+	// Let's connect to him
+	pConnector->ConnectTo( ServiceProxy.GetHostName().GetStr(), Connection.TcpPort, Connection.UdpPort );
 
+	return false;
+}
 
-	// pConnector->ConnectTo( ServiceProxy.GetHostName().GetStr(), ServiceProxy.GetTcpPort()
+	/**
+	 * Add a message listener to a connector
+	 * @param ConnectorName the name of the connector
+	 * @param MsgListener the object that will handle messages sent to this connector
+	 */
+bool OmiscidService::AddConnectorListener(SimpleString ConnectorName, OmiscidMessageListener * MsgListener)
+{
+	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
+	if ( pAtt == NULL )
+	{
+		TraceError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
+		return false;
+	}
+
+	if ( pAtt->IsAnOutput() )	// can be Input, InOutput, but not Output
+	{
+		TraceError( "Could not receive data over a simple output connector.\n" );
+		return false;
+	}
+
+	// Get the connector
+	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
+
+	// Link to receive messages
+	pConnector->LinkToMsgManager( MsgListener );
+	MsgListener->StartThread();
 
 	return false;
 }
 
 
-
-
+// Utility function
 
 
 
@@ -382,13 +448,15 @@ OmiscidServiceProxy * OmiscidService::FindService(OmiscidServiceFilter * Filter)
 	// We want to be sure that we destroy data in the rigth order
 	// Let's do it by ourself
 	WaitForOmiscidServices * WFOS = new WaitForOmiscidServices;
-	OmiscidServiceData MyData;
+	OmiscidServiceSearchData MyData;
 
 	MyData.FilterList.Add( Filter );
 
 	WFOS->NeedService( "", WaitForOmiscidServiceCallback, (void*)&MyData);
 	WFOS->WaitAll();
 
+	// Delete by ourself the object. Thus we are sure that
+	// we will find
 	delete WFOS;
 
 	return MyData.Proxy;

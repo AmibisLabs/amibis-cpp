@@ -17,8 +17,6 @@
 
 namespace Omiscid {
 
-typedef enum InOutputKind { AnInput = 0, AnOutput=1, AnInOutput = 2};
-
 /**
  * @class InOutputAttribut InOutputAttribut.h ServiceControl/InOutputAttribut.h
  * @brief Class to manage the input or output of a service.
@@ -65,6 +63,8 @@ class InOutputAttribut : public Attribut
   bool IsAnInput() const; /*!< test if the object kind is AnInput*/
   bool IsAnOutput() const; /*!< test if the object kind is AnOutput*/
   bool IsAnInOutput() const; /*!< test if the object kind is AnInOutput*/
+  InOutputKind GetType() const; /*!<retrieve the object kind */
+
   int GetTcpPort() const; /*!< Access to port number for TCP */
   int GetUdpPort() const; /*!< Access to port number for UDP */
 

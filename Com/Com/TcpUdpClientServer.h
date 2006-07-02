@@ -7,6 +7,7 @@
 #define TCPUDPCLIENTSERVER_H
 
 #include <System/Config.h>
+
 #include <System/SimpleList.h>
 #include <System/Mutex.h>
 #include <Com/TcpServer.h>
@@ -15,6 +16,20 @@
 #include <Com/MsgManager.h>
 
 namespace Omiscid {
+
+	// Definition of a connection point. Will be extended for Shared memory
+class ConnectionInfos
+{
+public:
+	ConnectionInfos();
+	ConnectionInfos(ConnectionInfos& ToCopy);
+
+	ConnectionInfos& operator=(ConnectionInfos& ToCopy);
+
+	int TcpPort;
+	int UdpPort;
+	InOutputKind Type;
+};
 
 /** 
  * @class ClientConnection TcpUdpClientServer.h Com/TcpUdpClientServer.h

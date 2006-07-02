@@ -273,7 +273,51 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const char* in_output_
   return NULL;
 }
 
+bool ControlClient::QueryDetailedDescription()
+{
+	if ( QueryGlobalDescription() == false )
+	{
+		return false;
+	}
 
+	// Ask for all variable
+	for( listVariableName.First(); listVariableName.NotAtEnd(); listVariableName.Next() )
+	{
+		if ( QueryVariableDescription( listVariableName.GetCurrent().GetStr() ) == false )
+		{
+			return false;
+		}
+	}
+
+	// Ask for all Input
+	for( listInputName.First(); listInputName.NotAtEnd(); listInputName.Next() )
+	{
+		if ( QueryInputDescription( listInputName.GetCurrent().GetStr() ) == false )
+		{
+			return false;
+		}
+	}
+
+	// Ask for all Output
+	for( listOutputName.First(); listOutputName.NotAtEnd(); listOutputName.Next() )
+	{
+		if ( QueryOutputDescription( listOutputName.GetCurrent().GetStr() ) == false )
+		{
+			return false;
+		}
+	}
+
+	// Ask for all InOutput
+	for( listInOutputName.First(); listInOutputName.NotAtEnd(); listInOutputName.Next() )
+	{
+		if ( QueryInOutputDescription( listInOutputName.GetCurrent().GetStr() ) == false )
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
 
 
 

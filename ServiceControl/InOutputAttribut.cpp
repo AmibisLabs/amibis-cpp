@@ -231,6 +231,11 @@ bool InOutputAttribut::IsAnInOutput() const
 	return kindOfInput == AnInOutput; 
 }
 
+InOutputKind InOutputAttribut::GetType() const
+{
+	return kindOfInput;
+}
+
 void InOutputAttribut::SetKindOfInput(InOutputKind kind_of_input)
 {
 	kindOfInput = kind_of_input; 

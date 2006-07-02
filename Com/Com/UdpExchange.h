@@ -29,7 +29,7 @@ namespace Omiscid {
  *
  * \author Sebastien Pesnel
  */
-class UdpExchange : public Omiscid::MsgSocket, virtual public Omiscid::ComTools
+class UdpExchange : public MsgSocket, virtual public ComTools
 {
  public:
   /**\brief Default Constructor 

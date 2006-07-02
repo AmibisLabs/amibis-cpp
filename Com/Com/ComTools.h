@@ -12,6 +12,8 @@
 
 namespace Omiscid {
 
+typedef enum InOutputKind { UnkownKind = -1, AnInput = 0, AnOutput=1, AnInOutput = 2};
+
 /**
  * @class ComTools ComTools.h Com/ComTools.h
  * \brief Interface the communication tools

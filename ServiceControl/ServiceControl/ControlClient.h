@@ -107,6 +107,11 @@ class ControlClient : public TcpClient, public XMLTreeParser
    */
   InOutputAttribut* QueryInOutputDescription(const char* in_output_name);
 
+    /** @brief Ask for a precise description of everything in the ControlServer 
+   * @return false if query failed, true otherwise
+   */
+  bool QueryDetailedDescription();
+
   /** @brief Ask for receive variable modification 
    * @param var_name [in] the variable name
    */

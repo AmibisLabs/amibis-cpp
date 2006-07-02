@@ -12,20 +12,12 @@
 #include <ServiceControl/OmiscidServiceFilters.h>
 #include <ServiceControl/OmiscidServicesTools.h>
 #include <ServiceControl/OmiscidServiceProxy.h>
+#include <ServiceControl/OmiscidMessageListener.h>
+#include <ServiceControl/OmiscidVariableChangeListener.h>
 
 namespace Omiscid {
 
 class OmiscidServiceRegistry;
-
-class OmiscidServiceData
-{
-public:
-	OmiscidServiceData();
-	~OmiscidServiceData();
-
-	OmiscidCascadeServiceFilters FilterList;
-	OmiscidServiceProxy * Proxy;
-};
 
 /**
  * @author Dominique Vaufreydaz
@@ -174,24 +166,24 @@ public:
      */
     static OmiscidServiceProxy * FindService(OmiscidServiceFilter& Filter);
 
-
-#if 0
-	    /** Variable for Read Access*/
-    public static final SimpleString READ = "read";
-    /** Variable for Read and Write Access*/
-    public static final SimpleString READ_WRITE = "read_write";
-    /** Object for Read-Write Access before init */
-    public static final SimpleString READ_WRITE_BEFORE_INIT = "read_write_before_init";
-
-
 	/**
 	 * Add a message listener to a connector
-	 * @param connectorName the name of the connector
-	 * @param msgListener the object that will handle messages sent to this connector
-	 * @throws UnknownBipConnector thrown if the service has not declared this connector
+	 * @param ConnectorName the name of the connector
+	 * @param MsgListener the object that will handle messages sent to this connector
 	 */
-	public void addConnectorListener(SimpleString connectorName,
-									BipMessageListener msgListener) throws UnknownBipConnector;
+	bool AddConnectorListener(SimpleString ConnectorName, OmiscidMessageListener * MsgListener);
+
+	/**
+	 * Adds a listener that will be triggered at every variable change
+	 * @param varName the varName
+	 * @param listener the listener
+	 * @throws UnknownBipVariable thrown if the variable has not been declared
+	 * @see BipService#addVariable
+	 */
+	bool AddVariableChangeListener(SimpleString VarName, OmiscidAllVariablesListener * listener);
+
+#if 0
+
 
 	/**
 	 * Adds a listener that will be triggered at every variable change
@@ -229,6 +221,7 @@ public:
      */
     public HashMap<SimpleString, BipServiceProxy> findServices(SimpleString[] services, OmiscidServiceFilter[] filters) ;
 #endif
+
 };
 
 } // namespace Omiscid

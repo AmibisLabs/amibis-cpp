@@ -5,6 +5,27 @@
 
 using namespace Omiscid;
 
+ConnectionInfos::ConnectionInfos()
+{
+	TcpPort = 0;
+	UdpPort = 0;
+	Type	= UnkownKind;
+}
+
+ConnectionInfos::ConnectionInfos(ConnectionInfos& ToCopy)
+{
+	operator=(ToCopy);
+}
+
+ConnectionInfos& ConnectionInfos::operator=(ConnectionInfos& ToCopy)
+{
+	TcpPort = ToCopy.TcpPort;
+	UdpPort = ToCopy.UdpPort;
+	Type	= ToCopy.Type;
+
+	return *this;
+}
+
 ClientConnection::ClientConnection(TcpClient* tcp_client, UdpConnection* udp_connect)
 { 
   tcpClient = tcp_client; 
@@ -16,8 +37,6 @@ ClientConnection::~ClientConnection()
   delete tcpClient;
   if (udpConnection) delete udpConnection;
 }
-
-
 
 TcpUdpClientServer::TcpUdpClientServer(int a_pid)
   : TcpServer(), UdpExchange()
@@ -115,7 +134,10 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 		udp_connect->pid = tcpclient->GetPeerPid();
 
 		// REVIEW : done by the TCP Port
-	    UdpExchange::Create(0);
+		if ( UdpExchange::GetUdpPort() == 0 )
+		{
+			UdpExchange::Create(0);
+		}
 		// Set UDP Port as property for the Sync Link paquet of the TCP Connection
 		char * tmpc = new char[512];
 		sprintf( tmpc, "%s:%d", MagicUdp.GetStr(), UdpExchange::GetUdpPort() );

@@ -4,6 +4,8 @@
 
 using namespace Omiscid;
 
+OmiscidServiceRegistry ServiceFactory;
+
 /** 
 	* Registers a new Omiscid service. This service will be advertised in DSN-SD
 	* @param serviceName the name of the service as it will appear in DNS-SD

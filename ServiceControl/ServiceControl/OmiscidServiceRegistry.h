@@ -32,6 +32,8 @@ public:
 
 };
 
+extern OmiscidServiceRegistry ServiceFactory;
+
 } // namespace Omiscid
 
 #endif  // __OMISCID_SERVICE_REGISTRY_H__
