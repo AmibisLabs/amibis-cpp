@@ -43,7 +43,7 @@ void RegisterOmiscidService::SetOwner()
 }
 
 WaitForOmiscidServices::WaitForOmiscidServices()
-: WaitForServices()
+: WaitForDnsSdServices()
 {
 }
 

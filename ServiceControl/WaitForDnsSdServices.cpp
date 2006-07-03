@@ -7,7 +7,7 @@
  *  \date    2004-2005
  */
 
-#include <ServiceControl/WaitForServices.h>
+#include <ServiceControl/WaitForDnsSdServices.h>
 
 #ifndef WIN32
 #include <netinet/in.h> // for ntohs
@@ -27,7 +27,7 @@ SearchService::SearchService()
 	UserData = NULL;
 }
 
-WaitForServices::WaitForServices()
+WaitForDnsSdServices::WaitForDnsSdServices()
 	: ServicesUsed(MaxSearchServices)
 {
 	NbSearchServices = 0;
@@ -39,12 +39,12 @@ WaitForServices::WaitForServices()
 	StartThread();
 }
 
-WaitForServices::~WaitForServices()
+WaitForDnsSdServices::~WaitForDnsSdServices()
 {
   StopThread(); 
 }
 
-bool WaitForServices::LockService( const char * ServiceName )
+bool WaitForDnsSdServices::LockService( const char * ServiceName )
 {
 	if ( ServiceName == NULL )
 	{
@@ -65,7 +65,7 @@ bool WaitForServices::LockService( const char * ServiceName )
 	return true;
 }
 
-void WaitForServices::UnlockService( const char * ServiceName )
+void WaitForDnsSdServices::UnlockService( const char * ServiceName )
 {
 	if ( ServiceName == NULL )
 	{
@@ -165,7 +165,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 	}
 }
 
-bool SearchService::StartSearch( const char * eName, const char * eRegType, WaitForServices * eParent, IsServiceValidForMe eCallBack, void * eUserData )
+bool SearchService::StartSearch( const char * eName, const char * eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack, void * eUserData )
 {
 	if ( DNSSDConnection == true || Service::CheckName( eName ) == false )
 	{
@@ -203,7 +203,7 @@ bool SearchService::StartSearch( const char * eName, const char * eRegType, Wait
 	return false;
 }
 
-int WaitForServices::NeedService( const char * eName, const char * eRegType, IsServiceValidForMe eCallBack, void * eUserData )
+int WaitForDnsSdServices::NeedService( const char * eName, const char * eRegType, IsServiceValidForMe eCallBack, void * eUserData )
 {
 	ThreadSafeSection.EnterMutex();
 
@@ -220,7 +220,7 @@ int WaitForServices::NeedService( const char * eName, const char * eRegType, IsS
 	return (NbSearchServices - 1); // Information about the service pos in the table
 }
 
-void WaitForServices::Run()
+void WaitForDnsSdServices::Run()
 {
 	fd_set fds;
 	int nReady;
@@ -290,7 +290,7 @@ void WaitForServices::Run()
 }
 
 
-bool WaitForServices::WaitAll( unsigned int DelayMax )
+bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 {
 	return AllFound.Wait( DelayMax );
 #if 0
@@ -319,12 +319,12 @@ bool WaitForServices::WaitAll( unsigned int DelayMax )
 #endif
 }
 
-int WaitForServices::GetNbOfSearchedServices()
+int WaitForDnsSdServices::GetNbOfSearchedServices()
 {
 	return NbSearchServices;
 }
 
-SearchService & WaitForServices::operator[](int nPos)
+SearchService & WaitForDnsSdServices::operator[](int nPos)
 {
 	if ( nPos < 0 || nPos >= NbSearchServices )
 	{

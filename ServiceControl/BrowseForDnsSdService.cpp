@@ -7,7 +7,7 @@
  *  \date    2004-2005
  */
 
-#include <ServiceControl/BrowseForDNSSDService.h>
+#include <ServiceControl/BrowseForDnsSdService.h>
 
 #ifndef WIN32
 #include <netinet/in.h>

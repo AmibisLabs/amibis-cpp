@@ -7,8 +7,8 @@
  *  \date    2004-2005
  */
 
-#ifndef __WAIT_FOR_SERVICES_H__
-#define __WAIT_FOR_SERVICES_H__
+#ifndef __WAIT_FOR_DNS_SD_SERVICES_H__
+#define __WAIT_FOR_DNS_SD_SERVICES_H__
 
 #include <System/Config.h>
 #include <System/Socket.h>
@@ -26,15 +26,15 @@ namespace Omiscid {
 
 typedef bool (FUNCTION_CALL_TYPE *IsServiceValidForMe)(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData);
 
-class WaitForServices;
+class WaitForDnsSdServices;
 
 class SearchService : public Service
 {
-	friend class WaitForServices;
+	friend class WaitForDnsSdServices;
 public:
 	SearchService();
 
-	bool StartSearch( const char * eName, const char * eRegType, WaitForServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
+	bool StartSearch( const char * eName, const char * eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 
 	bool IsAvailable();
 
@@ -44,7 +44,7 @@ private:
 	char Regtype[RegtypeLength];
 	DNSServiceRef Ref;
 	SOCKET DNSSocket;
-	WaitForServices * Parent;
+	WaitForDnsSdServices * Parent;
 	bool DNSSDConnection;
 	bool IsResolved;
 	IsServiceValidForMe CallBack;
@@ -54,12 +54,12 @@ private:
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context );
 };
 
-class WaitForServices : public Thread
+class WaitForDnsSdServices : public Thread
 {
 	friend class SearchService;
 public:
-	WaitForServices();
-	virtual ~WaitForServices(void);
+	WaitForDnsSdServices();
+	virtual ~WaitForDnsSdServices(void);
 
 	int NeedService( const char * eName, const char * eType, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 
@@ -93,4 +93,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif // __WAIT_FOR_SERVICES_H__
+#endif // __WAIT_FOR_DNS_SD_SERVICES_H__

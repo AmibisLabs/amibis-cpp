@@ -12,7 +12,7 @@
 
 #include <System/Config.h>
 #include <ServiceControl/Service.h>
-#include <ServiceControl/WaitForServices.h>
+#include <ServiceControl/WaitForDnsSdServices.h>
 
 namespace Omiscid {
 
@@ -32,7 +32,7 @@ private:
 	void Init( bool AutoRegister );
 };
 
-class WaitForOmiscidServices : public WaitForServices, public CommonServiceValues
+class WaitForOmiscidServices : public WaitForDnsSdServices, public CommonServiceValues
 {
 public:
 	WaitForOmiscidServices();
@@ -40,7 +40,7 @@ public:
 
 	int NeedService( const char * eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
 	{
-		return WaitForServices::NeedService( eName, OmiscidServiceDnsSdType, eCallBack, eUserData );
+		return WaitForDnsSdServices::NeedService( eName, OmiscidServiceDnsSdType, eCallBack, eUserData );
 	}
 };
 

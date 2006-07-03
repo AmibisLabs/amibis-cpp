@@ -7,8 +7,8 @@
  *  \date    2004-2005
  */
 
-#ifndef __BROWSE_FOR_SERVICE_H__
-#define __BROWSE_FOR_SERVICE_H__
+#ifndef __BROWSE_FOR_DNS_SD_SERVICE_H__
+#define __BROWSE_FOR_DNS_SD_SERVICE_H__
 
 #include <System/Config.h>
 #include <System/Thread.h>
@@ -45,4 +45,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif // __BROWSE_FOR_SERVICE_H__
+#endif // __BROWSE_FOR_DNS_SD_SERVICE_H__

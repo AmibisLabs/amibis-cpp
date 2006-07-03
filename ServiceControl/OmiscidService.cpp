@@ -4,7 +4,7 @@
 
 #include <Com/MsgManager.h>
 #include <Com/TcpUdpClientServer.h>
-#include <ServiceControl/WaitForServices.h>
+#include <ServiceControl/WaitForDnsSdServices.h>
 
 using namespace Omiscid;
 // using namespace Omiscid::OmiscidCascadeServiceFilters;
