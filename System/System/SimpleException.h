@@ -55,4 +55,4 @@ public:
 
 } // namespace Omiscid
 
-#endif /* __SIMPLE_EXCEPTION_H__ */
+#endif // __SIMPLE_EXCEPTION_H__

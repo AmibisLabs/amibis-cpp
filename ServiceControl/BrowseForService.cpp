@@ -7,7 +7,6 @@
  *  \date    2004-2005
  */
 
-#include <System/Socket.h>
 #include <ServiceControl/BrowseForService.h>
 
 #ifndef WIN32

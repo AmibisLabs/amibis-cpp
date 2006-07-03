@@ -6,8 +6,6 @@
 #include <System/Thread.h>
 #include <System/Portage.h>
 
-#include <stdio.h>
-
 #include <errno.h>
 
 using namespace Omiscid;

@@ -7,8 +7,8 @@
  *  \date    2004-2005
  */
 
-#ifndef _SERVICE_H_
-#define _SERVICE_H_
+#ifndef __SERVICE_H__
+#define __SERVICE_H__
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
@@ -87,4 +87,4 @@ private:
 
 } // namespace Omiscid
 
-#endif /* _SERVICE_H_ */
+#endif // __SERVICE_H__

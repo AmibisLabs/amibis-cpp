@@ -1,5 +1,5 @@
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
 /*! \def FUNCTION_CALL_TYPE
  *	\brief DNS-SD callbacks type (WIN32 specific).
@@ -71,8 +71,8 @@ namespace Omiscid {
 
 // Ugly for the moment
 #ifdef OMISCID_TRACE_ENABLE
-	// in tracer mode, we plan to trace every thing
-	inline int TraceError(char * format, ... )
+	// in trace mode, we plan to trace every thing
+	inline int TraceError(const char * format, ... )
 	{
 	   va_list args;
 	   va_start( args, format );
@@ -101,4 +101,4 @@ struct timezone {
 
 } // namespace Omiscid
 
-#endif	// _CONFIG_H_
+#endif	// __CONFIG_H__

@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef CONTROL_UTILS_H
-#define CONTROL_UTILS_H
+#ifndef __CONTROL_UTILS_H__
+#define __CONTROL_UTILS_H__
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
@@ -30,4 +30,4 @@ public:
 
 } // namespace Omiscid
 
-#endif /** CONTROL_UTILS_H */
+#endif // __CONTROL_UTILS_H__

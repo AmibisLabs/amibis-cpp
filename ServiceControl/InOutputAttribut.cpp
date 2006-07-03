@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <System/Config.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 
@@ -17,7 +15,7 @@ InOutputAttribut::InOutputAttribut()
   tcpPort = 0; udpPort = 0;
 }
 InOutputAttribut::InOutputAttribut(const SimpleString& a_name, ComTools* com_tool,
-				   InOutputKind kind_of_input)
+				   ConnectorKind kind_of_input)
   : Attribut(a_name)
 {  
   comTool = com_tool;
@@ -27,7 +25,7 @@ InOutputAttribut::InOutputAttribut(const SimpleString& a_name, ComTools* com_too
 }
 
 InOutputAttribut::InOutputAttribut(const char* a_name, ComTools* com_tool,
-				   InOutputKind kind_of_input)
+				   ConnectorKind kind_of_input)
   : Attribut(a_name)
 {
   kindOfInput = kind_of_input;
@@ -36,7 +34,7 @@ InOutputAttribut::InOutputAttribut(const char* a_name, ComTools* com_tool,
   tcpPort = 0; udpPort = 0;
 }
 
-InOutputAttribut::InOutputAttribut(const char* a_name, InOutputKind kind_of_input)
+InOutputAttribut::InOutputAttribut(const char* a_name, ConnectorKind kind_of_input)
   : Attribut(a_name)
 {
   kindOfInput = kind_of_input;
@@ -231,12 +229,12 @@ bool InOutputAttribut::IsAnInOutput() const
 	return kindOfInput == AnInOutput; 
 }
 
-InOutputKind InOutputAttribut::GetType() const
+ConnectorKind InOutputAttribut::GetType() const
 {
 	return kindOfInput;
 }
 
-void InOutputAttribut::SetKindOfInput(InOutputKind kind_of_input)
+void InOutputAttribut::SetKindOfInput(ConnectorKind kind_of_input)
 {
 	kindOfInput = kind_of_input; 
 }

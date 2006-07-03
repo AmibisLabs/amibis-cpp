@@ -1,6 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <System/Config.h>
 #include <Com/TcpUdpClientServer.h>
 
 using namespace Omiscid;
@@ -9,7 +6,7 @@ ConnectionInfos::ConnectionInfos()
 {
 	TcpPort = 0;
 	UdpPort = 0;
-	Type	= UnkownKind;
+	Type	= UnkownConnectorKind;
 }
 
 ConnectionInfos::ConnectionInfos(ConnectionInfos& ToCopy)

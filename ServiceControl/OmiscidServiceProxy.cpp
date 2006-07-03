@@ -135,6 +135,31 @@ bool OmiscidServiceProxy::GetVariableValue(const SimpleString VarName, SimpleStr
 	return true;
 }
 
+	/**
+     * search for a connector on the remote Omiscid Service
+     * @param ConnectorName the name of the remote variable
+     * @return true or false
+     */
+bool OmiscidServiceProxy::HasConnector(const SimpleString ConnectorName )
+{
+	return (FindConnector(ConnectorName) != NULL);
+}
+
+		/**
+     * search for a connector on the remote Omiscid Service
+     * @param ConnectorName the name of the remote variable
+     * @return true or false
+     */
+ConnectorKind OmiscidServiceProxy::GetConnectorKind(const SimpleString ConnectorName )
+{
+	InOutputAttribut * pAtt = FindConnector(ConnectorName);
+	if ( pAtt == NULL )
+	{
+		return UnkownConnectorKind;
+	}
+	return pAtt->GetType();
+}
+
 bool OmiscidServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection )
 {
 	InOutputAttribut * pAtt = FindConnector( Connector );

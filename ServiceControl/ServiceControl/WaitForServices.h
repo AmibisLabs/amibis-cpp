@@ -7,8 +7,8 @@
  *  \date    2004-2005
  */
 
-#ifndef _WAIT_FOR_SERVICES_H_
-#define _WAIT_FOR_SERVICES_H_
+#ifndef __WAIT_FOR_SERVICES_H__
+#define __WAIT_FOR_SERVICES_H__
 
 #include <System/Config.h>
 #include <System/Socket.h>
@@ -93,4 +93,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif /* _WAIT_FOR_SERVICES_H_ */
+#endif // __WAIT_FOR_SERVICES_H__

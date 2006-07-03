@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <System/Config.h>
 #include <Com/MsgManager.h>
 #include <Com/Message.h>
 #include <Com/MsgSocket.h>

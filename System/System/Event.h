@@ -2,8 +2,8 @@
  * @file Event.h
  * @brief Definition of Event class
  */
-#ifndef _EVENT_H_
-#define _EVENT_H_
+#ifndef __EVENT_H__
+#define __EVENT_H__
 
 #include <System/Config.h>
 
@@ -52,4 +52,4 @@ private:
 
 } // namespace Omiscid
 
-#endif /* _EVENT_H_ */
+#endif // __EVENT_H__

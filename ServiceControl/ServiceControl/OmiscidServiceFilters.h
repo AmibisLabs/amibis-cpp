@@ -27,7 +27,10 @@ class OmiscidCascadeServiceFilters : public OmiscidServiceFilter,
 									 public SimpleList<OmiscidServiceFilter*>
 {
 public:
-	OmiscidCascadeServiceFilters();
+
+	typedef enum OmiscidCascadeServiceFiltersType { IsAND, IsOR }; 
+
+	OmiscidCascadeServiceFilters(OmiscidCascadeServiceFiltersType CreationType = IsAND);
 	~OmiscidCascadeServiceFilters();
 
 // Abstracted function
@@ -35,6 +38,9 @@ public:
 	virtual OmiscidServiceFilter * Duplicate();
 
 	void Empty();
+
+private:
+	OmiscidCascadeServiceFiltersType Type;
 };
 
 /**
@@ -76,11 +82,51 @@ OmiscidServiceFilter * OwnerIs(SimpleString Name, bool CaseInsensitive = false);
 */
 OmiscidServiceFilter * HostPrefixIs(SimpleString Hostname);
 
-#if 0
-To do :
-- Variable Filter
-- InOutput filters
-#endif
+/**
+* Tests whether the service contain a variable
+*
+* @param String
+* @return
+*/
+OmiscidServiceFilter * HasVariable(SimpleString VarName);
+
+/**
+* Tests whether the service contain a variable with a specific value
+*
+* @param String
+* @param String
+* @return
+*/
+OmiscidServiceFilter * HasVariable(SimpleString VarName, SimpleString Value);
+
+/**
+* Tests whether the service contain a connector (with a specific type or not)
+*
+* @param String
+* @param ConnectorKind
+* @return
+*/
+OmiscidServiceFilter * HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector = UnkownConnectorKind );
+
+/**
+* Create an AND OmiscidServiceFilter test set with 0 to 5 parameters
+* one can use other filters by creating manually an OmiscidCascadeServiceFilters
+*
+* @return a pointer OmiscidServiceFilter
+*/
+OmiscidServiceFilter * And( OmiscidServiceFilter * First, OmiscidServiceFilter * Second = NULL,
+						    OmiscidServiceFilter * Third = NULL, OmiscidServiceFilter * Fourth = NULL,
+							OmiscidServiceFilter * Fifth = NULL );
+
+/**
+* Create an OR OmiscidServiceFilter test set with 1 up to 5 parameters
+* one can use other filters by creating manually an OmiscidCascadeServiceFilters
+*
+* @return a pointer OmiscidServiceFilter
+*/
+OmiscidServiceFilter * Or( OmiscidServiceFilter * First, OmiscidServiceFilter * Second = NULL,
+						   OmiscidServiceFilter * Third = NULL, OmiscidServiceFilter * Fourth = NULL,
+						   OmiscidServiceFilter * Fifth = NULL );
 
 } // namespace Omiscid
 

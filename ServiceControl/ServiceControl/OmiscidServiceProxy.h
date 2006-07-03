@@ -63,17 +63,22 @@ public:
      */
     SimpleString GetHostName();
 
+
+    /**
+     * Retrieve the control port of this service
+     * @return the control port
+     */
 	unsigned int GetControlPort();
 
     /**
-     * The Peer Id of the remote bip service
+     * The Peer Id of the remote Omiscid service
      * @return the peer id
      */
     unsigned int GetPeerId();
 	
 	/**
-     * The Peer Id of the remote bip service
-     * @return the peer id
+     * The name of the remote Omiscid service
+     * @return name
      */
     SimpleString GetName() ;
 	
@@ -90,6 +95,20 @@ public:
      * @param value the value (SimpleString format)
      */
     bool GetVariableValue(const SimpleString varName, SimpleString& value);
+
+	/**
+     * search for a connector on the remote Omiscid Service
+     * @param ConnectorName the name of the remote variable
+     * @return true or false
+     */
+    bool HasConnector(const SimpleString ConnectorName );
+
+		/**
+     * search for a connector on the remote Omiscid Service
+     * @param ConnectorName the name of the remote variable
+     * @return UnknowKind if the connecotr do not exists, AnInput, AnOutput, AnInOutput otherwise
+     */
+    ConnectorKind GetConnectorKind(const SimpleString ConnectorName );
 
 	/**
      * Gets the connection points of a remote connector

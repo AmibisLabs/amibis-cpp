@@ -4,8 +4,8 @@
  * @brief interface for the Thread class.
  */
 
-#ifndef _THREAD_H_
-#define _THREAD_H_
+#ifndef __THREAD_H__
+#define __THREAD_H__
 
 #include <System/Config.h>
 #include <System/Event.h>
@@ -119,5 +119,5 @@ private:
 
 } // namespace Omiscid
 
-#endif /*  _THREAD_H_ */
+#endif // __THREAD_H__
 

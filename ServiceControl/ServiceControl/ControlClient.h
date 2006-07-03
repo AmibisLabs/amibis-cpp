@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef CONTROL_CLIENT_H
-#define CONTROL_CLIENT_H
+#ifndef __CONTROL_CLIENT_H__
+#define __CONTROL_CLIENT_H__
 
 #include <System/Config.h>
 #include <System/SimpleList.h>
@@ -318,4 +318,4 @@ class ControlClient : public TcpClient, public XMLTreeParser
 
 } // namespace Omiscid
 
-#endif /* CONTROL_CLIENT_H */
+#endif // __CONTROL_CLIENT_H__

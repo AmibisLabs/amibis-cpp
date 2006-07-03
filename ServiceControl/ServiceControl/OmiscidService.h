@@ -48,7 +48,7 @@ public:
 	 */
 	bool AddConnector(SimpleString ConnectorName,
 			                 SimpleString ConnectorDescription,
-			                 InOutputKind ConnectorKind);
+			                 ConnectorKind KindOfConnector);
 
 	/**
 	 * Sends a message to all the clients connected to the service I
@@ -183,17 +183,6 @@ public:
 	bool AddVariableChangeListener(SimpleString VarName, OmiscidAllVariablesListener * listener);
 
 #if 0
-
-
-	/**
-	 * Adds a listener that will be triggered at every variable change
-	 * @param varName the varName
-	 * @param listener the listener
-	 * @throws UnknownBipVariable thrown if the variable has not been declared
-	 * @see BipService#addVariable
-	 */
-	public void addVariableChangeListener(SimpleString varName, final BipVariableChangeListener listener)
-			throws UnknownBipVariable ;
 
 	/**
 	 * Removes a listener on a variable change

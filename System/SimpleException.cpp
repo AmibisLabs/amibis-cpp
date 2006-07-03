@@ -1,8 +1,7 @@
-#include <stdio.h>
-#include <string.h>
 
-#include <System/Config.h>
 #include <System/SimpleException.h>
+
+#include <string.h>
 
 using namespace Omiscid;
 

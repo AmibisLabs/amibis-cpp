@@ -41,7 +41,7 @@ private:
 };
 
 /**
-* Tests whether a service has the good owner
+* Tests whether a service run on the rigth computer
 */
 class ServiceHostIs : public OmiscidServiceFilter
 {
@@ -53,6 +53,39 @@ public:
 
 private:
 	SimpleString Hostname;
+};
+
+/**
+* Tests whether a service has a variable and even a variable with the rigth value
+*/
+class ServiceHasVariable : public OmiscidServiceFilter
+{
+public:
+	ServiceHasVariable(SimpleString& VariableName);
+	ServiceHasVariable(SimpleString& VariableName, SimpleString& VariableValue);
+
+	bool IsAGoodService(OmiscidServiceProxy& SP);
+	virtual OmiscidServiceFilter * Duplicate();
+
+private:
+	SimpleString VariableName;
+	SimpleString VariableValue;
+};
+
+/**
+* Tests whether a service has a variable and even a variable with the rigth value
+*/
+class ServiceHasConnector : public OmiscidServiceFilter
+{
+public:
+	ServiceHasConnector(SimpleString& ConnectorName, ConnectorKind ConnectorType = UnkownConnectorKind );
+
+	bool IsAGoodService(OmiscidServiceProxy& SP);
+	virtual OmiscidServiceFilter * Duplicate();
+
+private:
+	SimpleString ConnectorName;
+	ConnectorKind ConnectorType;
 };
 
 } // namespace Omiscid
@@ -135,6 +168,60 @@ OmiscidServiceFilter * ServiceHostIs::Duplicate()
 	return new ServiceHostIs( Hostname );
 }
 
+ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName)
+{
+	this->VariableName = VariableName;
+	VariableValue = "";
+}
+
+ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName, SimpleString& VariableValue)
+{
+	this->VariableName  = VariableName;
+	this->VariableValue = VariableValue;
+}
+
+bool ServiceHasVariable::IsAGoodService(OmiscidServiceProxy& SP)
+{
+	SimpleString RemoteValue;
+	if ( SP.GetVariableValue( VariableName, RemoteValue ) == false )
+	{
+		return false;
+	}
+
+	// We have the variable, shall we compare with value ?
+	if ( !VariableValue.IsEmpty() )
+	{
+		if ( VariableValue == RemoteValue )
+		{
+			return true;
+		}
+		return false;
+	}
+	return true;
+}
+
+OmiscidServiceFilter * ServiceHasVariable::Duplicate()
+{
+	return new ServiceHasVariable( VariableName, VariableValue );
+}
+
+ServiceHasConnector::ServiceHasConnector(SimpleString& ConnectorName, ConnectorKind ConnectorType )
+{
+	this->ConnectorName = ConnectorName;
+	this->ConnectorType = ConnectorType;
+}
+
+bool ServiceHasConnector::IsAGoodService(OmiscidServiceProxy& SP)
+{
+	return true;
+}
+
+OmiscidServiceFilter * ServiceHasConnector::Duplicate()
+{
+	return new ServiceHasConnector( ConnectorName, ConnectorType );
+}
+
+
 /**
 * Tests whether the service name (with possible trailing dnssd number
 * removed).
@@ -176,9 +263,122 @@ OmiscidServiceFilter * Omiscid::HostPrefixIs(SimpleString Hostname)
 	return new ServiceHostIs(Hostname);
 }
 
-
-OmiscidCascadeServiceFilters::OmiscidCascadeServiceFilters()
+/**
+* Tests whether the service contain a variable
+*
+* @param String
+* @return
+*/
+OmiscidServiceFilter * Omiscid::HasVariable(SimpleString VarName)
 {
+	return new ServiceHasVariable( VarName );
+}
+
+/**
+* Tests whether the service contain a variable with a specific value
+*
+* @param String
+* @param String
+* @return
+*/
+OmiscidServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString Value)
+{
+	return new ServiceHasVariable( VarName, Value );
+}
+
+/**
+* Tests whether the service contain a connector (with a specific type or not)
+*
+* @param String
+* @param ConnectorKind
+* @return
+*/
+OmiscidServiceFilter * Omiscid::HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector )
+{
+	return new ServiceHasConnector( ConnectorName, KindOfConnector );
+}
+
+/**
+* Create an AND OmiscidServiceFilter test set with 0 to 5 parameters
+* one can use other filters by creating manually an OmiscidCascadeServiceFilters
+*
+* @return a pointer OmiscidServiceFilter
+*/
+OmiscidServiceFilter * Omiscid::And( OmiscidServiceFilter * First, OmiscidServiceFilter * Second,
+						    OmiscidServiceFilter * Third, OmiscidServiceFilter * Fourth,
+							OmiscidServiceFilter * Fifth )
+{
+	OmiscidCascadeServiceFilters * pFilter = new OmiscidCascadeServiceFilters( OmiscidCascadeServiceFilters::IsAND );
+	if ( pFilter == NULL )
+	{
+		return NULL;
+	}
+
+	pFilter->Add( First );
+	if ( Second )
+	{
+		pFilter->Add( Second );
+	}
+	if ( Third )
+	{
+		pFilter->Add( Third );
+	}
+	if ( Fourth )
+	{
+		pFilter->Add( Fourth );
+	}
+	if ( Fifth )
+	{
+		pFilter->Add( Fifth );
+	}
+
+	return pFilter;
+}
+
+/**
+* Create an OR OmiscidServiceFilter test set with 1 up to 5 parameters
+* one can use other filters by creating manually an OmiscidCascadeServiceFilters
+*
+* @return a pointer OmiscidServiceFilter
+*/
+OmiscidServiceFilter * Omiscid::Or( OmiscidServiceFilter * First, OmiscidServiceFilter * Second,
+						   OmiscidServiceFilter * Third, OmiscidServiceFilter * Fourth,
+						   OmiscidServiceFilter * Fifth )
+{
+	OmiscidCascadeServiceFilters * pFilter = new OmiscidCascadeServiceFilters( OmiscidCascadeServiceFilters::IsOR );
+	if ( pFilter == NULL )
+	{
+		return NULL;
+	}
+
+	pFilter->Add( First );
+	if ( Second )
+	{
+		pFilter->Add( Second );
+	}
+	if ( Third )
+	{
+		pFilter->Add( Third );
+	}
+	if ( Fourth )
+	{
+		pFilter->Add( Fourth );
+	}
+	if ( Fifth )
+	{
+		pFilter->Add( Fifth );
+	}
+
+	return pFilter;
+}
+
+
+
+
+
+OmiscidCascadeServiceFilters::OmiscidCascadeServiceFilters(OmiscidCascadeServiceFiltersType CreationType)
+{
+	Type = CreationType;
 }
 
 OmiscidCascadeServiceFilters::~OmiscidCascadeServiceFilters()
@@ -197,14 +397,30 @@ void OmiscidCascadeServiceFilters::Empty()
 
 bool OmiscidCascadeServiceFilters::IsAGoodService(OmiscidServiceProxy& SP)
 {
-	for( First(); NotAtEnd(); Next() )
+	if ( Type == IsAND )
 	{
-		if ( GetCurrent()->IsAGoodService(SP) == false )
+		// IsAND : at first false, the final answer is false
+		for( First(); NotAtEnd(); Next() )
 		{
-			return false;
+			if ( GetCurrent()->IsAGoodService(SP) == false )
+			{
+				return false;
+			}
 		}
+		return true;
 	}
-	return true;
+	else
+	{
+		// IsOr : at first true, the final answer is true
+		for( First(); NotAtEnd(); Next() )
+		{
+			if ( GetCurrent()->IsAGoodService(SP) == true )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 OmiscidServiceFilter * OmiscidCascadeServiceFilters::Duplicate()
@@ -225,76 +441,3 @@ OmiscidServiceFilter * OmiscidCascadeServiceFilters::Duplicate()
 	// Return the copy
 	return Copy;
 }
-
-#if 0
-
-/**
-* Tests whether the host of the service has a good name
-*/
-private static final class Host implements OmiscidServiceFilter {
-private String hostNameRegexp = null;
-
-public Host(String hostnameRegexp) {
-    hostNameRegexp = hostnameRegexp;
-}
-
-public boolean isAGoodService(OmiscidService s) {
-    System.out.println(s.getHostName());
-    return s.getHostName().matches(hostNameRegexp);
-}
-}
-
-/**
-* Tests whether a value in the TXT record is ok
-*/
-private static final class KeyValue implements OmiscidServiceFilter {
-private String key;
-
-private String valueRegexp;
-
-public KeyValue(String key, String valueRegexp) {
-    this.key = key;
-    this.valueRegexp = valueRegexp;
-}
-
-public boolean isAGoodService(OmiscidService s) {
-    byte[] b = s.getServiceInformation().getProperty(key);
-    if (valueRegexp == null) {
-        return b == null;
-    } else {
-        return (b != null && (new String(b)).matches(valueRegexp));
-    }
-}
-}
-
-public static String baseNameRegexp(String nameRegexp) {
-return "^" + nameRegexp + "( \\(\\d+\\))?" + "$";
-}
-
-static OmiscidServiceFilter * NamePrefixIs(SimpleString NamePrefix) {
-return new NamePrefix(Name);
-}
-
-static OmiscidServiceFilter * HostPrefixIs(SimpleString HostPrefix) {
-return new Host(HostPrefix);
-}
-
-static OmiscidServiceFilter * OwnerIs(String ownerRegexp) {
-return new KeyValue("owner", "^" + ownerRegexp + "$");
-}
-
-static OmiscidServiceFilter KeyPresent(String txtRecordKey) {
-return new KeyValue(txtRecordKey, ".*");
-}
-
-static OmiscidServiceFilter keyValue(String txtRecordKey, String regexp) {
-return new KeyValue(txtRecordKey, regexp);
-}
-
-/*
-static OmiscidServiceFilter and(OmiscidServiceFilter... filters) {
-    return new OmiscidServiceFilterCascade(filters);
-}
-*/
-
-#endif // 0

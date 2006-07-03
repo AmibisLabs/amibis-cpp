@@ -160,4 +160,4 @@ private:
 
 } // namespace Omiscid
 
-#endif /** __SOCKET_H__ */
+#endif // __SOCKET_H__

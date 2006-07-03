@@ -1,5 +1,5 @@
-#ifndef _PORTAGE_H_
-#define _PORTAGE_H_
+#ifndef __PORTAGE_H__
+#define __PORTAGE_H__
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
@@ -24,4 +24,4 @@ SimpleString GetLoggedUser();
 
 } // namespace Omiscid
 
-#endif	// _PORTAGE_H_
+#endif	// __PORTAGE_H__

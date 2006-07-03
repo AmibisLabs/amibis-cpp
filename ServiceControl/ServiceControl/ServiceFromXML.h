@@ -1,5 +1,5 @@
-#ifndef SERVICE_FROM_XML_H
-#define SERVICE_FROM_XML_H
+#ifndef __SERVICE_FROM_XML_H__
+#define __SERVICE_FROM_XML_H__
 
 #include <System/Config.h>
 #include <ServiceControl/ControlServer.h>
@@ -18,4 +18,4 @@ class ServiceFromXML : public ControlServer
 
 } // namespace Omiscid
 
-#endif /* SERVICE_FROM_XML_H */
+#endif // __SERVICE_FROM_XML_H__

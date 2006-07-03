@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <Com/Message.h>
 
 using namespace Omiscid;

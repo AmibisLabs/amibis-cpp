@@ -1,16 +1,14 @@
 #include <Com/MsgSocket.h>
 
-#include <stdio.h>
-
-#ifndef WIN32
-#include <arpa/inet.h>
-#endif
-
 #include <System/Config.h>
 #include <System/Socket.h>
 #include <System/SocketException.h>
 #include <Com/MsgSocketException.h>
 #include <Com/MsgSocket.h>
+
+#ifndef WIN32
+#include <arpa/inet.h>
+#endif
 
 using namespace Omiscid;
 

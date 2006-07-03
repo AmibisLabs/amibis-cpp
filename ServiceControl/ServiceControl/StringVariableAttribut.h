@@ -54,4 +54,4 @@ class StringVariableAttribut{
 
 } // namespace Omiscid
 
-#endif /* __STRING_VARIABLE_ATTRIBUT_H__ */
+#endif // __STRING_VARIABLE_ATTRIBUT_H__

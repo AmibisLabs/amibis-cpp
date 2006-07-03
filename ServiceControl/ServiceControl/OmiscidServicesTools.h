@@ -7,8 +7,8 @@
  *  \date    2004-2005
  */
 
-#ifndef _OMiSCID_SERVICES_H_
-#define _OMiSCID_SERVICES_H_
+#ifndef __OMISCID_SERVICES_TOOLS_H__
+#define __OMISCID_SERVICES_TOOLS_H__
 
 #include <System/Config.h>
 #include <ServiceControl/Service.h>
@@ -46,4 +46,4 @@ public:
 
 } // namespace Omiscid
 
-#endif /* _OMiSCID_SERVICES_H_ */
+#endif // __OMISCID_SERVICES_TOOLS_H__

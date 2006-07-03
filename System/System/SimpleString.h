@@ -26,6 +26,7 @@ namespace Omiscid {
  */
 class SimpleString
 {
+private:
 	/**
 	 * \brief Storage of characters, with a counter of reference.
 	 */
@@ -136,6 +137,10 @@ public:
 	const char* GetStr() const;
 	/** @return the length of the string */
 	unsigned int GetLength() const;
+
+	/** @return true if the string is empty, false otherwise */
+	bool IsEmpty();
+
 	/** read access on the characters
 	 * @param i [in] the index of the character between 0 and GetLength()-1
 	 */
@@ -178,7 +183,7 @@ public:
 	SimpleString& operator= (const SimpleString& str);
 	//@}
 	
-	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int TailleBuffer );
+	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer );
 
 	// REVIEW
 	static const SimpleString EmptyString;
@@ -211,4 +216,4 @@ SimpleString operator+(const SimpleString& str1, const char* str2);
 
 } // namespace Omiscid
 
-#endif /* __SIMPLE_STRING_H__ */
+#endif // __SIMPLE_STRING_H__

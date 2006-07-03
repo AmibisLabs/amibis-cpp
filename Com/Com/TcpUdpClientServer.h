@@ -3,8 +3,8 @@
  * @file TcpUdpClientServer.h
  * @brief Definition of TcpUdpClientServer class, ClientConnection class
  */
-#ifndef TCPUDPCLIENTSERVER_H
-#define TCPUDPCLIENTSERVER_H
+#ifndef __TCP_UDP_CLIENT_SERVER_H__
+#define __TCP_UDP_CLIENT_SERVER_H__
 
 #include <System/Config.h>
 
@@ -28,7 +28,7 @@ public:
 
 	int TcpPort;
 	int UdpPort;
-	InOutputKind Type;
+	ConnectorKind Type;
 };
 
 /** 
@@ -228,4 +228,4 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
 
 } // namespace Omiscid
 
-#endif /* TCPUDPCLIENTSERVER_H */
+#endif // __TCP_UDP_CLIENT_SERVER_H__

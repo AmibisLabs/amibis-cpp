@@ -1,8 +1,6 @@
 #include <Com/ComTools.h>
 #include <System/Portage.h>
 
-#include <stdlib.h>
-
 using namespace Omiscid;
 
 // test commit

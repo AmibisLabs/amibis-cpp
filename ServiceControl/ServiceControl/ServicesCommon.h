@@ -7,16 +7,12 @@
  *  \date    2004-2005
  */
 
-#ifndef _SERVICES_COMMON_H_
-#define _SERVICES_COMMON_H_
+#ifndef __SERVICES_COMMON_H__
+#define __SERVICES_COMMON_H__
 
 #include <System/Config.h>
 #include <System/Socket.h>
 #include <System/SimpleString.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-
 
 #include <dns_sd.h>
 
@@ -92,4 +88,4 @@ public:
 
 } // namespace Omiscid
 
-#endif /* _SERVICES_COMMON_H_ */
+#endif // __SERVICES_COMMON_H__

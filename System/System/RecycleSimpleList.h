@@ -2,8 +2,8 @@
  * @file RecycleSimpleList.h
  * @brief Definition of SimpleRecycleList class and MutexedSimpleRecycleList class
  */
-#ifndef __RECYCLE_LIST_H__
-#define __RECYCLE_LIST_H__
+#ifndef __RECYCLE_SIMPLE_LIST_H__
+#define __RECYCLE_SIMPLE_LIST_H__
 
 #include <System/Config.h>
 #include <System/SimpleList.h>
@@ -160,4 +160,4 @@ bool MutexedSimpleRecycleList<TYPE>::Unlock()
 
 } // namespace Omiscid
 
-#endif /* __RECYCLE_LIST_H__ */
+#endif // __RECYCLE_SIMPLE_LIST_H__

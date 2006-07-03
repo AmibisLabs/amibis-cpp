@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef ATTRIBUT_H
-#define ATTRIBUT_H
+#ifndef __ATTRIBUT_H__
+#define __ATTRIBUT_H__
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
@@ -126,4 +126,4 @@ class Attribut
 
 } // namespace Omiscid
 
-#endif /** ATTRIBUT_H */
+#endif // __ATTRIBUT_H__

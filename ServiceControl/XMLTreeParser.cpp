@@ -1,4 +1,3 @@
-#include <System/Config.h>
 #include <ServiceControl/XMLTreeParser.h>
 #include <Com/Message.h>
 #include <Com/MsgSocket.h> 

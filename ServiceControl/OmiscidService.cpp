@@ -83,7 +83,7 @@ void OmiscidService::Start()
 	* @throws ConnectorAlreadyExisting thrown if we try to recreate an already existing connector
 	* @throws IOException thrown if there is an error in the tcp socket creation
 	*/
-bool OmiscidService::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, InOutputKind ConnectorKind)
+bool OmiscidService::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind ConnectorKind)
 {
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt != NULL )

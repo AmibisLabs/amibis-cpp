@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef INOUTPUT_ATTRIBUT_H
-#define INOUTPUT_ATTRIBUT_H
+#ifndef __IN_OUTPUT_ATTRIBUT_H__
+#define __IN_OUTPUT_ATTRIBUT_H__
 
 #include <System/Config.h>
 #include <System/SimpleList.h>
@@ -42,20 +42,20 @@ class InOutputAttribut : public Attribut
    * @param com_tool Communication tool assciated to the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const SimpleString& a_name, ComTools* com_tool, InOutputKind kind_of_input);  
+  InOutputAttribut(const SimpleString& a_name, ComTools* com_tool, ConnectorKind kind_of_input);  
 
   /** @brief Constructor 
    * @param a_name name for the input/output
    * @param com_tool Communication tool assciated to the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const char* a_name, ComTools* com_tool, InOutputKind kind_of_input);
+  InOutputAttribut(const char* a_name, ComTools* com_tool, ConnectorKind kind_of_input);
 
   /** @brief Constructor 
    * @param a_name name for the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const char* a_name, InOutputKind kind_of_input);
+  InOutputAttribut(const char* a_name, ConnectorKind kind_of_input);
   //@}
 
   /** \name Read Accessors */
@@ -63,7 +63,7 @@ class InOutputAttribut : public Attribut
   bool IsAnInput() const; /*!< test if the object kind is AnInput*/
   bool IsAnOutput() const; /*!< test if the object kind is AnOutput*/
   bool IsAnInOutput() const; /*!< test if the object kind is AnInOutput*/
-  InOutputKind GetType() const; /*!<retrieve the object kind */
+  ConnectorKind GetType() const; /*!<retrieve the object kind */
 
   int GetTcpPort() const; /*!< Access to port number for TCP */
   int GetUdpPort() const; /*!< Access to port number for UDP */
@@ -75,7 +75,7 @@ class InOutputAttribut : public Attribut
 
   /** \name Write Accessors */
   //@{
-  void SetKindOfInput(InOutputKind kind_of_input); /*!< Change the kind of the object */
+  void SetKindOfInput(ConnectorKind kind_of_input); /*!< Change the kind of the object */
   
   void SetComTool(ComTools* com_tool); /*!< define the comunication tool associated to the input/output */
   ComTools * GetComTool();			   /*!< retrieve the comunication tool associated to the input/output */
@@ -111,7 +111,7 @@ public:
   void ExtractDataFromXml(xmlNodePtr node);
 
  protected:
-  InOutputKind kindOfInput; /*!< 0 if input, 1 of output, 2 if input/output*/
+  ConnectorKind kindOfInput; /*!< 0 if input, 1 of output, 2 if input/output*/
 
   ComTools* comTool; /*!< the pointer on the tool of communication associated to this input or output object */
 unsigned int peerId; /*!< needed in case of distant usage, because we do not have a comtool */
@@ -124,4 +124,4 @@ unsigned int peerId; /*!< needed in case of distant usage, because we do not hav
 
 } // namespace Omiscid
 
-#endif /** INOUTPUT_ATTRIBUT_H */
+#endif // __IN_OUTPUT_ATTRIBUT_H__

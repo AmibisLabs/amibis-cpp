@@ -1,8 +1,4 @@
-#include <System/Config.h>
-#include <System/Socket.h>
 #include <Com/TcpServer.h>
-
-#include <stdio.h>
 
 using namespace Omiscid;
 

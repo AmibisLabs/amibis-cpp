@@ -1,6 +1,5 @@
 #include <ServiceControl/ControlUtils.h>
 
-#include <stdlib.h>
 #include <time.h>
 
 using namespace Omiscid;

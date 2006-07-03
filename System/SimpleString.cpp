@@ -1,9 +1,5 @@
 #include <System/SimpleString.h>
 
-
-#include <stdlib.h>
-#include <stdio.h>
-
 #ifdef WIN32
 	#define snprintf _snprintf
 #endif
@@ -465,6 +461,11 @@ unsigned int SimpleString::GetLength() const
 	return stringData->GetLength(); 
 }
 
+bool SimpleString::IsEmpty()
+{
+	return (stringData->GetLength() == 0 );
+}
+
 bool SimpleString::operator==(const SimpleString& str) const
 {
 	return stringData->Equals(*(str.stringData)); 
@@ -485,7 +486,7 @@ bool SimpleString::operator!=(const char* str) const
 	return stringData->NotEquals(str); 
 }
 
-bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int TailleBuffer )
+bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer )
 {
 	const char * parse = Src;
 	int res;
@@ -493,7 +494,7 @@ bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int
 	if ( parse == NULL )
 		return false;
 
-	for( res=0; res < TailleBuffer; parse++, res++ )
+	for( res=0; res < SizeOfBuffer; parse++, res++ )
 	{
 		if ( *parse == '\0' )
 		{
@@ -507,7 +508,7 @@ bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int
 		}
 		else
 		{
-			if ( res+1 >= (TailleBuffer+1) )
+			if ( res+1 >= (SizeOfBuffer+1) )
 			{
 				return false;
 			}
@@ -517,7 +518,7 @@ bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int
 		}
 	}
 
-	if ( res >= TailleBuffer )
+	if ( res >= SizeOfBuffer )
 		return false;
 
 	return true;

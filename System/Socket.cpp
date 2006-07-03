@@ -445,7 +445,7 @@ hostent* Socket::GetHostByName( const char* name )
 
 	// DynamicNameSolving == OMISCIDNS_USE_DNS_ONLY
 
-	char hostname[1024];
+	char * hostname = new char[1024];	// To prevent memory overflow on stack
 	char * modify;
 	strncpy( hostname, name, 1023 );
 
@@ -457,9 +457,11 @@ hostent* Socket::GetHostByName( const char* name )
 
 	if((he = ::gethostbyname(hostname)) == NULL)
     {
-      throw SocketException("GetHostByName", Errno());
+		delete hostname;
+		throw SocketException("GetHostByName", Errno());
     }
 
+	delete hostname;
 	return he;
 }
 

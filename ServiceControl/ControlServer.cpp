@@ -591,7 +591,7 @@ VariableAttribut* ControlServer::AddVariable(const char* name)
   return va;
 }
 
-InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_tool, InOutputKind kind_of_input)
+InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_tool, ConnectorKind kind_of_input)
 {
   unsigned int ConnectorId;
 

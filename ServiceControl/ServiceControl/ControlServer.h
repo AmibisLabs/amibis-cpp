@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef CONTROL_SERVER_H
-#define CONTROL_SERVER_H
+#ifndef __CONTROL_SERVER_H__
+#define __CONTROL_SERVER_H__
 
 #include <System/Config.h>
 #include <System/SimpleList.h>
@@ -134,7 +134,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @param kind_of_input [in] define if it is input or output or inoutput
    * @return a new InOutputAttribut object (will be deleted by the controlServer)
    */
-  InOutputAttribut* AddInOutput(const char* name, ComTools* com_tool, InOutputKind kind_of_input);
+  InOutputAttribut* AddInOutput(const char* name, ComTools* com_tool, ConnectorKind kind_of_input);
   
   /**
    * @brief Create a new variable to export.
@@ -359,4 +359,4 @@ public:
 
 } // namespace Omiscid
 
-#endif /** CONTROL_SERVER_H */
+#endif // __CONTROL_SERVER_H__
