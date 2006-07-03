@@ -171,39 +171,20 @@ VariableAttribut * OmiscidServiceProxy::FindVariable( SimpleString VarName )
 InOutputAttribut * OmiscidServiceProxy::FindConnector( SimpleString ConnectortName )
 {
 	InOutputAttribut * pAtt;
-	bool FirstTry;
 
-	for(FirstTry = true;;)
+	
+	if (   (pAtt = FindInput(ConnectortName.GetStr())) != NULL					// Is is an Input ?
+		|| (pAtt = QueryInputDescription(ConnectortName.GetStr())) != NULL		// again
+		|| (pAtt = FindOutput(ConnectortName.GetStr())) != NULL					// Is it an Output
+		|| (pAtt = QueryOutputDescription(ConnectortName.GetStr())) != NULL		// again
+		|| (pAtt = FindInOutput(ConnectortName.GetStr())) != NULL				// Is is an InOutput ?
+		|| (pAtt = QueryInOutputDescription(ConnectortName.GetStr())) != NULL	// again
+		)
 	{
-		pAtt = ControlClient::FindInput( ConnectortName.GetStr() );
-		if ( pAtt )
-		{
-			// We've got it
-			return pAtt;
-		}
-		pAtt = ControlClient::FindOutput( ConnectortName.GetStr() );
-		if ( pAtt )
-		{
-			// idem
-			return pAtt;
-		}
-		pAtt = ControlClient::FindInOutput( ConnectortName.GetStr() );
-		if ( pAtt )
-		{
-			// idem
-			return pAtt;
-		}
-		// Here, we do not get the connector, if it is the first time, we first try to update
-		// the omiscid service description, if not, we exit without finding the connector
-		if ( FirstTry == false )
-		{
-			// exit the loop
-			break;
-		}
-		// Update the description and loop one more time
-		UpdateDescription();
-		FirstTry = false;
+		// We found it
+		return pAtt;
 	}
+
 	// Here we did not find the connector
 	TraceError( "Connector '%s' not found\n", ConnectortName.GetStr() );
 	return NULL;

@@ -89,7 +89,7 @@ VariableAttribut* ControlClient::QueryVariableDescription(const char* var_name)
     {
       if(!NameInList(var_name, listVariableName))
 	{
-		TraceError( "Unknown Name : %s\n", var_name);
+		TraceError( "Unknown variable '%s', ask to the service.\n", var_name);
 	    name_in_list = false;
 	}
     }
@@ -128,7 +128,7 @@ VariableAttribut* ControlClient::QueryVariableModif(const char* var_name, const 
   VariableAttribut* var_attr = FindVariable(var_name);
   if(!var_attr)
     {    
-      TraceError( "Unknown Variable : Not Available Description : %s\n", var_name);
+      TraceError( "Unknown Variable '%s' : Not Available Description : %s\n", var_name);
       return NULL;
     }
 
@@ -161,7 +161,7 @@ InOutputAttribut* ControlClient::QueryInputDescription(const char* input_name)
     {
       if(!NameInList(input_name, listInputName))
 	{
-		TraceError( "Unknown Name : %s\n",input_name);
+		TraceError( "Unknown Input '%s', ask to the service.\n",input_name);
 	  name_in_list = false;
 	}
     }
@@ -201,7 +201,7 @@ InOutputAttribut* ControlClient::QueryOutputDescription(const char* output_name)
     {
       if(!NameInList(output_name, listOutputName))
 	{
-		TraceError( "Unknown Name : %s\n", output_name);
+		TraceError( "Unknown Output '%s', ask to the service.\n", output_name);
 	    name_in_list = false;
 	}
     }
@@ -241,7 +241,7 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const char* in_output_
     {
       if(!NameInList(in_output_name, listInOutputName))
 	{
-		TraceError( "Unknown Name : %s\n", in_output_name);
+		TraceError( "Unknown InOutput '%s', ask to the service.\n", in_output_name);
 	  name_in_list = false;
 	}
     }
