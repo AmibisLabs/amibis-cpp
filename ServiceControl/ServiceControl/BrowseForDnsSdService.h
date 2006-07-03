@@ -20,12 +20,12 @@ namespace Omiscid {
 
 typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( Service& NewService, DNSServiceFlags flags, unsigned int UserData );
 
-class BrowseForService : public Thread
+class BrowseForDNSSDService : public Thread
 {
 public:
-	BrowseForService();
-	BrowseForService(const char * eRegType, BrowseCallBack eCallBack, unsigned int eUserData, bool AutoStart = false);
-	~BrowseForService();
+	BrowseForDNSSDService();
+	BrowseForDNSSDService(const char * eRegType, BrowseCallBack eCallBack, unsigned int eUserData, bool AutoStart = false);
+	~BrowseForDNSSDService();
 
 	void Start();
 

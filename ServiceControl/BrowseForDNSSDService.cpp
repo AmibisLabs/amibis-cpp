@@ -7,7 +7,7 @@
  *  \date    2004-2005
  */
 
-#include <ServiceControl/BrowseForService.h>
+#include <ServiceControl/BrowseForDNSSDService.h>
 
 #ifndef WIN32
 #include <netinet/in.h>
@@ -19,14 +19,14 @@
 
 using namespace Omiscid;
 
-BrowseForService::BrowseForService()
+BrowseForDNSSDService::BrowseForDNSSDService()
 {
 	RegType[0] = '\0';
 	CallBack = NULL;
 	UserData = 0;
 }
 
-BrowseForService::BrowseForService(const char * eRegtype, BrowseCallBack eCallBack, unsigned int eUserData, bool AutoStart /* = false */)
+BrowseForDNSSDService::BrowseForDNSSDService(const char * eRegtype, BrowseCallBack eCallBack, unsigned int eUserData, bool AutoStart /* = false */)
 {
 	strncpy( RegType, eRegtype, sizeof(RegType) );
 	CallBack = eCallBack;
@@ -38,19 +38,19 @@ BrowseForService::BrowseForService(const char * eRegtype, BrowseCallBack eCallBa
 	}
 }
 
-BrowseForService::~BrowseForService()
+BrowseForDNSSDService::~BrowseForDNSSDService()
 {
 	StopThread();
 }
 
-void FUNCTION_CALL_TYPE BrowseForService::SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags,
+void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags,
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
 	uint16_t txtLen, const char *txtRecord, void *context )
 {
 	if ( errorCode != kDNSServiceErr_NoError )
 		return;
 
-	BrowseForService * MyThis = (BrowseForService *)context;
+	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)context;
 
 	Service ServiceInfo( fullname, ntohs(port), hosttarget );
 	ServiceInfo.Properties.ImportTXTRecord( txtLen, txtRecord );
@@ -58,14 +58,14 @@ void FUNCTION_CALL_TYPE BrowseForService::SearchCallBackDNSServiceResolveReply( 
 }
 
 
-void FUNCTION_CALL_TYPE BrowseForService::SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags,
+void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags,
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType,
 	const char *replyDomain, void *context )
 {
 	if ( errorCode != kDNSServiceErr_NoError )
 		return;
 	
-	BrowseForService * MyThis = (BrowseForService *)context;
+	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)context;
 
 	if ( flags & kDNSServiceFlagsAdd )
 	{
@@ -85,7 +85,7 @@ void FUNCTION_CALL_TYPE BrowseForService::SearchCallBackDNSServiceBrowseReply( D
 	}
 }
 
-void BrowseForService::Run()
+void BrowseForDNSSDService::Run()
 {
 	::timeval timeout;
 	fd_set fds;
@@ -130,7 +130,7 @@ void BrowseForService::Run()
 	DNSServiceRefDeallocate( Ref );	
 }
 
-void BrowseForService::Start()
+void BrowseForDNSSDService::Start()
 {
 	if ( ! Running() )
 	{
@@ -138,7 +138,7 @@ void BrowseForService::Start()
 	}
 }
 
-void BrowseForService::CallbackClient(Service& Service, const DNSServiceFlags flags )
+void BrowseForDNSSDService::CallbackClient(Service& Service, const DNSServiceFlags flags )
 {
 	CallBack( Service, flags, UserData );
 }
