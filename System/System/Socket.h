@@ -63,7 +63,7 @@ public:
    * @param port [in] port number where bind the socket. If port equals zero, a free port number is chosen.
    * @exception SocketException error during binding.
    */
-  void Bind(const char* addr, int port);
+  void Bind(const SimpleString addr, int port);
 
   /**
    * @brief Listen for connections on a socket.
@@ -83,7 +83,7 @@ public:
    * @param addr [in] address where connect
    * @param port [in] port where connect
    */
-  void Connect(const char* addr, int port);
+  void Connect(const SimpleString addr, int port);
 
   /** @brief Close the connection*/
   void Close();
@@ -125,16 +125,17 @@ public:
    * @return the port where the socket is connected.
    */
   unsigned short GetPortNb();
+
   /**
    * Return the host name on which the socket is connected.
    * @param name [in out] buffer of length 'len' where the name will copied.
    * @param len [in] lenght of the buffer name, where the result will be put.
    */
-  void GetHostName(char* name, int len);
+  SimpleString GetHostName();
 
-  static struct hostent* GetHostByName( const char* name );
-  static struct hostent* gethostbyname( const char* name ) { return GetHostByName(name); };
-  static bool   FillAddrIn(struct sockaddr_in * pAdd, const char * name, int port);
+  static struct hostent* GetHostByName( const SimpleString name );
+  static struct hostent* gethostbyname( const SimpleString name ) { return GetHostByName(name); };
+  static bool   FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int port);
 
   static void GetDnsNameSolvingOption();
 
@@ -143,7 +144,7 @@ public:
   static int Errno();
 
   // REVIEW
-  const SimpleString& GetConnectedHost();
+  const SimpleString GetConnectedHost();
   const struct sockaddr_in * GetAddrDest();
 
 private:

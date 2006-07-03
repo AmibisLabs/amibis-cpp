@@ -131,6 +131,9 @@ public:
 	/** @brief Destructor */
 	~SimpleString();
 
+	//* @brief To empty a string */
+	void Empty();
+
 	/** @name Data Access */
 	//@{
 	/** @return the character string */
@@ -162,9 +165,13 @@ public:
 	/*! add 'str' to the end of this string */
 	SimpleString& operator+= (const SimpleString& str);
 	/*! add the integer 'i' changed in string to the end of this string */
+	SimpleString& operator+= (unsigned int ui);
+	/*! add the integer 'i' changed in string to the end of this string */
 	SimpleString& operator+= (int i);
 	/*! add the long integer 'l' changed in string to the end of this string */
 	SimpleString& operator+= (long l);
+	/*! add the long integer 'l' changed in string to the end of this string */
+	SimpleString& operator+= (float f);
 	/*! add the integer 'd' changed in string (using no specific formating) to the end of this string */
 	SimpleString& operator+= (double d);
 	//@}
@@ -181,6 +188,11 @@ public:
 	//@{
 	SimpleString& operator= (const char* str);
 	SimpleString& operator= (const SimpleString& str);
+	SimpleString& operator= (int i);
+	SimpleString& operator= (unsigned int ui);
+	SimpleString& operator= (long int li);
+	SimpleString& operator= (float f);
+	SimpleString& operator= (double d);
 	//@}
 	
 	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer );

@@ -3,6 +3,7 @@
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
+#include <System/SimpleException.h>
 
 namespace Omiscid {
 
@@ -21,6 +22,30 @@ void RandomInit();
 
 // Retrieve the logged username
 SimpleString GetLoggedUser();
+
+// classes for Allocate/Unallocation memory buffer
+class MemoryBufferException : public SimpleException
+{
+public:
+	MemoryBufferException( SimpleString Msg, int i = -1 );
+
+	const char* GetExceptionType();
+};
+
+class TemporaryMemoryBuffer
+{
+public:
+	TemporaryMemoryBuffer( size_t SizeOfBuffer );
+	~TemporaryMemoryBuffer();
+
+	operator char*();
+	operator unsigned char*();
+
+private:
+	char * Buffer;
+	size_t BufferSize;
+};
+
 
 } // namespace Omiscid
 

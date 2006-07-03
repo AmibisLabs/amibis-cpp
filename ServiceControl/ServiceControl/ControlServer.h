@@ -43,7 +43,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
 {
  public:
   /** @brief Values for the variable 'status' that gives the state of the service */
-  enum STATUS {STATUS_BEGIN = 0, STATUS_INIT = 1, STATUS_RUNNING = 2};
+  enum STATUS {STATUS_INIT = 1, STATUS_RUNNING = 2};
 
   /** @brief Constructor
    *
@@ -197,8 +197,9 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * Enable user to add field in the TXT record send to DNS-SD.
    * Reserved fields : owner, inputs, outputs, inoutputs.
    * Added by Doms
+   * Finally removed by Doms ;-P
    */
-  ServiceProperties Properties;
+  // ServiceProperties Properties;
 
  protected:
 
@@ -296,10 +297,9 @@ class ControlServer : public TcpServer, public XMLTreeParser
   unsigned int localConnectorId;	 
 
   SimpleString serviceName; /*<! service name */
-
-  IntVariableAttribut* statusIntVariable; /*!< default variable structure for the variable status combined with the status value */
-  IntVariableAttribut* nbvarIntVariable; /*!< variable structure for integer to manage the number of variable */
-  IntVariableAttribut* nbioIntVariable; /*!< variable structure for integer to manage the number of inputs/outputs */
+  STATUS Status; /*!< default variable structure for the variable status combined with the status value */
+  
+  
   IntVariableAttribut* lockIntVariable; /*!< variable structure for integer to manage the lock state */
   StringVariableAttribut* NameVariable; /*!< variable structure for exporting the name of this service */
   StringVariableAttribut* OwnerVariable; /*!< variable structure for exporting the name of this service */

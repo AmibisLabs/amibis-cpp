@@ -25,26 +25,51 @@ public:
 
 static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
 
+
+// class for Allocate/Unallocation memory buffer
+TemporaryMemoryBuffer::TemporaryMemoryBuffer( size_t SizeOfBuffer )
+{
+	Buffer = new char[SizeOfBuffer];
+	if ( Buffer == NULL )
+	{
+		throw MemoryBufferException( "No more memory to allocate buffer" );
+	}
+}
+
+TemporaryMemoryBuffer::~TemporaryMemoryBuffer()
+{
+	if ( Buffer != NULL )
+	{
+		delete [] Buffer;
+	}
+}
+
+TemporaryMemoryBuffer::operator char*()
+{
+	return (char*)Buffer;
+}
+
+TemporaryMemoryBuffer::operator unsigned char*()
+{
+	return (unsigned char*)Buffer;
+}
+
 #ifdef WIN32
 
 int Omiscid::random()
 {
 	int result;
+
+#if RAND_MAX <= 32767
 	int i;
-
-	if ( RAND_MAX <= 32767 )	// 16 bits generator
+	short * where = (short*)&result;
+	for( i = 0; i < (sizeof(result)/sizeof(short)); i++ )
 	{
-		short * where = (short*)&result;
-		for( i = 0; i < (sizeof(result)/sizeof(short)); i++ )
-		{
-			where[i] = (short)rand();
-		}
+		where[i] = (short)rand();
 	}
-	else							// >32 nits generator
-	{
-		result = rand();
-	}
-
+#else
+	result = rand();
+#endif
 	return result;
 }
 
@@ -82,20 +107,15 @@ SimpleString Omiscid::GetLoggedUser()
 
 #ifdef WIN32
 	DWORD len;
-	char * UserName = new char[MAX_LOGIN_LEN];	// for debugging purpose
-	if ( UserName == NULL )
-		// No more memory
-		return Login;
+	TemporaryMemoryBuffer UserName(MAX_LOGIN_LEN);	// for debugging purpose
 
-	// init data
-	UserName[0] = '\0';
+	// init data to empty login
+	*((char*)UserName) = '\0';
 	len = MAX_LOGIN_LEN-1;
 
 	GetUserName( UserName, &len );
 	Login = UserName;
 
-	// delete buffer
-	delete UserName;
 #else
 	// alternatively we could use getpwuid( geteuid() );
 	Login = getenv("LOGNAME");
@@ -103,3 +123,18 @@ SimpleString Omiscid::GetLoggedUser()
 
 	return Login;
 }
+
+
+MemoryBufferException::MemoryBufferException( SimpleString Msg, int i )
+	: SimpleException( Msg.GetStr(), i )
+{
+}
+
+const char* MemoryBufferException::GetExceptionType()
+{
+	return "MemoryBufferException";
+}
+
+
+
+

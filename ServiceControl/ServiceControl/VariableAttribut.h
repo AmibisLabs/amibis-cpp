@@ -19,7 +19,8 @@ namespace Omiscid {
   /** @brief VariableAccess Kind */
 typedef enum VariableAccess
 {
-	  ReadAccess /*!< read only access  the user cannot change the value through the ControlServer */, 
+	  ConstantAccess /*!< constant values */, 
+	  ReadAccess /*!< read only access  the user cannot change the value through the ControlClient */, 
   	  ReadWriteAccess /*!< read write access  : the user can change the value through the ControlServer*/, 
 	  ReadWriteBeforeInitAccess /*!< the user can change the value through the ControlServer only 
 				  when the status is different than ControlServer::STATUS_RUNNING */
@@ -88,6 +89,7 @@ class VariableAttribut : public Attribut
   void SetDefaultValue(const SimpleString&);
   void SetDefaultValue(const char* str);
   void SetAccess(VariableAccess);
+  void SetAccessConstant();
   void SetAccessRead();
   void SetAccessReadWrite();
   void SetAccessReadWriteBeforeInit();
@@ -179,10 +181,10 @@ protected:
   VariableAccess access; /*!< kind of access.*/
   SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
 
+  static const SimpleString VariableAttribut::access_constant_str; /*<! SimpleString representation for 'constant' access (used in XML description)*/
   static const SimpleString access_read_str; /*<! SimpleString representation for 'read' access (used in XML description)*/
   static const SimpleString access_readwrite_str; /*<! SimpleString representation for 'read-write' access (used in XML description)*/
-  static const SimpleString access_readwritebeforeinit_str; /*<! SimpleString representation for 'read-write before init' 
-							     access (used in XML description)*/
+
  private:
 	VariableAttributCallback CallbackData; /*!< the callback method to call when the value changed */
 };

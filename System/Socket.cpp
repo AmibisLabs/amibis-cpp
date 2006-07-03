@@ -1,4 +1,5 @@
 #include <System/Socket.h>
+#include <System/Portage.h>
 
 #include <sys/types.h>
 
@@ -118,7 +119,7 @@ void Socket::SetDescriptor(SOCKET descr)
 //     }
 }
 
-void Socket::Bind(const char* addr, int port)
+void Socket::Bind(const SimpleString addr, int port)
 {
  
 //   if(socketType == UDP)
@@ -212,7 +213,7 @@ Socket* Socket::Accept()
 	return NULL;
 }
 
-const SimpleString & Socket::GetConnectedHost()
+const SimpleString Socket::GetConnectedHost()
 {
 	struct hostent *he;
 	struct sockaddr_in addr;
@@ -248,16 +249,16 @@ const struct sockaddr_in * Socket::GetAddrDest()
 	return (const struct sockaddr_in *)&dest;
 }
 
-bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const char * name, int port)
+bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int port)
 {
 	struct hostent *he;
 
-	if ( pAdd == NULL || name == NULL || port < 0 )
+	if ( pAdd == NULL || port < 0 )
 		return false;
 
     pAdd->sin_family = AF_INET;
     pAdd->sin_port = htons(port);
-	if ( name[0] == '\0' )	// name == ""
+	if ( name.GetLength() == 0 )	// name == ""
 	{
 		// Brodcast
 		pAdd->sin_addr.s_addr = INADDR_ANY;
@@ -272,7 +273,7 @@ bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const char * name, int port)
 	return true;
 }
 
-void Socket::Connect(const char* addr, int port)
+void Socket::Connect(const SimpleString addr, int port)
 {
   if(socketType == TCP)
     {
@@ -403,12 +404,15 @@ unsigned short Socket::GetPortNb()
 }
 
 
-void Socket::GetHostName(char* name, int len)
-{  
-  if(gethostname(name, len))
-    {
-      throw SocketException("gethostname", Errno());
-    }
+SimpleString Socket::GetHostName()
+{
+	TemporaryMemoryBuffer HostName(1024);
+
+	if(gethostname((char*)HostName, 1023))
+	{
+		throw SocketException("gethostname", Errno());
+	}
+	return SimpleString( HostName );
 }
 
 void Socket::GetDnsNameSolvingOption()
@@ -430,13 +434,13 @@ void Socket::GetDnsNameSolvingOption()
 #endif
 }
 
-hostent* Socket::GetHostByName( const char* name )
+hostent* Socket::GetHostByName( const SimpleString name )
 {
 	struct hostent *he;
 
 	if ( DynamicNameSolving == OMISCIDNS_USE_MDNS_NAME_SOLVING )
 	{
-		if((he = ::gethostbyname(name)) == NULL)
+		if((he = ::gethostbyname(name.GetStr())) == NULL)
 		{
 			throw SocketException("GetHostByName", Errno());
 		}
@@ -445,23 +449,21 @@ hostent* Socket::GetHostByName( const char* name )
 
 	// DynamicNameSolving == OMISCIDNS_USE_DNS_ONLY
 
-	char * hostname = new char[1024];	// To prevent memory overflow on stack
+	TemporaryMemoryBuffer hostname(1024);	// To prevent memory overflow on stack
 	char * modify;
-	strncpy( hostname, name, 1023 );
+	strncpy( (char*)hostname, name.GetStr(), 1023 );
 
-	modify = strstr( hostname, ".local." );
+	modify = strstr( (char*)hostname, ".local." );
 	if ( modify && modify[7] == '\0' )	// we found ".local.\0"
 	{
 		modify[0] = '\0';
 	}
 
-	if((he = ::gethostbyname(hostname)) == NULL)
+	if((he = ::gethostbyname((char*)hostname)) == NULL)
     {
-		delete hostname;
 		throw SocketException("GetHostByName", Errno());
     }
 
-	delete hostname;
 	return he;
 }
 

@@ -20,7 +20,7 @@ sub WorkOnFile()
  	my $CurrentLine;
  	my $NumLine;
 
-	if ( defined $CheckedFiles{$FileName} )
+	if ( defined $NotParseThisFiles{$FileName} )
 	{
 		return
 	}
@@ -43,8 +43,19 @@ sub WorkOnFile()
 	}
 }
 
-$CheckedFiles{'System/Portage.cpp'} = 1;
+@ExcludedFiles = (
+'System/Socket.cpp',
+'System/System/Config.h',
+'System/System/Portage.h',
+'System/System/SimpleException.h',
+'System/System/SimpleString.h'
+);
+
+foreach $fic ( @ExcludedFiles )
+{
+	$NotParseThisFiles{$fic} = 1;
+}
 
 &RecurseWork::RecurseWork( 'System', 0 );
-&RecurseWork::RecurseWork( 'Com', 0 );
-&RecurseWork::RecurseWork( 'ServiceControl', 0 );
+# &RecurseWork::RecurseWork( 'Com', 0 );
+# &RecurseWork::RecurseWork( 'ServiceControl', 0 );

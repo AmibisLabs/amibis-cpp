@@ -1,4 +1,5 @@
 #include <System/SimpleString.h>
+#include <System/Portage.h>
 
 #ifdef WIN32
 	#define snprintf _snprintf
@@ -269,6 +270,11 @@ SimpleString::~SimpleString()
 	DestroyStringData();
 }
 
+void SimpleString::Empty()
+{
+	operator=((char*)NULL);
+}
+
 void SimpleString::DestroyStringData()
 {
 	if ( stringData->RemoveReference() <= 0 )
@@ -298,6 +304,36 @@ SimpleString& SimpleString::operator= (const char* str)
 		stringData = new StringData(str);
 	}
 	return *this;
+}
+
+SimpleString& SimpleString::operator= (int i)
+{
+	Empty();
+	return operator+=(i);
+}
+
+SimpleString& SimpleString::operator= (unsigned int ui)
+{
+	Empty();
+	return operator+=(ui);
+}
+
+SimpleString& SimpleString::operator= (long int li)
+{
+	Empty();
+	return operator+=(li);
+}
+
+SimpleString& SimpleString::operator= (float f)
+{
+	Empty();
+	return operator+=(f);
+}
+
+SimpleString& SimpleString::operator= (double d)
+{
+	operator=("");
+	return operator+=(d);
 }
 
 
@@ -350,25 +386,41 @@ SimpleString& SimpleString::operator+= (const SimpleString& str)
 
 SimpleString& SimpleString::operator+= (int i)
 {
-	char tmp[20];
-	snprintf(tmp, 20, "%d", i);
-	Append(tmp);
+	TemporaryMemoryBuffer tmp(20);
+	snprintf((char*)tmp, 20, "%d", i);
+	Append((char*)tmp);
+	return *this;
+}
+
+SimpleString& SimpleString::operator+= (unsigned int ui)
+{
+	TemporaryMemoryBuffer tmp(20);
+	snprintf((char*)tmp, 20, "%u", ui);
+	Append((char*)tmp);
 	return *this;
 }
 
 SimpleString& SimpleString::operator+= (long l)
 {
-	char tmp[20];
-	snprintf(tmp, 20, "%li", l);
-	Append(tmp);
+	TemporaryMemoryBuffer tmp(50);
+	snprintf((char*)tmp, 50, "%li", l);
+	Append((char*)tmp);
+	return *this;
+}
+
+SimpleString& SimpleString::operator+= (float f)
+{
+	TemporaryMemoryBuffer tmp(50);
+	snprintf((char*)tmp, 50, "%f", f);
+	Append((char*)tmp);
 	return *this;
 }
 
 SimpleString& SimpleString::operator+= (double d)
 {
-	char tmp[30];
-	snprintf(tmp, 30, "%lf", d);
-	Append(tmp);
+	TemporaryMemoryBuffer tmp(30);
+	snprintf((char*)tmp, 30, "%lf", d);
+	Append((char*)tmp);
 	return *this;
 }
 

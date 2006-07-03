@@ -24,10 +24,9 @@ VariableAttributCallback& VariableAttributCallback::operator=(VariableAttributCa
 	return *this;
 }
 
-
+const SimpleString VariableAttribut::access_constant_str = "constant";
 const SimpleString VariableAttribut::access_read_str = "read";
 const SimpleString VariableAttribut::access_readwrite_str = "readWrite";
-const SimpleString VariableAttribut::access_readwritebeforeinit_str = "readWriteBeforeInit";
 
 const SimpleString VariableAttribut::variable_str = "variable";
 
@@ -50,9 +49,9 @@ VariableAttribut::VariableAttribut(const char* a_name)
 
 const SimpleString& VariableAttribut::AccessToStr(VariableAccess a)
 {
+  if(a == ConstantAccess) return access_constant_str;
   if(a == ReadAccess) return access_read_str;
-  if(a == ReadWriteAccess) return access_readwrite_str;
-  else return access_readwritebeforeinit_str;
+  return access_readwrite_str;
 }
 
 
@@ -181,15 +180,22 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 	else if (strcmp(cur_name, "access") == 0)
 	  {
 	    SimpleString content = XMLMessage::ExtractTextContent(cur_node->children);
-	    if(content == "read") SetAccessRead();
-	    else if(content == access_readwrite_str)
-	      SetAccessReadWrite();
-	    else if(content == access_readwritebeforeinit_str )
-	      SetAccessReadWriteBeforeInit();
-	    else 
-	      {
-		TraceError( "Unknow Access kind : %s\n", cur_node->children->content);
-	      }
+		if(content == access_readwrite_str)
+		{
+			SetAccessRead();
+		}
+		else if(content == access_readwrite_str)
+		{
+			SetAccessReadWrite();
+		}
+		else if(content == access_constant_str )
+		{
+			SetAccessConstant();
+		}
+		else 
+		{
+			TraceError( "Unknow Access kind : %s\n", cur_node->children->content);
+		}
 	  }
 	else TraceError( "Unwaited Tag : %s\n", cur_name);
       }
@@ -218,14 +224,14 @@ void VariableAttribut::SetAccessRead()
 	access = ReadAccess;
 }
 
+void VariableAttribut::SetAccessConstant()
+{
+	access = ConstantAccess;
+}
+
 void VariableAttribut::SetAccessReadWrite()
 {
 	access = ReadWriteAccess;
-}
-
-void VariableAttribut::SetAccessReadWriteBeforeInit()
-{
-	access = ReadWriteBeforeInitAccess;
 }
 
 void VariableAttribut::SetDefaultValue(const SimpleString& str)
@@ -265,7 +271,7 @@ SimpleString& VariableAttribut::GetDefaultValue()
 
 bool VariableAttribut::CanBeModified(ControlServer::STATUS status) const
 { 
-	return (access == ReadWriteAccess || (access == ReadWriteBeforeInitAccess && status != ControlServer::STATUS_RUNNING)); 
+	return (access == ReadWriteAccess || (access == ConstantAccess && status != ControlServer::STATUS_RUNNING)); 
 }
 
 void VariableAttribut::SetCallbackValueChanged(SignalValueChanged callback, void* user_data_ptr)

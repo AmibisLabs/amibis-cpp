@@ -27,27 +27,9 @@ void ControlServer::InitInstance()
 
 	TcpServer::SetCallBackOnRecv(XMLTreeParser::CumulMessage, (XMLTreeParser*)this);
 
+	SetStatus( STATUS_INIT );
+
 	VariableAttribut* va = NULL;
-
-	nbvarIntVariable = NULL;
-	va = AddVariable("number of variables");
-	va->SetType("integer");
-	va->SetAccess(ReadAccess);
-	va->SetDescription("Gives the number of declared variables");
-	va->SetFormatDescription("decimal representation");
-	nbvarIntVariable = new IntVariableAttribut(va, 1);
-
-	VariableAttribut* status_variable = AddVariable("status");
-	status_variable->SetType("integer");
-	status_variable->SetAccess(ReadAccess);
-	statusIntVariable = new IntVariableAttribut(status_variable, (int)STATUS_BEGIN);
-
-	va = AddVariable("number of inoutputs");  
-	va->SetType("integer");
-	va->SetAccess(ReadAccess);
-	va->SetDescription("Gives the number of declared inputs/outputs");
-	va->SetFormatDescription("decimal representation");
-	nbioIntVariable = new IntVariableAttribut(va, 0);
 
 	va = AddVariable("lock");
 	va->SetType("integer");
@@ -57,19 +39,19 @@ void ControlServer::InitInstance()
 
 	va = AddVariable("name");
 	va->SetType("string");
-	va->SetAccess(ReadAccess);
+	va->SetAccess(ConstantAccess);
 	va->SetDescription("Registered name of this service");
 	NameVariable = new StringVariableAttribut( va, "" );
 
 	va = AddVariable("owner");
 	va->SetType("string");
-	va->SetAccess(ReadAccess);
+	va->SetAccess(ConstantAccess);
 	va->SetDescription("Login which launches this service");
 	OwnerVariable = new StringVariableAttribut( va, "none" );
 
-	va = AddVariable("peerid");
+	va = AddVariable("id");
 	va->SetType("hexadecimal");
-	va->SetAccess(ReadAccess);
+	va->SetAccess(ConstantAccess);
 	va->SetDescription("PeerId of this service");
 	PeerIdVariable = new StringVariableAttribut( va, "00000000" );
 
@@ -90,24 +72,6 @@ ControlServer::ControlServer(const SimpleString& service_name)
 
 ControlServer::~ControlServer()
 {
-	if(statusIntVariable != NULL)
-	{
-		delete statusIntVariable;
-		statusIntVariable = NULL;
-	}
-
-	if(nbvarIntVariable != NULL)
-	{
-		delete nbvarIntVariable;
-		nbvarIntVariable = NULL;
-	}
-
-	if(nbioIntVariable != NULL)
-	{
-		delete nbioIntVariable;
-		nbioIntVariable = NULL;
-	}
-
 	if(lockIntVariable != NULL)
 	{
 		delete lockIntVariable;
@@ -166,7 +130,7 @@ bool ControlServer::StartServer()
       port = GetSocket()->GetPortNb();
       // GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
       
- 
+#if 0
 	  // creer les infos pour le Champ TXT
 	  // -- input, output
 	  SimpleString input_record("");
@@ -202,13 +166,30 @@ bool ControlServer::StartServer()
 
 	  if(output_record.GetLength()>0)
 		  output_record = output_record.SubString(0, output_record.GetLength()-1);
-
+#endif
       
       registerDnsSd = new RegisterOmiscidService( serviceName.GetStr(), "local.", (unsigned short)port, false);
       
-      // Import parents properties
-      registerDnsSd->Properties.ImportTXTRecord( Properties.GetTXTRecordLength(), Properties.ExportTXTRecord() );
-      
+	  // Add Constant variable
+	  // The desctiption if full by default
+	  registerDnsSd->Properties["desc"] = "full";
+
+	  // Add peerID
+      TemporaryMemoryBuffer tmp_peerid(30);	// To prevent buffer overflow
+      sprintf((char*)tmp_peerid, "%08x",  GetServiceId());        
+      registerDnsSd->Properties["id"]= (char*)tmp_peerid;
+	  PeerIdVariable->SetValue( (char*)tmp_peerid );
+
+
+      // Add owner
+      registerDnsSd->SetOwner();
+
+	  OwnerVariable->SetValue( GetLoggedUser() );
+
+	  // 
+
+
+#if 0
       // Override inputs, outputs, inouputs properties
 	  SimpleString DnsSdField;
 
@@ -219,19 +200,9 @@ bool ControlServer::StartServer()
       registerDnsSd->Properties[DnsSdField.GetStr()] = output_record.GetStr();
    	  DnsSdField = InOutputAttribut::inoutput_str+"s";
       registerDnsSd->Properties[DnsSdField.GetStr()] = in_output_record.GetStr();
-      
-      // Add owner
-      registerDnsSd->SetOwner();
-
-	  OwnerVariable->SetValue( GetLoggedUser() );
-
-      //peerID
-      char tmp_peerid[10];
-      sprintf(tmp_peerid, "%08x",  GetServiceId());        
-      registerDnsSd->Properties["id"]= tmp_peerid;
-	  PeerIdVariable->SetValue( tmp_peerid );
-
-      registerDnsSd->Register();
+#endif
+	  
+	  registerDnsSd->Register();
 
     if(registerDnsSd->IsRegistered())
 	{
@@ -239,7 +210,7 @@ bool ControlServer::StartServer()
 		serviceName = registerDnsSd->RegisteredName;
 		NameVariable->SetValue( serviceName );
 		// Copy back Properties from RegisterDnsSd to parent, so this object
-		Properties.ImportTXTRecord( registerDnsSd->Properties.GetTXTRecordLength(), registerDnsSd->Properties.ExportTXTRecord() );
+		// Properties.ImportTXTRecord( registerDnsSd->Properties.GetTXTRecordLength(), registerDnsSd->Properties.ExportTXTRecord() );
 	}
     else
 	{
@@ -250,7 +221,9 @@ bool ControlServer::StartServer()
       e.Display();
       return false;
     }
-  SetStatus(STATUS_INIT);
+
+  StartThreadProcessMsg();
+  SetStatus(STATUS_RUNNING);
     
   return true;
 }
@@ -587,7 +560,7 @@ VariableAttribut* ControlServer::AddVariable(const char* name)
   VariableAttribut* va = new VariableAttribut(name);
   listVariable.Add(va);
   va->SetCallbackValueChanged(ValueChanged, this);
-  if (nbvarIntVariable != NULL) nbvarIntVariable->Incr();
+  
   return va;
 }
 
@@ -619,7 +592,6 @@ InOutputAttribut* ControlServer::AddInOutput(const char* name, ComTools* com_too
   
   listInOutput.Add(ioa);
 
-  if (nbioIntVariable != NULL) nbioIntVariable->Incr();
   return ioa;
 }
 
@@ -762,12 +734,12 @@ void ControlServer::DisplayServiceGlobalShortDescription()
 
 ControlServer::STATUS ControlServer::GetStatus() const
 {
-	return (STATUS)statusIntVariable->GetValue(); 
+	return (STATUS)Status; 
 }
 
 void ControlServer::SetStatus(STATUS s)
 {
-	statusIntVariable->SetValue((int)s); 
+	Status = s; 
 }
 
 const char* ControlServer::GetServiceName()
