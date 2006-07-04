@@ -3,7 +3,7 @@
 //////////////////////////////////////////////////////////////////////
 
 
-#include <System/Mutex.h>
+#include <System/ReentrantMutex.h>
 
 using namespace Omiscid;
 
@@ -11,19 +11,23 @@ using namespace Omiscid;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-Mutex::Mutex()
+ReentrantMutex::ReentrantMutex()
 {
 #ifdef WIN32
-	// mutex = CreateMutex( NULL, false, NULL );
-	mutex = CreateSemaphore(NULL, 1, 2^32-1, NULL );
+	mutex = CreateMutex(NULL, false, NULL );
 	OwnerId = 0;
 #else
-	if(pthread_mutex_init(&mutex, NULL) != 0)
+	pthread_mutexattr_t attr;
+	pthread_mutexattr_init (&attr);
+	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
+	pthread_mutex_init (&mutex, &attr);
+
+	if(pthread_mutex_init(&mutex, &attr) != 0)
 		throw "Error Mutex Init";
 #endif	
 }
 
-Mutex::~Mutex()
+ReentrantMutex::~ReentrantMutex()
 {
 #ifdef WIN32
 	if ( mutex )
@@ -36,7 +40,7 @@ Mutex::~Mutex()
 #endif
 }
 
-bool Mutex::EnterMutex()
+bool ReentrantMutex::EnterMutex()
 {
 #ifdef WIN32
 	unsigned int Result = WaitForSingleObject( mutex, INFINITE );
@@ -56,11 +60,10 @@ bool Mutex::EnterMutex()
 	return false;
 }
 
-bool Mutex::LeaveMutex()
+bool ReentrantMutex::LeaveMutex()
 {
 #ifdef WIN32
-	// if ( !ReleaseMutex(mutex) )
-	if ( !ReleaseSemaphore(mutex,1,NULL) )
+	if ( !ReleaseMutex(mutex) )
 	{
 		return false;
 	}
@@ -75,4 +78,3 @@ bool Mutex::LeaveMutex()
 
 	return true;
 }
-

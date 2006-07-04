@@ -136,7 +136,7 @@ bool OmiscidServiceProxy::GetVariableValue(const SimpleString VarName, SimpleStr
 }
 
 	/**
-     * search for a connector on the remote Omiscid Service
+     * search for a connector on the remote Omiscid DnsSdService
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */
@@ -146,7 +146,7 @@ bool OmiscidServiceProxy::HasConnector(const SimpleString ConnectorName )
 }
 
 		/**
-     * search for a connector on the remote Omiscid Service
+     * search for a connector on the remote Omiscid DnsSdService
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */

@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -7,7 +7,7 @@
  *  \date    2004-2005
  */
 
-#include <ServiceControl/Service.h>
+#include <ServiceControl/DnsSdService.h>
 
 #include <System/Portage.h>
 #include <System/Socket.h>
@@ -20,7 +20,7 @@
 
 using namespace Omiscid;
 
-void Service::Init()
+void DnsSdService::Init()
 {
 	Name[0] = '\0';
 	Protocol[0] = '\0';
@@ -31,13 +31,13 @@ void Service::Init()
 	HostName[0] = '\0';
 }
 
-void Service::Empty()
+void DnsSdService::Empty()
 {
 	CompleteServiceName[0] = '\0';
 	Init();
 }
 
-bool Service::CheckProtocol( const SimpleString Protocol )
+bool DnsSdService::CheckProtocol( const SimpleString Protocol )
 {
 	int PreviousUnderscore;
 	int ProtocolLenght;
@@ -80,7 +80,7 @@ bool Service::CheckProtocol( const SimpleString Protocol )
 	return true;
 }
 
-bool Service::CheckName( const SimpleString eName )
+bool DnsSdService::CheckName( const SimpleString eName )
 {
 	if ( eName.IsEmpty() )
 	{
@@ -95,12 +95,12 @@ bool Service::CheckName( const SimpleString eName )
 	return true;
 }
 
-Service::Service()
+DnsSdService::DnsSdService()
 {
 	Empty();
 }
 
-Service::Service( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
+DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	char * Search;
 	char * LastFind;
@@ -118,7 +118,7 @@ Service::Service( const SimpleString eFullName, uint16_t ePort, const SimpleStri
 	Search = strstr( CompleteServiceName, "._tcp." );
 	if ( Search )
 	{
-		// TCP Service
+		// TCP DnsSdService
 		nTransport = TCP;
 		strcpy( Transport, "_tcp" );
 	}
@@ -127,7 +127,7 @@ Service::Service( const SimpleString eFullName, uint16_t ePort, const SimpleStri
 		Search = strstr( CompleteServiceName, "._udp." );
 		if ( Search )
 		{
-			// UDP Service
+			// UDP DnsSdService
 			nTransport = UDP;
 			strcpy( Transport, "_udp" );
 		}
@@ -178,7 +178,7 @@ Service::Service( const SimpleString eFullName, uint16_t ePort, const SimpleStri
 	}
 }
 
-Service::Service( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
+DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	SimpleString RegType;
 	char * Search;
@@ -201,7 +201,7 @@ Service::Service( const SimpleString ServiceName, const SimpleString eRegType, c
 	Search = strstr( RegType.GetStr(), "._tcp" );
 	if ( Search )
 	{
-		// TCP Service
+		// TCP DnsSdService
 		nTransport = TCP;
 		strcpy( Transport, "_tcp" );
 	}
@@ -210,7 +210,7 @@ Service::Service( const SimpleString ServiceName, const SimpleString eRegType, c
 		Search = strstr( RegType.GetStr(), "._udp" );
 		if ( Search )
 		{
-			// UDP Service
+			// UDP DnsSdService
 			nTransport = UDP;
 			strcpy( Transport, "_udp" );
 		}
@@ -264,7 +264,7 @@ Service::Service( const SimpleString ServiceName, const SimpleString eRegType, c
 	}
 }
 
-Service::Service( const SimpleString eName, const SimpleString eProtocol, TransportProtocol enTransport, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
+DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtocol, TransportProtocol enTransport, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	Empty();
 
@@ -322,7 +322,7 @@ Service::Service( const SimpleString eName, const SimpleString eProtocol, Transp
 	}
 }
 
-SimpleString Service::ToString()
+SimpleString DnsSdService::ToString()
 {
 	SimpleString Generate(Name);
 /*  Generate += ".";
@@ -341,7 +341,7 @@ SimpleString Service::ToString()
 
 
 RegisterService::RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister )
-	: Service( FullName, ePort )
+	: DnsSdService( FullName, ePort )
 {
 	Registered = false;
 	ConnectionOk = false;
@@ -353,7 +353,7 @@ RegisterService::RegisterService( const SimpleString FullName, uint16_t ePort, b
 }
 
 RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister )
-	: Service( ServiceName, RegType, Domain, ePort )
+	: DnsSdService( ServiceName, RegType, Domain, ePort )
 {
 	Registered = false;
 	ConnectionOk = false;
@@ -365,7 +365,7 @@ RegisterService::RegisterService( const SimpleString ServiceName, const SimpleSt
 }
 
 RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString Protocol, TransportProtocol Transport, const SimpleString Domain,  uint16_t ePort, bool AutoRegister  )
-	: Service( ServiceName, Protocol, Transport, Domain, ePort )
+	: DnsSdService( ServiceName, Protocol, Transport, Domain, ePort )
 {
 	Registered = false;
 	ConnectionOk = false;

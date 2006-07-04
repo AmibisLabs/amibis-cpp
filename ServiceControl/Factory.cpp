@@ -1,19 +1,19 @@
 
 
-#include <ServiceControl/OmiscidServiceRegistry.h>
+#include <ServiceControl/Factory.h>
 
 using namespace Omiscid;
 
-OmiscidServiceRegistry ServiceFactory;
+Factory ServiceFactory;
 
 /** 
 	* Registers a new Omiscid service. This service will be advertised in DSN-SD
 	* @param serviceName the name of the service as it will appear in DNS-SD
 	* @return the bip service. All access to the service will be through this object
 	*/
-OmiscidService * OmiscidServiceRegistry::Create( const SimpleString ServiceName )
+OmiscidService * Factory::Create( const SimpleString ServiceName )
 {
-	OmiscidService * NewOmiscidService = new OmiscidService(ServiceName);
+	OmiscidService * NewOmiscidService = new Service(ServiceName);
 
 	return NewOmiscidService;
 }
@@ -24,7 +24,7 @@ OmiscidService * OmiscidServiceRegistry::Create( const SimpleString ServiceName 
 	* @return the bip service. All access to the service will be through this object
 	* -------------------            Not implemented yet         -----------
 	*/
-OmiscidService * OmiscidServiceRegistry::CreateFromXML( SimpleString XmlDesc )
+OmiscidService * Factory::CreateFromXML( SimpleString XmlDesc )
 {
 	return NULL;
 }

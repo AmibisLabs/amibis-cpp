@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -167,12 +167,12 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 
 bool SearchService::StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack, void * eUserData )
 {
-	if ( DNSSDConnection == true || (!eName.IsEmpty() && Service::CheckName( eName ) == false) )
+	if ( DNSSDConnection == true || (!eName.IsEmpty() && DnsSdService::CheckName( eName ) == false) )
 	{
 		return false;
 	}
 
-	// Length of eNAme is checked by Service::CheckName
+	// Length of eNAme is checked by DnsSdService::CheckName
 	SearchNameLength = 0;
 	for( ;SearchNameLength < (int)eName.GetLength(); SearchNameLength++ )
 	{

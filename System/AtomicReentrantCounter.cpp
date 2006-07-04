@@ -1,8 +1,8 @@
-#include <System/AtomicReentrantMutex.h>
+#include <System/AtomicReentrantCounter.h>
 
 using namespace Omiscid;
 
-AtomicReentrantMutex::AtomicReentrantMutex(int init_value)
+AtomicReentrantCounter::AtomicReentrantCounter(int init_value)
 {
 	mutex.EnterMutex();
 	counter = init_value;
@@ -10,7 +10,7 @@ AtomicReentrantMutex::AtomicReentrantMutex(int init_value)
 }
 	
 	
-int AtomicReentrantMutex::operator++()
+int AtomicReentrantCounter::operator++()
 {
 	mutex.EnterMutex();
 	++counter;
@@ -18,7 +18,7 @@ int AtomicReentrantMutex::operator++()
 	return counter;
 }
 
-int AtomicReentrantMutex::operator++(int)
+int AtomicReentrantCounter::operator++(int)
 {
 	mutex.EnterMutex();
 	int val = counter++;	
@@ -26,7 +26,7 @@ int AtomicReentrantMutex::operator++(int)
 	return val;
 }
 
-int AtomicReentrantMutex::operator--()
+int AtomicReentrantCounter::operator--()
 {
 	mutex.EnterMutex();
 	--counter;
@@ -34,7 +34,7 @@ int AtomicReentrantMutex::operator--()
 	return counter;
 }
 
-int AtomicReentrantMutex::operator--(int)
+int AtomicReentrantCounter::operator--(int)
 {
 	mutex.EnterMutex();	
 	int val = counter--;
@@ -42,10 +42,10 @@ int AtomicReentrantMutex::operator--(int)
 	return val;
 }
 
-AtomicReentrantMutex::operator int() const
+AtomicReentrantCounter::operator int() const
 { return counter; }
 
-int AtomicReentrantMutex::operator=(int value)
+int AtomicReentrantCounter::operator=(int value)
 {
   mutex.EnterMutex();
   counter = value;

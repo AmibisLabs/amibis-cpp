@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Implementation file of the common classes for the PRIMA Service package
+ *  \brief Implementation file of the common classes for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD

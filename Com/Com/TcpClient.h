@@ -57,9 +57,9 @@ class TcpClient : public MsgSocket, public ComTools
   int SendToServer(int len, const char* buffer);
 
     
-  /** @brief Define the Service Id
+  /** @brief Define the DnsSdService Id
    *
-   * Define the Service Id used in the header of each sent messages.
+   * Define the DnsSdService Id used in the header of each sent messages.
    * @param pid [in] the service id value.
    */
   void SetServiceId(unsigned int pid);

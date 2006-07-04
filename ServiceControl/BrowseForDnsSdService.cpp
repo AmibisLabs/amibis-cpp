@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -52,7 +52,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 
 	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)context;
 
-	Service ServiceInfo( fullname, ntohs(port), hosttarget );
+	DnsSdService ServiceInfo( fullname, ntohs(port), hosttarget );
 	ServiceInfo.Properties.ImportTXTRecord( txtLen, txtRecord );
 	MyThis->CallbackClient( ServiceInfo, flags | kDNSServiceFlagsAdd );
 }
@@ -80,7 +80,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	}
 	else
 	{
-		Service ServiceInfo( serviceName, replyType, replyDomain, 1 );
+		DnsSdService ServiceInfo( serviceName, replyType, replyDomain, 1 );
 		MyThis->CallbackClient( ServiceInfo, flags );
 	}
 }
@@ -138,7 +138,7 @@ void BrowseForDNSSDService::Start()
 	}
 }
 
-void BrowseForDNSSDService::CallbackClient(Service& Service, const DNSServiceFlags flags )
+void BrowseForDNSSDService::CallbackClient(DnsSdService& DnsSdService, const DNSServiceFlags flags )
 {
-	CallBack( Service, flags, UserData );
+	CallBack( DnsSdService, flags, UserData );
 }

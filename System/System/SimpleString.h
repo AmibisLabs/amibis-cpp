@@ -6,7 +6,7 @@
 #define __SIMPLE_STRING_H__
 
 #include <System/Config.h>
-#include <System/AtomicReentrantMutex.h>
+#include <System/AtomicReentrantCounter.h>
 
 #include <string.h>
 
@@ -111,7 +111,7 @@ private:
 		ReentrantMutex Protect;
 
 	protected:
-		AtomicReentrantMutex * nbReferences; /*!< number of reference on the buffer */
+		AtomicReentrantCounter * nbReferences; /*!< number of reference on the buffer */
 		char * data; /*!< the character buffer */
 		unsigned int length;/*!< the length of the string */
 		static StringData EmptyStringData; /*!< object StringData for empty string "" */
