@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -13,13 +13,13 @@
 #include <System/Config.h>
 #include <System/Thread.h>
 #include <System/SimpleString.h>
-#include <ServiceControl/Service.h>
+#include <ServiceControl/DnsSdService.h>
 
 #include <dns_sd.h>
 
 namespace Omiscid {
 
-typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( Service& NewService, DNSServiceFlags flags, void * UserData );
+typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( DnsSdService& NewService, DNSServiceFlags flags, void * UserData );
 
 class BrowseForDNSSDService : public Thread
 {
@@ -38,7 +38,7 @@ protected:
 
 	SimpleString RegType;
 
-	void CallbackClient( Service& Service, const DNSServiceFlags flags );
+	void CallbackClient( DnsSdService& DnsSdService, const DNSServiceFlags flags );
 
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context );

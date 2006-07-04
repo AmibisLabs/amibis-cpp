@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -22,9 +22,9 @@
 namespace Omiscid {
 
 /*! \class ServiceException
- *  \brief The mother class of all exceptions of the PRIMA Service Package.
+ *  \brief The mother class of all exceptions of the PRIMA DnsSdService Package.
  *
- *  This class is the mother class of all exceptions raised by the PRIMA Service
+ *  This class is the mother class of all exceptions raised by the PRIMA DnsSdService
  *  package. All derived classes must define their own exception type (const char*)
  *  by rewriting the virtual function ServiceException#GetExceptionType.
  */
@@ -50,9 +50,9 @@ namespace Omiscid {
 
 
 /*! \class CommonServiceValues
- *	\brief The mother class of all Service classes of the PRIMA Service package.
+ *	\brief The mother class of all DnsSdService classes of the PRIMA DnsSdService package.
  *
- *	This class is the mother class of all Service classes. It defines common values
+ *	This class is the mother class of all DnsSdService classes. It defines common values
  *	defined in DNS-SD documentation like fields length.
  */
 class CommonServiceValues

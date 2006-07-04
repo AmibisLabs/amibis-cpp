@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -17,7 +17,7 @@
 #include <System/Mutex.h>
 #include <System/AtomicCounter.h>
 #include <System/SimpleString.h>
-#include <ServiceControl/Service.h>
+#include <ServiceControl/DnsSdService.h>
 
 #ifndef WIN32
 #include <sys/time.h>
@@ -29,7 +29,7 @@ typedef bool (FUNCTION_CALL_TYPE *IsServiceValidForMe)(const char * fullname, co
 
 class WaitForDnsSdServices;
 
-class SearchService : public Service
+class SearchService : public DnsSdService
 {
 	friend class WaitForDnsSdServices;
 public:

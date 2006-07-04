@@ -1,7 +1,7 @@
 //      -*- C++ -*-
 
 /*! @file 
- * @brief Header of the common classes and values for the PRIMA Service package
+ * @brief Header of the common classes and values for the PRIMA DnsSdService package
  * @date 2004-2005
  */
 
@@ -48,7 +48,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
 
   /** @brief Constructor
    *
-   * Define a Service ID for this service.
+   * Define a DnsSdService ID for this service.
    * @param service_name the name for the service. It will be registered with this name.
    */
   ControlServer(const SimpleString service_name = "Control");
@@ -170,7 +170,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    */
   void SetStatus(STATUS state);
 
-  /** @brief Service Properties. 
+  /** @brief DnsSdService Properties. 
    *
    * Enable user to add field in the TXT record send to DNS-SD.
    * Reserved fields : owner, inputs, outputs, inoutputs.

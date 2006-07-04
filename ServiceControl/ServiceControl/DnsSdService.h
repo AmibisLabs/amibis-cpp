@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -18,17 +18,17 @@
 namespace Omiscid {
 
 /**
- * @class Service Service.h ServiceControl/Service.h
+ * @class DnsSdService DnsSdService.h ServiceControl/DnsSdService.h
  * @brief To Comment
  * @author Dominique Vaufreydaz
  */
-class Service : public CommonServiceValues
+class DnsSdService : public CommonServiceValues
 {
 public:
-	Service();
-	Service( const SimpleString FullName, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
-	Service( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
-	Service( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
+	DnsSdService();
+	DnsSdService( const SimpleString FullName, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
+	DnsSdService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
+	DnsSdService( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
 
 	char CompleteServiceName[ServiceNameLength];	// Complete service Name
 	SimpleString RegisteredName;
@@ -55,11 +55,11 @@ public:
 };
 
 /**
- * @class RegisterService Service.h ServiceControl/Service.h
+ * @class RegisterService DnsSdService.h ServiceControl/DnsSdService.h
  * @brief To Comment
  * @author Dominique Vaufreydaz
  */
-class RegisterService : public Service
+class RegisterService : public DnsSdService
 {
 public:
 	RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );

@@ -32,7 +32,7 @@ protected:
      * @param message
      *            the Omiscid message to process
      */
-    virtual void VariableChanged(OmiscidService& Service, SimpleString VarName, SimpleString NewValue) = 0;
+    virtual void VariableChanged(OmiscidService& DnsSdService, SimpleString VarName, SimpleString NewValue) = 0;
 };
 
 /**
@@ -55,7 +55,7 @@ protected:
      * @param message
      *            the Omiscid message to process
      */
-    virtual void VariableChanged(OmiscidService& Service, SimpleString NewValue) = 0;
+    virtual void VariableChanged(OmiscidService& DnsSdService, SimpleString NewValue) = 0;
 };
 
 

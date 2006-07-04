@@ -5,7 +5,7 @@
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
-#include <ServiceControl/OmiscidService.h>
+#include <ServiceControl/Service.h>
 
 namespace Omiscid {
 
@@ -13,7 +13,7 @@ namespace Omiscid {
  * @author 
  *
  */
-class OmiscidServiceRegistry
+class Factory
 {
 public:
 	/** 
@@ -32,7 +32,7 @@ public:
 
 };
 
-extern OmiscidServiceRegistry ServiceFactory;
+extern Factory ServiceFactory;
 
 } // namespace Omiscid
 

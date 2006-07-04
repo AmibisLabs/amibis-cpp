@@ -1,7 +1,7 @@
 //      -*- C++ -*-
 
 /*! @file IntVariableAttribut.h
- * @brief Header of the common classes and values for the PRIMA Service package
+ * @brief Header of the common classes and values for the PRIMA DnsSdService package
  * @date 2004-2005
  */
 

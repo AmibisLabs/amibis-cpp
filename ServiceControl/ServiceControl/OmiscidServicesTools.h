@@ -1,5 +1,5 @@
 /*! \file
- *  \brief Header of the common classes and values for the PRIMA Service package
+ *  \brief Header of the common classes and values for the PRIMA DnsSdService package
  *  \author Dominique Vaufreydaz
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
@@ -12,7 +12,7 @@
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
-#include <ServiceControl/Service.h>
+#include <ServiceControl/DnsSdService.h>
 #include <ServiceControl/WaitForDnsSdServices.h>
 
 namespace Omiscid {
