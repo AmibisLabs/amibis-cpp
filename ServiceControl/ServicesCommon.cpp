@@ -29,7 +29,7 @@ public:
 		if ( Option == NULL || strcmp( Option, DefaultDomain.GetStr() ) == 0 )
 		{
 			OmiscidServiceDnsSdType = DefaultDomain;
-			TraceError( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain );
+			TraceError( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
 			return;
 		}
 
@@ -40,14 +40,14 @@ public:
 		if ( size >= RegtypeLength )
 		{
 			OmiscidServiceDnsSdType = CommonServiceValues::DefaultDomain;
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long (%d max). Use '%s' instead.\n", RegtypeLength-1, DefaultDomain );
+			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long (%d max). Use '%s' instead.\n", RegtypeLength-1, DefaultDomain.GetStr() );
 			return;
 		}
 
 		if ( sscanf( Option, "_bip_%[^.]._tcp", (char*)tmpdomain) != 1 )
 		{
 			OmiscidServiceDnsSdType = DefaultDomain;
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain );
+			fprintf( stderr, "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain.GetStr() );
 			return;
 		}
 
