@@ -3,81 +3,37 @@ import sys
 import string
 from SCons.Util import WhereIs
 
-def primaMessage(str):
+def OmiscidMessage(str):
  print '--==-- '+str
 
 #############################################
 ### Command to initialize the environment ###
 #############################################
-def primaInit(env,commandLineTargets,arguments,options=[]):
+def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  global COMMAND_LINE_TARGETS
  COMMAND_LINE_TARGETS=commandLineTargets
  global ARGUMENTS
  ARGUMENTS=arguments
- if "ravimoduledest" in ARGUMENTS \
- or "ravi" in options:
-  env.ParseConfig('ravitool --cflags')
-  env.ParseConfig('ravitool --ldflags')
- if "bip" in options:
+ if "omiscid" in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
-  env.ParseConfig('primacontrol-config --cflags')
-  env.ParseConfig('primacontrol-config --libs')
-  env.ParseConfig('primacom-config --cflags')
-  env.ParseConfig('primacom-config --libs')
-  env.ParseConfig('primasystem-config --cflags')
-  env.ParseConfig('primasystem-config --libs')
- if "primavision" in options:
-  env.ParseConfig('primavision-config --cflags')
-  env.ParseConfig('primavision-config --libs')
+  env.ParseConfig('Omiscidcontrol-config --cflags')
+  env.ParseConfig('Omiscidcontrol-config --libs')
+  env.ParseConfig('Omiscidcom-config --cflags')
+  env.ParseConfig('Omiscidcom-config --libs')
+  env.ParseConfig('Omiscidsystem-config --cflags')
+  env.ParseConfig('Omiscidsystem-config --libs')
  if "xml2" in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
- if "ffmpeg" in options:
-  if "ffmpeginc" in ARGUMENTS :
-   env.Append(CPPPATH = [ARGUMENTS.get("ffmpeginc")])
-   #env.Append(LIBS = ["avformat","avcodec"])
-  else :
-   env.ParseConfig('ffmpeg-config --cflags')
-   env.ParseConfig('ffmpeg-config --libs avformat')
- if "svideo" in ARGUMENTS :
-  env.Append(CPPPATH = [os.path.join(ARGUMENTS.get("svideo"),"include")])
-  env.Append(LIBPATH = [os.path.join(ARGUMENTS.get("svideo"),"lib")])
  if "debug" in ARGUMENTS :
-  primaMessage("compiling in debug mode")
+  OmiscidMessage("compiling in debug mode")
   env.Append(CXXFLAGS = ["-g","-Wall"])
-
-######################################
-### Command to build a ravi module ###
-######################################
-def primaRaviModuleTarget(env, target, dcl, addModPaths, source):
- envRavi = env.Copy()
- envRavi.Append(ENV = os.environ)
- raviOptions = ""
- sourceH = []
- sourceO = []
- sourceHString = ""
- sourceOString = ""
- addModPathsString = ""
- for path in addModPaths:
-  addModPathsString += " -R "+path
- for path in env["CPPPATH"]:
-  raviOptions += " -I "+path
- for s in source:
-  sourceH += [s+".h"]
-  sourceO += [s+".os"]
-  sourceHString += s+".h "
-  sourceOString += s+".os "
- output = []
- output += envRavi.Command([target+".cpp",target+".x.scm"],sourceH,"ravitool --generate %s %s -I ./ -o $TARGET %s" % (addModPathsString,dcl,sourceHString))
- envRavi.Command(target+".os",target+".cpp","ravitool --compile %s -o $TARGET $SOURCE" % raviOptions)
- output += envRavi.Command(target+".so",[target+".os"]+sourceO,"ravitool --link %s -o $TARGET $SOURCE" % raviOptions)
- return output
 
 ##############################################
 ### Command to build a file from a file.in ###
 ##############################################
-def primaDotInFileTarget(env, target, mapping):
+def OmiscidDotInFileTarget(env, target, mapping):
  replacements = ""
  for i in mapping.keys():
   replacements += " -e 's#"
@@ -103,7 +59,7 @@ def primaDotInFileTarget(env, target, mapping):
 ##############################################
 ### Command to map file ###
 ##############################################
-def primaMapping():
+def OmiscidMapping():
  if "prefix" in ARGUMENTS:
   return {
         "@prefix@": ARGUMENTS.get("prefix"),
@@ -116,7 +72,7 @@ def primaMapping():
 ##############################################
 ### Command to generate the install target ###
 ##############################################
-def primaInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hToInstall=[]):
+def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hToInstall=[]):
  global COMMAND_LINE_TARGETS
  global ARGUMENTS
  if "install" in COMMAND_LINE_TARGETS :
@@ -145,17 +101,17 @@ def primaInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hToIn
     toInstall += [destScm,destSo]
    env.Alias("install", toInstall)
   else :
-   primaMessage('prefix must be given for installation')
-   primaMessage('you can use "scons prefix=Prefix/Where/To/Install install" to specify the prefix')
+   OmiscidMessage('prefix must be given for installation')
+   OmiscidMessage('you can use "scons prefix=Prefix/Where/To/Install install" to specify the prefix')
 
 ##################################
 ### Command to check some libs ###
 ##################################
-def primaCheckLibs(conf,libs=[]):
+def OmiscidCheckLibs(conf,libs=[]):
  missing = []
  # Fix a strange behaviour: first check (of svideo in the tests) fails but the following are passing as expected
  if not conf.CheckLib():
-  primaMessage(":".join(conf.env.Dictionary().get("LIBPATH")))
+  OmiscidMessage(":".join(conf.env.Dictionary().get("LIBPATH")))
    
  for lib in libs:
   if type(lib) in (str, unicode):
@@ -186,13 +142,13 @@ def primaCheckLibs(conf,libs=[]):
    if not conf.CheckLibWithHeader(lib[0],lib[1],lib[2]):
     missing += [lib[0]]
   else:
-   primaMessage(" !!! some libs to check had wrong syntax")
+   OmiscidMessage(" !!! some libs to check had wrong syntax")
 
  if not missing == []:
-  primaMessage("Some libraries are missing: ")
-  primaMessage("   "+", ".join(missing))
+  OmiscidMessage("Some libraries are missing: ")
+  OmiscidMessage("   "+", ".join(missing))
   for miss in missing:
    if miss == "svideo":
-    primaMessage("missing "+miss)
-    primaMessage("       You can specify svideo path using 'scons svideo=/prefix/for/svideo'")
+    OmiscidMessage("missing "+miss)
+    OmiscidMessage("       You can specify svideo path using 'scons svideo=/prefix/for/svideo'")
   sys.exit(1)

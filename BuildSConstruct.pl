@@ -45,12 +45,12 @@ if ( open( $SConstruct, '>SConstruct' ) == 0 )
 }
 
 print $SConstruct 'import os
-from primaScons import *
+from OmiscidScons import *
 env = Environment()
-primaInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[\'xml2\'])
+OmiscidInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[\'xml2\'])
 
 conf = Configure(env)
-primaCheckLibs(conf,[\'xml2\',\'dns_sd\',\'pthread\']);
+OmiscidCheckLibs(conf,[\'xml2\',\'dns_sd\',\'pthread\']);
 env = conf.Finish()
 
 # common environment settings
@@ -62,7 +62,7 @@ libToInstall = []
 env_system = env.Copy()
 env_system.Append(CPPPATH=\'System\')
 target_system = env_system.SharedLibrary(
-    target=\'primasystem\',
+    target=\'OmiscidSystem\',
     source=['				; # end of the previous print line
 
 &PrintSources( 'System' );
@@ -74,9 +74,9 @@ libToInstall += target_system
 env_com = env.Copy()
 env_com.Append(CPPPATH=[\'System\', \'Com\'])
 env_com.Append(LIBPATH=[\'.\'])
-env_com.Append(LIBS = [\'primasystem\'])
+env_com.Append(LIBS = [\'OmiscidSystem\'])
 target_com = env_com.SharedLibrary(
-    target=\'com\',
+    target=\'OmiscidCom\',
     source=['				; # end of the previous print line
 
 &PrintSources( 'Com' );
@@ -89,9 +89,9 @@ libToInstall += target_com
 env_control = env.Copy()
 env_control.Append(CPPPATH=[\'System\', \'Com\', \'ServiceControl\'])
 env_control.Append(LIBPATH=[\'.\'])
-env_control.Append(LIBS = [\'com\', \'primasystem\'])
+env_control.Append(LIBS = [\'OmiscidCom\', \'OmiscidSystem\'])
 target_control = env_control.SharedLibrary(
-    target=\'control\',
+    target=\'OmiscidControl\',
     source=['				; # end of the previous print line
     
 &PrintSources( 'ServiceControl' );
@@ -124,11 +124,11 @@ hToInstall += ['			; # end of the previous print line
 
 print $SConstruct ']
 
-binToInstall += primaDotInFileTarget(env, \'Com/primacom-config\', primaMapping())
-binToInstall += primaDotInFileTarget(env, \'System/primasystem-config\', primaMapping())
-binToInstall += primaDotInFileTarget(env, \'ServiceControl/primacontrol-config\', primaMapping())
+binToInstall += OmiscidDotInFileTarget(env, \'Com/Omiscidcom-config\', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, \'System/Omiscidsystem-config\', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, \'ServiceControl/Omiscidcontrol-config\', OmiscidMapping())
 
-primaInstallTarget(env,binToInstall,libToInstall,hToInstall=hToInstall)
+OmiscidInstallTarget(env,binToInstall,libToInstall,hToInstall=hToInstall)
 
 '					; # end of the previous print line
 
