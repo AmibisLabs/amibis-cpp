@@ -303,6 +303,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
   IntVariableAttribut* lockIntVariable; /*!< variable structure for integer to manage the lock state */
   StringVariableAttribut* NameVariable; /*!< variable structure for exporting the name of this service */
   StringVariableAttribut* OwnerVariable; /*!< variable structure for exporting the name of this service */
+  StringVariableAttribut* ClassVariable; /*!< variable structure for exporting the name of this service */
   StringVariableAttribut* PeerIdVariable; /*!< variable structure for integer to export the peerid */
 
   SimpleList<InOutputAttribut*> listInOutput; /*!< list of inputs and outputs */

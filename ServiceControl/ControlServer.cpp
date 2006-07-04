@@ -49,6 +49,13 @@ void ControlServer::InitInstance()
 	va->SetDescription("Login which launches this service");
 	OwnerVariable = new StringVariableAttribut( va, "none" );
 
+	va = AddVariable("class");
+	va->SetType("string");
+	va->SetAccess(ConstantAccess);
+	va->SetDescription("Class of thisthis service");
+	ClassVariable = new StringVariableAttribut( va, "" );
+
+
 	va = AddVariable("id");
 	va->SetType("hexadecimal");
 	va->SetAccess(ConstantAccess);
@@ -88,6 +95,12 @@ ControlServer::~ControlServer()
 	{
 		delete OwnerVariable;
 		OwnerVariable = NULL;
+	}
+
+	if(ClassVariable != NULL)
+	{
+		delete ClassVariable;
+		ClassVariable = NULL;
 	}
 
 	if ( PeerIdVariable != NULL )
