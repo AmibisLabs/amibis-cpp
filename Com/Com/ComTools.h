@@ -48,9 +48,8 @@ class ComTools
   /** \brief Define the service id*/
   virtual void SetServiceId(unsigned int service_id) = 0;
 
-  /** \brief Cast in ComTools (for Ravi)
+  /** \brief Cast in ComTools
    *
-   * For Ravi
    * \return the Comtool pointer on an object that derived Comtool
    */
   virtual ComTools* Cast() = 0;

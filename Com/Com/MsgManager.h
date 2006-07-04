@@ -95,7 +95,7 @@ public:
   /** @brief Set the callback method of a MasgSocket object
    *
    * call the method SetCallBackOnRecv of the tools of communication (derived 
-   * from MsgSocket (used in RAVI))
+   * from MsgSocket)
    * with the function CumulMessage and this object MsgManager
    * @param ms communication tool who will provide the message
    */

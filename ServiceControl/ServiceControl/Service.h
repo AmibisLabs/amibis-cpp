@@ -13,13 +13,6 @@
 #include <System/Config.h>
 #include <System/SimpleString.h>
 
-#if 0
-#ifdef RAVI_INTERFACE
-typedef int uint16_t;
-typedef int uint32_t;
-#endif
-#endif
-
 #include <ServiceControl/ServiceProperties.h>
 
 namespace Omiscid {

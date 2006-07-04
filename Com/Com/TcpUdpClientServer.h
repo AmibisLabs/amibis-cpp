@@ -177,7 +177,7 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
   /** \brief Set a MsgManager object as callback for message reception
    *
    * Enable to define a MsgManager object for the callback function of the 
-   * receive method (useful under Ravi).
+   * receive method.
    * \param msgManager [in, out] object where the message are sent when they arrive.
    * \see SetCallBackOnRecv
    */
