@@ -282,14 +282,14 @@ void SimpleString::DestroyStringData()
 	stringData = NULL;
 }
 
-SimpleString& SimpleString::operator= (const SimpleString& str)
+const SimpleString& SimpleString::operator= (const SimpleString& str)
 {
 	DestroyStringData();
 	CopyStringData( str.stringData );
 	return *this;
 }
 
-SimpleString& SimpleString::operator= (const char* str)
+const SimpleString& SimpleString::operator= (const char* str)
 {
 	if(str == NULL)
 	{
@@ -304,36 +304,35 @@ SimpleString& SimpleString::operator= (const char* str)
 	return *this;
 }
 
-SimpleString& SimpleString::operator= (int i)
+const SimpleString& SimpleString::operator= (int i)
 {
 	Empty();
 	return operator+=(i);
 }
 
-SimpleString& SimpleString::operator= (unsigned int ui)
+const SimpleString& SimpleString::operator= (unsigned int ui)
 {
 	Empty();
 	return operator+=(ui);
 }
 
-SimpleString& SimpleString::operator= (long int li)
+const SimpleString& SimpleString::operator= (long int li)
 {
 	Empty();
 	return operator+=(li);
 }
 
-SimpleString& SimpleString::operator= (float f)
+const SimpleString& SimpleString::operator= (float f)
 {
 	Empty();
 	return operator+=(f);
 }
 
-SimpleString& SimpleString::operator= (double d)
+const SimpleString& SimpleString::operator= (double d)
 {
 	operator=("");
 	return operator+=(d);
 }
-
 
 void SimpleString::Append(const char* str)
 {

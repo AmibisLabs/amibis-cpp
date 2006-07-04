@@ -186,13 +186,13 @@ public:
 
 	/** @name Affectation */
 	//@{
-	SimpleString& operator= (const char* str);
-	SimpleString& operator= (const SimpleString& str);
-	SimpleString& operator= (int i);
-	SimpleString& operator= (unsigned int ui);
-	SimpleString& operator= (long int li);
-	SimpleString& operator= (float f);
-	SimpleString& operator= (double d);
+	const SimpleString& operator= (const char* str);
+	const SimpleString& operator= (const SimpleString& str);
+	const SimpleString& operator= (int i);
+	const SimpleString& operator= (unsigned int ui);
+	const SimpleString& operator= (long int li);
+	const SimpleString& operator= (float f);
+	const SimpleString& operator= (double d);
 	//@}
 	
 	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer );
