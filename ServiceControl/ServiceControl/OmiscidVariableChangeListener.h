@@ -10,7 +10,7 @@
 
 namespace Omiscid {
 
-class OmiscidService;
+class Service;
 
 /**
  * Defines the listener interface for all Omiscid variable of a service
@@ -21,7 +21,7 @@ class OmiscidService;
  */
 class OmiscidAllVariablesListener
 {
-	friend class OmiscidService;
+	friend class Service;
 
 protected:
     /**
@@ -32,7 +32,7 @@ protected:
      * @param message
      *            the Omiscid message to process
      */
-    virtual void VariableChanged(OmiscidService& DnsSdService, SimpleString VarName, SimpleString NewValue) = 0;
+    virtual void VariableChanged(Service& DnsSdService, SimpleString VarName, SimpleString NewValue) = 0;
 };
 
 /**
@@ -44,7 +44,7 @@ protected:
  */
 class OmiscidVariableListener
 {
-	friend class OmiscidService;
+	friend class Service;
 
 protected:
     /**
@@ -55,7 +55,7 @@ protected:
      * @param message
      *            the Omiscid message to process
      */
-    virtual void VariableChanged(OmiscidService& DnsSdService, SimpleString NewValue) = 0;
+    virtual void VariableChanged(Service& DnsSdService, SimpleString NewValue) = 0;
 };
 
 

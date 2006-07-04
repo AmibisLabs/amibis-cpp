@@ -10,7 +10,7 @@
 
 namespace Omiscid {
 
-class OmiscidService;
+class Service;
 
 /**
  * Defines the listener interface for Omiscid
@@ -21,7 +21,7 @@ class OmiscidService;
  */
 class OmiscidMessageListener : protected MsgManager, public Thread
 {
-	friend class OmiscidService;
+	friend class Service;
 
 public:
     /**

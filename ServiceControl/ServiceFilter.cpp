@@ -9,13 +9,13 @@ namespace Omiscid {
 /**
 * Tests whether a service has the good name
 */
-class ServiceNameIs : public OmiscidServiceFilter
+class ServiceNameIs : public ServiceFilter
 {
 public:
 	ServiceNameIs(SimpleString& Name, bool CaseInsensitive = false, bool OnlyPrefix = false);
 
-	virtual bool IsAGoodService(OmiscidServiceProxy& SP);
-	virtual OmiscidServiceFilter * Duplicate();
+	virtual bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
 
 private:
 	SimpleString Name;
@@ -27,13 +27,13 @@ private:
 /**
 * Tests whether a service has the good owner
 */
-class ServiceOwnerIs : public OmiscidServiceFilter
+class ServiceOwnerIs : public ServiceFilter
 {
 public:
 	ServiceOwnerIs(SimpleString& Owner, bool CaseInsensitive = false);
 
-	bool IsAGoodService(OmiscidServiceProxy& SP);
-	virtual OmiscidServiceFilter * Duplicate();
+	bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
 
 private:
 	SimpleString Owner;
@@ -43,13 +43,13 @@ private:
 /**
 * Tests whether a service run on the rigth computer
 */
-class ServiceHostIs : public OmiscidServiceFilter
+class ServiceHostIs : public ServiceFilter
 {
 public:
 	ServiceHostIs(SimpleString& Hostname);
 
-	bool IsAGoodService(OmiscidServiceProxy& SP);
-	virtual OmiscidServiceFilter * Duplicate();
+	bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
 
 private:
 	SimpleString Hostname;
@@ -58,14 +58,14 @@ private:
 /**
 * Tests whether a service has a variable and even a variable with the rigth value
 */
-class ServiceHasVariable : public OmiscidServiceFilter
+class ServiceHasVariable : public ServiceFilter
 {
 public:
 	ServiceHasVariable(SimpleString& VariableName);
 	ServiceHasVariable(SimpleString& VariableName, SimpleString& VariableValue);
 
-	bool IsAGoodService(OmiscidServiceProxy& SP);
-	virtual OmiscidServiceFilter * Duplicate();
+	bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
 
 private:
 	SimpleString VariableName;
@@ -75,13 +75,13 @@ private:
 /**
 * Tests whether a service has a variable and even a variable with the rigth value
 */
-class ServiceHasConnector : public OmiscidServiceFilter
+class ServiceHasConnector : public ServiceFilter
 {
 public:
 	ServiceHasConnector(SimpleString& ConnectorName, ConnectorKind ConnectorType = UnkownConnectorKind );
 
-	bool IsAGoodService(OmiscidServiceProxy& SP);
-	virtual OmiscidServiceFilter * Duplicate();
+	bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
 
 private:
 	SimpleString ConnectorName;
@@ -97,7 +97,7 @@ ServiceNameIs::ServiceNameIs(SimpleString& Name, bool CaseInsensitive, bool Only
 	this->OnlyPrefix	  = OnlyPrefix;
 }
 
-bool ServiceNameIs::IsAGoodService(OmiscidServiceProxy& SP)
+bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceName;
 	ServiceName = SP.GetName();
@@ -120,7 +120,7 @@ bool ServiceNameIs::IsAGoodService(OmiscidServiceProxy& SP)
 	}
 }
 
-OmiscidServiceFilter * ServiceNameIs::Duplicate()
+ServiceFilter * ServiceNameIs::Duplicate()
 {
 	return new ServiceNameIs( Name, CaseInsensitive, OnlyPrefix );
 }
@@ -131,7 +131,7 @@ ServiceOwnerIs::ServiceOwnerIs(SimpleString& Owner, bool CaseInsensitive)
 	this->CaseInsensitive = CaseInsensitive;
 }
 
-bool ServiceOwnerIs::IsAGoodService(OmiscidServiceProxy& SP)
+bool ServiceOwnerIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceOwner;
 	if ( SP.GetVariableValue( "owner", ServiceOwner ) == false )
@@ -146,7 +146,7 @@ bool ServiceOwnerIs::IsAGoodService(OmiscidServiceProxy& SP)
 	return (Owner == ServiceOwner);
 }
 
-OmiscidServiceFilter * ServiceOwnerIs::Duplicate()
+ServiceFilter * ServiceOwnerIs::Duplicate()
 {
 	return new ServiceOwnerIs( Owner, CaseInsensitive );
 }
@@ -156,14 +156,14 @@ ServiceHostIs::ServiceHostIs(SimpleString& Hostname)
 	this->Hostname = Hostname;
 }
 
-bool ServiceHostIs::IsAGoodService(OmiscidServiceProxy& SP)
+bool ServiceHostIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceHostname = SP.GetHostName();
 
 	return (strncasecmp(Hostname.GetStr(), ServiceHostname.GetStr(), Hostname.GetLength()) == 0);
 }
 
-OmiscidServiceFilter * ServiceHostIs::Duplicate()
+ServiceFilter * ServiceHostIs::Duplicate()
 {
 	return new ServiceHostIs( Hostname );
 }
@@ -180,7 +180,7 @@ ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName, SimpleString&
 	this->VariableValue = VariableValue;
 }
 
-bool ServiceHasVariable::IsAGoodService(OmiscidServiceProxy& SP)
+bool ServiceHasVariable::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString RemoteValue;
 	if ( SP.GetVariableValue( VariableName, RemoteValue ) == false )
@@ -200,7 +200,7 @@ bool ServiceHasVariable::IsAGoodService(OmiscidServiceProxy& SP)
 	return true;
 }
 
-OmiscidServiceFilter * ServiceHasVariable::Duplicate()
+ServiceFilter * ServiceHasVariable::Duplicate()
 {
 	return new ServiceHasVariable( VariableName, VariableValue );
 }
@@ -211,12 +211,12 @@ ServiceHasConnector::ServiceHasConnector(SimpleString& ConnectorName, ConnectorK
 	this->ConnectorType = ConnectorType;
 }
 
-bool ServiceHasConnector::IsAGoodService(OmiscidServiceProxy& SP)
+bool ServiceHasConnector::IsAGoodService(ServiceProxy& SP)
 {
 	return true;
 }
 
-OmiscidServiceFilter * ServiceHasConnector::Duplicate()
+ServiceFilter * ServiceHasConnector::Duplicate()
 {
 	return new ServiceHasConnector( ConnectorName, ConnectorType );
 }
@@ -229,13 +229,13 @@ OmiscidServiceFilter * ServiceHasConnector::Duplicate()
 * @param String
 * @return
 */
-OmiscidServiceFilter * Omiscid::NameIs(SimpleString Name, bool CaseInsensitive)
+ServiceFilter * Omiscid::NameIs(SimpleString Name, bool CaseInsensitive)
 {
 	// Ask to find the full name of the service
 	return new ServiceNameIs(Name, CaseInsensitive, false );
 }
 
-OmiscidServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensitive)
+ServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensitive)
 {
 	// Ask to find the full name of the service
 	return new ServiceNameIs(Name, CaseInsensitive, true );
@@ -247,7 +247,7 @@ OmiscidServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensi
 * @param String
 * @return
 */
-OmiscidServiceFilter * Omiscid::OwnerIs(SimpleString Name, bool CaseInsensitive)
+ServiceFilter * Omiscid::OwnerIs(SimpleString Name, bool CaseInsensitive)
 {
 	return new ServiceOwnerIs(Name, CaseInsensitive);
 }
@@ -258,7 +258,7 @@ OmiscidServiceFilter * Omiscid::OwnerIs(SimpleString Name, bool CaseInsensitive)
 * @param String
 * @return
 */
-OmiscidServiceFilter * Omiscid::HostPrefixIs(SimpleString Hostname)
+ServiceFilter * Omiscid::HostPrefixIs(SimpleString Hostname)
 {
 	return new ServiceHostIs(Hostname);
 }
@@ -269,7 +269,7 @@ OmiscidServiceFilter * Omiscid::HostPrefixIs(SimpleString Hostname)
 * @param String
 * @return
 */
-OmiscidServiceFilter * Omiscid::HasVariable(SimpleString VarName)
+ServiceFilter * Omiscid::HasVariable(SimpleString VarName)
 {
 	return new ServiceHasVariable( VarName );
 }
@@ -281,7 +281,7 @@ OmiscidServiceFilter * Omiscid::HasVariable(SimpleString VarName)
 * @param String
 * @return
 */
-OmiscidServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString Value)
+ServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString Value)
 {
 	return new ServiceHasVariable( VarName, Value );
 }
@@ -293,22 +293,22 @@ OmiscidServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString V
 * @param ConnectorKind
 * @return
 */
-OmiscidServiceFilter * Omiscid::HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector )
+ServiceFilter * Omiscid::HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector )
 {
 	return new ServiceHasConnector( ConnectorName, KindOfConnector );
 }
 
 /**
-* Create an AND OmiscidServiceFilter test set with 0 to 5 parameters
-* one can use other filters by creating manually an OmiscidCascadeServiceFilters
+* Create an AND ServiceFilter test set with 0 to 5 parameters
+* one can use other filters by creating manually an CascadeServiceFilters
 *
-* @return a pointer OmiscidServiceFilter
+* @return a pointer ServiceFilter
 */
-OmiscidServiceFilter * Omiscid::And( OmiscidServiceFilter * First, OmiscidServiceFilter * Second,
-						    OmiscidServiceFilter * Third, OmiscidServiceFilter * Fourth,
-							OmiscidServiceFilter * Fifth )
+ServiceFilter * Omiscid::And( ServiceFilter * First, ServiceFilter * Second,
+						    ServiceFilter * Third, ServiceFilter * Fourth,
+							ServiceFilter * Fifth )
 {
-	OmiscidCascadeServiceFilters * pFilter = new OmiscidCascadeServiceFilters( OmiscidCascadeServiceFilters::IsAND );
+	CascadeServiceFilters * pFilter = new CascadeServiceFilters( CascadeServiceFilters::IsAND );
 	if ( pFilter == NULL )
 	{
 		return NULL;
@@ -336,16 +336,16 @@ OmiscidServiceFilter * Omiscid::And( OmiscidServiceFilter * First, OmiscidServic
 }
 
 /**
-* Create an OR OmiscidServiceFilter test set with 1 up to 5 parameters
-* one can use other filters by creating manually an OmiscidCascadeServiceFilters
+* Create an OR ServiceFilter test set with 1 up to 5 parameters
+* one can use other filters by creating manually an CascadeServiceFilters
 *
-* @return a pointer OmiscidServiceFilter
+* @return a pointer ServiceFilter
 */
-OmiscidServiceFilter * Omiscid::Or( OmiscidServiceFilter * First, OmiscidServiceFilter * Second,
-						   OmiscidServiceFilter * Third, OmiscidServiceFilter * Fourth,
-						   OmiscidServiceFilter * Fifth )
+ServiceFilter * Omiscid::Or( ServiceFilter * First, ServiceFilter * Second,
+						   ServiceFilter * Third, ServiceFilter * Fourth,
+						   ServiceFilter * Fifth )
 {
-	OmiscidCascadeServiceFilters * pFilter = new OmiscidCascadeServiceFilters( OmiscidCascadeServiceFilters::IsOR );
+	CascadeServiceFilters * pFilter = new CascadeServiceFilters( CascadeServiceFilters::IsOR );
 	if ( pFilter == NULL )
 	{
 		return NULL;
@@ -376,17 +376,17 @@ OmiscidServiceFilter * Omiscid::Or( OmiscidServiceFilter * First, OmiscidService
 
 
 
-OmiscidCascadeServiceFilters::OmiscidCascadeServiceFilters(OmiscidCascadeServiceFiltersType CreationType)
+CascadeServiceFilters::CascadeServiceFilters(OmiscidCascadeServiceFiltersType CreationType)
 {
 	Type = CreationType;
 }
 
-OmiscidCascadeServiceFilters::~OmiscidCascadeServiceFilters()
+CascadeServiceFilters::~CascadeServiceFilters()
 {
 	Empty();
 }
 
-void OmiscidCascadeServiceFilters::Empty()
+void CascadeServiceFilters::Empty()
 {
 	for( First(); NotAtEnd(); Next() )
 	{
@@ -395,7 +395,7 @@ void OmiscidCascadeServiceFilters::Empty()
 	}
 }
 
-bool OmiscidCascadeServiceFilters::IsAGoodService(OmiscidServiceProxy& SP)
+bool CascadeServiceFilters::IsAGoodService(ServiceProxy& SP)
 {
 	if ( Type == IsAND )
 	{
@@ -423,10 +423,10 @@ bool OmiscidCascadeServiceFilters::IsAGoodService(OmiscidServiceProxy& SP)
 	}
 }
 
-OmiscidServiceFilter * OmiscidCascadeServiceFilters::Duplicate()
+ServiceFilter * CascadeServiceFilters::Duplicate()
 {
 	// Create a copy
-	OmiscidCascadeServiceFilters * Copy = new OmiscidCascadeServiceFilters();
+	CascadeServiceFilters * Copy = new CascadeServiceFilters();
 	if ( Copy == NULL )
 	{
 		return NULL;

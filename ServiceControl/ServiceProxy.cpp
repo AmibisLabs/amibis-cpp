@@ -1,24 +1,24 @@
 
 
-#include <ServiceControl/OmiscidServiceProxy.h>
+#include <ServiceControl/ServiceProxy.h>
 
 #include <ServiceControl/VariableAttribut.h>
 
 using namespace Omiscid;
 
-OmiscidServiceProxy::OmiscidServiceProxy( SimpleString eHostName, int eControlPort )
+ServiceProxy::ServiceProxy( SimpleString eHostName, int eControlPort )
 	: ControlClient(ComTools::GeneratePeerId())
 {
 	HostName	= eHostName;
 	ControlPort	= eControlPort;
 	if ( ConnectToCtrlServer(HostName.GetStr(), ControlPort) == false )
 	{
-		throw "OmiscidServiceProxy failed";
+		throw "ServiceProxy failed";
 	}
 	// UpdateDescription();
 }
 
-OmiscidServiceProxy::~OmiscidServiceProxy()
+ServiceProxy::~ServiceProxy()
 {
 }
 
@@ -26,7 +26,7 @@ OmiscidServiceProxy::~OmiscidServiceProxy()
 	 * Returns the list of variables
 	 * @return the list of variables
 	 */
-SimpleList<SimpleString>& OmiscidServiceProxy::GetVariables()
+SimpleList<SimpleString>& ServiceProxy::GetVariables()
 {
 	return GetVariableNameList();
 }
@@ -35,7 +35,7 @@ SimpleList<SimpleString>& OmiscidServiceProxy::GetVariables()
 	* Returns the list of connectors (input type)
 	* @return the list of connectors
 	*/
-SimpleList<SimpleString>& OmiscidServiceProxy::GetInputConnectors()
+SimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
 {
 	return GetInputNameList();
 }
@@ -44,7 +44,7 @@ SimpleList<SimpleString>& OmiscidServiceProxy::GetInputConnectors()
     * Returns the list of connectors (output type)
     * @return the list of connectors
     */
-SimpleList<SimpleString>& OmiscidServiceProxy::GetOutputConnectors()
+SimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
 {
 	return GetOutputNameList();
 }
@@ -53,7 +53,7 @@ SimpleList<SimpleString>& OmiscidServiceProxy::GetOutputConnectors()
      * Returns the list of connectors (input-output type)
      * @return the list of connectors
      */
-SimpleList<SimpleString>& OmiscidServiceProxy::GetInputOutputConnectors()
+SimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
 {
 	return GetInOutputNameList();
 }
@@ -65,7 +65,7 @@ SimpleList<SimpleString>& OmiscidServiceProxy::GetInputOutputConnectors()
      * <li> the list of connectors
      * </ul>
      */
-void OmiscidServiceProxy::UpdateDescription()
+void ServiceProxy::UpdateDescription()
 {
 	QueryDetailedDescription();
 }
@@ -74,17 +74,17 @@ void OmiscidServiceProxy::UpdateDescription()
      * Host name where the remote service is located
      * @return the host name
      */
-SimpleString OmiscidServiceProxy::GetHostName()
+SimpleString ServiceProxy::GetHostName()
 {
 	return HostName;
 }
 
-unsigned int OmiscidServiceProxy::GetControlPort()
+unsigned int ServiceProxy::GetControlPort()
 {
 	return ControlPort;
 }
 
-SimpleString OmiscidServiceProxy::GetName()
+SimpleString ServiceProxy::GetName()
 {
 	SimpleString ServiceName;
 
@@ -97,7 +97,7 @@ SimpleString OmiscidServiceProxy::GetName()
 * The Peer Id of the remote bip service
 * @return the peer id
 */
-unsigned int OmiscidServiceProxy::GetPeerId()
+unsigned int ServiceProxy::GetPeerId()
 {
 	return ControlClient::GetPeerId();
 }
@@ -106,7 +106,7 @@ unsigned int OmiscidServiceProxy::GetPeerId()
      * @param varName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool OmiscidServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleString Value)
+bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleString Value)
 {
 	VariableAttribut * pVar = FindVariable(VarName.GetStr());
 	if ( pVar == NULL )
@@ -123,7 +123,7 @@ bool OmiscidServiceProxy::SetVariableValue(const SimpleString VarName, const Sim
      * @param varName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool OmiscidServiceProxy::GetVariableValue(const SimpleString VarName, SimpleString& Value)
+bool ServiceProxy::GetVariableValue(const SimpleString VarName, SimpleString& Value)
 {
 	VariableAttribut * pVar = FindVariable(VarName.GetStr());
 	if ( pVar == NULL )
@@ -140,7 +140,7 @@ bool OmiscidServiceProxy::GetVariableValue(const SimpleString VarName, SimpleStr
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */
-bool OmiscidServiceProxy::HasConnector(const SimpleString ConnectorName )
+bool ServiceProxy::HasConnector(const SimpleString ConnectorName )
 {
 	return (FindConnector(ConnectorName) != NULL);
 }
@@ -150,7 +150,7 @@ bool OmiscidServiceProxy::HasConnector(const SimpleString ConnectorName )
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */
-ConnectorKind OmiscidServiceProxy::GetConnectorKind(const SimpleString ConnectorName )
+ConnectorKind ServiceProxy::GetConnectorKind(const SimpleString ConnectorName )
 {
 	InOutputAttribut * pAtt = FindConnector(ConnectorName);
 	if ( pAtt == NULL )
@@ -160,7 +160,7 @@ ConnectorKind OmiscidServiceProxy::GetConnectorKind(const SimpleString Connector
 	return pAtt->GetType();
 }
 
-bool OmiscidServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection )
+bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection )
 {
 	InOutputAttribut * pAtt = FindConnector( Connector );
 	if ( pAtt == NULL )
@@ -177,7 +177,7 @@ bool OmiscidServiceProxy::GetConnectionInfos( const SimpleString Connector, Conn
 }
 
 // Utility functions
-VariableAttribut * OmiscidServiceProxy::FindVariable( SimpleString VarName )
+VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 {
 	VariableAttribut * pVar = ControlClient::FindVariable(VarName.GetStr());
 	if ( pVar == NULL )
@@ -193,7 +193,7 @@ VariableAttribut * OmiscidServiceProxy::FindVariable( SimpleString VarName )
 	return pVar;
 }
 
-InOutputAttribut * OmiscidServiceProxy::FindConnector( SimpleString ConnectortName )
+InOutputAttribut * ServiceProxy::FindConnector( SimpleString ConnectortName )
 {
 	InOutputAttribut * pAtt;
 

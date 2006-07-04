@@ -11,29 +11,29 @@
 #include <ServiceControl/VariableAttribut.h>
 #include <ServiceControl/OmiscidServiceFilters.h>
 #include <ServiceControl/OmiscidServicesTools.h>
-#include <ServiceControl/OmiscidServiceProxy.h>
+#include <ServiceControl/ServiceProxy.h>
 #include <ServiceControl/OmiscidMessageListener.h>
 #include <ServiceControl/OmiscidVariableChangeListener.h>
 
 namespace Omiscid {
 
-class OmiscidServiceRegistry;
+class Factory;
 
 /**
  * @author Dominique Vaufreydaz
  *
  */
-class OmiscidService : protected ControlServer
+class Service : protected ControlServer
 {
-	// Ok, let's say, this cdlass is the only able to construct OmiscidService
-	friend class OmiscidServiceRegistry;
+	// Ok, let's say, this cdlass is the only able to construct Service
+	friend class Factory;
 
 private:
-	OmiscidService(const SimpleString ServiceName);
+	Service(const SimpleString ServiceName);
 
-	// Every one can destroy an OmiscidService
+	// Every one can destroy an Service
 public:
-	~OmiscidService();
+	~Service();
 
 	/**
 	 * Starts the corresponding service
@@ -78,7 +78,7 @@ public:
 	 * @param connectorName the name of the connector that will send the message
 	 * @param msg the message to send
 	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, OmiscidServiceProxy& ServiceProxy, bool FastSend = false );
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool FastSend = false );
 
 	/**
 	 * Creates a new Omiscid Variable
@@ -151,20 +151,20 @@ public:
      * @throws IncorrectConnectorType thrown if the coonnectors cannot connect : for instance : trying to connect an input
      * connector on another input connector.
      */
-    bool ConnectTo(SimpleString LocalConnector, OmiscidServiceProxy& ServiceProxy, SimpleString RemoteConnector);
+    bool ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, SimpleString RemoteConnector);
 
 
 	/**
      * Finds a service on the network. The research is based on the service filter
      * @return the service Proxy
      */
-    static OmiscidServiceProxy * FindService(OmiscidServiceFilter * Filter) ;
+    static ServiceProxy * FindService(ServiceFilter * Filter) ;
 
 	/**
      * Finds a service on the network. The research is based on the service filter
      * @return the service Proxy
      */
-    static OmiscidServiceProxy * FindService(OmiscidServiceFilter& Filter);
+    static ServiceProxy * FindService(ServiceFilter& Filter);
 
 	/**
 	 * Add a message listener to a connector
@@ -208,7 +208,7 @@ public:
      * @return the list of associated services proxy
      * @see BipServiceProxy
      */
-    public HashMap<SimpleString, BipServiceProxy> findServices(SimpleString[] services, OmiscidServiceFilter[] filters) ;
+    public HashMap<SimpleString, BipServiceProxy> findServices(SimpleString[] services, ServiceFilter[] filters) ;
 #endif
 
 };

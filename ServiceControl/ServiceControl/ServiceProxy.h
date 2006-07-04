@@ -17,12 +17,12 @@ namespace Omiscid {
  * @author 
  *
  */
-class OmiscidServiceProxy  : protected ControlClient
+class ServiceProxy  : protected ControlClient
 {
 public:
-	OmiscidServiceProxy( SimpleString eHostname, int eControlPort );
+	ServiceProxy( SimpleString eHostname, int eControlPort );
 
-	~OmiscidServiceProxy();
+	~ServiceProxy();
 
    /**
 	 * Returns the list of variables

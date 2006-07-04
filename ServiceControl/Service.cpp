@@ -1,13 +1,13 @@
 
 
-#include <ServiceControl/OmiscidService.h>
+#include <ServiceControl/Service.h>
 
 #include <Com/MsgManager.h>
 #include <Com/TcpUdpClientServer.h>
 #include <ServiceControl/WaitForDnsSdServices.h>
 
 using namespace Omiscid;
-// using namespace Omiscid::OmiscidCascadeServiceFilters;
+// using namespace Omiscid::CascadeServiceFilters;
 
 namespace Omiscid {
 
@@ -17,8 +17,8 @@ public:
 	OmiscidServiceSearchData();
 	~OmiscidServiceSearchData();
 
-	OmiscidCascadeServiceFilters FilterList;
-	OmiscidServiceProxy * Proxy;
+	CascadeServiceFilters FilterList;
+	ServiceProxy * Proxy;
 };
 
 bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData)
@@ -27,7 +27,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 
 	SimpleString Host(hosttarget);
 
-	OmiscidServiceProxy * Proxy = new OmiscidServiceProxy( Host, port );
+	ServiceProxy * Proxy = new ServiceProxy( Host, port );
 	if ( Proxy == NULL )
 	{
 		return false;
@@ -58,18 +58,18 @@ OmiscidServiceSearchData::~OmiscidServiceSearchData()
 {
 }
 
-OmiscidService::OmiscidService(const SimpleString ServiceName)
+Service::Service(const SimpleString ServiceName)
 	: ControlServer( ServiceName )
 {
 
 }
 
-OmiscidService::~OmiscidService()
+Service::~Service()
 {
 
 }
 
-void OmiscidService::Start()
+void Service::Start()
 {
 	StartServer();
 	StartThreadProcessMsg();
@@ -83,7 +83,7 @@ void OmiscidService::Start()
 	* @throws ConnectorAlreadyExisting thrown if we try to recreate an already existing connector
 	* @throws IOException thrown if there is an error in the tcp socket creation
 	*/
-bool OmiscidService::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind ConnectorKind)
+bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind ConnectorKind)
 {
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt != NULL )
@@ -114,7 +114,7 @@ bool OmiscidService::AddConnector(SimpleString ConnectorName, SimpleString Conne
 	 * @throws UnknownBipService thrown if serviceId is not a declared service
 	 * @throws UnknownBipConnector thrown if the service has not declared this connector
 	 */
-bool OmiscidService::SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool FastSend )
+bool Service::SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool FastSend )
 {
 	if ( Buffer == NULL && BufferLen != 0 )
 	{
@@ -152,7 +152,7 @@ bool OmiscidService::SendToAllClients(SimpleString ConnectorName, char * Buffer,
 	 * @param BufferLen the length of message to send
 	 * @param PeerId : the identification of the client that must receive the message
 	 */
-bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool FastSend )
+bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool FastSend )
 {
 	if ( Buffer == NULL && BufferLen != 0 )
 	{
@@ -189,9 +189,9 @@ bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, 
 	* @param connectorName the name of the connector that will send the message
 	* @param msg the message to send
 	*/
-bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, OmiscidServiceProxy& ServiceProxy, bool FastSend )
+bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool FastSend )
 {
-	return SendToOneClient(ConnectorName, Buffer, BufferLen, ServiceProxy.GetPeerId(), FastSend );
+	return SendToOneClient(ConnectorName, Buffer, BufferLen, ServProxy.GetPeerId(), FastSend );
 }
 
    /**
@@ -201,7 +201,7 @@ bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, 
 	* @param accessType the access type of the variable
 	* name has already been declated
 	*/
-bool OmiscidService::AddVariable(SimpleString VarName, SimpleString Type, SimpleString VarDescription, VariableAccess AccessType)
+bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString VarDescription, VariableAccess AccessType)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar != NULL )
@@ -231,7 +231,7 @@ bool OmiscidService::AddVariable(SimpleString VarName, SimpleString Type, Simple
 	* @param varDescription the description
 	* @throws UnknownBipVariable thrown if the variable has not been created
 	*/
-bool OmiscidService::SetVariableDescription(SimpleString VarName, SimpleString VarDescription)
+bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescription)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -251,7 +251,7 @@ bool OmiscidService::SetVariableDescription(SimpleString VarName, SimpleString V
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-SimpleString OmiscidService::GetVariableDescription(SimpleString VarName)
+SimpleString Service::GetVariableDescription(SimpleString VarName)
 {
 	SimpleString Empty("");
 
@@ -272,7 +272,7 @@ SimpleString OmiscidService::GetVariableDescription(SimpleString VarName)
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-bool OmiscidService::SetVariableValue(SimpleString VarName, SimpleString VarValue)
+bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -292,7 +292,7 @@ bool OmiscidService::SetVariableValue(SimpleString VarName, SimpleString VarValu
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-SimpleString OmiscidService::GetVariableValue(SimpleString VarName)
+SimpleString Service::GetVariableValue(SimpleString VarName)
 {
 	SimpleString Empty("");
 
@@ -313,7 +313,7 @@ SimpleString OmiscidService::GetVariableValue(SimpleString VarName)
 	 * @throws UnknownBipVariable thrown if the variable has not been decladed
 	 * @see BipService#addVariable
 	 */
-SimpleString OmiscidService::GetVariableAccessType(SimpleString VarName)
+SimpleString Service::GetVariableAccessType(SimpleString VarName)
 {
 	SimpleString Empty("");
 
@@ -334,7 +334,7 @@ SimpleString OmiscidService::GetVariableAccessType(SimpleString VarName)
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
 	 */
-SimpleString OmiscidService::GetVariableType(SimpleString VarName)
+SimpleString Service::GetVariableType(SimpleString VarName)
 {
 	SimpleString Empty("");
 
@@ -350,7 +350,7 @@ SimpleString OmiscidService::GetVariableType(SimpleString VarName)
      * @throws IncorrectConnectorType thrown if the coonnectors cannot connect : for instance : trying to connect an input
      * connector on another input connector.
      */
-bool OmiscidService::ConnectTo(SimpleString LocalConnector, OmiscidServiceProxy& ServiceProxy, SimpleString RemoteConnector)
+bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, SimpleString RemoteConnector)
 {
 	InOutputAttribut * pAtt = FindInOutput( LocalConnector );
 	if ( pAtt == NULL )
@@ -360,7 +360,7 @@ bool OmiscidService::ConnectTo(SimpleString LocalConnector, OmiscidServiceProxy&
 	}
 
 	ConnectionInfos Connection;
-	if ( ServiceProxy.GetConnectionInfos( RemoteConnector, Connection ) == false )
+	if ( ServProxy.GetConnectionInfos( RemoteConnector, Connection ) == false )
 	{
 		// TraceError already done in GetConnectionInfos
 		return false;
@@ -397,7 +397,7 @@ bool OmiscidService::ConnectTo(SimpleString LocalConnector, OmiscidServiceProxy&
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
 	// Let's connect to him
-	pConnector->ConnectTo( ServiceProxy.GetHostName().GetStr(), Connection.TcpPort, Connection.UdpPort );
+	pConnector->ConnectTo( ServProxy.GetHostName().GetStr(), Connection.TcpPort, Connection.UdpPort );
 
 	return false;
 }
@@ -407,7 +407,7 @@ bool OmiscidService::ConnectTo(SimpleString LocalConnector, OmiscidServiceProxy&
 	 * @param ConnectorName the name of the connector
 	 * @param MsgListener the object that will handle messages sent to this connector
 	 */
-bool OmiscidService::AddConnectorListener(SimpleString ConnectorName, OmiscidMessageListener * MsgListener)
+bool Service::AddConnectorListener(SimpleString ConnectorName, OmiscidMessageListener * MsgListener)
 {
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
@@ -438,7 +438,7 @@ bool OmiscidService::AddConnectorListener(SimpleString ConnectorName, OmiscidMes
 
 
 // Static
-OmiscidServiceProxy * OmiscidService::FindService(OmiscidServiceFilter * Filter)
+ServiceProxy * Service::FindService(ServiceFilter * Filter)
 {
 	if ( Filter == NULL )
 	{
@@ -462,7 +462,7 @@ OmiscidServiceProxy * OmiscidService::FindService(OmiscidServiceFilter * Filter)
 	return MyData.Proxy;
 }
 
-OmiscidServiceProxy * OmiscidService::FindService(OmiscidServiceFilter& Filter)
+ServiceProxy * Service::FindService(ServiceFilter& Filter)
 {
 	return FindService(Filter.Duplicate());
 }
