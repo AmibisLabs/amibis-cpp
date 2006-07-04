@@ -39,8 +39,8 @@ public:
 	TemporaryMemoryBuffer( size_t SizeOfBuffer );
 	~TemporaryMemoryBuffer();
 
-	operator char*();
-	operator unsigned char*();
+	operator char*() const;
+	operator unsigned char*() const;
 
 private:
 	char * Buffer;

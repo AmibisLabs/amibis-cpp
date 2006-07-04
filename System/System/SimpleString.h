@@ -204,7 +204,7 @@ public:
 	 * \param begin index of the first character included in the result string
 	 * \param end index of the first excluded character
 	 */
-	SimpleString SubString(int begin, int end);
+	SimpleString SubString(int begin, int end) const;
 
 protected:
 	SimpleString(StringData*); /*!< used by SubString*/

@@ -40,7 +40,7 @@ public:
 	 * during a maximum of 'timer' milliseconds (if 'timer' no null)
 	 * @param [in] timer timeout in milliseconds. 0 to wait an infinite time.
 	 */
-	bool Wait(unsigned long timer = 0);
+	bool Wait(unsigned long timer = 0) const;
 private:
 #ifdef WIN32
 	HANDLE handle;

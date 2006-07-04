@@ -421,7 +421,7 @@ SimpleString& SimpleString::operator+= (double d)
 	return *this;
 }
 
-SimpleString SimpleString::SubString(int begin, int end)
+SimpleString SimpleString::SubString(int begin, int end) const
 {
 	StringData* sd = new StringData(GetStr(), begin, end);
 	return SimpleString(sd);
@@ -519,6 +519,7 @@ bool SimpleString::operator==(const SimpleString& str) const
 {
 	return stringData->Equals(*(str.stringData)); 
 }
+
 
 bool SimpleString::operator==(const char* str) const
 {

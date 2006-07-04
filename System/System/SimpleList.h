@@ -41,7 +41,8 @@ public:
 	}
 
 	/** \brief Initialize the object */
-	void Init(){
+	void Init()
+	{
 	  	NextElement = NULL;
 	}
 
@@ -99,18 +100,18 @@ public:
 	/** \brief Do we reach the end of the list 
 	 * \return true is we have reached the end of the list
 	 */
-	bool AtEnd();
+	bool AtEnd() const;
 
 	/** \brief Are we at the begining of the middle of the list ? 
 	 * \return true is we don't have reached the end of the list
 	 */
-	bool NotAtEnd();
+	bool NotAtEnd() const;
 
 	/** \brief Get the current element of the list 
 	 * \return the current element of the list 
 	 * \exception SimpleListException raised if GetCurrent is called after a call to RemoveCurrent
 	 */
-	TYPE& GetCurrent();
+	TYPE& GetCurrent() const;
 
 	/** \brief Remove the current element
 	 * \return false if called on an empty list
@@ -152,14 +153,14 @@ public:
 	 *
 	 * Create a new instance of SimpleListElement object 
 	 */
-	virtual SimpleListElement<TYPE>* GetNewSimpleListElement();
+	virtual SimpleListElement<TYPE>* GetNewSimpleListElement() const;
 
 	/** \brief Release a SimpleListElement object 
 	 *
 	 * Delete the SimpleListElement object 
 	 * @param elt the element to release
 	 */
-	virtual void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt);
+	virtual void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const;
 	
  private:
 	SimpleListElement<TYPE> * Head, * Tail; /*!< pointers on head and tail of the list */
@@ -268,7 +269,7 @@ bool SimpleList<TYPE>::Next()
 
 // Set position to the next element
 template <typename TYPE>
-bool SimpleList<TYPE>::AtEnd()
+bool SimpleList<TYPE>::AtEnd() const
 {
 	// Ok, we do not have any other element
 	if ( CurrentElement == NULL )
@@ -279,7 +280,7 @@ bool SimpleList<TYPE>::AtEnd()
 
 // Set position to the next element
 template <typename TYPE>
-bool SimpleList<TYPE>::NotAtEnd()
+bool SimpleList<TYPE>::NotAtEnd() const
 {
 	// Ok, we do not have any other element
 	if ( CurrentElement != NULL )
@@ -290,7 +291,7 @@ bool SimpleList<TYPE>::NotAtEnd()
 
 // Get the current element of the list
 template <typename TYPE>
-TYPE& SimpleList<TYPE>::GetCurrent()
+TYPE& SimpleList<TYPE>::GetCurrent() const
 {
 	if(RemoveCurrentHasOccured)
 		throw SimpleListException("SimpleList<TYPE>::GetCurrent : Forbidden after a call to RemoveCurrent");
@@ -408,11 +409,11 @@ TYPE SimpleList<TYPE>::ExtractFirst()
 }
 
 template <typename TYPE>
-SimpleListElement<TYPE>*  SimpleList<TYPE>::GetNewSimpleListElement()
+SimpleListElement<TYPE>*  SimpleList<TYPE>::GetNewSimpleListElement() const
 { return new SimpleListElement<TYPE>; }
 
 template <typename TYPE>
-void  SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt)
+void  SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
 { delete elt; }
 
 /**
@@ -452,7 +453,7 @@ bool MutexedSimpleList<TYPE>::Lock()
 }
 
 template <typename TYPE>
-bool MutexedSimpleList<TYPE>::Unlock()
+bool MutexedSimpleList<TYPE>::Unlock() 
 {
 	return mutex.LeaveMutex();
 }

@@ -48,14 +48,14 @@ class SimpleRecycleList : public SimpleList<TYPE>
 	 * Create a new instance of SimpleListElement object if there is no available cell else
 	 * use a cell present in the static list of cells associate to the class SimpleRecycleList
 	 */
-	SimpleListElement<TYPE>* GetNewSimpleListElement();
+	SimpleListElement<TYPE>* GetNewSimpleListElement() const;
 
 	/** \brief Release a SimpleListElement object 
 	 *
 	 * Add the SimpleListElement object to the list of available cells
 	 * @param elt the element to release
 	 */
-	void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt)
+	void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
 	  { AddAvailableCells(elt); }
 
  private:
@@ -69,6 +69,7 @@ class SimpleRecycleList : public SimpleList<TYPE>
 	    availableCells = elt;
 	    mutexAvailable.LeaveMutex();
 	  }
+
 	/** @brief Extract an available cell
 	 * @return an available cell, NULL if no available cell */
 	static SimpleListElement<TYPE>* ExtractAvailableCells()
@@ -102,7 +103,7 @@ template <typename TYPE>
 SimpleRecycleList<TYPE>::~SimpleRecycleList(){}
 
 template <typename TYPE>
-SimpleListElement<TYPE>* SimpleRecycleList<TYPE>::GetNewSimpleListElement()
+SimpleListElement<TYPE>* SimpleRecycleList<TYPE>::GetNewSimpleListElement() const
 {
   SimpleListElement<TYPE>* elt = ExtractAvailableCells();
   if(elt == NULL)

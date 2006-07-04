@@ -44,12 +44,12 @@ TemporaryMemoryBuffer::~TemporaryMemoryBuffer()
 	}
 }
 
-TemporaryMemoryBuffer::operator char*()
+TemporaryMemoryBuffer::operator char*() const
 {
 	return (char*)Buffer;
 }
 
-TemporaryMemoryBuffer::operator unsigned char*()
+TemporaryMemoryBuffer::operator unsigned char*() const
 {
 	return (unsigned char*)Buffer;
 }
