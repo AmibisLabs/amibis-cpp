@@ -124,9 +124,9 @@ hToInstall += ['			; # end of the previous print line
 
 print $SConstruct ']
 
-binToInstall += OmiscidDotInFileTarget(env, \'Com/Omiscidcom-config\', OmiscidMapping())
-binToInstall += OmiscidDotInFileTarget(env, \'System/Omiscidsystem-config\', OmiscidMapping())
-binToInstall += OmiscidDotInFileTarget(env, \'ServiceControl/Omiscidcontrol-config\', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, \'Com/OmiscidCom-config\', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, \'System/OmiscidSystem-config\', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, \'ServiceControl/OmiscidControl-config\', OmiscidMapping())
 
 OmiscidInstallTarget(env,binToInstall,libToInstall,hToInstall=hToInstall)
 

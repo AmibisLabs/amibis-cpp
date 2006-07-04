@@ -54,9 +54,9 @@ hToInstall += [['Com/Com/ComTools.h','Com'],['Com/Com/Message.h','Com'],['Com/Co
 
 hToInstall += [['ServiceControl/ServiceControl/Attribut.h','ServiceControl'],['ServiceControl/ServiceControl/BrowseForDnsSdService.h','ServiceControl'],['ServiceControl/ServiceControl/ControlClient.h','ServiceControl'],['ServiceControl/ServiceControl/ControlServer.h','ServiceControl'],['ServiceControl/ServiceControl/ControlUtils.h','ServiceControl'],['ServiceControl/ServiceControl/InOutputAttribut.h','ServiceControl'],['ServiceControl/ServiceControl/IntVariableAttribut.h','ServiceControl'],['ServiceControl/ServiceControl/OmiscidMessageListener.h','ServiceControl'],['ServiceControl/ServiceControl/OmiscidService.h','ServiceControl'],['ServiceControl/ServiceControl/OmiscidServiceFilters.h','ServiceControl'],['ServiceControl/ServiceControl/OmiscidServiceProxy.h','ServiceControl'],['ServiceControl/ServiceControl/OmiscidServiceRegistry.h','ServiceControl'],['ServiceControl/ServiceControl/OmiscidServicesTools.h','ServiceControl'],['ServiceControl/ServiceControl/OmiscidVariableChangeListener.h','ServiceControl'],['ServiceControl/ServiceControl/Service.h','ServiceControl'],['ServiceControl/ServiceControl/ServiceFromXML.h','ServiceControl'],['ServiceControl/ServiceControl/ServiceProperties.h','ServiceControl'],['ServiceControl/ServiceControl/ServicesCommon.h','ServiceControl'],['ServiceControl/ServiceControl/StringVariableAttribut.h','ServiceControl'],['ServiceControl/ServiceControl/VariableAttribut.h','ServiceControl'],['ServiceControl/ServiceControl/WaitForDnsSdServices.h','ServiceControl'],['ServiceControl/ServiceControl/XMLTreeParser.h','ServiceControl']]
 
-binToInstall += OmiscidDotInFileTarget(env, 'Com/Omiscidcom-config', OmiscidMapping())
-binToInstall += OmiscidDotInFileTarget(env, 'System/Omiscidsystem-config', OmiscidMapping())
-binToInstall += OmiscidDotInFileTarget(env, 'ServiceControl/Omiscidcontrol-config', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, 'Com/OmiscidCom-config', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, 'System/OmiscidSystem-config', OmiscidMapping())
+binToInstall += OmiscidDotInFileTarget(env, 'ServiceControl/OmiscidControl-config', OmiscidMapping())
 
 OmiscidInstallTarget(env,binToInstall,libToInstall,hToInstall=hToInstall)
 
