@@ -29,7 +29,7 @@ class OmiscidService : protected ControlServer
 	friend class OmiscidServiceRegistry;
 
 private:
-	OmiscidService(const SimpleString& ServiceName);
+	OmiscidService(const SimpleString ServiceName);
 
 	// Every one can destroy an OmiscidService
 public:

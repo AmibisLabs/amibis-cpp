@@ -20,7 +20,7 @@ namespace Omiscid {
 class OmiscidServiceProxy  : protected ControlClient
 {
 public:
-	OmiscidServiceProxy( SimpleString& eHostname, int eControlPort );
+	OmiscidServiceProxy( SimpleString eHostname, int eControlPort );
 
 	~OmiscidServiceProxy();
 

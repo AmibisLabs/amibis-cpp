@@ -74,6 +74,14 @@ sub WorkOnFile()
 @ExcludedFiles = (
 'System/SimpleString.cpp',
 'Com/ComTools.cpp',
+'ServiceControl/ControlServer.cpp',
+'ServiceControl/Attribut.cpp',
+'ServiceControl/ControlClient.cpp',
+'ServiceControl/InOutputAttribut.cpp',
+'ServiceControl/ControlUtils.cpp',
+'ServiceControl/OmiscidServiceFilters.cpp',
+'ServiceControl/OmiscidServiceProxy.cpp',
+'ServiceControl/VariableAttribut.cpp'
 );
 
 foreach $fic ( @ExcludedFiles )

@@ -6,7 +6,7 @@
 
 using namespace Omiscid;
 
-OmiscidServiceProxy::OmiscidServiceProxy( SimpleString& eHostName, int eControlPort )
+OmiscidServiceProxy::OmiscidServiceProxy( SimpleString eHostName, int eControlPort )
 	: ControlClient(ComTools::GeneratePeerId())
 {
 	HostName	= eHostName;

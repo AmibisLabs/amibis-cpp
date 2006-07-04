@@ -477,7 +477,8 @@ void ControlClient::DisplayListName(SimpleList<SimpleString>& list_name,
       printf("\t %s\n", (list_name.GetCurrent()).GetStr());
     }
 }
-bool ControlClient::NameInList(const SimpleString& name, SimpleList<SimpleString>& list_name)
+
+bool ControlClient::NameInList(const SimpleString name, SimpleList<SimpleString>& list_name)
 {
   for(list_name.First(); list_name.NotAtEnd(); list_name.Next())
     {

@@ -11,7 +11,7 @@ OmiscidServiceRegistry ServiceFactory;
 	* @param serviceName the name of the service as it will appear in DNS-SD
 	* @return the bip service. All access to the service will be through this object
 	*/
-OmiscidService * OmiscidServiceRegistry::Create( const SimpleString& ServiceName )
+OmiscidService * OmiscidServiceRegistry::Create( const SimpleString ServiceName )
 {
 	OmiscidService * NewOmiscidService = new OmiscidService(ServiceName);
 

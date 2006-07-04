@@ -289,7 +289,7 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * \param list_name [in] the list of name
    * \return true if the name is in the list of name
    */
-  bool NameInList(const SimpleString& name, SimpleList<SimpleString>& list_name);
+  bool NameInList(const SimpleString name, SimpleList<SimpleString>& list_name);
 
   unsigned int id; /*!< query id */
 

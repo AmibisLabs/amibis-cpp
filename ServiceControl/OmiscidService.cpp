@@ -58,7 +58,7 @@ OmiscidServiceSearchData::~OmiscidServiceSearchData()
 {
 }
 
-OmiscidService::OmiscidService(const SimpleString& ServiceName)
+OmiscidService::OmiscidService(const SimpleString ServiceName)
 	: ControlServer( ServiceName )
 {
 
