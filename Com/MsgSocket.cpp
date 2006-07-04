@@ -443,7 +443,7 @@ bool MsgSocket::SendSyncLinkMsg()
     }
 	catch(SocketException& e)
     {
-      TraceError( "SocketException: %s %d\n", e.msg, e.err);
+      TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
       connected = false;
       protectSend.LeaveMutex();
       return false;
@@ -672,7 +672,7 @@ void MsgSocket::Receive()
     }
 	catch(SocketException& e)
 	{
-		TraceError( "SocketException: %s %d\n", e.msg, e.err);
+		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		connected = false;
 	}
 }
@@ -737,7 +737,7 @@ int MsgSocket::Send(int len, const char* buf)
     }
 	catch(SocketException& e)
     {
-      TraceError( "SocketException: %s %d\n", e.msg, e.err);
+      TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
       connected = false;
       protectSend.LeaveMutex();
       return -1;
@@ -779,7 +779,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	}
 	catch(SocketException& e)
 	{
-		TraceError( "SocketException: %s %d\n", e.msg, e.err);
+		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		connected = false;      
 		protectSend.LeaveMutex();
 		return -1;
@@ -828,7 +828,7 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
     }
   catch(SocketException& e)
     {
-      TraceError( "SocketException: %s %d\n", e.msg, e.err);
+      TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
       connected = false;
       protectSend.LeaveMutex();
       return -1;
@@ -876,7 +876,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
     }
   catch(SocketException& e)
     {
-      TraceError( "SocketException: %s %d \n", e.msg, e.err);
+      TraceError( "SocketException: %s %d \n", e.msg.GetStr(), e.err);
       connected = false;      
       protectSend.LeaveMutex();
       return -1;
@@ -1055,7 +1055,7 @@ void MsgSocket::ReceiveUdpExchange()
     }
   catch(SocketException& e)
     {
-      TraceError( "SocketException: %s %d\n", e.msg, e.err);
+      TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
       connected = false;
     }
 }
