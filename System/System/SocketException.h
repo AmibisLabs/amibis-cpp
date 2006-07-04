@@ -24,7 +24,7 @@ public:
    * \param m [in] the message for the exception
    * \param i [in] the number for the error
    */
-  SocketException(const char* m, int i = -1);
+  SocketException(const SimpleString m, int i = -1);
 
   /** \brief Copy Constructor 
    * \param ExceptionToCopy [in] the exception to copy

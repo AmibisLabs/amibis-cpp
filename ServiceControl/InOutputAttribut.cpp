@@ -16,9 +16,9 @@ InOutputAttribut::InOutputAttribut()
   peerId = 0;
   tcpPort = 0; udpPort = 0;
 }
-InOutputAttribut::InOutputAttribut(const SimpleString& a_name, ComTools* com_tool,
-				   ConnectorKind kind_of_input)
-  : Attribut(a_name)
+
+InOutputAttribut::InOutputAttribut(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input)
+		: Attribut(a_name)
 {  
   comTool = com_tool;
   kindOfInput = kind_of_input;
@@ -26,17 +26,7 @@ InOutputAttribut::InOutputAttribut(const SimpleString& a_name, ComTools* com_too
   tcpPort = 0; udpPort = 0;
 }
 
-InOutputAttribut::InOutputAttribut(const char* a_name, ComTools* com_tool,
-				   ConnectorKind kind_of_input)
-  : Attribut(a_name)
-{
-  kindOfInput = kind_of_input;
-  comTool = com_tool;
-  peerId = 0;
-  tcpPort = 0; udpPort = 0;
-}
-
-InOutputAttribut::InOutputAttribut(const char* a_name, ConnectorKind kind_of_input)
+InOutputAttribut::InOutputAttribut(const SimpleString a_name, ConnectorKind kind_of_input)
   : Attribut(a_name)
 {
   kindOfInput = kind_of_input;

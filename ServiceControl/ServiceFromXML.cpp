@@ -4,7 +4,7 @@
 
 using namespace Omiscid;
 
-ServiceFromXML::ServiceFromXML(const char* file_name)
+ServiceFromXML::ServiceFromXML(const SimpleString file_name)
 {
   XMLTreeParser xmlTreeParser;
   xmlDocPtr doc = xmlTreeParser.ParseFile(file_name);

@@ -57,7 +57,7 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * \param port [in] port where listen the control server
    * \return if the connection is correctly established
    */
-  bool ConnectToCtrlServer(const char* host, int port);
+  bool ConnectToCtrlServer(const SimpleString host, int port);
 
   /** \brief Define the callback for the event processing
    * \param fct callback for the event processing
@@ -79,33 +79,33 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * @param var_name name of the variable
    * @return NULL if query failed, else a pointer on a structure with data about the variable 
    */
-  VariableAttribut* QueryVariableDescription(const char* var_name);  
+  VariableAttribut* QueryVariableDescription(const SimpleString var_name);  
 
   /** @brief Ask for a variable modification
    * @param var_name name of the variable
    * @param value_str the new value for the variable
    * @return NULL if query failed, else a pointer on a structure with data about the variable.
-   * If the query has bee accepted GetValueStr give value_str
+   * If the query has bee accepted GetValue give value_str
    */
-  VariableAttribut* QueryVariableModif(const char* var_name, const char* value_str);
+  VariableAttribut* QueryVariableModif(const SimpleString var_name, const SimpleString value_str);
   
   /** @brief Ask for a input description
    * @param input_name name of the input
    * @return NULL if query failed, else a pointer on a structure with data about the input
    */
-  InOutputAttribut* QueryInputDescription(const char* input_name);
+  InOutputAttribut* QueryInputDescription(const SimpleString input_name);
   
   /** @brief Ask for a output description
    * @param output_name name of the output
    * @return NULL if query failed, else a pointer on a structure with data about the output
    */
-  InOutputAttribut* QueryOutputDescription(const char* output_name);
+  InOutputAttribut* QueryOutputDescription(const SimpleString output_name);
 
   /** @brief Ask for a input description
    * @param in_output_name name of the inoutput
    * @return NULL if query failed, else a pointer on a structure with data about the inoutput
    */
-  InOutputAttribut* QueryInOutputDescription(const char* in_output_name);
+  InOutputAttribut* QueryInOutputDescription(const SimpleString in_output_name);
 
     /** @brief Ask for a precise description of everything in the ControlServer 
    * @return false if query failed, true otherwise
@@ -115,11 +115,11 @@ class ControlClient : public TcpClient, public XMLTreeParser
   /** @brief Ask for receive variable modification 
    * @param var_name [in] the variable name
    */
-  void Subscribe(const char* var_name);
+  void Subscribe(const SimpleString var_name);
   /** @brief Ask for receive variable modification no longer
    * @param var_name [in] the variable name
    */
-  void Unsubscribe(const char* var_name);
+  void Unsubscribe(const SimpleString var_name);
   //@}
 
   /** @name Retrieve data about attributes 
@@ -131,22 +131,22 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * @param name [in] the variable name 
    * @return NULL if the variable is not found, else a pointer on a structure with the data about the variable
    */
-  VariableAttribut* FindVariable(const char* name);
+  VariableAttribut* FindVariable(const SimpleString name);
   /** @brief Access to data about an input
    * @param name [in] the input name 
    * @return NULL if the input is not found, else a pointer on a structure with the data about the input
    */
-  InOutputAttribut* FindInput(const char* name);
+  InOutputAttribut* FindInput(const SimpleString name);
   /** @brief Access to data about an output
    * @param name [in] the output name 
    * @return NULL if the output is not found, else a pointer on a structure with the data about the output
    */
-  InOutputAttribut* FindOutput(const char* name);
+  InOutputAttribut* FindOutput(const SimpleString name);
   /** @brief Access to data about an inoutput
    * @param name [in] the inoutput name 
    * @return NULL if the inoutput is not found, else a pointer on a structure with the data about the inoutput
    */
-  InOutputAttribut* FindInOutput(const char* name);
+  InOutputAttribut* FindInOutput(const SimpleString name);
   //@}
 
   /** @name Display Name of known attributes */

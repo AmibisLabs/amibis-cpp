@@ -32,7 +32,7 @@ sub WorkOnFile()
 		while( $CurrentLine = <$fd> )
 		{
 			$NumLine++;
-			if ( $CurrentLine =~ /char\s+\*/ || $CurrentLine =~ /char\s+\w+(\s)?\[/)
+			if ( $CurrentLine =~ /char\s*\*/ || $CurrentLine =~ /char\s*\w+(\s)?\[/)
 			{
 				$CurrentLine =~  s/[\r\n]+$//;
 				print "$FileName [$NumLine]: $CurrentLine\n";
@@ -43,40 +43,50 @@ sub WorkOnFile()
 	}
 }
 
-@ExcludedFiles = (
-'System/System/Config.h',
-'System/Socket.cpp',
-'System/Portage.cpp',
-'System/SimpleException.cpp',
-'System/SimpleString.cpp',
-'Com/MsgSocket.cpp',
-'Com/TcpUdpClientServer.cpp',
-'Com/Com/TcpServer.h',
-'ServiceControl/BrowseForDnsSdService.cpp',
-'ServiceControl/OmiscidService.cpp',
-'ServiceControl/Service.cpp',
-'ServiceControl/ServiceProperties.cpp',
-'ServiceControl/WaitForDnsSdServices.cpp',
-'ServiceControl/ServicesCommon.cpp'
-);
-
-foreach $fic ( @ExcludedFiles )
-{
-	if ( $fic =~ /\.cpp/ )
-	{
-		$NotParseThisFiles{$fic} = 1;
-		# print STDERR "$fic\n";
-		$fic =~ /([^\/]+)\/([^\/]+)\.cpp$/;
-		$fic = "$1/$1/$2.h";
-		$NotParseThisFiles{$fic} = 1;
-		# print STDERR "$fic\n";
-	}
-	else
-	{
-		$NotParseThisFiles{$fic} = 1;
-		# print STDERR "$fic\n";
-	}
-}
+# @ExcludedFiles = (
+# 'System/System/Config.h',
+# 'System/Socket.cpp',
+# 'System/Portage.cpp',
+# 'System/SimpleException.cpp',
+# 'System/SimpleString.cpp',
+# 'Com/MsgSocket.cpp',
+# 'Com/TcpUdpClientServer.cpp',
+# 'Com/TcpServer.cpp',
+# 'Com/UdpExchange.cpp',
+# 'ServiceControl/ControlClient.cpp',
+# 'Com/Message.cpp',
+# 'Com/TcpClient.cpp',
+# 'ServiceControl/BrowseForDnsSdService.cpp',
+# 'ServiceControl/OmiscidService.cpp',
+# 'ServiceControl/Service.cpp',
+# 'ServiceControl/ServiceProperties.cpp',
+# 'ServiceControl/WaitForDnsSdServices.cpp',
+# 'ServiceControl/ServicesCommon.cpp',
+# 'ServiceControl/ControlServer.cpp',
+# 'ServiceControl/ControlUtils.cpp',
+# 'ServiceControl/XMLTreeParser.cpp',
+# 'ServiceControl/VariableAttribut.cpp',
+# 'ServiceControl/InOutputAttribut.cpp',
+# 'ServiceControl/ServiceFromXML.cpp'
+# );
+# 
+# foreach $fic ( @ExcludedFiles )
+# {
+# 	if ( $fic =~ /\.cpp/ )
+# 	{
+# 		$NotParseThisFiles{$fic} = 1;
+# 		# print STDERR "$fic\n";
+# 		$fic =~ /([^\/]+)\/([^\/]+)\.cpp$/;
+# 		$fic = "$1/$1/$2.h";
+# 		$NotParseThisFiles{$fic} = 1;
+# 		# print STDERR "$fic\n";
+# 	}
+# 	else
+# 	{
+# 		$NotParseThisFiles{$fic} = 1;
+# 		# print STDERR "$fic\n";
+# 	}
+# }
 
 &RecurseWork::RecurseWork( 'System', 0 );
 &RecurseWork::RecurseWork( 'Com', 0 );

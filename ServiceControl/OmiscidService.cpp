@@ -281,7 +281,7 @@ bool OmiscidService::SetVariableValue(SimpleString VarName, SimpleString VarValu
 		return false;
 	}
 
-	pVar->SetValueStr( VarValue );
+	pVar->SetValue( VarValue );
 	return true;
 }
 
@@ -303,7 +303,7 @@ SimpleString OmiscidService::GetVariableValue(SimpleString VarName)
 		return Empty;
 	}
 
-	return pVar->GetValueStr();
+	return pVar->GetValue();
 }
 
 	/**

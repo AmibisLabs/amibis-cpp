@@ -36,7 +36,7 @@ class TcpClient : public MsgSocket, public ComTools
    * @param port [in] port where the server listen.
    * @see ConnectToServer
    */
-  TcpClient(const char* addr, int port);
+  TcpClient(const SimpleString addr, int port);
   
   /**
    * @brief Connect to Server.
@@ -44,7 +44,7 @@ class TcpClient : public MsgSocket, public ComTools
    * @param port [in] port where the server listen.
    * @exception SocketException if connection error.
    */
-  void ConnectToServer(const char* addr, int port);
+  void ConnectToServer(const SimpleString addr, int port);
 
   /** @brief Send a message to the server
    *

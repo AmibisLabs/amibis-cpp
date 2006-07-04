@@ -65,18 +65,13 @@ class VariableAttribut : public Attribut
 
   /** @brief Constructor
    * @param a_name [in] the name for the variable */
-  VariableAttribut(const SimpleString& a_name);
-
-  /** @brief Constructor
-   * @param a_name [in] the name for the variable */
-  VariableAttribut(const char* a_name);
+  VariableAttribut(const SimpleString a_name);
   //@}
 
   /** @name Read Accessors */
   //@{
-  SimpleString& GetType();  
-  SimpleString& GetValueStr();
-  const char* GetValueCh();
+  SimpleString& GetType();
+  SimpleString& GetValue();
   SimpleString& GetDefaultValue();
   VariableAccess GetAccess();
   //@}
@@ -84,10 +79,9 @@ class VariableAttribut : public Attribut
 
   /** \name Write Accessors */
   //@{
-  void SetType(const char* str);
-  void SetType(const SimpleString& str);
-  void SetDefaultValue(const SimpleString&);
-  void SetDefaultValue(const char* str);
+  void SetType(const SimpleString str);
+  void SetDefaultValue(const SimpleString str);
+
   void SetAccess(VariableAccess);
   void SetAccessConstant();
   void SetAccessRead();
@@ -96,12 +90,8 @@ class VariableAttribut : public Attribut
   
   /** @brief Set the value and signal that the value has changed 
    * @param value_str [in] the new string representaion of the value */
-  void SetValueStr(const char* value_str);
+  void SetValue(const SimpleString value_str);
 
-  /** @brief Set the value and signal that the value has changed 
-   * @param value_str [in] the new string representaion of the value */
-  void SetValueStr(const SimpleString& value_str);
-  
   /** @brief Callback call when value changed
    * @param user_data_ptr pointer given to the callback when it is called */
   void SetCallbackValueChanged(SignalValueChanged callback, void* user_data_ptr);

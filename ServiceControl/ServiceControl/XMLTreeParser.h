@@ -76,7 +76,7 @@ class XMLMessage
    * @param node [in] the node where look for this attribute.
    * @return the found attribute, NULL if not found
    */
-  static xmlAttrPtr FindAttribute(const char* name, xmlNodePtr node);
+  static xmlAttrPtr FindAttribute(const SimpleString name, xmlNodePtr node);
   
   /** @brief Find a particular child node
    *
@@ -85,7 +85,7 @@ class XMLMessage
    * @param node [in] look for the node in the children of this node
    * @return the first child with the tag 'name', NULL if not child node with that name
    */
-  static xmlNodePtr FindFirstChild(const char* name, xmlNodePtr node);
+  static xmlNodePtr FindFirstChild(const SimpleString name, xmlNodePtr node);
 
   /** @brief Display a node
    * 
@@ -196,7 +196,7 @@ class XMLTreeParser : public Thread
    * @param filename [in] file to parse
    * @return the tree structure, NULL if parsing failed
    */
-  xmlDocPtr ParseFile(const char* filename);
+  xmlDocPtr ParseFile(const SimpleString filename);
   
  private:
 

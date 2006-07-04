@@ -35,13 +35,7 @@ VariableAttribut::VariableAttribut()
   access = ReadAccess;  
 }
 
-VariableAttribut::VariableAttribut(const SimpleString& a_name)
-  : Attribut(a_name)
-{
-  access = ReadAccess; 
-}
-
-VariableAttribut::VariableAttribut(const char* a_name)
+VariableAttribut::VariableAttribut(const SimpleString a_name)
   : Attribut(a_name)
 {
   access = ReadAccess; 
@@ -65,7 +59,7 @@ void VariableAttribut::GenerateLongDescription(SimpleString& str)
   GenerateHeaderDescription(variable_str, GetName(), str, false);
 
   str += "<value>";
-  PutAValueInCData(GetValueStr().GetStr(), str);
+  PutAValueInCData(GetValue().GetStr(), str);
   str += "</value>";
   if(defaultValue != "")
     {
@@ -85,7 +79,7 @@ void VariableAttribut::GenerateValueMessage(SimpleString& str)
   GenerateHeaderDescription(variable_str, GetName(), str, false);
 
   str += "<value>";
-  PutAValueInCData(GetValueStr().GetStr(), str);
+  PutAValueInCData(GetValue().GetStr(), str);
   str += "</value>";
 	
   str = str + "</variable>";
@@ -95,7 +89,7 @@ void VariableAttribut::GenerateValueMessage(SimpleString& str)
 
 void VariableAttribut::Display()
 {
-  printf("Name : %s\n", GetNameCh());
+  printf("Name : %s\n", GetName().GetStr() );
   printf("Type : %s\n", type.GetStr());
   printf("Default Value : %s\n", defaultValue.GetStr());
   printf("Last Value : %s\n", valueStr.GetStr());
@@ -120,15 +114,7 @@ void VariableAttribut::Display()
 // 	}
 // }
 
-void VariableAttribut::SetValueStr(const char* value_str){
-  valueStr = value_str; 
-  if(CallbackData.callbackValue)
-  {
-	  CallbackData.callbackValue(this, CallbackData.userDataPtr);
-  }
-}
-
-void  VariableAttribut::SetValueStr(const SimpleString& value_str)
+void VariableAttribut::SetValue(const SimpleString value_str)
 {
   valueStr = value_str; 
   if(CallbackData.callbackValue)
@@ -136,7 +122,6 @@ void  VariableAttribut::SetValueStr(const SimpleString& value_str)
 	  CallbackData.callbackValue(this, CallbackData.userDataPtr);
   }
 }
-
 
 void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 {  
@@ -156,22 +141,22 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 	const char* cur_name = (const char*)cur_node->name;
 	if(strcmp(cur_name, "description")==0)
 	  {
-	    SetDescription(XMLMessage::ExtractTextContent(cur_node->children).GetStr());
+	    SetDescription(XMLMessage::ExtractTextContent(cur_node->children));
 	  }      
 	else if(strcmp(cur_name, "formatDescription")==0)
 	  {
-	    SetFormatDescription(XMLMessage::ExtractTextContent(cur_node->children).GetStr());
+	    SetFormatDescription(XMLMessage::ExtractTextContent(cur_node->children));
 	  }
 	else if (strcmp(cur_name, "value")==0)
 	{
 	
 
 	  tmp_value = XMLMessage::ExtractTextContent(cur_node->children);
-	  //vattr->SetValueStr((const char*)cur_node->children->content);
+	  //vattr->SetValue((const char*)cur_node->children->content);
 	}
 	else if (strcmp(cur_name,"default")==0)
 	  {
-	    SetDefaultValue(XMLMessage::ExtractTextContent(cur_node->children).GetStr());
+	    SetDefaultValue(XMLMessage::ExtractTextContent(cur_node->children));
 	  }
 	else if (strcmp(cur_name, "type") == 0)
 	  {
@@ -201,17 +186,12 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
       }
     }
     
-  SetValueStr(tmp_value.GetStr());
+  SetValue(tmp_value.GetStr());
 }
 
-void VariableAttribut::SetType(const char* t)
+void VariableAttribut::SetType(const SimpleString t)
 {
 	type = t; 
-}
-
-void VariableAttribut::SetType(const SimpleString& str)
-{
-	type = str; 
 }
 
 void VariableAttribut::SetAccess(VariableAccess a)
@@ -234,24 +214,14 @@ void VariableAttribut::SetAccessReadWrite()
 	access = ReadWriteAccess;
 }
 
-void VariableAttribut::SetDefaultValue(const SimpleString& str)
+void VariableAttribut::SetDefaultValue(const SimpleString str)
 {
 	defaultValue = str;
 }
 
-void VariableAttribut::SetDefaultValue(const char* str)
-{
-	defaultValue = str;
-}
-
-SimpleString& VariableAttribut::GetValueStr()
+SimpleString& VariableAttribut::GetValue()
 {
 	return valueStr; 
-}
-
-const char* VariableAttribut::GetValueCh()
-{
-	return valueStr.GetStr(); 
 }
 
 SimpleString& VariableAttribut::GetType()

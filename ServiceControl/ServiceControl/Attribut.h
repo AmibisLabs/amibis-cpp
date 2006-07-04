@@ -35,11 +35,7 @@ class Attribut
 
   /** \brief Constructor 
    * \param a_name [in] name of the attribute */
-  Attribut(const SimpleString& a_name); 
-
-  /** \brief Constructor 
-   * \param a_name [in] name of the attribute */
-  Attribut(const char* a_name);
+  Attribut(const SimpleString a_name);
   //@}
 
   /** \brief Destructor */
@@ -51,19 +47,13 @@ class Attribut
   const SimpleString& GetName() const;
   const SimpleString& GetDescription() const;
   const SimpleString& GetFormatDescription() const;
-  const char* GetNameCh() const;
-  const char* GetDescriptionCh() const;
-  const char* GetFormatDescriptionCh() const;
   //@}
 
   /** \name Write Accessors */
   //@{
-  void SetName(const char*);
-  void SetDescription(const char*); 
-  void SetFormatDescription(const char* str);
-  void SetName(const SimpleString& str);
-  void SetDescription(const SimpleString& str);
-  void SetFormatDescription(const SimpleString& str);
+  void SetName(const SimpleString str);
+  void SetDescription(const SimpleString str); 
+  void SetFormatDescription(const SimpleString str);
   //@}
 
   /** \name XML Generation */
@@ -93,7 +83,7 @@ class Attribut
    * \param val [in] the content for the CDATA section
    * \param str [in, out] add the section to the end of str
    */
-  static void PutAValueInCData(const char* val, SimpleString& str);
+  static void PutAValueInCData(const SimpleString val, SimpleString& str);
   //@}
 
  protected:

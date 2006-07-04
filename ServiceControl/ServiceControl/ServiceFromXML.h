@@ -2,6 +2,8 @@
 #define __SERVICE_FROM_XML_H__
 
 #include <System/Config.h>
+
+#include <System/SimpleString.h>
 #include <ServiceControl/ControlServer.h>
 
 namespace Omiscid {
@@ -9,7 +11,7 @@ namespace Omiscid {
 class ServiceFromXML : public ControlServer
 {
  public:
-  ServiceFromXML(const char* file_name);
+  ServiceFromXML(const SimpleString file_name);
  private:
   void InitServiceFromXml(xmlNodePtr root_node);
   void ProcessVariableAttribut(xmlNodePtr node);

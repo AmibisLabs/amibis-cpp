@@ -58,7 +58,7 @@ void SocketException::SocketErrorCheck()
 #endif
 }
 
-SocketException::SocketException(const char* m, int i)
+SocketException::SocketException(const SimpleString m, int i)
  : SimpleException(m, i)
 {
 	SocketErrorCheck();

@@ -54,7 +54,7 @@ ControlClient::~ControlClient()
     }  
 }
 
-bool ControlClient::ConnectToCtrlServer(const char* host, int port)
+bool ControlClient::ConnectToCtrlServer(const SimpleString host, int port)
 {
   try
     {
@@ -81,7 +81,7 @@ bool ControlClient::QueryGlobalDescription()
   return false;
 }
 
-VariableAttribut* ControlClient::QueryVariableDescription(const char* var_name)
+VariableAttribut* ControlClient::QueryVariableDescription(const SimpleString var_name)
 {
   VariableAttribut* var_attr = FindVariable(var_name);
 
@@ -91,7 +91,7 @@ VariableAttribut* ControlClient::QueryVariableDescription(const char* var_name)
     {
       if(!NameInList(var_name, listVariableName))
 	{
-		TraceError( "Unknown variable '%s', ask to the service.\n", var_name);
+		TraceError( "Unknown variable '%s', ask to the service.\n", var_name.GetStr());
 	    name_in_list = false;
 	}
     }
@@ -125,12 +125,12 @@ VariableAttribut* ControlClient::QueryVariableDescription(const char* var_name)
 }
 
 
-VariableAttribut* ControlClient::QueryVariableModif(const char* var_name, const char* value_str)
+VariableAttribut* ControlClient::QueryVariableModif(const SimpleString var_name, const SimpleString value_str)
 {
   VariableAttribut* var_attr = FindVariable(var_name);
   if(!var_attr)
     {    
-      TraceError( "Unknown Variable '%s' : Not Available Description : %s\n", var_name);
+      TraceError( "Unknown Variable '%s' : Not Available Description : %s\n", var_name.GetStr());
       return NULL;
     }
 
@@ -155,7 +155,7 @@ VariableAttribut* ControlClient::QueryVariableModif(const char* var_name, const 
   return NULL;
 }
 
-InOutputAttribut* ControlClient::QueryInputDescription(const char* input_name)
+InOutputAttribut* ControlClient::QueryInputDescription(const SimpleString input_name)
 {  
   InOutputAttribut* input_attr = FindInput(input_name);
   bool name_in_list = true;
@@ -163,7 +163,7 @@ InOutputAttribut* ControlClient::QueryInputDescription(const char* input_name)
     {
       if(!NameInList(input_name, listInputName))
 	{
-		TraceError( "Unknown Input '%s', ask to the service.\n",input_name);
+		TraceError( "Unknown Input '%s', ask to the service.\n",input_name.GetStr());
 	  name_in_list = false;
 	}
     }
@@ -195,7 +195,7 @@ InOutputAttribut* ControlClient::QueryInputDescription(const char* input_name)
   return NULL;
 }
 
-InOutputAttribut* ControlClient::QueryOutputDescription(const char* output_name)
+InOutputAttribut* ControlClient::QueryOutputDescription(const SimpleString output_name)
 {
   InOutputAttribut* output_attr = FindOutput(output_name);
   bool name_in_list = true; 
@@ -203,7 +203,7 @@ InOutputAttribut* ControlClient::QueryOutputDescription(const char* output_name)
     {
       if(!NameInList(output_name, listOutputName))
 	{
-		TraceError( "Unknown Output '%s', ask to the service.\n", output_name);
+		TraceError( "Unknown Output '%s', ask to the service.\n", output_name.GetStr());
 	    name_in_list = false;
 	}
     }
@@ -235,7 +235,7 @@ InOutputAttribut* ControlClient::QueryOutputDescription(const char* output_name)
   return NULL;
 }
 
-InOutputAttribut* ControlClient::QueryInOutputDescription(const char* in_output_name)
+InOutputAttribut* ControlClient::QueryInOutputDescription(const SimpleString in_output_name)
 {
   InOutputAttribut* in_output_attr = FindInOutput(in_output_name);
   bool name_in_list = true;
@@ -243,7 +243,7 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const char* in_output_
     {
       if(!NameInList(in_output_name, listInOutputName))
 	{
-		TraceError( "Unknown InOutput '%s', ask to the service.\n", in_output_name);
+		TraceError( "Unknown InOutput '%s', ask to the service.\n", in_output_name.GetStr());
 	  name_in_list = false;
 	}
     }
@@ -487,7 +487,7 @@ bool ControlClient::NameInList(const SimpleString& name, SimpleList<SimpleString
 }
 
 
-VariableAttribut* ControlClient::FindVariable(const char* name)
+VariableAttribut* ControlClient::FindVariable(const SimpleString name)
 {
   for(listVariableAttr.First(); listVariableAttr.NotAtEnd();
       listVariableAttr.Next())
@@ -497,7 +497,7 @@ VariableAttribut* ControlClient::FindVariable(const char* name)
     }
   return NULL;
 }
-InOutputAttribut* ControlClient::FindInput(const char* name)
+InOutputAttribut* ControlClient::FindInput(const SimpleString name)
 {
   for(listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next())
     {
@@ -506,7 +506,7 @@ InOutputAttribut* ControlClient::FindInput(const char* name)
     }
   return NULL;
 }
-InOutputAttribut* ControlClient::FindOutput(const char* name)
+InOutputAttribut* ControlClient::FindOutput(const SimpleString name)
 {
   for(listOutputAttr.First(); listOutputAttr.NotAtEnd(); listOutputAttr.Next())
     {
@@ -515,7 +515,7 @@ InOutputAttribut* ControlClient::FindOutput(const char* name)
     }
   return NULL;
 }
-InOutputAttribut* ControlClient::FindInOutput(const char* name)
+InOutputAttribut* ControlClient::FindInOutput(const SimpleString name)
 {
   for(listInOutputAttr.First(); listInOutputAttr.NotAtEnd(); 
       listInOutputAttr.Next())
@@ -526,7 +526,7 @@ InOutputAttribut* ControlClient::FindInOutput(const char* name)
   return NULL;
 }
 
-void ControlClient::Subscribe(const char* var_name)
+void ControlClient::Subscribe(const SimpleString var_name)
 {
 	VariableAttribut* va = FindVariable(var_name);
 	if(va)
@@ -540,7 +540,7 @@ void ControlClient::Subscribe(const char* var_name)
 		TraceError( "variable unknown by client\n");
 	}
 }
-void ControlClient::Unsubscribe(const char* var_name)
+void ControlClient::Unsubscribe(const SimpleString var_name)
 {
 	VariableAttribut* va = FindVariable(var_name);
 	if(va)
@@ -590,7 +590,7 @@ void FUNCTION_CALL_TYPE ControlClient::CtrlEventProcess(XMLMessage* msg, void* p
 	  if(va)
 	    {
 	      xmlNodePtr val_node = XMLMessage::FindFirstChild("value", current);
-	      if(val_node) va->SetValueStr((const char*)val_node->children->content);
+	      if(val_node) va->SetValue((const char*)val_node->children->content);
 	    }
 	  else
 	  {

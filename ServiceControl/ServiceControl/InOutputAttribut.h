@@ -42,20 +42,13 @@ class InOutputAttribut : public Attribut
    * @param com_tool Communication tool assciated to the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const SimpleString& a_name, ComTools* com_tool, ConnectorKind kind_of_input);  
-
-  /** @brief Constructor 
-   * @param a_name name for the input/output
-   * @param com_tool Communication tool assciated to the input/output
-   * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
-   */
-  InOutputAttribut(const char* a_name, ComTools* com_tool, ConnectorKind kind_of_input);
+  InOutputAttribut(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input);  
 
   /** @brief Constructor 
    * @param a_name name for the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const char* a_name, ConnectorKind kind_of_input);
+  InOutputAttribut(const SimpleString a_name, ConnectorKind kind_of_input);
   //@}
 
   /** \name Read Accessors */

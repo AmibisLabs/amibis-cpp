@@ -181,7 +181,9 @@ public:
 	void Empty();
 
 protected:
-	enum SizeOfBuffers { MaxTxtRecordSize = 8000 }; // according to the DNS-SD specifications
+	// according to the DNS-SD specifications, can be up to 8000 bytes
+	// but not on multicast usage
+	enum SizeOfBuffers { MaxTxtRecordSize = 1024 }; 
 
 	virtual int Find( const char * Name, bool ReadOnly = true );
 

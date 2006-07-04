@@ -10,6 +10,7 @@
 
 #include <System/Config.h>
 #include <System/SimpleList.h>
+#include <System/SimpleString.h>
 #include <Com/ComTools.h>
 #include <Com/TcpServer.h>
 #include <ServiceControl/XMLTreeParser.h>
@@ -50,14 +51,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * Define a Service ID for this service.
    * @param service_name the name for the service. It will be registered with this name.
    */
-  ControlServer(const char* service_name = "Control");
-
-    /** @brief Constructor
-   *
-   * Define a Service ID for this service.
-   * @param service_name the name for the service. It will be registered with this name.
-   */
-   ControlServer(const SimpleString& service_name);
+  ControlServer(const SimpleString service_name = "Control");
 
   /** @brief Destructor */
   virtual ~ControlServer();  
@@ -67,19 +61,19 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * If the service is already registered, it will not change the published data.
    * @param service_name [in] the name for the service registration
    */
-  bool SetServiceName(const char* service_name);
+  bool SetServiceName(const SimpleString service_name);
 
   /** @brief get the name of the service.
    * @return the service name
    */
-  const char* GetServiceName();
+  const SimpleString& GetServiceName();
   
   /** @brief Access to the name of the registered service.
    *
    * Available after server starts.
    * @return the service name registered
    */
-  const char* GetServiceNameRegistered();
+  const SimpleString& GetRegisteredServiceName();
   /**
    * @brief Launch a server for the control and Register the service.
    *
@@ -134,7 +128,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @param kind_of_input [in] define if it is input or output or inoutput
    * @return a new InOutputAttribut object (will be deleted by the controlServer)
    */
-  InOutputAttribut* AddInOutput(const char* name, ComTools* com_tool, ConnectorKind kind_of_input);
+  InOutputAttribut* AddInOutput(const SimpleString name, ComTools* com_tool, ConnectorKind kind_of_input);
   
   /**
    * @brief Create a new variable to export.
@@ -143,7 +137,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @return a new VariableAttribut object. It will be deleted by the controlServer.
    * use this pointer to complete the data about this variable.
    */
-  VariableAttribut* AddVariable(const char* name);
+  VariableAttribut* AddVariable(const SimpleString name);
 
   /**
    * @brief Retrieve an InOutputAttribut object with a particular name
@@ -153,7 +147,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @param name [in] name of the input or output
    * @return the InOutputAttribut object or NULL if not found
    */
-  InOutputAttribut* FindInOutput(const SimpleString& name);
+  InOutputAttribut* FindInOutput(const SimpleString name);
 
   /** @brief Retrieve a VariableAttribut object with a particular name
    *
@@ -162,23 +156,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @param name [in] name of the variable
    * @return the VariableAttribut object or NULL if not found
    */
-  VariableAttribut* FindVariable(const SimpleString& name);
-  /** @brief Retrieve a InOutputAttribut object with a particular name
-   *
-   * retrieve an InOutputAttribut object declared with AddInOutput, 
-   * and that has the name 'name'.
-   * @param name [in] name of the input or output
-   * @return the InOutputAttribut object or NULL if not found
-   */
-  InOutputAttribut* FindInOutputCh(const char* name);
-  /** @brief Retrieve a VariableAttribut object with a particular name
-   *
-   * retrieve a VariableAttribut object declared with AddVariable, 
-   * and that has the name 'name'.
-   * @param name [in] name of the variable
-   * @return the VariableAttribut object or NULL if not found
-   */
-  VariableAttribut* FindVariableCh(const char* name);
+  VariableAttribut* FindVariable(const SimpleString name);
 
   /**
    * @brief Access to the service status
@@ -212,7 +190,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @param host [in] host where do connection.
    * @param port [in] port to connect.
    */
-  virtual void Connect(const SimpleString& host, int port, bool tcp, InOutputAttribut* ioa);
+  virtual void Connect(const SimpleString host, int port, bool tcp, InOutputAttribut* ioa);
 
   /**
    * @brief Called when a request of variable modification is done.
@@ -225,7 +203,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * only during initialization.
    * @param va [in] contains the data about the variable.
    */
-  virtual void ModifVariable(int length, const unsigned char* buffer, int status, VariableAttribut* va);
+  virtual void ModifVariable( SimpleString NewValue, int status, VariableAttribut* va);
 
 
   /**

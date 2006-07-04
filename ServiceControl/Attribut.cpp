@@ -5,11 +5,7 @@ using namespace Omiscid;
 Attribut::Attribut()
 {}
 
-Attribut::Attribut(const SimpleString& a_name)
-  : name(a_name)
-{}
-
-Attribut::Attribut(const char* a_name)
+Attribut::Attribut(const SimpleString a_name)
   : name(a_name)
 {}
 
@@ -34,7 +30,7 @@ void Attribut::AddTagDescriptionToStr(SimpleString& str)
     }
 }
 
-void Attribut::PutAValueInCData(const char* val, SimpleString& str){
+void Attribut::PutAValueInCData(const SimpleString val, SimpleString& str){
   str += "<![CDATA[";
   str += val;
   str += "]]>";
@@ -50,32 +46,12 @@ const SimpleString& Attribut::GetDescription() const
 	return description;
 }
 
-const char* Attribut::GetNameCh() const
-{
-	return name.GetStr();
-}
-
-const char* Attribut::GetDescriptionCh() const
-{
-	return description.GetStr();
-}
-
-void Attribut::SetName(const char* str)
+void Attribut::SetName(const SimpleString str)
 { 
 	name = str;
 }
 
-void Attribut::SetDescription(const char* str)
-{
-	description = str;
-}
-
-void Attribut::SetName(const SimpleString& str)
-{
-	name = str;
-}
-
-void Attribut::SetDescription(const SimpleString& str)
+void Attribut::SetDescription(const SimpleString str)
 {
 	description = str;
 }
@@ -95,17 +71,7 @@ const SimpleString& Attribut::GetFormatDescription() const
 	return formatDescription;
 }
 
-const char* Attribut::GetFormatDescriptionCh() const
-{
-	return formatDescription.GetStr();
-}
-
-void Attribut::SetFormatDescription(const SimpleString& str)
-{
-	formatDescription = str;
-}
-
-void Attribut::SetFormatDescription(const char* str)
+void Attribut::SetFormatDescription(const SimpleString str)
 {
 	formatDescription = str;
 }

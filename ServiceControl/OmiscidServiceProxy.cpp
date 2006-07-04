@@ -114,7 +114,7 @@ bool OmiscidServiceProxy::SetVariableValue(const SimpleString VarName, const Sim
 		return false;
 	}
 
-	pVar->SetValueStr( Value );
+	pVar->SetValue( Value );
 	return true;
 }
 
@@ -131,7 +131,7 @@ bool OmiscidServiceProxy::GetVariableValue(const SimpleString VarName, SimpleStr
 		return false;
 	}
 
-	Value = pVar->GetValueStr();
+	Value = pVar->GetValue();
 	return true;
 }
 

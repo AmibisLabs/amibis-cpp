@@ -20,7 +20,7 @@ void IntVariableAttribut::SetValue( int value )
 	
 	  IntegerValue = value;
 	  TmpValue += IntegerValue;
-	  VariableAtt->SetValueStr(TmpValue); 
+	  VariableAtt->SetValue(TmpValue); 
   }
 }
 

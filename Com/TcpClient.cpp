@@ -6,13 +6,13 @@ TcpClient::TcpClient()
 : MsgSocket(Socket::TCP)
 {}
 
-TcpClient::TcpClient(const char* addr, int port)
+TcpClient::TcpClient(const SimpleString addr, int port)
  : MsgSocket(Socket::TCP)
 {
   ConnectToServer(addr, port);
 }
   
-void TcpClient::ConnectToServer(const char* addr, int port)
+void TcpClient::ConnectToServer(const SimpleString addr, int port)
 {
   MsgSocket::InitForTcpClient(addr, port);
 
