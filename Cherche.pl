@@ -70,24 +70,29 @@ sub WorkOnFile()
 # 'ServiceControl/InOutputAttribut.cpp',
 # 'ServiceControl/ServiceFromXML.cpp'
 # );
-# 
-# foreach $fic ( @ExcludedFiles )
-# {
-# 	if ( $fic =~ /\.cpp/ )
-# 	{
-# 		$NotParseThisFiles{$fic} = 1;
-# 		# print STDERR "$fic\n";
-# 		$fic =~ /([^\/]+)\/([^\/]+)\.cpp$/;
-# 		$fic = "$1/$1/$2.h";
-# 		$NotParseThisFiles{$fic} = 1;
-# 		# print STDERR "$fic\n";
-# 	}
-# 	else
-# 	{
-# 		$NotParseThisFiles{$fic} = 1;
-# 		# print STDERR "$fic\n";
-# 	}
-# }
+
+@ExcludedFiles = (
+'System/SimpleString.cpp',
+'Com/ComTools.cpp',
+);
+
+foreach $fic ( @ExcludedFiles )
+{
+	if ( $fic =~ /\.cpp/ )
+	{
+		$NotParseThisFiles{$fic} = 1;
+		# print STDERR "$fic\n";
+		$fic =~ /([^\/]+)\/([^\/]+)\.cpp$/;
+		$fic = "$1/$1/$2.h";
+		$NotParseThisFiles{$fic} = 1;
+		# print STDERR "$fic\n";
+	}
+	else
+	{
+		$NotParseThisFiles{$fic} = 1;
+		# print STDERR "$fic\n";
+	}
+}
 
 &RecurseWork::RecurseWork( 'System', 0 );
 &RecurseWork::RecurseWork( 'Com', 0 );

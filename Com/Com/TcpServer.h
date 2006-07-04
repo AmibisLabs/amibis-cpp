@@ -145,7 +145,7 @@ class TcpServer :public MsgSocket, virtual public ComTools
 
   /** \brief Access to the service id 
    * \return the service id*/
-  unsigned int GetServiceId();
+  unsigned int GetServiceId() const;
   /**
    * Get the list of id of the service connected to the server.
    * @param list_peer [out] received the list of the ids.

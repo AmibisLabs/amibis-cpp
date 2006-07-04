@@ -29,7 +29,7 @@ unsigned int ComTools::GeneratePeerId()
 
 const SimpleString ComTools::MagicUdp("udp-port");
 
-SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key)
+SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString key)
 {
    unsigned int klen = key.GetLength();    // key length
    unsigned int len  = array.GetLength (); // remaining characters
@@ -44,7 +44,7 @@ SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key)
 	 }
 
      // check if key matches the line head
-     if (key != array.SubString(idx, idx + klen))
+     if ( key != array.SubString(idx, idx + klen) )
 	 {
 		 goto eat_line;
 	 }
@@ -61,7 +61,7 @@ SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key)
 
      if (len == 0)
 	 {
-		 return NULL;
+		 return SimpleString::EmptyString;
 	 }
 
      switch (array[idx])
@@ -95,13 +95,13 @@ SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key)
      }
 
    data_eaten:
-     return new SimpleString( array.SubString(idx_start, idx) );
+     return array.SubString(idx_start, idx);
 
    eat_line:
 
      if (len == 0)
 	 {
-		 return NULL;
+		 return SimpleString::EmptyString;
 	 }
 
      switch (array[idx])
@@ -115,5 +115,5 @@ SimpleString * ComTools::ValueFromKey(SimpleString& array, SimpleString& key)
          goto eat_line;
      }
 
-	 return NULL;
+	 return SimpleString::EmptyString;
 }

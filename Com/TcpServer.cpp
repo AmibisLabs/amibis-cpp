@@ -391,7 +391,7 @@ ComTools* TcpServer::Cast()
 	return dynamic_cast<ComTools*>(this); 
 }
 
-unsigned int TcpServer::GetServiceId()
+unsigned int TcpServer::GetServiceId() const
 {
 	return MsgSocket::GetServiceId(); 
 }

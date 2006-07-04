@@ -137,7 +137,7 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
   /** \brief Access to the service id
    * \return the service identifier associated to this object
    */
-  unsigned int GetServiceId();
+  unsigned int GetServiceId() const;
 
   /** \brief Access to the TCP port
    * \return the port number of the TCP connection created as server

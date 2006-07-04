@@ -43,7 +43,7 @@ class ComTools
 
   /** \brief Access to the service Id
    * \return the service id */
-  virtual unsigned int GetServiceId() = 0;
+  virtual unsigned int GetServiceId() const = 0;
 
   /** \brief Define the service id*/
   virtual void SetServiceId(unsigned int service_id) = 0;
@@ -69,7 +69,7 @@ class ComTools
    *
    */
   static const SimpleString MagicUdp;
-  static SimpleString * ValueFromKey(SimpleString& array, SimpleString& key);
+  static SimpleString ValueFromKey(const SimpleString array, const SimpleString key);
 };
 
 } // namespace Omiscid

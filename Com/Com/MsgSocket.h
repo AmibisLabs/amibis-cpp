@@ -239,11 +239,11 @@ class MsgSocket : public Thread
   
   /** \brief Access to the socket object 
    * \return the Socket object used by this MsgSocket object */
-  Socket* GetSocket();
+  Socket* GetSocket() const;
 
   /** \brief Access to Port number 
    * \return the port number where the socket listen */
-  unsigned short GetPortNb();
+  unsigned short GetPortNb() const;
 
   /** \brief Test if the MsgSocket is in usage
    * \return false if this object is no more useful (no more connected)*/
@@ -289,7 +289,7 @@ class MsgSocket : public Thread
 
   /**\brief size max for message on TCP
    * \return the size max accepted for exchange on TCP */
-  int GetMaxMessageSizeForTCP();
+  int GetMaxMessageSizeForTCP() const;
 
   /**\brief size max for message on TCP
    * Define the size max accepted for exchange on TCP (by default the value is 1<<16)*/

@@ -86,9 +86,9 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 		SimpleString tmpBuf((const char*)MsgData->buffer);
 		SimpleString tmpUdp = MagicUdp;
 
-		SimpleString * UDPPort = ValueFromKey( tmpBuf, tmpUdp );
+		SimpleString UDPPort = ValueFromKey( tmpBuf, tmpUdp );
 
-		if ( UDPPort != 0 )
+		if ( UDPPort.GetLength() != 0 )
 		{
 			UdpConnection udpConnection;
 			udpConnection.pid = MsgData->pid;
@@ -99,7 +99,7 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 
 			SimpleString ConnectedHost = MyMsgSocket->GetSocket()->GetConnectedHost();
 
-			int tmpudp = atoi( UDPPort->GetStr() );
+			int tmpudp = atoi( UDPPort.GetStr() );
 			//REVIEW 
 			// udpConnection.addr.sin_family = AF_INET;
 			// udpConnection.addr.sin_port = htons(tmpudp);
@@ -110,8 +110,6 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 			Socket::FillAddrIn(&udpConnection.addr, ConnectedHost.GetStr(), tmpudp );
 
 			pThis->AcceptConnection( udpConnection, true );
-
-			delete UDPPort;
 		}
 	}
 }
@@ -474,7 +472,7 @@ unsigned short TcpUdpClientServer::GetTcpPort()
 	return TcpServer::GetTcpPort(); 
 }
 
-unsigned int TcpUdpClientServer::GetServiceId()
+unsigned int TcpUdpClientServer::GetServiceId() const
 {
 	return TcpServer::GetServiceId(); 
 }

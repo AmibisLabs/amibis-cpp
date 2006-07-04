@@ -244,12 +244,12 @@ ComTools * InOutputAttribut::GetComTool()
 	return comTool; 
 }
 
-int InOutputAttribut::GetTcpPort() const
+int InOutputAttribut::GetTcpPort()
 {
 	return comTool == NULL ? tcpPort : comTool->GetTcpPort(); 
 }
 
-int InOutputAttribut::GetUdpPort() const
+int InOutputAttribut::GetUdpPort()
 {
 	return comTool == NULL ? udpPort : comTool->GetUdpPort(); 
 }

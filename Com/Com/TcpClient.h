@@ -66,7 +66,7 @@ class TcpClient : public MsgSocket, public ComTools
 
   /** @brief Acces to the service id
    * @return the service id*/
-  unsigned int GetServiceId();
+  unsigned int GetServiceId() const;
 
   /** @brief Access to the server id
    * @return the id of the server. */
@@ -80,7 +80,7 @@ class TcpClient : public MsgSocket, public ComTools
    */
   int GetListPeerId(SimpleList<unsigned int>& listId);
 
-  int GetMaxMessageSizeForTCP();
+  int GetMaxMessageSizeForTCP() const;
   void SetMaxMessageSizeForTCP(int max);
 
   virtual ComTools* Cast();

@@ -43,7 +43,7 @@ ComTools* TcpClient::Cast()
 	return dynamic_cast<ComTools*>(this);
 }
 
-unsigned int TcpClient::GetServiceId()
+unsigned int TcpClient::GetServiceId() const
 {
 	return MsgSocket::GetServiceId(); 
 }
@@ -64,7 +64,7 @@ int TcpClient::GetListPeerId(SimpleList<unsigned int>& listId)
   return 0;
 }
 
-int TcpClient::GetMaxMessageSizeForTCP()
+int TcpClient::GetMaxMessageSizeForTCP() const
 {
 	return MsgSocket::GetMaxMessageSizeForTCP(); 
 }

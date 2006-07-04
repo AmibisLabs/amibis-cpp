@@ -1060,7 +1060,7 @@ void MsgSocket::ReceiveUdpExchange()
     }
 }
 
-unsigned short MsgSocket::GetPortNb()
+unsigned short MsgSocket::GetPortNb() const
 {
 	return socket->GetPortNb();
 }
@@ -1075,7 +1075,7 @@ bool UdpConnection::operator==(const UdpConnection& udp_connect) const
 	return !memcmp(&addr, udp_connect.getAddr(), sizeof(struct sockaddr));
 }
 
-Socket* MsgSocket::GetSocket()
+Socket* MsgSocket::GetSocket() const
 {
 	return socket; 
 }
@@ -1114,7 +1114,7 @@ bool MsgSocket::SyncLinkMsgSent() const
 	return sendSyncLinkMsg; 
 }
 
-int MsgSocket::GetMaxMessageSizeForTCP()
+int MsgSocket::GetMaxMessageSizeForTCP() const
 {
 	return maxMessageSizeForTCP; 
 }

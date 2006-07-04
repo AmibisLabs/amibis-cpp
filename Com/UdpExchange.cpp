@@ -177,7 +177,7 @@ ComTools* UdpExchange::Cast()
 	return dynamic_cast<ComTools*>(this);
 }
 
-unsigned int UdpExchange::GetServiceId()
+unsigned int UdpExchange::GetServiceId() const
 {
 	return MsgSocket::GetServiceId();
 }

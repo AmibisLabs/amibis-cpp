@@ -58,8 +58,8 @@ class InOutputAttribut : public Attribut
   bool IsAnInOutput() const; /*!< test if the object kind is AnInOutput*/
   ConnectorKind GetType() const; /*!<retrieve the object kind */
 
-  int GetTcpPort() const; /*!< Access to port number for TCP */
-  int GetUdpPort() const; /*!< Access to port number for UDP */
+  int GetTcpPort(); /*!< Access to port number for TCP */
+  int GetUdpPort(); /*!< Access to port number for UDP */
 
   unsigned int GetPeerId(); /*!< Will return either the comtool peerid either the local one for distant usage */
 

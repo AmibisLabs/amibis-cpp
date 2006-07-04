@@ -115,7 +115,7 @@ class UdpExchange : public MsgSocket, virtual public ComTools
 
   /** \brief Access to the service Id
    * \return the service id */
-  unsigned int GetServiceId();
+  unsigned int GetServiceId() const;
 
   /** \brief Access to the UDP port
    * \return the port where the socket listens */
