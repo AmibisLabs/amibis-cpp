@@ -15,7 +15,7 @@ Mutex::Mutex()
 {
 #ifdef WIN32
 	// mutex = CreateMutex( NULL, false, NULL );
-	mutex = CreateSemaphore(NULL, 1, 2^32, NULL );
+	mutex = CreateSemaphore(NULL, 1, 2^32-1, NULL );
 	OwnerId = 0;
 #else
 	if(pthread_mutex_init(&mutex, NULL) != 0)

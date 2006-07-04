@@ -12,7 +12,7 @@
 namespace Omiscid {
 
 /**
- * @class MutexedCounter MutexedCounter.h System/MutexedCounter.h
+ * @class AtomicReentrantMutex AtomicReentrantMutex.h System/AtomicReentrantMutex.h
  * @brief Counter with access protected by mutex.
  *
  * Can be incremented, decremented and, of course, accessed.
@@ -20,13 +20,13 @@ namespace Omiscid {
  * @author Dominique Vaufreydaz
  * @author Sebastien Pesnel
  */
-class MutexedCounter
+class AtomicReentrantMutex
 {
 public:
 	/** @brief Constructor
 	 * @param init_value [in] the initial value for the counter (0 by default).
 	 */
-	MutexedCounter(int init_value = 0);
+	AtomicReentrantMutex(int init_value = 0);
 	
 	/** @name Operators */
 	//@{

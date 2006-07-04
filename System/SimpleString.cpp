@@ -32,7 +32,7 @@ int SimpleString::StringData::AddReference()
 	
 	if ( nbReferences == NULL )
 	{
-		nbReferences = new MutexedCounter(1);
+		nbReferences = new AtomicReentrantMutex(1);
 		res = 1;
 	}
 	else
