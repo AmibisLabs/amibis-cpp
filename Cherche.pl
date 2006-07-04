@@ -74,4 +74,4 @@ foreach $fic ( @ExcludedFiles )
 
 &RecurseWork::RecurseWork( 'System', 0 );
 &RecurseWork::RecurseWork( 'Com', 0 );
-# &RecurseWork::RecurseWork( 'ServiceControl', 0 );
+&RecurseWork::RecurseWork( 'ServiceControl', 0 );

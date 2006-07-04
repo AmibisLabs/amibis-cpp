@@ -114,7 +114,7 @@ bool OmiscidService::AddConnector(SimpleString ConnectorName, SimpleString Conne
 	 * @throws UnknownBipService thrown if serviceId is not a declared service
 	 * @throws UnknownBipConnector thrown if the service has not declared this connector
 	 */
-bool OmiscidService::SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool ReliableSend )
+bool OmiscidService::SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool FastSend )
 {
 	if ( Buffer == NULL && BufferLen != 0 )
 	{
@@ -135,9 +135,9 @@ bool OmiscidService::SendToAllClients(SimpleString ConnectorName, char * Buffer,
 
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
-	// if ReliableSend == true, we should send over tcp so the last parameter (udp send)
-	// must be false and vice versa.
-	pConnector->SendToAll( BufferLen, Buffer, !ReliableSend );
+	// if ReliableSend == true, we should send over udp so the last parameter (udp send)
+	// must be true
+	pConnector->SendToAll( BufferLen, Buffer, FastSend );
 
 	return true;
 }
@@ -152,7 +152,7 @@ bool OmiscidService::SendToAllClients(SimpleString ConnectorName, char * Buffer,
 	 * @param BufferLen the length of message to send
 	 * @param PeerId : the identification of the client that must receive the message
 	 */
-bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool ReliableSend )
+bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool FastSend )
 {
 	if ( Buffer == NULL && BufferLen != 0 )
 	{
@@ -173,9 +173,9 @@ bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, 
 
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
-	// if ReliableSend == true, we should send over tcp so the last parameter (udp send)
-	// must be false and vice versa.
-	if ( pConnector->SendToPeer( BufferLen, Buffer, PeerId, !ReliableSend ) <= 0 )
+	// if ReliableSend == true, we should send over udp so the last parameter (udp send)
+	// must be true
+	if ( pConnector->SendToPeer( BufferLen, Buffer, PeerId, FastSend ) <= 0 )
 	{
 		return false;
 	}
@@ -189,9 +189,9 @@ bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, 
 	* @param connectorName the name of the connector that will send the message
 	* @param msg the message to send
 	*/
-bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, OmiscidServiceProxy& ServiceProxy, bool ReliableSend )
+bool OmiscidService::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, OmiscidServiceProxy& ServiceProxy, bool FastSend )
 {
-	return SendToOneClient(ConnectorName, Buffer, BufferLen, ServiceProxy.GetPeerId(), ReliableSend );
+	return SendToOneClient(ConnectorName, Buffer, BufferLen, ServiceProxy.GetPeerId(), FastSend );
 }
 
    /**

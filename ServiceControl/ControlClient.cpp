@@ -1,4 +1,6 @@
 #include <ServiceControl/ControlClient.h>
+
+#include <System/Portage.h>
 #include <System/SocketException.h>
 #include <Com/MsgManager.h>
 #include <ServiceControl/InOutputAttribut.h>
@@ -355,16 +357,15 @@ bool ControlClient::CheckMessage(XMLMessage* msg, unsigned int msg_id)
 
 unsigned int ControlClient::BeginEndTag(SimpleString& str)
 {
-  char tmp[9];
-  sprintf(tmp, "%08x", id); id++;
+  TemporaryMemoryBuffer tmp(10);
+  snprintf((char*)tmp, 10, "%08x", id);
+  id++;
   SimpleString tmp_str(tmp);
   str = "<controlQuery id=\"" + tmp_str + "\">"
     + str
     + "</controlQuery>";
   return id - 1;
 }
-
-
 
 void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 {

@@ -2,7 +2,7 @@
 #include <System/Portage.h>
 
 #ifdef WIN32
-	#define snprintf _snprintf
+	
 #endif
 
 using namespace Omiscid;

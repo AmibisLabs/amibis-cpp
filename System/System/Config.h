@@ -44,17 +44,19 @@
 
 	#define strcasecmp stricmp
 	#define strncasecmp strnicmp
+	#define snprintf _snprintf
+	// #define fprintf _fprintf
+
 #else
 	#define FUNCTION_CALL_TYPE
-	#include <sys/socket.h>
-	#define strcasecmp strcasecmp
-	#define strncasecmp strncasecmp
 
 	#include <sys/types.h>
-	#include <sys/socket.h>
 	#include <sys/time.h>
+
+	#include <sys/socket.h>
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
+	
 	typedef int SOCKET;
 	#define SOCKET_ERROR (-1)
 

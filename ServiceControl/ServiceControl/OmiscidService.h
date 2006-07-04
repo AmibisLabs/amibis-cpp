@@ -55,9 +55,9 @@ public:
 	 * @param connectorName the name of the connector sending the message
 	 * @param Buffer the message to send
 	 * @param BufferLen the length of message to send
-	 * @param ReliableSend should the system send it maybe slower but without message lost
+	 * @param FastSend should Omiscid send data maybe faster but with possibly message lost
 	 */
-	bool SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool ReliableSend = true );
+	bool SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool FastSend = false );
 
 
 	/**
@@ -70,7 +70,7 @@ public:
 	 * @param BufferLen the length of message to send
 	 * @param PeerId : the identification of the client that must receive the message
 	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool ReliableSend = true );
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool FastSend = false );
 
 	/**
 	 * Sends a message to a particular client. This client is identified by BipServiceProxy because
@@ -78,7 +78,7 @@ public:
 	 * @param connectorName the name of the connector that will send the message
 	 * @param msg the message to send
 	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, OmiscidServiceProxy& ServiceProxy, bool ReliableSend = true );
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, OmiscidServiceProxy& ServiceProxy, bool FastSend = false );
 
 	/**
 	 * Creates a new Omiscid Variable
