@@ -2,7 +2,7 @@
 
 using namespace Omiscid;
 
-MsgSocketException::MsgSocketException(const char* m, int i)
+MsgSocketException::MsgSocketException(const SimpleString m, int i)
   : SimpleException(m, i)
 {}
 
@@ -10,7 +10,7 @@ MsgSocketException::MsgSocketException(const MsgSocketException& ExceptionToCopy
   : SimpleException(ExceptionToCopy)
 {}
 
-const char* MsgSocketException::GetExceptionType()
+SimpleString MsgSocketException::GetExceptionType() const
 {
-	return "MsgSocketException";
-};
+	return SimpleString( "MsgSocketException" );
+}

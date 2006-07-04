@@ -7,6 +7,8 @@
 
 #include <System/Config.h>
 
+#include <System/SimpleString.h>
+
 namespace Omiscid {
 
 /**
@@ -24,13 +26,15 @@ namespace Omiscid {
 class SimpleException
 {
 public:
+	typedef enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
+
   /** \brief Constructor 
    *
    * Create a new SimpleException.
    * \param m [in] message for the error. This string is copied.
    * \param i [in] value for error number
    */
-  SimpleException(const char* m, int i = -1);
+  SimpleException(const SimpleString m, int i = UnkownSimpleExceptionCode);
 
   /** \brief Copy Constructor */
   SimpleException(const SimpleException& ExceptionToCopy);
@@ -39,7 +43,7 @@ public:
   virtual ~SimpleException();
   
   /** \brief Display the message followed by the error number on stderr. */
-  void Display();
+  void Display() const;
 
   /** \brief The virtual function to return the exception type.
    *  \return A const char * pointer to a human readable exception type, usualy the class name.
@@ -47,9 +51,9 @@ public:
    *  All classes derived from SimpleException must described themselves by
    *  implementing this fonction.
    */
-  virtual const char* GetExceptionType();
+  virtual SimpleString GetExceptionType() const;
   
-  char* msg; /*!< string message */
+  SimpleString msg; /*!< string message */
   int err; /*!< error number (for example value returned by errno)*/
 };
 

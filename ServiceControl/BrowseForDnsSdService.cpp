@@ -26,9 +26,9 @@ BrowseForDNSSDService::BrowseForDNSSDService()
 	UserData = 0;
 }
 
-BrowseForDNSSDService::BrowseForDNSSDService(const char * eRegtype, BrowseCallBack eCallBack, unsigned int eUserData, bool AutoStart /* = false */)
+BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, BrowseCallBack eCallBack, void * eUserData, bool AutoStart /* = false */)
 {
-	strncpy( RegType, eRegtype, sizeof(RegType) );
+	RegType  = eRegtype;
 	CallBack = eCallBack;
 	UserData = eUserData;
 
@@ -80,7 +80,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	}
 	else
 	{
-		Service ServiceInfo( serviceName, replyType, replyDomain, 1, NULL );
+		Service ServiceInfo( serviceName, replyType, replyDomain, 1 );
 		MyThis->CallbackClient( ServiceInfo, flags );
 	}
 }
@@ -94,7 +94,7 @@ void BrowseForDNSSDService::Run()
 	DNSServiceRef Ref;
 	SOCKET DNSSocket;
 
-	if ( DNSServiceBrowse(&Ref,0,0,RegType,"",SearchCallBackDNSServiceBrowseReply,this) != kDNSServiceErr_NoError )
+	if ( DNSServiceBrowse(&Ref,0,0,RegType.GetStr(),"",SearchCallBackDNSServiceBrowseReply,this) != kDNSServiceErr_NoError )
 	{
 		return;
 	}

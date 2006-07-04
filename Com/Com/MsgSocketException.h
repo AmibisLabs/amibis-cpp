@@ -22,7 +22,7 @@ public:
    * @param m [in] message for the exception
    * @param i [in] the error number
    */
-  MsgSocketException(const char* m, int i = -1);
+  MsgSocketException(const SimpleString m, int i = -1);
 
   /** @brief Copy Constructor
    * @param ExceptionToCopy [in] the exception to copy
@@ -30,7 +30,7 @@ public:
   MsgSocketException(const MsgSocketException& ExceptionToCopy);
 
   /** @brief Return a human readable exception type */
-  const char* GetExceptionType();
+  SimpleString GetExceptionType() const;
 };
 
 } // namespace Omiscid

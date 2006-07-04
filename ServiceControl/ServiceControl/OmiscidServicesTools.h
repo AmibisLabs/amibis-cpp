@@ -11,6 +11,7 @@
 #define __OMISCID_SERVICES_TOOLS_H__
 
 #include <System/Config.h>
+#include <System/SimpleString.h>
 #include <ServiceControl/Service.h>
 #include <ServiceControl/WaitForDnsSdServices.h>
 
@@ -23,8 +24,8 @@ namespace Omiscid {
 class RegisterOmiscidService : public RegisterService
 {
 public:
-	RegisterOmiscidService( const char * FullName, uint16_t ePort, bool AutoRegister = false );
- 	RegisterOmiscidService( const char * ServiceName, const char * Domain, uint16_t ePort, bool AutoRegister = false );
+	RegisterOmiscidService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
+ 	RegisterOmiscidService( const SimpleString ServiceName, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
 
 	void SetOwner();
 
@@ -38,7 +39,7 @@ public:
 	WaitForOmiscidServices();
 	virtual ~WaitForOmiscidServices(void);
 
-	int NeedService( const char * eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
+	int NeedService( const SimpleString eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
 	{
 		return WaitForDnsSdServices::NeedService( eName, OmiscidServiceDnsSdType, eCallBack, eUserData );
 	}

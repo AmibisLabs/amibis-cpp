@@ -131,7 +131,7 @@ public:
    * @param name [in out] buffer of length 'len' where the name will copied.
    * @param len [in] lenght of the buffer name, where the result will be put.
    */
-  SimpleString GetHostName();
+  static SimpleString GetHostName();
 
   static struct hostent* GetHostByName( const SimpleString name );
   static struct hostent* gethostbyname( const SimpleString name ) { return GetHostByName(name); };

@@ -25,14 +25,14 @@ class ServicePropertiesException  : public ServiceException
  public:
   /** @brief Constructor
    * @param Message [in] message for the exception */
-  ServicePropertiesException(const char * Message ) : ServiceException( Message ) {};
+  ServicePropertiesException(const SimpleString Message, int Err = UnkownSimpleExceptionCode ) : ServiceException( Message, UnkownSimpleExceptionCode ) {};
 
   /** @brief Destructor */
   virtual ~ServicePropertiesException() {};
 
  protected:
   /** @brief Return a human readable exception type */
-  virtual const char * GetExceptionType() { return "ServicePropertiesException"; };
+  virtual SimpleString GetExceptionType() const { return SimpleString("ServicePropertiesException"); };
 };
 
 // A container for service properties, will be defined later in this file

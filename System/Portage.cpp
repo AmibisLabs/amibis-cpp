@@ -126,13 +126,18 @@ SimpleString Omiscid::GetLoggedUser()
 
 
 MemoryBufferException::MemoryBufferException( SimpleString Msg, int i )
-	: SimpleException( Msg.GetStr(), i )
+	: SimpleException( Msg, i )
 {
 }
 
-const char* MemoryBufferException::GetExceptionType()
+MemoryBufferException::MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy )
+	: SimpleException( MemoryBufferExceptionToCopy )
 {
-	return "MemoryBufferException";
+}
+
+SimpleString MemoryBufferException::GetExceptionType() const
+{
+	return SimpleString("MemoryBufferException");
 }
 
 

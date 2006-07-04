@@ -22,13 +22,13 @@ public:
   /** \brief Constructor 
    * \param m [in] message for the exception
    */
-  SimpleListException(const char* m);
+  SimpleListException(const SimpleString m, int i = UnkownSimpleExceptionCode );
 
   /** \brief Copy Constrcutor */
   SimpleListException(const SimpleListException& ExceptionToCopy);
 
   /** \brief Return a human readable exception type */
-  const char* GetExceptionType();
+  SimpleString GetExceptionType() const;
 };
 
 } // namespace Omiscid

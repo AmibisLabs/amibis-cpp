@@ -1,9 +1,7 @@
 #include <System/SimpleString.h>
 #include <System/Portage.h>
 
-#ifdef WIN32
-	
-#endif
+
 
 using namespace Omiscid;
 
@@ -513,7 +511,7 @@ unsigned int SimpleString::GetLength() const
 	return stringData->GetLength(); 
 }
 
-bool SimpleString::IsEmpty()
+bool SimpleString::IsEmpty() const
 {
 	return (stringData->GetLength() == 0 );
 }

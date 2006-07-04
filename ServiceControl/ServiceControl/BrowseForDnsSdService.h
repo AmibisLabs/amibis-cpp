@@ -12,19 +12,20 @@
 
 #include <System/Config.h>
 #include <System/Thread.h>
+#include <System/SimpleString.h>
 #include <ServiceControl/Service.h>
 
 #include <dns_sd.h>
 
 namespace Omiscid {
 
-typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( Service& NewService, DNSServiceFlags flags, unsigned int UserData );
+typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( Service& NewService, DNSServiceFlags flags, void * UserData );
 
 class BrowseForDNSSDService : public Thread
 {
 public:
 	BrowseForDNSSDService();
-	BrowseForDNSSDService(const char * eRegType, BrowseCallBack eCallBack, unsigned int eUserData, bool AutoStart = false);
+	BrowseForDNSSDService(const SimpleString eRegType, BrowseCallBack eCallBack, void * eUserData, bool AutoStart = false);
 	~BrowseForDNSSDService();
 
 	void Start();
@@ -33,9 +34,9 @@ protected:
 	void Run();
 
 	BrowseCallBack CallBack;
-	unsigned int UserData;
+	void* UserData;
 
-	char RegType[512];
+	SimpleString RegType;
 
 	void CallbackClient( Service& Service, const DNSServiceFlags flags );
 

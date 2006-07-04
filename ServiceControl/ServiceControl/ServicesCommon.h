@@ -34,7 +34,7 @@ namespace Omiscid {
   /** \brief Constructor 
    * \param m [in] the message for the exception
    */
-  ServiceException(const char* m);
+  ServiceException(const SimpleString m, int Err = UnkownSimpleExceptionCode );
 
   /** \brief Copy Constructor 
    * \param ExceptionToCopy [in] the exception to copy
@@ -45,7 +45,7 @@ namespace Omiscid {
   virtual ~ServiceException();  
 
   /** \brief Return a human readable exception type */
-  virtual const char * GetExceptionType() { return "ServiceException"; };
+  virtual SimpleString GetExceptionType() const;
 };
 
 
@@ -78,12 +78,13 @@ public:
 		*/
 		enum SizeOfBuffers {
 			ServiceField = 64,	/*!< the service name length */
+			ProtocolAndTransportField = ServiceField + sizeof("_tcp"), /*!< the protocol and transport size */
 			ServiceNameLength = (3*ServiceField + sizeof("_tcp") + kDNSServiceMaxDomainName + 4), /*!< the complete unique name length of a service like "Doms._printer._tcp.local." */
 			RegtypeLength = ServiceField + sizeof("_tcp")/*!< the length of the protocol and the transport protocol for a service, i.e "_printer._tcp" */
 		};
 
-		static char * OmiscidServiceDnsSdType;
-		static const char * DefaultDomain;
+		static SimpleString OmiscidServiceDnsSdType;
+		static const SimpleString DefaultDomain;
 };
 
 } // namespace Omiscid

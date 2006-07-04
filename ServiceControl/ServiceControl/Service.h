@@ -33,16 +33,16 @@ class Service : public CommonServiceValues
 {
 public:
 	Service();
-	Service( const char * FullName, uint16_t ePort, const char * HostName = NULL );
-	Service( const char * ServiceName, const char * RegType, const char * Domain, uint16_t ePort, const char * HostName = NULL );
-	Service( const char * ServiceName, const char * Protocol, CommonServiceValues::TransportProtocol Transport, const char * Domain, uint16_t ePort, const char * HostName = NULL );
+	Service( const SimpleString FullName, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
+	Service( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
+	Service( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
 
 	char CompleteServiceName[ServiceNameLength];	// Complete service Name
 	SimpleString RegisteredName;
 	ServiceProperties Properties;
 
-	static bool CheckProtocol( const char * RegisterType );
-	static bool CheckName( const char * Name, int NameLength = -1 );
+	static bool CheckProtocol( const SimpleString RegisterType );
+	static bool CheckName( const SimpleString Name );
 
 protected:
 	void Empty();
@@ -69,9 +69,9 @@ public:
 class RegisterService : public Service
 {
 public:
-	RegisterService( const char * FullName, uint16_t ePort, bool AutoRegister = false );
-	RegisterService( const char * ServiceName, const char * RegType, const char * Domain, uint16_t ePort, bool AutoRegister = false );
-	RegisterService( const char * ServiceName, const char * Protocol, CommonServiceValues::TransportProtocol Transport, const char * Domain, uint16_t ePort, bool AutoRegister = false );
+	RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
+	RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
+	RegisterService( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
 	~RegisterService();
 
 	bool Register();

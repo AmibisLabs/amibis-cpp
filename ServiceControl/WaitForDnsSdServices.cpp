@@ -165,18 +165,20 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 	}
 }
 
-bool SearchService::StartSearch( const char * eName, const char * eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack, void * eUserData )
+bool SearchService::StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack, void * eUserData )
 {
-	if ( DNSSDConnection == true || Service::CheckName( eName ) == false )
+	if ( DNSSDConnection == true || (!eName.IsEmpty() && Service::CheckName( eName ) == false) )
 	{
 		return false;
 	}
 
+	// Length of eNAme is checked by Service::CheckName
 	SearchNameLength = 0;
-	while( (SearchName[SearchNameLength] = eName[SearchNameLength]) )
+	for( ;SearchNameLength < (int)eName.GetLength(); SearchNameLength++ )
 	{
-		SearchNameLength++;
+		SearchName[SearchNameLength] = eName[SearchNameLength];
 	}
+	SearchName[SearchNameLength] = '\0';
 
 	// we must at least put a name or give a callback
 	// in all other case, we can not choose a service !
@@ -193,7 +195,7 @@ bool SearchService::StartSearch( const char * eName, const char * eRegType, Wait
 	CallBack = eCallBack;
 	UserData = eUserData;
 
-	if ( DNSServiceBrowse(&Ref,0,0,eRegType,"",SearchCallBackDNSServiceBrowseReply,this) == kDNSServiceErr_NoError )
+	if ( DNSServiceBrowse(&Ref,0,0,eRegType.GetStr(),"",SearchCallBackDNSServiceBrowseReply,this) == kDNSServiceErr_NoError )
 	{
 		DNSSocket = DNSServiceRefSockFD( Ref );
 		DNSSDConnection = true;
@@ -203,7 +205,7 @@ bool SearchService::StartSearch( const char * eName, const char * eRegType, Wait
 	return false;
 }
 
-int WaitForDnsSdServices::NeedService( const char * eName, const char * eRegType, IsServiceValidForMe eCallBack, void * eUserData )
+int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleString eRegType, IsServiceValidForMe eCallBack, void * eUserData )
 {
 	ThreadSafeSection.EnterMutex();
 

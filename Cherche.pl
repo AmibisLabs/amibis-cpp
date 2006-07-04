@@ -51,7 +51,13 @@ sub WorkOnFile()
 'System/SimpleString.cpp',
 'Com/MsgSocket.cpp',
 'Com/TcpUdpClientServer.cpp',
-'Com/Com/TcpServer.h'
+'Com/Com/TcpServer.h',
+'ServiceControl/BrowseForDnsSdService.cpp',
+'ServiceControl/OmiscidService.cpp',
+'ServiceControl/Service.cpp',
+'ServiceControl/ServiceProperties.cpp',
+'ServiceControl/WaitForDnsSdServices.cpp',
+'ServiceControl/ServicesCommon.cpp'
 );
 
 foreach $fic ( @ExcludedFiles )

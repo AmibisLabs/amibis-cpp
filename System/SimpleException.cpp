@@ -5,19 +5,11 @@
 
 using namespace Omiscid;
 
-SimpleException::SimpleException(const char* m, int i) 
+SimpleException::SimpleException(const SimpleString m, int i) 
 {
-	TraceError( "%s : %d\n", m, i );
+	TraceError( "%s : %d\n", m.GetStr(), i );
 
-	if ( m != NULL )
-	{
-		size_t msgLen = strlen(m);
-		msg = new char[msgLen+1];
-		if ( msg )
-		{
-			strcpy( msg, m );
-		}
-	}
+	msg = m;
 	err = i;
 }
 
@@ -25,12 +17,7 @@ SimpleException::SimpleException(const SimpleException& ExceptionToCopy)
 { 
 	if ( ExceptionToCopy.msg != NULL )
 	{
-		size_t msgLen = strlen(ExceptionToCopy.msg);
-		msg = new char[msgLen+1];
-		if ( msg )
-		{
-			strcpy( msg, ExceptionToCopy.msg );
-		}
+		msg = ExceptionToCopy.msg;
 	}
 	err = ExceptionToCopy.err;
 }
@@ -38,18 +25,14 @@ SimpleException::SimpleException(const SimpleException& ExceptionToCopy)
 
 SimpleException::~SimpleException() 
 { 
-  if ( msg != NULL )
-  {   
-    delete [] msg;
-  }
 }
 
-void SimpleException::Display()
+void SimpleException::Display() const
 {
-  TraceError( "SimpleException: %s (%d)\n", msg, err);
+  TraceError( "SimpleException: %s (%d)\n", msg.GetStr(), err);
 }
 
-const char* SimpleException::GetExceptionType() 
+SimpleString SimpleException::GetExceptionType() const 
 {
-	return "SimpleException";
+	return SimpleString("SimpleException");
 }

@@ -31,11 +31,8 @@ public:
    */
   SocketException(const SocketException& ExceptionToCopy);
 
-  /** \brief Destructor */
-  ~SocketException();  
-
   /** \brief Return a human readable exception type */
-  const char* GetExceptionType();
+  SimpleString GetExceptionType() const;
 
 protected:
   void SocketErrorCheck();

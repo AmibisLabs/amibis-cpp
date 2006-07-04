@@ -16,6 +16,7 @@
 #include <System/Thread.h>
 #include <System/Mutex.h>
 #include <System/AtomicCounter.h>
+#include <System/SimpleString.h>
 #include <ServiceControl/Service.h>
 
 #ifndef WIN32
@@ -34,7 +35,7 @@ class SearchService : public Service
 public:
 	SearchService();
 
-	bool StartSearch( const char * eName, const char * eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
+	bool StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 
 	bool IsAvailable();
 
@@ -61,7 +62,7 @@ public:
 	WaitForDnsSdServices();
 	virtual ~WaitForDnsSdServices(void);
 
-	int NeedService( const char * eName, const char * eType, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
+	int NeedService( const SimpleString eName, const SimpleString eType, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 
 	/* DelayMax en milliseconds*/
 	bool WaitAll(unsigned int DelayMax = 0 );

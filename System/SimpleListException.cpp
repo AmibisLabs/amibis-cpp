@@ -3,15 +3,17 @@
 using namespace Omiscid;
 
   
-SimpleListException::SimpleListException(const char* m)
- : SimpleException(m, -1)
-{}
+SimpleListException::SimpleListException(const SimpleString m, int i)
+ : SimpleException(m, i)
+{
+}
 
 SimpleListException::SimpleListException(const SimpleListException& ExceptionToCopy)
  : SimpleException(ExceptionToCopy)
-{}
-
-const char* SimpleListException::GetExceptionType()
 {
-	return "SimpleListException"; 
-};
+}
+
+SimpleString SimpleListException::GetExceptionType() const
+{
+	return SimpleString( "SimpleListException" ); 
+}

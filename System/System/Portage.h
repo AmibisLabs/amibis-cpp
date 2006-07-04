@@ -27,9 +27,10 @@ SimpleString GetLoggedUser();
 class MemoryBufferException : public SimpleException
 {
 public:
-	MemoryBufferException( SimpleString Msg, int i = -1 );
+	MemoryBufferException( SimpleString Msg, int i = UnkownSimpleExceptionCode );
+	MemoryBufferException::MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy );
 
-	const char* GetExceptionType();
+	SimpleString GetExceptionType() const;
 };
 
 class TemporaryMemoryBuffer

@@ -9,11 +9,13 @@
 
 #include <ServiceControl/ServicesCommon.h>
 
+#include <System/Portage.h>
+
 using namespace Omiscid;
 
-const char * CommonServiceValues::DefaultDomain = "_bip._tcp";
+const SimpleString CommonServiceValues::DefaultDomain = "_bip._tcp";
 
-char * CommonServiceValues::OmiscidServiceDnsSdType = (char*)NULL; // help for debug
+SimpleString CommonServiceValues::OmiscidServiceDnsSdType(""); // help for debug
 
 namespace Omiscid {
 
@@ -24,57 +26,43 @@ public:
 	OmiscidDnsSdTypeInitClass()
 	{
 		char * Option = getenv( "OMISCID_WORKING_DOMAIN" );
-		if ( Option == NULL || strcmp( Option, (char*)DefaultDomain ) == 0 )
+		if ( Option == NULL || strcmp( Option, DefaultDomain.GetStr() ) == 0 )
 		{
-			OmiscidServiceDnsSdType = (char*)DefaultDomain;
-			#ifdef DEBUG
-				fprintf( stderr, "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain );
-			#endif
+			OmiscidServiceDnsSdType = DefaultDomain;
+			TraceError( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain );
 			return;
 		}
 
 		// Copy the environment variable
 		size_t size = strlen( Option );
-		char tmpdomain[128];
+		TemporaryMemoryBuffer tmpdomain(128);
 
 		if ( size >= RegtypeLength )
 		{
-			OmiscidServiceDnsSdType = (char*)CommonServiceValues::DefaultDomain;
+			OmiscidServiceDnsSdType = CommonServiceValues::DefaultDomain;
 			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long (%d max). Use '%s' instead.\n", RegtypeLength-1, DefaultDomain );
 			return;
 		}
 
-		if ( sscanf( Option, "_bip_%[^.]._tcp", tmpdomain) != 1 )
+		if ( sscanf( Option, "_bip_%[^.]._tcp", (char*)tmpdomain) != 1 )
 		{
-			OmiscidServiceDnsSdType = (char*)DefaultDomain;
+			OmiscidServiceDnsSdType = DefaultDomain;
 			fprintf( stderr, "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain );
 			return;
 		}
 
-		OmiscidServiceDnsSdType = new char[size+1];
-		strcpy( CommonServiceValues::OmiscidServiceDnsSdType, Option );
+		CommonServiceValues::OmiscidServiceDnsSdType = Option;
 
-		#ifdef DEBUG
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType );
-		#endif
+		TraceError( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
 	};
-
-	~OmiscidDnsSdTypeInitClass()
-	{
-		if ( CommonServiceValues::OmiscidServiceDnsSdType != (char*)CommonServiceValues::DefaultDomain )
-		{
-			delete CommonServiceValues::OmiscidServiceDnsSdType;
-			CommonServiceValues::OmiscidServiceDnsSdType = NULL;
-		}
-	}
 };
 
 static OmiscidDnsSdTypeInitClass OmiscidServiceDnsSdTypeInitClassInitialisationObject;
 
 } // namespace Omiscid
 
-ServiceException::ServiceException( const char * Message )
-  : SimpleException(Message)
+ServiceException::ServiceException( const SimpleString Message, int Err )
+  : SimpleException(Message, Err)
 {}
 
 ServiceException::ServiceException(const ServiceException& ExceptionToCopy)
@@ -85,3 +73,8 @@ ServiceException::ServiceException(const ServiceException& ExceptionToCopy)
 ServiceException::~ServiceException( )
 {
 }
+
+SimpleString ServiceException::GetExceptionType() const
+{
+	return SimpleString("ServiceException");
+};

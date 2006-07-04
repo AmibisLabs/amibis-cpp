@@ -408,9 +408,9 @@ SimpleString Socket::GetHostName()
 {
 	TemporaryMemoryBuffer HostName(1024);
 
-	if(gethostname((char*)HostName, 1023))
+	if(::gethostname( HostName, 1023))
 	{
-		throw SocketException("gethostname", Errno());
+		throw SocketException("GetHostName", Errno());
 	}
 	return SimpleString( HostName );
 }

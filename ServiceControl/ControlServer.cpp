@@ -514,8 +514,8 @@ void ControlServer::ProcessLockQuery(xmlNodePtr node, unsigned int pid, bool loc
       }           
     }
  
-  char tmp_peerid[10];
-  sprintf(tmp_peerid, "%08x",  (unsigned int)lockIntVariable->GetValue());  
+  TemporaryMemoryBuffer tmp_peerid(10);
+  snprintf(tmp_peerid, 10, "%08x",  (unsigned int)lockIntVariable->GetValue());  
   result += "\" peer=\"";
   result += tmp_peerid;
   result += "\"/>";

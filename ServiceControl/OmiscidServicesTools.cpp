@@ -20,10 +20,10 @@ void RegisterOmiscidService::Init( bool AutoRegister )
 	}
 }
 
-RegisterOmiscidService::RegisterOmiscidService( const char * FullName, uint16_t ePort, bool AutoRegister /* = false */ )
+RegisterOmiscidService::RegisterOmiscidService( const SimpleString FullName, uint16_t ePort, bool AutoRegister /* = false */ )
 	: RegisterService( FullName, ePort, /* AutoRegister = */ false )
 {
-	if ( strstr( FullName, OmiscidServiceDnsSdType ) == NULL )
+	if ( strstr( FullName.GetStr(), OmiscidServiceDnsSdType.GetStr() ) == NULL )
 	{
 		throw ServiceException( "It do not seem to be a valid BIP service" );
 	}
@@ -31,7 +31,7 @@ RegisterOmiscidService::RegisterOmiscidService( const char * FullName, uint16_t 
 	Init(AutoRegister);
 }
 
-RegisterOmiscidService::RegisterOmiscidService( const char * ServiceName, const char * Domain, uint16_t ePort, bool AutoRegister /* = false */ )
+RegisterOmiscidService::RegisterOmiscidService( const SimpleString ServiceName, const SimpleString Domain, uint16_t ePort, bool AutoRegister /* = false */ )
 	: RegisterService( ServiceName, OmiscidServiceDnsSdType, Domain, ePort, /* AutoRegister = */ false )
 {
 	Init(AutoRegister);

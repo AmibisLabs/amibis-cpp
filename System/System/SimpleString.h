@@ -142,7 +142,7 @@ public:
 	unsigned int GetLength() const;
 
 	/** @return true if the string is empty, false otherwise */
-	bool IsEmpty();
+	bool IsEmpty() const;
 
 	/** read access on the characters
 	 * @param i [in] the index of the character between 0 and GetLength()-1

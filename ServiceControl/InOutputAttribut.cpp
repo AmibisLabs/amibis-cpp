@@ -1,4 +1,6 @@
 #include <ServiceControl/InOutputAttribut.h>
+
+#include <System/Portage.h>
 #include <ServiceControl/XMLTreeParser.h>
 
 using namespace Omiscid;
@@ -59,33 +61,36 @@ void InOutputAttribut::GenerateShortDescription(SimpleString& str)
 
 void InOutputAttribut::GenerateLongDescription(SimpleString& str)
 {
-  char tmp[10];
+  TemporaryMemoryBuffer tmp(30);
 
   GenerateHeaderDescription(KindToStr(), GetName(), str, false);
 
   if(GetTcpPort() != 0)
     {
-      sprintf(tmp, "%d", GetTcpPort());
+      snprintf(tmp, 30, "%d", GetTcpPort());
       str = str + "<tcp>"+tmp+"</tcp>";
     }
   if(GetUdpPort() != 0)
     {
-      sprintf(tmp, "%d", GetUdpPort());
+      snprintf(tmp, 30, "%d", GetUdpPort());
       str = str + "<udp>"+tmp+"</udp>";
     }
 
-	sprintf( tmp, "%x", comTool->GetServiceId() );
+	snprintf( tmp, 30, "%x", comTool->GetServiceId() );
 	str = str + "<peerid>" + tmp+ "</peerid>";
 
   AddTagDescriptionToStr(str);
   
   str = str + "<peers>";
   SimpleList<unsigned int> listPeer;
-  if(comTool) comTool->GetListPeerId(listPeer);
+  if(comTool)
+  {
+	  comTool->GetListPeerId(listPeer);
+  }
   
   for( listPeer.First(); listPeer.NotAtEnd();  listPeer.Next())
     {
-      sprintf(tmp, "%08x",  listPeer.GetCurrent());
+      snprintf(tmp, 30, "%08x",  listPeer.GetCurrent());
       str = str + "<peer>"+ tmp +"</peer>";
     }
   str = str + "</peers>";
@@ -100,7 +105,7 @@ void InOutputAttribut::GenerateRecordData(SimpleString& str)
   // TraceError( "in InOutputAttribut::GenerateRecordData\n");
   // TraceError( "str before : |%s| \n", str.GetStr());
   // TraceError( "Tcp port (%p) : %d %d \n", comTool, GetTcpPort() ,comTool->GetTcpPort());
-  char tmp[10];
+  TemporaryMemoryBuffer tmp(30);
 
   int tcp, udp;
 
@@ -117,12 +122,12 @@ void InOutputAttribut::GenerateRecordData(SimpleString& str)
       
   if(tcp != 0)
     {
-      sprintf(tmp, "%d", tcp);
+      snprintf(tmp, 30, "%d", tcp);
       str = tmp;	  
     }      
   if(udp != 0)
     {
-      sprintf(tmp, "%d", udp);
+      snprintf(tmp, 30, "%d", udp);
       str = str + "/" + tmp;
     }
 

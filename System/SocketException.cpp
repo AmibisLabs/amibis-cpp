@@ -8,7 +8,7 @@ void SocketException::SocketErrorCheck()
 {
 #ifdef DEBUG
 
-#ifdef WIN32
+#if defined WIN32 && defined OMISCID_TRACE_ENABLE
 	SimpleString tmpc;
 	int tmpi = WSAGetLastError();
 	switch( tmpi )
@@ -70,11 +70,7 @@ SocketException::SocketException(const SocketException& ExceptionToCopy)
 	SocketErrorCheck();
 }
 
-
-SocketException::~SocketException() 
-{}
-
-const char* SocketException::GetExceptionType()
+SimpleString SocketException::GetExceptionType() const
 {
-	return "SocketException"; 
-};
+	return SimpleString( "SocketException" );
+}

@@ -9,6 +9,9 @@
 
 #include <ServiceControl/Service.h>
 
+#include <System/Portage.h>
+#include <System/Socket.h>
+
 #include <string.h> //strlen, strcpy, ...
 #ifndef WIN32
 #include <unistd.h> //gethostname
@@ -34,7 +37,7 @@ void Service::Empty()
 	Init();
 }
 
-bool Service::CheckProtocol( const char * Protocol )
+bool Service::CheckProtocol( const SimpleString Protocol )
 {
 	int PreviousUnderscore;
 	int ProtocolLenght;
@@ -77,14 +80,14 @@ bool Service::CheckProtocol( const char * Protocol )
 	return true;
 }
 
-bool Service::CheckName( const char * Name, int NameLength )
+bool Service::CheckName( const SimpleString eName )
 {
-	if ( Name == NULL )
+	if ( eName.IsEmpty() )
 	{
 		return false;
 	}
 	
-	if ( NameLength > 63 || (NameLength < 0 && strlen( Name ) > 63) )
+	if ( eName.GetLength() > ServiceField-1 )
 	{
 			return false;
 	}
@@ -97,7 +100,7 @@ Service::Service()
 	Empty();
 }
 
-Service::Service( const char * FullName, uint16_t ePort, const char * eHostName /* = NULL */ )
+Service::Service( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	char * Search;
 	char * LastFind;
@@ -105,12 +108,12 @@ Service::Service( const char * FullName, uint16_t ePort, const char * eHostName 
 
 	Empty();
 
-	if ( FullName == NULL || ePort == 0 )
+	if ( eFullName.IsEmpty() || ePort == 0 )
 	{
 		return;
 	}
 
-	strcpy( CompleteServiceName, FullName );
+	strcpy( CompleteServiceName, eFullName.GetStr() );
 
 	Search = strstr( CompleteServiceName, "._tcp." );
 	if ( Search )
@@ -134,7 +137,7 @@ Service::Service( const char * FullName, uint16_t ePort, const char * eHostName 
 	if ( nTransport == UNKNOWN )
 	{
 		Init();
-		throw ServiceException( "Transport protocol must be '_tcp' or 'udp'" );
+		throw ServiceException( "Transport protocol must be '_tcp' or '_udp'" );
 	}
 
 	// Let's try to analyse the name
@@ -166,22 +169,23 @@ Service::Service( const char * FullName, uint16_t ePort, const char * eHostName 
 
 	if ( eHostName == NULL )
 	{
-		gethostname( HostName, ServiceField );
+		SimpleString LocalHost = Socket::GetHostName();
+		strncpy( HostName, LocalHost.GetStr(), ServiceField );
 	}
 	else
 	{
-		strcpy( HostName, eHostName );
+		strncpy( HostName, eHostName.GetStr(), ServiceField  );
 	}
 }
 
-Service::Service( const char * ServiceName, const char * eRegType, const char * eDomain, uint16_t ePort, const char * eHostName /* = NULL */ )
+Service::Service( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
-	char RegType[512];
+	SimpleString RegType;
 	char * Search;
 
 	Empty();
 
-	if ( ServiceName == NULL || RegType == NULL || ePort == 0 )
+	if ( ServiceName.GetLength() != 0 || eRegType.GetLength() != 0 || ePort == 0 )
 	{
 		return;
 	}
@@ -191,10 +195,10 @@ Service::Service( const char * ServiceName, const char * eRegType, const char * 
 		throw ServiceException( "Bad service Name" );
 	}
 
-	strcpy( Name, ServiceName );
+	strcpy( Name, ServiceName.GetStr() );
 
-	strncpy( RegType, eRegType, sizeof(RegType)-1);
-	Search = strstr( RegType, "._tcp" );
+	RegType = eRegType;
+	Search = strstr( RegType.GetStr(), "._tcp" );
 	if ( Search )
 	{
 		// TCP Service
@@ -203,7 +207,7 @@ Service::Service( const char * ServiceName, const char * eRegType, const char * 
 	}
 	else
 	{
-		Search = strstr( RegType, "._udp" );
+		Search = strstr( RegType.GetStr(), "._udp" );
 		if ( Search )
 		{
 			// UDP Service
@@ -236,7 +240,7 @@ Service::Service( const char * ServiceName, const char * eRegType, const char * 
 		throw ServiceException( "Bad protocol format : must be '_tcp' or 'udp'" );
 	}
 
-	strcpy( Protocol, RegType );
+	strcpy( Protocol, RegType.GetStr() );
 
 	if ( eDomain == NULL )
 	{
@@ -244,21 +248,23 @@ Service::Service( const char * ServiceName, const char * eRegType, const char * 
 	}
 	else
 	{
-		strcpy( Domain, eDomain );
+		strcpy( Domain, eDomain.GetStr() );
 	}
 
 	Port = ePort;
+
 	if ( eHostName == NULL )
 	{
-		gethostname( HostName, ServiceField );
+		SimpleString LocalHost = Socket::GetHostName();
+		strncpy( HostName, LocalHost.GetStr(), ServiceField );
 	}
 	else
 	{
-		strcpy( HostName, eHostName );
+		strncpy( HostName, eHostName.GetStr(), ServiceField  );
 	}
 }
 
-Service::Service( const char * eName, const char * eProtocol, TransportProtocol enTransport, const char * eDomain, uint16_t ePort, const char * eHostName /* = NULL */)
+Service::Service( const SimpleString eName, const SimpleString eProtocol, TransportProtocol enTransport, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	Empty();
 
@@ -273,7 +279,7 @@ Service::Service( const char * eName, const char * eProtocol, TransportProtocol 
 		Init();
 		return;
 	}
-	strcpy( Protocol, eProtocol );
+	strcpy( Protocol, eProtocol.GetStr() );
 
 	// Check parameters values
 	if ( CheckName( Name ) == false )
@@ -281,7 +287,8 @@ Service::Service( const char * eName, const char * eProtocol, TransportProtocol 
 		Init();
 		return;
 	}
-	strcpy( Name, eName );
+
+	strcpy( Name, eName.GetStr() );
 
 	if ( eDomain == NULL )
 	{
@@ -289,7 +296,7 @@ Service::Service( const char * eName, const char * eProtocol, TransportProtocol 
 	}
 	else
 	{
-		strcpy( Domain, eDomain );
+		strcpy( Domain, eDomain.GetStr() );
 	}
 
 	if ( enTransport == TCP )
@@ -303,13 +310,15 @@ Service::Service( const char * eName, const char * eProtocol, TransportProtocol 
 	nTransport = enTransport;
 
 	Port = ePort;
+
 	if ( eHostName == NULL )
 	{
-		gethostname( HostName, ServiceField );
+		SimpleString LocalHost = Socket::GetHostName();
+		strncpy( HostName, LocalHost.GetStr(), ServiceField );
 	}
 	else
 	{
-		strcpy( HostName, eHostName );
+		strncpy( HostName, eHostName.GetStr(), ServiceField  );
 	}
 }
 
@@ -331,7 +340,7 @@ SimpleString Service::ToString()
 }
 
 
-RegisterService::RegisterService( const char * FullName, uint16_t ePort, bool AutoRegister )
+RegisterService::RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister )
 	: Service( FullName, ePort )
 {
 	Registered = false;
@@ -343,7 +352,7 @@ RegisterService::RegisterService( const char * FullName, uint16_t ePort, bool Au
 	}
 }
 
-RegisterService::RegisterService( const char * ServiceName, const char * RegType, const char * Domain, uint16_t ePort, bool AutoRegister )
+RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister )
 	: Service( ServiceName, RegType, Domain, ePort )
 {
 	Registered = false;
@@ -355,7 +364,7 @@ RegisterService::RegisterService( const char * ServiceName, const char * RegType
 	}
 }
 
-RegisterService::RegisterService( const char * ServiceName, const char * Protocol, TransportProtocol Transport, const char * Domain,  uint16_t ePort, bool AutoRegister  )
+RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString Protocol, TransportProtocol Transport, const SimpleString Domain,  uint16_t ePort, bool AutoRegister  )
 	: Service( ServiceName, Protocol, Transport, Domain, ePort )
 {
 	Registered = false;
@@ -398,10 +407,10 @@ bool RegisterService::IsRegistered()
 
 bool RegisterService::Register()
 {
-	char ProtocolAndTransport[ServiceField + sizeof("_tcp")+1];		// <Name> . "_tcp" or <Name> . "_udp"
+	TemporaryMemoryBuffer ProtocolAndTransport(ProtocolAndTransportField+1);		// <Name> . "_tcp" or <Name> . "_udp"
 	int err;
 
-	sprintf( ProtocolAndTransport, "%s.%s", Protocol, Transport );
+	snprintf( ProtocolAndTransport, ProtocolAndTransportField+1, "%s.%s", Protocol, Transport );
 
 	err = DNSServiceRegister( &DnsSdConnection, 0, 0, Name, ProtocolAndTransport, Domain, NULL, (uint16_t)htons(Port),
 		Properties.GetTXTRecordLength(), Properties.ExportTXTRecord(), DnsRegisterReply, (void*)this );
