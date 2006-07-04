@@ -38,9 +38,10 @@ public:
 	 * 
 	 * Block the thread on this event until another thread signal the event, 
 	 * during a maximum of 'timer' milliseconds (if 'timer' no null)
+	 * It should have been const but the pthread API make problems...
 	 * @param [in] timer timeout in milliseconds. 0 to wait an infinite time.
 	 */
-	bool Wait(unsigned long timer = 0) const;
+	bool Wait(unsigned long timer = 0);
 private:
 #ifdef WIN32
 	HANDLE handle;

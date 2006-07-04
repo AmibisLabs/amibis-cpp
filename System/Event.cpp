@@ -45,7 +45,7 @@ void Event::Signal()
 #endif /* WIN32 */
 }
 
-bool Event::Wait(unsigned long timer) const
+bool Event::Wait(unsigned long timer)
 {
 #ifndef WIN32
 	pthread_mutex_lock(&mutex);
