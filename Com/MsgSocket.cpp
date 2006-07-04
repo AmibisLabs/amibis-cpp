@@ -1,6 +1,6 @@
 #include <Com/MsgSocket.h>
 
-#include <System/Config.h>
+#include <System/Portage.h>
 #include <System/Socket.h>
 #include <System/SocketException.h>
 #include <Com/MsgSocketException.h>
@@ -21,7 +21,7 @@ UdpConnection::UdpConnection(const UdpConnection& udp_connect)
   memcpy(&addr, &(udp_connect.addr), sizeof(struct sockaddr_in));
 }
 
-UdpConnection::UdpConnection(const char* an_addr, int port)
+UdpConnection::UdpConnection(const SimpleString an_addr, int port)
 {
 //REVIEW
 /*	addr.sin_family = AF_INET;
@@ -68,10 +68,6 @@ MsgSocket::MsgSocket(Socket* s)
     service_id(0), message_id(0), peer_pid(0),
     receivedSyncLinkMsg(false),
 	sendSyncLinkMsg(false),
-	SyncLinkData(NULL),
-	SyncLinkDataLength(0),
-	PeerSyncLinkData(NULL),
-	PeerSyncLinkDataLength(0),
 	callbackSyncLinkFct(NULL)
 {
   callbackReceive = NULL;
@@ -92,10 +88,6 @@ MsgSocket::MsgSocket(Socket::SocketKind type)
     service_id(0), message_id(0), peer_pid(0),
     receivedSyncLinkMsg(false),
 	sendSyncLinkMsg(false),
-	SyncLinkData(NULL),
-	SyncLinkDataLength(0),
-	PeerSyncLinkData(NULL),
-	PeerSyncLinkDataLength(0),
 	callbackSyncLinkFct(NULL)
 {
   callbackReceive = NULL; 
@@ -132,25 +124,11 @@ MsgSocket::~MsgSocket()
 		delete [] SendBuffer;
 		SendBuffer = NULL;
 	}
-
-	if ( SyncLinkData )
-	{
-		delete [] SyncLinkData;
-		SyncLinkData = NULL;
-	}
-
-	if ( PeerSyncLinkData )
-	{
-		delete [] PeerSyncLinkData;
-		PeerSyncLinkData = NULL;
-	}
 }
 
-int MsgSocket::SetSyncLinkData( unsigned char * data, int length )
+bool MsgSocket::SetSyncLinkData( SimpleString DataForSL )
 {
-	unsigned char * tmpc;
-
-	if ( data == NULL || length <= 0 )
+	if ( DataForSL.GetLength() <= 0 )
 		return false;
 
 	protectSend.EnterMutex();
@@ -168,42 +146,21 @@ int MsgSocket::SetSyncLinkData( unsigned char * data, int length )
 		return false;
 	}
 
-	tmpc = new unsigned char[length];
-	if ( tmpc == NULL )
-	{
-#ifdef DEBUG
-		if ( Debug & DBG_LINKSYNC )
-		{
-			fprintf( stderr, "MsgSocket::SetSyncLinkData: no more memory to set SyncLink data.\n" );
-		}
-#endif
-		protectSend.LeaveMutex();
-		return false;
-	}
-
-	if ( SyncLinkData != NULL )
-	{
-		// Free previous data...
-		delete [] SyncLinkData;
-	}
-
 	// Copy data and set Length
-	SyncLinkData = tmpc;
-	memcpy( SyncLinkData, data, (size_t)length );
-	SyncLinkDataLength = length;
+	SyncLinkData = DataForSL;
 
 	protectSend.LeaveMutex();
 	return true;
 }
 
-int MsgSocket::SetPeerSyncLinkData( unsigned char * data, int length )
+bool MsgSocket::SetPeerSyncLinkData( char* DataForSL, int DataLength )
 {
-	if ( data == NULL || length <= 0 )
+	if ( DataForSL == NULL || DataLength <= 0 )
 		return false;
 
 	protectSend.EnterMutex();
 
-	if ( PeerSyncLinkData != NULL )
+	if ( PeerSyncLinkData.GetLength() != 0 )
 	{
 		// TOO LATE
 #ifdef DEBUG
@@ -216,60 +173,39 @@ int MsgSocket::SetPeerSyncLinkData( unsigned char * data, int length )
 		return false;
 	}
 
-	PeerSyncLinkData = new unsigned char[length];
-	if ( PeerSyncLinkData == NULL )
-	{
-#ifdef DEBUG
-		if ( Debug & DBG_LINKSYNC )
-		{
-			fprintf( stderr, "MsgSocket::SetPeerSyncLinkData: no more memory to set SyncLink data.\n" );
-		}
-#endif
-		protectSend.LeaveMutex();
-		return false;
-	}
+	TemporaryMemoryBuffer Buffer( DataLength+1 );
+	memcpy( (char*)Buffer, DataForSL, DataLength );
+	((char*)Buffer)[DataLength] = '\0';
 
-	// Copy data and set Length
-	memmove( PeerSyncLinkData, data, (size_t)length );
-	PeerSyncLinkDataLength = length;
+	PeerSyncLinkData = Buffer;
 
 	protectSend.LeaveMutex();
 	return true;
 }
 
 
-int MsgSocket::GetSyncLinkData( unsigned char * data, int maxlength )
+SimpleString MsgSocket::GetSyncLinkData()
 {
-	protectSend.EnterMutex();
-
-	if ( SyncLinkDataLength > maxlength )
-	{
-		protectSend.LeaveMutex();
-		return 0;
-	}
+	SimpleString ReturnValue;
 
 	// Copy the data
-	memmove( data, SyncLinkData, (size_t)SyncLinkDataLength ); 
-
+	protectSend.EnterMutex();
+	ReturnValue = SyncLinkData;
 	protectSend.LeaveMutex();
-	return SyncLinkDataLength;
+
+	return ReturnValue;
 }
 
-int MsgSocket::GetPeerSyncLinkData( unsigned char * data, int maxlength )
+SimpleString MsgSocket::GetPeerSyncLinkData()
 {
-	protectSend.EnterMutex();
-
-	if ( PeerSyncLinkData == NULL || PeerSyncLinkDataLength > maxlength )
-	{
-		protectSend.LeaveMutex();
-		return 0;
-	}
+	SimpleString ReturnValue;
 
 	// Copy the data
-	memmove( data, SyncLinkData, (size_t)PeerSyncLinkDataLength );
-
+	protectSend.EnterMutex();
+	ReturnValue = PeerSyncLinkData;
 	protectSend.LeaveMutex();
-	return PeerSyncLinkDataLength;
+
+	return ReturnValue;
 }
 
 int MsgSocket::PrepareBufferForBip(char * buf, const char * data, int datalen)
@@ -361,7 +297,7 @@ int MsgSocket::WriteHeaderForBip(char * buf, int service_id, int message_id )
 }
 
 
-void MsgSocket::InitForTcpClient(const char* addr, int port)
+void MsgSocket::InitForTcpClient(const SimpleString addr, int port)
 {
   socket->Connect(addr, port);
   bufferSize = TCP_BUFFER_SIZE;
@@ -387,7 +323,7 @@ void MsgSocket::InitForTcpClient(const char* addr, int port)
 
 void MsgSocket::InitForTcpServer(int port)
 {
-  socket->Bind("", port);    
+	socket->Bind(SimpleString::EmptyString, port);    
   socket->Listen();
   kind = TCP_SERVER_KIND;
   connected = true;
@@ -402,7 +338,7 @@ void MsgSocket::InitForTcpServer(int port)
 
 void MsgSocket::InitForUdpExchange(int port)
 {
-  socket->Bind("", port);    
+  socket->Bind(SimpleString::EmptyString, port);    
   bufferSize = TCP_BUFFER_SIZE;
   buffer = new unsigned char[bufferSize];
   buffer_udp_send = new char[UDP_MAX_MSG_SIZE];
@@ -468,9 +404,9 @@ bool MsgSocket::SendSyncLinkMsg()
 
   try
     {
-		if ( SyncLinkDataLength != 0 )
+		if ( SyncLinkData.GetLength() != 0 )
 		{
-			TotalLen = PrepareBufferForBip( (char*)SendBuffer, (const char*)SyncLinkData, SyncLinkDataLength );
+			TotalLen = PrepareBufferForBip( (char*)SendBuffer, (const char*)SyncLinkData.GetStr(), SyncLinkData.GetLength() );
 		}
 		else
 		{
@@ -623,7 +559,7 @@ void MsgSocket::Receive()
 							
 							if ( length_msg != 0 )
 							{
-								SetPeerSyncLinkData( (unsigned char*)(buffer+offset+length_header), length_msg );
+								SetPeerSyncLinkData( (char*)(buffer+offset+length_header), length_msg );
 							}
 
 							offset += length_header + tag_end_size;
@@ -1181,16 +1117,6 @@ bool MsgSocket::SyncLinkMsgSent() const
 int MsgSocket::GetMaxMessageSizeForTCP()
 {
 	return maxMessageSizeForTCP; 
-}
-
-int MsgSocket::GetSyncLinkDataLength()
-{
-	return SyncLinkDataLength;
-}
-
-int MsgSocket::GetPeerSyncLinkDataLength()
-{
-	return PeerSyncLinkDataLength;
 }
 
 void MsgSocket::SetMaxMessageSizeForTCP(int max)

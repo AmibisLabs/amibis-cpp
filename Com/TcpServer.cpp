@@ -227,9 +227,9 @@ void TcpServer::AcceptConnection(MsgSocket* sock)
   // Init the socket
   // REVIEW: Inherit my SyndLink data
   mutex.EnterMutex();
-  if ( SyncLinkDataLength != 0 )
+  if ( SyncLinkData.GetLength() != 0 )
   {
-	sock->SetSyncLinkData( SyncLinkData, SyncLinkDataLength );
+	sock->SetSyncLinkData( SyncLinkData  );
   }
   // If we have a fonction set to process LincSyncData, set it to the opened connection
   if ( callbackSyncLinkFct )

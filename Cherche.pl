@@ -44,18 +44,34 @@ sub WorkOnFile()
 }
 
 @ExcludedFiles = (
-'System/Socket.cpp',
 'System/System/Config.h',
-'System/System/Portage.h',
-'System/System/SimpleException.h',
-'System/System/SimpleString.h'
+'System/Socket.cpp',
+'System/Portage.cpp',
+'System/SimpleException.cpp',
+'System/SimpleString.cpp',
+'Com/MsgSocket.cpp',
+'Com/TcpUdpClientServer.cpp',
+'Com/Com/TcpServer.h'
 );
 
 foreach $fic ( @ExcludedFiles )
 {
-	$NotParseThisFiles{$fic} = 1;
+	if ( $fic =~ /\.cpp/ )
+	{
+		$NotParseThisFiles{$fic} = 1;
+		# print STDERR "$fic\n";
+		$fic =~ /([^\/]+)\/([^\/]+)\.cpp$/;
+		$fic = "$1/$1/$2.h";
+		$NotParseThisFiles{$fic} = 1;
+		# print STDERR "$fic\n";
+	}
+	else
+	{
+		$NotParseThisFiles{$fic} = 1;
+		# print STDERR "$fic\n";
+	}
 }
 
 &RecurseWork::RecurseWork( 'System', 0 );
-# &RecurseWork::RecurseWork( 'Com', 0 );
+&RecurseWork::RecurseWork( 'Com', 0 );
 # &RecurseWork::RecurseWork( 'ServiceControl', 0 );

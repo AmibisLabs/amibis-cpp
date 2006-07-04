@@ -71,6 +71,7 @@ class ClientConnection
  * Communication can be done with TCP or UDP protocol.
  * 
  * \author Sebastien Pesnel
+ * \author Dominique Vaufreydaz
  */
 class TcpUdpClientServer : public TcpServer, public UdpExchange
 {

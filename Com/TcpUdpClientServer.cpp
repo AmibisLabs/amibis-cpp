@@ -1,5 +1,6 @@
 #include <Com/TcpUdpClientServer.h>
 
+
 using namespace Omiscid;
 
 ConnectionInfos::ConnectionInfos()
@@ -61,10 +62,9 @@ void TcpUdpClientServer::Create(int port_tcp, int port_udp)
   // REVIEW add support of UDP Port
   UdpExchange::Create(port_udp);
 
-  char * tmpc = new char[512];
-  sprintf( tmpc, "UDP:%d", UdpExchange::GetUdpPort() );
-  TcpServer::SetSyncLinkData( (unsigned char*)tmpc, (int)strlen(tmpc) );
-  delete tmpc;
+  SimpleString tmps = "UDP:";
+  tmps += UdpExchange::GetUdpPort();
+  TcpServer::SetSyncLinkData( tmps );
   TcpServer::SetCallbackSyncLink( ProcessLyncSyncMsg, (void*)this, (void*)0 );
   TcpServer::Create(port_tcp);
 }
@@ -136,12 +136,11 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 			UdpExchange::Create(0);
 		}
 		// Set UDP Port as property for the Sync Link paquet of the TCP Connection
-		char * tmpc = new char[512];
-		sprintf( tmpc, "%s:%d", MagicUdp.GetStr(), UdpExchange::GetUdpPort() );
-		int tmpi = (int)strlen(tmpc);
-		TcpServer::SetSyncLinkData( (unsigned char*)tmpc, tmpi );
-		tcpclient->SetSyncLinkData( (unsigned char*)tmpc, tmpi );
-		delete tmpc;
+		SimpleString tmps = MagicUdp;
+		tmps += ":";
+		tmps += UdpExchange::GetUdpPort();
+		TcpServer::SetSyncLinkData( tmps );
+		tcpclient->SetSyncLinkData( tmps );
   }
 
   tcpclient->ConnectToServer(addr, port_tcp);

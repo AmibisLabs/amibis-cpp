@@ -10,6 +10,7 @@
 #include <System/Config.h>
 #include <System/Thread.h>
 #include <System/Socket.h>
+#include <System/SimpleString.h>
 
 namespace Omiscid {
 
@@ -27,7 +28,7 @@ class MsgSocketCallBackData
 {
 public:
   int len; /*!< the message length*/
-  unsigned char* buffer;/*!< a pointer on an array conatining the message byte. */
+  unsigned char* buffer;/*!< a pointer on an array containing the message byte. */
   bool origUdp;/*!< true if the source is UDP, false else*/
   unsigned int pid;/*!< the peer identifier */
   unsigned int mid;/*!< the message identifier (protocol BIP) */
@@ -50,7 +51,7 @@ class UdpConnection
    * \param addr [in] host address
    * \param port [in] port number
    */
-  UdpConnection(const char* addr, int port);
+  UdpConnection(const SimpleString addr, int port);
 
   /** \brief Copy Constructor
    * \param udp_connect [in] the UdpConnection object to copy.
@@ -152,7 +153,7 @@ class MsgSocket : public Thread
    * \param addr [in] host where find the server
    * \param port [in] port where listen the server
    */
-  void InitForTcpClient(const char* addr, int port);
+  void InitForTcpClient(const SimpleString addr, int port);
 
   /** \brief Initialization for TCP Server
    * \param port [in] port number where the server must listen
@@ -173,7 +174,7 @@ class MsgSocket : public Thread
    */
   void SetCallbackReceive(Callback_Receive cr, void* user_data1, void* user_data2 = NULL);
 
-   void SetCallbackSyncLink(Callback_SyncLink cr, void* user_data1 = NULL, void* user_data2 = NULL);
+  void SetCallbackSyncLink(Callback_SyncLink cr, void* user_data1 = NULL, void* user_data2 = NULL);
 
   /** \brief method call when the Thread is started
    *
@@ -306,11 +307,9 @@ class MsgSocket : public Thread
   bool SetTcpNoDelay(bool Set = true);
 
     // REVIEW 
-  int SetSyncLinkData( unsigned char * data, int length );
-  int GetSyncLinkData( unsigned char * data, int maxlength );
-  int GetPeerSyncLinkData( unsigned char * data, int maxlength );
-  int GetSyncLinkDataLength();
-  int GetPeerSyncLinkDataLength();
+  bool SetSyncLinkData( SimpleString DataForSL );
+  SimpleString GetSyncLinkData();
+  SimpleString GetPeerSyncLinkData();
 
 protected:
 
@@ -344,10 +343,8 @@ protected:
 
   Callback_SyncLink callbackSyncLinkFct;/*!< callback call when messages arrive*/
   MsgSocketCallBackData callbackSyncLinkData;
-  unsigned char * SyncLinkData;
-  int SyncLinkDataLength;
-  unsigned char * PeerSyncLinkData;
-  int PeerSyncLinkDataLength;
+  SimpleString SyncLinkData;
+  SimpleString PeerSyncLinkData;
 
  private:
   /** \brief Accept TCP Connection
@@ -403,7 +400,7 @@ protected:
 private:
 
 	// REVIEW : can only be done internaly
-  int SetPeerSyncLinkData( unsigned char * data, int length );
+  bool SetPeerSyncLinkData( char* DataForSL, int DataLength );
 
 	// let say that TcpServer Need to now these constant values
 	friend class TcpServer;
