@@ -97,14 +97,14 @@ public:
     bool GetVariableValue(const SimpleString varName, SimpleString& value);
 
 	/**
-     * search for a connector on the remote Omiscid DnsSdService
+     * search for a connector on the remote Omiscid service
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */
     bool HasConnector(const SimpleString ConnectorName );
 
 		/**
-     * search for a connector on the remote Omiscid DnsSdService
+     * search for a connector on the remote Omiscid service
      * @param ConnectorName the name of the remote variable
      * @return UnknowKind if the connecotr do not exists, AnInput, AnOutput, AnInOutput otherwise
      */

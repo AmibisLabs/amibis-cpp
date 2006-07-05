@@ -1,7 +1,7 @@
 //      -*- C++ -*-
 
 /*! @file 
- * @brief Header of the common classes and values for the PRIMA DnsSdService package
+ * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2005
  */
 
@@ -187,14 +187,13 @@ class ControlClient : public TcpClient, public XMLTreeParser
   
   /** \brief Process Control Event
    *
-   * An implementation of callback for the event processing
    * For the event about value modification, the value contained in the VariableAttribut
    * object is set to the new value.
    * <br> Can be used with in user callback
    * \param msg the message containing the ControlEvent
    * \param ptr pointer on a ControlClient object
    */
-  static void FUNCTION_CALL_TYPE CtrlEventProcess(XMLMessage* msg, void* ptr);
+  void CtrlEventProcess(XMLMessage* msg);
 
  protected:
   /** \brief Process a message from a ControlServer
@@ -203,7 +202,8 @@ class ControlClient : public TcpClient, public XMLTreeParser
    * \param msg The message to process
    */
   void ProcessAMessage(XMLMessage* msg);
- private:
+
+private:
   int ProcessMessages();
   bool WaitForMessage(unsigned long timer = 0);
 

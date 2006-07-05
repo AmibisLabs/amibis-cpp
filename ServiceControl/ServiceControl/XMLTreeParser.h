@@ -1,7 +1,7 @@
 //      -*- C++ -*-
 
 /*! @file XMLTreeParser.h
- * @brief Header of the common classes and values for the PRIMA DnsSdService package
+ * @brief Header of the common classes and values for the Omiscid package
  * @date 2004-2005
  */
 

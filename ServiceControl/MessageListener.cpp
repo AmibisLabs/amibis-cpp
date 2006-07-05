@@ -1,15 +1,15 @@
 
 
-#include <ServiceControl/OmiscidMessageListener.h>
+#include <ServiceControl/MessageListener.h>
 
 using namespace Omiscid;
 
-void OmiscidMessageListener::ProcessAMessage( Message * Msg )
+void MessageListener::ProcessAMessage( Message * Msg )
 {
 	ReceivedOmiscidMessage( *Msg );
 }
 
-void OmiscidMessageListener::Run()
+void MessageListener::Run()
 {
 	while( !StopPending() )
 	{

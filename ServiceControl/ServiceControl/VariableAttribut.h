@@ -1,7 +1,7 @@
 //      -*- C++ -*-
 
 /*! @file VariableAttribut.h
- * @brief Header of the common classes and values for the PRIMA DnsSdService package
+ * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2005
  */
 
@@ -29,7 +29,7 @@ typedef enum VariableAccess
 class VariableAttribut;
 
   /** @brief Callback called when the value changed */
-typedef void (FUNCTION_CALL_TYPE *SignalValueChanged)(VariableAttribut* var, void* user_ptr);
+typedef bool (FUNCTION_CALL_TYPE *SignalThatValueChanged)(VariableAttribut* var, void* user_ptr);
 
 class VariableAttributCallback
 {
@@ -39,7 +39,7 @@ public:
 
 	VariableAttributCallback& operator=(VariableAttributCallback&ToCopy);
 
-	SignalValueChanged callbackValue; /*!< the callback method to call when the value changed */
+	SignalThatValueChanged callbackValue; /*!< the callback method to call when the value changed */
 	void* userDataPtr; /*!< the pointer on data given to the callback */
 };
 
@@ -57,7 +57,10 @@ public:
  */
 class VariableAttribut : public Attribut
 {
- public:
+	friend class ControlServer;
+	friend class ControlClient;
+
+private:
   /** @name Constructor */
   //@{
   /** @brief Default Constructor */
@@ -68,6 +71,7 @@ class VariableAttribut : public Attribut
   VariableAttribut(const SimpleString a_name);
   //@}
 
+public:
   /** @name Read Accessors */
   //@{
   SimpleString& GetType();
@@ -92,11 +96,13 @@ class VariableAttribut : public Attribut
    * @param value_str [in] the new string representaion of the value */
   void SetValue(const SimpleString value_str);
 
+private:
   /** @brief Callback call when value changed
    * @param user_data_ptr pointer given to the callback when it is called */
-  void SetCallbackValueChanged(SignalValueChanged callback, void* user_data_ptr);
+  void SetCallbackForControlServer(SignalThatValueChanged callback, void* user_data_ptr);
   //@}
 
+public:
   /** @brief define if a variable can be modified according to its kid of access.
    * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.
    * @return true if access is 'read-write' or 'read-write only before init' and the status is different of STATUS_RUNNING (: 2).
@@ -159,8 +165,6 @@ class VariableAttribut : public Attribut
    */
   void ExtractDataFromXml(xmlNodePtr node);
 
-  VariableAttributCallback GetCallbackData();
-
   /**  \brief to parse/generate XML data.
    */
   static const SimpleString variable_str;
@@ -175,8 +179,12 @@ protected:
   static const SimpleString access_read_str; /*<! SimpleString representation for 'read' access (used in XML description)*/
   static const SimpleString access_readwrite_str; /*<! SimpleString representation for 'read-write' access (used in XML description)*/
 
- private:
-	VariableAttributCallback CallbackData; /*!< the callback method to call when the value changed */
+private:
+
+  void SetValueFromControls(const SimpleString value_str);
+
+  VariableAttributCallback NotifyControlServer; /*!< the callback method to call when the value changed */
+  MutexedSimpleList<VariableAttributCallback*> Listeners;
 };
 
 } // namespace Omiscid

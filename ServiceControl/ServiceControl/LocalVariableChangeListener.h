@@ -19,7 +19,7 @@ class Service;
  *
  * @author Dominique Vaufreydaz
  */
-class OmiscidAllVariablesListener
+class LocalVariableListener
 {
 	friend class Service;
 
@@ -32,30 +32,7 @@ protected:
      * @param message
      *            the Omiscid message to process
      */
-    virtual void VariableChanged(Service& DnsSdService, SimpleString VarName, SimpleString NewValue) = 0;
-};
-
-/**
- * Defines the listener interface for all Omiscid variable of a service
- * messages. This interface must be implemented in order to receive
- * notifications on Omiscid messages receptions.
- *
- * @author Dominique Vaufreydaz
- */
-class OmiscidVariableListener
-{
-	friend class Service;
-
-protected:
-    /**
-     * Processes a received Omiscid message. As a given message could be processed
-     * by several others listeners, the message must not be modified by its
-     * processing.
-     *
-     * @param message
-     *            the Omiscid message to process
-     */
-    virtual void VariableChanged(Service& DnsSdService, SimpleString NewValue) = 0;
+    virtual void VariableChanged(Service& Service, SimpleString NewValue) = 0;
 };
 
 

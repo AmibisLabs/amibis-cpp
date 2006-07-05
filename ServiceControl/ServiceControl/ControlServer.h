@@ -1,7 +1,7 @@
 //      -*- C++ -*-
 
 /*! @file 
- * @brief Header of the common classes and values for the PRIMA DnsSdService package
+ * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2005
  */
 
@@ -16,7 +16,7 @@
 #include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/IntVariableAttribut.h>
-#include <ServiceControl/OmiscidServicesTools.h>
+#include <ServiceControl/ServicesTools.h>
 #include <ServiceControl/StringVariableAttribut.h>
 
 namespace Omiscid {
@@ -48,7 +48,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
 
   /** @brief Constructor
    *
-   * Define a DnsSdService ID for this service.
+   * Define a service ID for this service.
    * @param service_name the name for the service. It will be registered with this name.
    */
   ControlServer(const SimpleString service_name = "Control");
@@ -170,7 +170,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    */
   void SetStatus(STATUS state);
 
-  /** @brief DnsSdService Properties. 
+  /** @brief Service Properties. 
    *
    * Enable user to add field in the TXT record send to DNS-SD.
    * Reserved fields : owner, inputs, outputs, inoutputs.
@@ -203,7 +203,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * only during initialization.
    * @param va [in] contains the data about the variable.
    */
-  virtual void ModifVariable( SimpleString NewValue, int status, VariableAttribut* va);
+  virtual void VariableChange( SimpleString NewValue, STATUS status, VariableAttribut* va );
 
 
   /**
@@ -244,7 +244,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    *
    * Callback given to the variable attribut object
    */
-  static void FUNCTION_CALL_TYPE ValueChanged(VariableAttribut* var, void* userData);
+  static bool FUNCTION_CALL_TYPE NotifyValueChanged(VariableAttribut* var, void* userData);
 
   void RefreshLock();
   

@@ -255,7 +255,7 @@ class MsgSocket : public Thread
    * and set the MsgSocket as disconnected */
   void Stop();
 
-  /** \brief Set the DnsSdService Id
+  /** \brief Set the service Id
    *
    * Define the id used by the BIP protocol to identifies peer in message exchange
    */

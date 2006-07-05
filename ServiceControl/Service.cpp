@@ -194,6 +194,16 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 	return SendToOneClient(ConnectorName, Buffer, BufferLen, ServProxy.GetPeerId(), FastSend );
 }
 
+bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy* ServProxy, bool FastSend )
+{
+	if ( ServProxy == NULL )
+	{
+		TraceError( "Coulnd not send data to (null) proxy\n" );
+		return false;
+	}
+	return SendToOneClient(ConnectorName, Buffer, BufferLen, ServProxy->GetPeerId(), FastSend );
+}
+
    /**
 	* Creates a new Omiscid Variable
 	* @param varName the variable name
@@ -402,12 +412,23 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, Si
 	return false;
 }
 
+bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, SimpleString RemoteConnector)
+{
+	if ( ServProxy == NULL )
+	{
+		TraceError( "Coulnd not connect to (null) proxy service\n" );
+		return false;
+	}
+	return ConnectTo(LocalConnector, *ServProxy, RemoteConnector);
+}
+
+
 	/**
 	 * Add a message listener to a connector
 	 * @param ConnectorName the name of the connector
 	 * @param MsgListener the object that will handle messages sent to this connector
 	 */
-bool Service::AddConnectorListener(SimpleString ConnectorName, OmiscidMessageListener * MsgListener)
+bool Service::AddConnectorListener(SimpleString ConnectorName, MessageListener * MsgListener)
 {
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )

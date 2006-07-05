@@ -91,7 +91,7 @@ ServiceFilter * HostPrefixIs(SimpleString Hostname);
 ServiceFilter * HasVariable(SimpleString VarName);
 
 /**
-* Tests whether the service contain a variable with a specific value
+* Tests whether the service contain a variable (we do not care about value)
 *
 * @param String
 * @param String
@@ -100,13 +100,23 @@ ServiceFilter * HasVariable(SimpleString VarName);
 ServiceFilter * HasVariable(SimpleString VarName, SimpleString Value);
 
 /**
-* Tests whether the service contain a connector (with a specific type or not)
+* Tests whether the service contain a connector (we do not care if it is an input or so...)
 *
 * @param String
 * @param ConnectorKind
 * @return
 */
-ServiceFilter * HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector = UnkownConnectorKind );
+ServiceFilter * HasConnector( SimpleString ConnectorName );
+
+/**
+* Tests whether the service contain a connector (with a specific type)
+*
+* @param String
+* @param ConnectorKind
+* @return
+*/
+ServiceFilter * HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector );
+
 
 /**
 * Create an AND ServiceFilter test set with 0 to 5 parameters

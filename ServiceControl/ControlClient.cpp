@@ -27,8 +27,8 @@ ControlClient::ControlClient(unsigned int serviceId)
   XMLTreeParser::StartThread();
   
   // By default, I will process the ConrolFlow by myself
-  callback = ControlClient::CtrlEventProcess;
-  userDataPtr = this;
+  callback    = NULL;
+  userDataPtr = 0;
 }
 
 ControlClient::~ControlClient()
@@ -568,15 +568,16 @@ void ControlClient::ProcessAMessage(XMLMessage* msg)
 	}
 	else if(strcmp((const char*)msg->GetRootNode()->name, "controlEvent")==0)
 	{
-		if(callback != NULL)
-		{ callback(msg, userDataPtr); }
+		CtrlEventProcess( msg );
+		if ( callback != NULL )
+		{
+			callback(msg, userDataPtr);
+		}
 	}
 }
 
-void FUNCTION_CALL_TYPE ControlClient::CtrlEventProcess(XMLMessage* msg, void* ptr)
+void ControlClient::CtrlEventProcess(XMLMessage* msg)
 {
-  ControlClient* ctrl_client = (ControlClient*)ptr;
-
   xmlNodePtr node = msg->GetRootNode();
 
   xmlNodePtr current = node->children;
@@ -587,16 +588,18 @@ void FUNCTION_CALL_TYPE ControlClient::CtrlEventProcess(XMLMessage* msg, void* p
       if(strcmp(cur_name, VariableAttribut::variable_str.GetStr())==0)
 	{
 	  xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", current);
-	  VariableAttribut* va = ctrl_client->FindVariable((const char*)attr_name->children->content);
+	  VariableAttribut* va = FindVariable((const char*)attr_name->children->content);
 	  if(va)
 	    {
 	      xmlNodePtr val_node = XMLMessage::FindFirstChild("value", current);
-	      if(val_node) va->SetValue((const char*)val_node->children->content);
+	      if(val_node)
+		  {
+			  va->SetValue((const char*)val_node->children->content);
+		  }
 	    }
 	  else
 	  {
-	    TraceError( "in CtrlEventProcess : Unknown variable %s\n", 
-		    (const char*)attr_name->children->content);	  
+	    TraceError( "in CtrlEventProcess : Unknown variable %s\n", (const char*)attr_name->children->content);	  
 	  }
 	}
       else

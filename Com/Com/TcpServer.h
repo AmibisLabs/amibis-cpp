@@ -138,7 +138,7 @@ class TcpServer :public MsgSocket, virtual public ComTools
 			 void* user_data2 = NULL);
 
   /**
-   * \brief Define the DnsSdService Id used in the header of each sent messages.
+   * \brief Define the service Id used in the header of each sent messages.
    * \param pid [in] the service id value.
    */
   void SetServiceId(unsigned int pid);

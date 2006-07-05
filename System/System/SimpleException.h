@@ -13,7 +13,7 @@ namespace Omiscid {
 
 /**
  * @class SimpleException SimpleException.h System/SimpleException.h
- * @brief Exception raised by the object of the PRIMA system library
+ * @brief Exception raised by the object of the OMiSCID system library
  * 
  * This class is a mother class for exceptions.
  * All derived classes must define their own exception type (const char*)

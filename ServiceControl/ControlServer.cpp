@@ -4,7 +4,7 @@
 #include <System/Socket.h>
 #include <System/SocketException.h>
 #include <ServiceControl/ControlUtils.h>
-#include <ServiceControl/OmiscidServicesTools.h>
+#include <ServiceControl/ServicesTools.h>
 #include <ServiceControl/VariableAttribut.h>
 
 #ifndef WIN32
@@ -66,7 +66,7 @@ void ControlServer::InitInstance()
 }
 
 ControlServer::ControlServer(const SimpleString service_name)
-  :	serviceName( service_name.GetStr() )
+:	serviceName( service_name.GetStr() )
 {
 	InitInstance();
 }
@@ -103,174 +103,174 @@ ControlServer::~ControlServer()
 		PeerIdVariable = NULL;
 	}
 
-  for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
-    {
-       delete listInOutput.GetCurrent();
-       listInOutput.RemoveCurrent();
-    }
- 
-  for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
-    {
-      delete listVariable.GetCurrent();
-      listVariable.RemoveCurrent();
-    }
+	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
+	{
+		delete listInOutput.GetCurrent();
+		listInOutput.RemoveCurrent();
+	}
+
+	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
+	{
+		delete listVariable.GetCurrent();
+		listVariable.RemoveCurrent();
+	}
 
 
-  listValueListener.Lock();
-  for(listValueListener.First(); listValueListener.NotAtEnd(); 
-      listValueListener.Next())
-    {
-       delete listValueListener.GetCurrent();
-       listValueListener.RemoveCurrent();
-    }
-  listValueListener.Unlock();
-  
-  if(registerDnsSd){ delete registerDnsSd; registerDnsSd = NULL; }
+	listValueListener.Lock();
+	for(listValueListener.First(); listValueListener.NotAtEnd(); 
+		listValueListener.Next())
+	{
+		delete listValueListener.GetCurrent();
+		listValueListener.RemoveCurrent();
+	}
+	listValueListener.Unlock();
+
+	if(registerDnsSd){ delete registerDnsSd; registerDnsSd = NULL; }
 }
 
 bool ControlServer::StartServer()
 { 
-  try
-    {
-      Create(0);
-      
-      port = GetSocket()->GetPortNb();
-      // GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
-      
-#if 0
-	  // creer les infos pour le Champ TXT
-	  // -- input, output
-	  SimpleString input_record("");
-	  SimpleString output_record("") ;
-	  SimpleString in_output_record("") ;
-	  SimpleString tmp;
-
-	  for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
-	  {
-		  tmp = (listInOutput.GetCurrent())->GetName();
-		  if((listInOutput.GetCurrent())->IsAnInput())
-		  {
-			  input_record = input_record + tmp + ",";
-		  }
-		  else
-		  {
-			  if ( (listInOutput.GetCurrent())->IsAnOutput() )
-			  {
-				  output_record = output_record + tmp + ",";
-			  }
-			  else 
-			  {
-				  in_output_record = in_output_record + tmp + ",";
-			  }
-		  }
-
-		  SimpleString recordData;
-		  listInOutput.GetCurrent()->GenerateRecordData(recordData);
-		  Properties[tmp.GetStr()] = recordData.GetStr();
-	  }
-	  if(input_record.GetLength() > 0)
-		  input_record = input_record.SubString(0, input_record.GetLength()-1);  
-
-	  if(output_record.GetLength()>0)
-		  output_record = output_record.SubString(0, output_record.GetLength()-1);
-#endif
-      
-      registerDnsSd = new RegisterOmiscidService( serviceName.GetStr(), "local.", (unsigned short)port, false);
-      
-	  // Add Constant variable
-	  // The desctiption if full by default
-	  registerDnsSd->Properties["desc"] = "part"; // Will be set to full if possible
-
-	  // Add peerID
-      TemporaryMemoryBuffer tmp_peerid(30);	// To prevent buffer overflow
-      snprintf( tmp_peerid, 30, "%08x", GetServiceId());        
-      registerDnsSd->Properties["id"]= tmp_peerid;
-	  PeerIdVariable->SetValue( (char*)tmp_peerid );
-
-      // Add owner
-      registerDnsSd->SetOwner();
-
-	  OwnerVariable->SetValue( GetLoggedUser() );
-
-	  // 
-
-
-#if 0
-      // Override inputs, outputs, inouputs properties
-	  SimpleString DnsSdField;
-
-	  // ad an s to the names
-	  DnsSdField = InOutputAttribut::input_str+"s";
-	  registerDnsSd->Properties[DnsSdField.GetStr()] = input_record.GetStr();
-  	  DnsSdField = InOutputAttribut::output_str+"s";
-      registerDnsSd->Properties[DnsSdField.GetStr()] = output_record.GetStr();
-   	  DnsSdField = InOutputAttribut::inoutput_str+"s";
-      registerDnsSd->Properties[DnsSdField.GetStr()] = in_output_record.GetStr();
-#endif
-	  
-	  registerDnsSd->Register();
-
-    if(registerDnsSd->IsRegistered())
+	try
 	{
-		TraceError( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
-		serviceName = registerDnsSd->RegisteredName;
-		NameVariable->SetValue( serviceName );
-		// Copy back Properties from RegisterDnsSd to parent, so this object
-		// Properties.ImportTXTRecord( registerDnsSd->Properties.GetTXTRecordLength(), registerDnsSd->Properties.ExportTXTRecord() );
+		Create(0);
+
+		port = GetSocket()->GetPortNb();
+		// GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
+
+#if 0
+		// creer les infos pour le Champ TXT
+		// -- input, output
+		SimpleString input_record("");
+		SimpleString output_record("") ;
+		SimpleString in_output_record("") ;
+		SimpleString tmp;
+
+		for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
+		{
+			tmp = (listInOutput.GetCurrent())->GetName();
+			if((listInOutput.GetCurrent())->IsAnInput())
+			{
+				input_record = input_record + tmp + ",";
+			}
+			else
+			{
+				if ( (listInOutput.GetCurrent())->IsAnOutput() )
+				{
+					output_record = output_record + tmp + ",";
+				}
+				else 
+				{
+					in_output_record = in_output_record + tmp + ",";
+				}
+			}
+
+			SimpleString recordData;
+			listInOutput.GetCurrent()->GenerateRecordData(recordData);
+			Properties[tmp.GetStr()] = recordData.GetStr();
+		}
+		if(input_record.GetLength() > 0)
+			input_record = input_record.SubString(0, input_record.GetLength()-1);  
+
+		if(output_record.GetLength()>0)
+			output_record = output_record.SubString(0, output_record.GetLength()-1);
+#endif
+
+		registerDnsSd = new RegisterOmiscidService( serviceName.GetStr(), "local.", (unsigned short)port, false);
+
+		// Add Constant variable
+		// The desctiption if full by default
+		registerDnsSd->Properties["desc"] = "part"; // Will be set to full if possible
+
+		// Add peerID
+		TemporaryMemoryBuffer tmp_peerid(30);	// To prevent buffer overflow
+		snprintf( tmp_peerid, 30, "%08x", GetServiceId());        
+		registerDnsSd->Properties["id"]= tmp_peerid;
+		PeerIdVariable->SetValue( (char*)tmp_peerid );
+
+		// Add owner
+		registerDnsSd->SetOwner();
+
+		OwnerVariable->SetValue( GetLoggedUser() );
+
+		// 
+
+
+#if 0
+		// Override inputs, outputs, inouputs properties
+		SimpleString DnsSdField;
+
+		// ad an s to the names
+		DnsSdField = InOutputAttribut::input_str+"s";
+		registerDnsSd->Properties[DnsSdField.GetStr()] = input_record.GetStr();
+		DnsSdField = InOutputAttribut::output_str+"s";
+		registerDnsSd->Properties[DnsSdField.GetStr()] = output_record.GetStr();
+		DnsSdField = InOutputAttribut::inoutput_str+"s";
+		registerDnsSd->Properties[DnsSdField.GetStr()] = in_output_record.GetStr();
+#endif
+
+		registerDnsSd->Register();
+
+		if(registerDnsSd->IsRegistered())
+		{
+			TraceError( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
+			serviceName = registerDnsSd->RegisteredName;
+			NameVariable->SetValue( serviceName );
+			// Copy back Properties from RegisterDnsSd to parent, so this object
+			// Properties.ImportTXTRecord( registerDnsSd->Properties.GetTXTRecordLength(), registerDnsSd->Properties.ExportTXTRecord() );
+		}
+		else
+		{
+			TraceError( "registered failed\n");}
 	}
-    else
+	catch(SocketException e)
 	{
-		TraceError( "registered failed\n");}
-    }
-  catch(SocketException e)
-    {
-      e.Display();
-      return false;
-    }
+		e.Display();
+		return false;
+	}
 
-  StartThreadProcessMsg();
-  SetStatus(STATUS_RUNNING);
-    
-  return true;
+	StartThreadProcessMsg();
+	SetStatus(STATUS_RUNNING);
+
+	return true;
 }
 
 void ControlServer::StartThreadProcessMsg()
 {
-  XMLTreeParser::StartThread();
+	XMLTreeParser::StartThread();
 }
 
 void ControlServer::GenerateGlobalShortDescription(SimpleString& str)
 {
-  for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
-    {
-      (listInOutput.GetCurrent())->GenerateShortDescription(str);
-    }
+	for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
+	{
+		(listInOutput.GetCurrent())->GenerateShortDescription(str);
+	}
 
-  for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
-    {
-      (listVariable.GetCurrent())->GenerateShortDescription(str);
-    }
+	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
+	{
+		(listVariable.GetCurrent())->GenerateShortDescription(str);
+	}
 }
 
 InOutputAttribut* ControlServer::FindInOutput(const SimpleString name)
 {
 
-  for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
-    {
-      if(name == (listInOutput.GetCurrent())->GetName()) 
-         return listInOutput.GetCurrent();
-    }
-  return NULL;
+	for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
+	{
+		if(name == (listInOutput.GetCurrent())->GetName()) 
+			return listInOutput.GetCurrent();
+	}
+	return NULL;
 }
 
 VariableAttribut* ControlServer::FindVariable(const SimpleString name)
 { 
-  for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
-    {
-      if(name == (listVariable.GetCurrent())->GetName()) 
-         return listVariable.GetCurrent();
-    }
-  return NULL;
+	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
+	{
+		if(name == (listVariable.GetCurrent())->GetName()) 
+			return listVariable.GetCurrent();
+	}
+	return NULL;
 }
 
 void ControlServer::ProcessAMessage(XMLMessage* msg)
@@ -358,14 +358,14 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 
 void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answer)
 {
-  if(node->children != NULL)
-    {
-      TraceError( "unknown inoutput query (unwaited child)\n");
-    }
-  else
-    {
-      xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
-      bool found = (attr != NULL);      
+	if(node->children != NULL)
+	{
+		TraceError( "unknown inoutput query (unwaited child)\n");
+	}
+	else
+	{
+		xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
+		bool found = (attr != NULL);      
 		if(found)
 		{
 			SimpleString name((const char*)attr->children->content);
@@ -377,232 +377,233 @@ void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answ
 		}
 		else
 		{
-		  TraceError( "understood query (name requested)\n");      
+			TraceError( "understood query (name requested)\n");      
 		}
-    }
+	}
 }
 
 void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, SimpleString& str_answer)
 {
-  //std::cerr<<"in processVariable\n";
-  xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
-  bool found = (attr != NULL);
+	//std::cerr<<"in processVariable\n";
+	xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
+	bool found = (attr != NULL);
 
-  if ( found )
-  {
-      SimpleString name((const char*)attr->children->content);
-      VariableAttribut* va = FindVariable(name);     
-      if(va)
+	if ( found )
 	{
-	  if(node->children == NULL)
-	    va->GenerateLongDescription(str_answer);
-	  else
-	    {
-	      xmlNodePtr val_node = XMLMessage::FindFirstChild("value", node);
-	      if(val_node)
-	      {
-		if(LockOk(pid) && va->CanBeModified(GetStatus()))
+		SimpleString name((const char*)attr->children->content);
+		VariableAttribut* va = FindVariable(name);     
+		if(va)
 		{
-		  if(va->GetType() == "xml")
-		  { 
-		    // SimpleString val_modif((const char*)val_node->children->content);
-		    // VariableAttribut::ModifXmlInStrRevert(val_modif);
-		    ModifVariable( (const char*)val_node->children->content, GetStatus(), va);
-		  }
-		  else
-		  {
-		  	ModifVariable( (const char*)val_node->children->content, GetStatus(), va);
-		  }
+			if(node->children == NULL)
+				va->GenerateLongDescription(str_answer);
+			else
+			{
+				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", node);
+				if(val_node)
+				{
+					if(LockOk(pid) && va->CanBeModified(GetStatus()))
+					{
+						if(va->GetType() == "xml")
+						{ 
+							// SimpleString val_modif((const char*)val_node->children->content);
+							// VariableAttribut::ModifXmlInStrRevert(val_modif);
+							VariableChange( (const char*)val_node->children->content, GetStatus(), va);
+						}
+						else
+						{
+							VariableChange( (const char*)val_node->children->content, GetStatus(), va);
+						}
+					}
+					va->GenerateValueMessage(str_answer);
+				}
+			}
 		}
-		va->GenerateValueMessage(str_answer);
-	      }
-	    }
 	}
-  }
-    else
-  {
-	  TraceError( "understood query (name requested)\n");      
-  }
+	else
+	{
+		TraceError( "understood query (name requested)\n");      
+	}
 }
 
 void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answer)
 {
-  //std::cerr << "connect query : not yet implemented\n";
-  xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
-  bool found = (attr != NULL);  
-  if( found ) 
-  {
-     SimpleString name((const char*)attr->children->content);
-      InOutputAttribut* ioa = FindInOutput(name);     
-      if(ioa)
+	//std::cerr << "connect query : not yet implemented\n";
+	xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
+	bool found = (attr != NULL);  
+	if( found ) 
 	{
-	  bool found_host = false;
-	  bool found_port = false;
-	  bool tcp = true;
-	  int port = 0;
-	  SimpleString host;
+		SimpleString name((const char*)attr->children->content);
+		InOutputAttribut* ioa = FindInOutput(name);     
+		if(ioa)
+		{
+			bool found_host = false;
+			bool found_port = false;
+			bool tcp = true;
+			int port = 0;
+			SimpleString host;
 
-	  xmlNodePtr cur_node = node->children;
-	  for(; cur_node; cur_node = cur_node->next)
-	    {
-	      const char* name = (const char*)(cur_node->name);
-	      if(strcmp(name, "host") == 0)
-		{
-		  host = SimpleString((const char*)cur_node->children->content);
-		  found_host = true;
-		}	
-	      else if((strcmp(name,"tcp") == 0) || (strcmp(name,"udp")==0) )
-		{
-		  tcp = (strcmp(name, "tcp") == 0);
-		  found_port = true;
-		  port = atoi((const char*)(cur_node->children->content));
-		}
-	      else 
-		{
-		  TraceError( "in connect query : unused tag :\n");
+			xmlNodePtr cur_node = node->children;
+			for(; cur_node; cur_node = cur_node->next)
+			{
+				const char* name = (const char*)(cur_node->name);
+				if(strcmp(name, "host") == 0)
+				{
+					host = SimpleString((const char*)cur_node->children->content);
+					found_host = true;
+				}	
+				else if((strcmp(name,"tcp") == 0) || (strcmp(name,"udp")==0) )
+				{
+					tcp = (strcmp(name, "tcp") == 0);
+					found_port = true;
+					port = atoi((const char*)(cur_node->children->content));
+				}
+				else 
+				{
+					TraceError( "in connect query : unused tag :\n");
 #if defined DEBUG
-		  XMLMessage::DisplayNode(cur_node, stderr);
+					XMLMessage::DisplayNode(cur_node, stderr);
 #endif
+				}
+			}
+			if(found_port && found_host)
+			{
+				Connect(host, port, tcp, ioa);
+				ioa->GenerateConnectAnswer(str_answer);
+			}
 		}
-	    }
-	  if(found_port && found_host)
-	    {
-	      Connect(host, port, tcp, ioa);
-	      ioa->GenerateConnectAnswer(str_answer);
-	    }
 	}
-  }
-  else
-  {
-	  TraceError( "understood query (name requested)\n");      
-  }
+	else
+	{
+		TraceError( "understood query (name requested)\n");      
+	}
 }
 void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, bool subscribe)
 {
-  //std::cerr << "connect query : not yet implemented\n";
-  xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
-  bool found = (attr != NULL);  
-  if(!found) TraceError( "understood query (name requested)\n");      
-  else
-  {
-     SimpleString name((const char*)attr->children->content);
-      VariableAttribut* va = FindVariable(name);     
-      if(va)
+	//std::cerr << "connect query : not yet implemented\n";
+	xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
+	bool found = (attr != NULL);  
+	if(!found) TraceError( "understood query (name requested)\n");      
+	else
 	{
-		if(subscribe) AddListener(va, peer_id);
-		else RemoveListener(va, peer_id);
+		SimpleString name((const char*)attr->children->content);
+		VariableAttribut* va = FindVariable(name);     
+		if(va)
+		{
+			if(subscribe) AddListener(va, peer_id);
+			else RemoveListener(va, peer_id);
+		}
 	}
-    }
 }
 
 void ControlServer::ProcessLockQuery(xmlNodePtr node, unsigned int pid, bool lock, SimpleString& str_answer)
 {
-  SimpleString result = "<";
-  if(lock)
-    {
-      result += "lock result=\"";
-      if(LockOk(pid)){
-	lockIntVariable->SetValue((int)pid);
-	result+="ok";
-      }else{
-	result += "failed";
-      }
-    }
-  else
-    {      
-      result += "unlock result=\"";
-      if(LockOk(pid)){
-	result+="ok";
-	lockIntVariable->SetValue(0);
-      }else{
-	result += "failed";
-      }           
-    }
- 
-  TemporaryMemoryBuffer tmp_peerid(10);
-  snprintf(tmp_peerid, 10, "%08x",  (unsigned int)lockIntVariable->GetValue());  
-  result += "\" peer=\"";
-  result += tmp_peerid;
-  result += "\"/>";
+	SimpleString result = "<";
+	if(lock)
+	{
+		result += "lock result=\"";
+		if(LockOk(pid)){
+			lockIntVariable->SetValue((int)pid);
+			result+="ok";
+		}else{
+			result += "failed";
+		}
+	}
+	else
+	{      
+		result += "unlock result=\"";
+		if(LockOk(pid)){
+			result+="ok";
+			lockIntVariable->SetValue(0);
+		}else{
+			result += "failed";
+		}           
+	}
 
-  str_answer += result;
+	TemporaryMemoryBuffer tmp_peerid(10);
+	snprintf(tmp_peerid, 10, "%08x",  (unsigned int)lockIntVariable->GetValue());  
+	result += "\" peer=\"";
+	result += tmp_peerid;
+	result += "\"/>";
+
+	str_answer += result;
 }
 
 
 bool ControlServer::LockOk(unsigned int peer){
-  RefreshLock();
-  return (lockIntVariable->GetValue() == 0) || (((unsigned int)lockIntVariable->GetValue()) == peer);
+	RefreshLock();
+	return (lockIntVariable->GetValue() == 0) || (((unsigned int)lockIntVariable->GetValue()) == peer);
 }
 
 void ControlServer::RefreshLock(){
-  unsigned int peer = (unsigned)lockIntVariable->GetValue();
-  if(peer != 0){
-    if(!IsStillConnected(peer)){
-      lockIntVariable->SetValue(0);
-    }
-  }    
+	unsigned int peer = (unsigned)lockIntVariable->GetValue();
+	if(peer != 0){
+		if(!IsStillConnected(peer)){
+			lockIntVariable->SetValue(0);
+		}
+	}    
 }
-
 
 void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutputAttribut* ioa)
 {
 #ifdef DEBUG
-  fprintf(stderr, "in ControlServer::Connect (%s:%d", host.GetStr(), port);
-  if(tcp) fprintf(stderr, " [TCP] "); else fprintf(stderr, " [UDP] ");
-  fprintf(stderr, "%s\n", ioa->GetName().GetStr());
+	fprintf(stderr, "in ControlServer::Connect (%s:%d", host.GetStr(), port);
+	if(tcp) fprintf(stderr, " [TCP] "); else fprintf(stderr, " [UDP] ");
+	fprintf(stderr, "%s\n", ioa->GetName().GetStr());
 #endif
 }
 
-void ControlServer::ModifVariable( SimpleString NewValue, int status, VariableAttribut* va)
+void ControlServer::VariableChange( SimpleString NewValue, STATUS status, VariableAttribut* va)
 {
-#ifdef DEBUG
-  fprintf( stderr, "in ControlServer::ModifVariable %s New Value= %s\n", 
-  	va->GetName().GetStr(), NewValue.GetStr());  
-#endif
+	TraceError( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
+	if ( va->CanBeModified(status) )
+	{
+		va->SetValueFromControls( NewValue );
+		NotifyValueChanged( va, (void*)this );
+	}
 }
 
 VariableAttribut* ControlServer::AddVariable(const SimpleString name)
 {
-  VariableAttribut* va = new VariableAttribut(name);
-  listVariable.Add(va);
-  va->SetCallbackValueChanged(ValueChanged, this);
-  
-  return va;
+	VariableAttribut* va = new VariableAttribut(name);
+	listVariable.Add(va);
+	va->SetCallbackForControlServer(NotifyValueChanged, this);
+
+	return va;
 }
 
 InOutputAttribut* ControlServer::AddInOutput(const SimpleString name, ComTools* com_tool, ConnectorKind kind_of_input)
 {
-  unsigned int ConnectorId;
+	unsigned int ConnectorId;
 
-  InOutputAttribut* ioa = new InOutputAttribut(name, com_tool, kind_of_input);
-  if ( com_tool )
-  {
-	  // Incr number for the Connector
-	  localConnectorId++;
-	  if ( (localConnectorId & ComTools::SERVICE_PEERID) != 0 )
-	  {
-		  fprintf( stderr, "Too many connector (>127). Unexpected features may appear\n." );
-	  }
+	InOutputAttribut* ioa = new InOutputAttribut(name, com_tool, kind_of_input);
+	if ( com_tool )
+	{
+		// Incr number for the Connector
+		localConnectorId++;
+		if ( (localConnectorId & ComTools::SERVICE_PEERID) != 0 )
+		{
+			fprintf( stderr, "Too many connector (>127). Unexpected features may appear\n." );
+		}
 
-	  ConnectorId = localConnectorId & ComTools::CONNECTOR_ID;
+		ConnectorId = localConnectorId & ComTools::CONNECTOR_ID;
 
-	  com_tool->SetServiceId( GetServiceId() | ConnectorId );
-  }
-  
-  listInOutput.Add(ioa);
+		com_tool->SetServiceId( GetServiceId() | ConnectorId );
+	}
 
-  return ioa;
+	listInOutput.Add(ioa);
+
+	return ioa;
 }
 
 ////////////// LISTENER ////////////////////////
 
-void FUNCTION_CALL_TYPE ControlServer::ValueChanged(VariableAttribut* var, void* user_data)
+bool FUNCTION_CALL_TYPE ControlServer::NotifyValueChanged(VariableAttribut* var, void* user_data)
 {	
-//	TraceError( "in ControlServer::ValueChanged : Not Yet Implemented\n");
-//	TraceError( "value changed for %s\n", var->GetName().GetStr() );
-	
+	//	TraceError( "in ControlServer::NotifyValueChanged : Not Yet Implemented\n");
+	//	TraceError( "value changed for %s\n", var->GetName().GetStr() );
+
 	ControlServer* ctrl = (ControlServer*)user_data;
-	
+
 	ctrl->listValueListener.Lock();
 	ValueListener* vl = ctrl->FindValueListener(var);
 	if(vl && vl->HasListener())
@@ -610,18 +611,26 @@ void FUNCTION_CALL_TYPE ControlServer::ValueChanged(VariableAttribut* var, void*
 		SimpleString str("<variable name=\"");
 		str = str + var->GetName()+"\"><value>"+ var->GetValue()+"</value></variable>";
 		str = "<controlEvent>" + str + "</controlEvent>";
-		
+
 		for(vl->listListener.First(); vl->listListener.NotAtEnd();
-		    vl->listListener.Next())
+			vl->listListener.Next())
 		{
 			ctrl->listConnections.Lock();
 			MsgSocket* sock = ctrl->FindClientFromId(vl->listListener.GetCurrent());
-			if(sock) sock->Send(str.GetLength(), str.GetStr());
-			else vl->listListener.RemoveCurrent();
+			if( sock )
+			{
+				sock->Send(str.GetLength(), str.GetStr());
+			}
+			else
+			{
+				vl->listListener.RemoveCurrent();
+			}
 			ctrl->listConnections.Unlock();
 		}
 	}
 	ctrl->listValueListener.Unlock();
+
+	return true;
 }
 
 
@@ -647,7 +656,7 @@ void ControlServer::RemoveListener(VariableAttribut* var, unsigned int pid)
 	else
 	{
 		for(listValueListener.First(); listValueListener.NotAtEnd();
-		     listValueListener.Next())
+			listValueListener.Next())
 			(listValueListener.GetCurrent())->RemoveListener(pid);
 	}
 	listValueListener.Unlock();
@@ -656,9 +665,9 @@ void ControlServer::RemoveListener(VariableAttribut* var, unsigned int pid)
 ValueListener* ControlServer::FindValueListener(VariableAttribut* var)
 {
 	ValueListener* vl = NULL;	
-	
+
 	for(listValueListener.First(); 
-	    vl == NULL && listValueListener.NotAtEnd(); listValueListener.Next())
+		vl == NULL && listValueListener.NotAtEnd(); listValueListener.Next())
 	{
 		if((listValueListener.GetCurrent())->var == var) 
 			vl = listValueListener.GetCurrent();
@@ -677,10 +686,11 @@ ValueListener::~ValueListener()
 	var = NULL;
 	listListener.Clear();
 }
+
 void ValueListener::AddListener(unsigned int listener_id)
 { 
 	TraceError( "addListener  %s %u\n", var->GetName().GetStr(), listener_id);
-	listListener.Add(listener_id); 
+	listListener.Add(listener_id);
 }
 
 void ValueListener::RemoveListener(unsigned int listener_id)
@@ -726,9 +736,9 @@ bool ControlServer::WaitForMessage(unsigned long timer)
 
 void ControlServer::DisplayServiceGlobalShortDescription()
 {
-  SimpleString str;
-  GenerateGlobalShortDescription(str);
-  printf("%s\n", str.GetStr());
+	SimpleString str;
+	GenerateGlobalShortDescription(str);
+	printf("%s\n", str.GetStr());
 }
 
 ControlServer::STATUS ControlServer::GetStatus() const
@@ -748,12 +758,12 @@ const SimpleString& ControlServer::GetServiceName()
 
 const SimpleString& ControlServer::GetRegisteredServiceName()
 { 
-  if ( registerDnsSd )
-  {
-	  return registerDnsSd->RegisteredName;
-  }
-  else
-  {
-	  return SimpleString::EmptyString;
-  }
+	if ( registerDnsSd )
+	{
+		return registerDnsSd->RegisteredName;
+	}
+	else
+	{
+		return SimpleString::EmptyString;
+	}
 }

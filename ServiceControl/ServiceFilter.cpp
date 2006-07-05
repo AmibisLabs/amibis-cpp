@@ -1,6 +1,6 @@
 
 
-#include <ServiceControl/OmiscidServiceFilters.h>
+#include <ServiceControl/ServiceFilter.h>
 
 using namespace Omiscid;
 
@@ -70,6 +70,7 @@ public:
 private:
 	SimpleString VariableName;
 	SimpleString VariableValue;
+	bool CheckValue;
 };
 
 /**
@@ -171,13 +172,14 @@ ServiceFilter * ServiceHostIs::Duplicate()
 ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName)
 {
 	this->VariableName = VariableName;
-	VariableValue = "";
+	this->CheckValue   = false;
 }
 
 ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName, SimpleString& VariableValue)
 {
 	this->VariableName  = VariableName;
 	this->VariableValue = VariableValue;
+	this->CheckValue    = true;
 }
 
 bool ServiceHasVariable::IsAGoodService(ServiceProxy& SP)
@@ -189,7 +191,7 @@ bool ServiceHasVariable::IsAGoodService(ServiceProxy& SP)
 	}
 
 	// We have the variable, shall we compare with value ?
-	if ( !VariableValue.IsEmpty() )
+	if ( CheckValue )
 	{
 		if ( VariableValue == RemoteValue )
 		{
@@ -213,6 +215,17 @@ ServiceHasConnector::ServiceHasConnector(SimpleString& ConnectorName, ConnectorK
 
 bool ServiceHasConnector::IsAGoodService(ServiceProxy& SP)
 {
+	if ( SP.HasConnector( ConnectorName ) == false )
+	{
+		return false;
+	}
+	if ( ConnectorType != UnkownConnectorKind )
+	{
+		if ( SP.GetConnectorKind( ConnectorName ) != ConnectorType )
+		{
+			return false;
+		}
+	}
 	return true;
 }
 
@@ -287,7 +300,19 @@ ServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString Value)
 }
 
 /**
-* Tests whether the service contain a connector (with a specific type or not)
+* Tests whether the service contain a connector (we do not care if it is an input or so...)
+*
+* @param String
+* @param ConnectorKind
+* @return
+*/
+ServiceFilter * Omiscid::HasConnector( SimpleString ConnectorName )
+{
+	return new ServiceHasConnector( ConnectorName, UnkownConnectorKind );
+}
+
+/**
+* Tests whether the service contain a connector (with a specific type)
 *
 * @param String
 * @param ConnectorKind

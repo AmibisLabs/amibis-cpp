@@ -19,7 +19,7 @@ class Service;
  *
  * @author Dominique Vaufreydaz
  */
-class OmiscidMessageListener : protected MsgManager, public Thread
+class MessageListener : protected MsgManager, public Thread
 {
 	friend class Service;
 

@@ -9,11 +9,11 @@
 #include <ServiceControl/ControlServer.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/VariableAttribut.h>
-#include <ServiceControl/OmiscidServiceFilters.h>
-#include <ServiceControl/OmiscidServicesTools.h>
+#include <ServiceControl/ServiceFilter.h>
+#include <ServiceControl/ServicesTools.h>
 #include <ServiceControl/ServiceProxy.h>
-#include <ServiceControl/OmiscidMessageListener.h>
-#include <ServiceControl/OmiscidVariableChangeListener.h>
+#include <ServiceControl/MessageListener.h>
+#include <ServiceControl/LocalVariableChangeListener.h>
 
 namespace Omiscid {
 
@@ -79,6 +79,14 @@ public:
 	 * @param msg the message to send
 	 */
 	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool FastSend = false );
+
+	/**
+	 * Sends a message to a particular client. This client is identified by BipServiceProxy because
+	 * we have been looking for it to create the connexion.
+	 * @param connectorName the name of the connector that will send the message
+	 * @param msg the message to send
+	 */
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy * ServProxy, bool FastSend = false );
 
 	/**
 	 * Creates a new Omiscid Variable
@@ -153,6 +161,17 @@ public:
      */
     bool ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, SimpleString RemoteConnector);
 
+    /**
+     * Connects a local connector to a remote connector of a remote service
+     * @param localConnector
+     * @param proxy the proxy of the remote service
+     * @param remoteConnector the name of the remote connector on the remote service
+     * @throws UnknownBipConnector thrown if one of the connector does not exist
+     * @throws IncorrectConnectorType thrown if the coonnectors cannot connect : for instance : trying to connect an input
+     * connector on another input connector.
+     */
+    bool ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, SimpleString RemoteConnector);
+
 
 	/**
      * Finds a service on the network. The research is based on the service filter
@@ -171,7 +190,7 @@ public:
 	 * @param ConnectorName the name of the connector
 	 * @param MsgListener the object that will handle messages sent to this connector
 	 */
-	bool AddConnectorListener(SimpleString ConnectorName, OmiscidMessageListener * MsgListener);
+	bool AddConnectorListener(SimpleString ConnectorName, MessageListener * MsgListener);
 
 	/**
 	 * Adds a listener that will be triggered at every variable change
@@ -180,7 +199,7 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
 	 */
-	bool AddVariableChangeListener(SimpleString VarName, OmiscidAllVariablesListener * listener);
+	// bool AddVariableChangeListener(SimpleString VarName, OmiscidAllVariablesListener * listener);
 
 #if 0
 
