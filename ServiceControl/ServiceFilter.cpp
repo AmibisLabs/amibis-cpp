@@ -401,7 +401,7 @@ ServiceFilter * Omiscid::Or( ServiceFilter * First, ServiceFilter * Second,
 
 
 
-CascadeServiceFilters::CascadeServiceFilters(OmiscidCascadeServiceFiltersType CreationType)
+CascadeServiceFilters::CascadeServiceFilters(CascadeServiceFiltersType CreationType)
 {
 	Type = CreationType;
 }

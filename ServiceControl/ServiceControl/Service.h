@@ -175,15 +175,16 @@ public:
 
 	/**
      * Finds a service on the network. The research is based on the service filter
+	 * @params Wait for WaitTime ms to find the service. If WaitTime == 0, wait until a valid service is here
      * @return the service Proxy
      */
-    static ServiceProxy * FindService(ServiceFilter * Filter) ;
+    static ServiceProxy * FindService(ServiceFilter * Filter, unsigned int WaitTime = 0) ;
 
 	/**
      * Finds a service on the network. The research is based on the service filter
      * @return the service Proxy
      */
-    static ServiceProxy * FindService(ServiceFilter& Filter);
+    static ServiceProxy * FindService(ServiceFilter& Filter, unsigned int WaitTime = 0);
 
 	/**
 	 * Add a message listener to a connector

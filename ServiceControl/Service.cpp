@@ -459,7 +459,7 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, MessageListener *
 
 
 // Static
-ServiceProxy * Service::FindService(ServiceFilter * Filter)
+ServiceProxy * Service::FindService(ServiceFilter * Filter, unsigned int WaitTime)
 {
 	if ( Filter == NULL )
 	{
@@ -474,7 +474,7 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter)
 	MyData.FilterList.Add( Filter );
 
 	WFOS->NeedService( "", WaitForOmiscidServiceCallback, (void*)&MyData);
-	WFOS->WaitAll();
+	WFOS->WaitAll(WaitTime);
 
 	// Delete by ourself the object. Thus we are sure that
 	// we will find
@@ -483,7 +483,7 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter)
 	return MyData.Proxy;
 }
 
-ServiceProxy * Service::FindService(ServiceFilter& Filter)
+ServiceProxy * Service::FindService(ServiceFilter& Filter, unsigned int WaitTime)
 {
 	return FindService(Filter.Duplicate());
 }

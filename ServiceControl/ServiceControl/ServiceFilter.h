@@ -28,9 +28,9 @@ class CascadeServiceFilters : public ServiceFilter,
 {
 public:
 
-	typedef enum OmiscidCascadeServiceFiltersType { IsAND, IsOR }; 
+	typedef enum CascadeServiceFiltersType { IsAND, IsOR }; 
 
-	CascadeServiceFilters(OmiscidCascadeServiceFiltersType CreationType = IsAND);
+	CascadeServiceFilters(CascadeServiceFiltersType CreationType = IsAND);
 	~CascadeServiceFilters();
 
 // Abstracted function
@@ -40,7 +40,7 @@ public:
 	void Empty();
 
 private:
-	OmiscidCascadeServiceFiltersType Type;
+	CascadeServiceFiltersType Type;
 };
 
 /**

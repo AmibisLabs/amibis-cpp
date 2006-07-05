@@ -8,7 +8,7 @@ void SocketException::SocketErrorCheck()
 {
 #ifdef DEBUG
 
-#if defined WIN32 && defined OMISCID_TRACE_ENABLE
+#if 0 // defined WIN32 && defined OMISCID_TRACE_ENABLE
 	SimpleString tmpc;
 	int tmpi = WSAGetLastError();
 	switch( tmpi )

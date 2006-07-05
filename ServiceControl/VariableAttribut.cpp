@@ -170,7 +170,7 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 			else if (strcmp(cur_name, "access") == 0)
 			{
 				SimpleString content = XMLMessage::ExtractTextContent(cur_node->children);
-				if(content == access_readwrite_str)
+				if(content == access_read_str)
 				{
 					SetAccessRead();
 				}

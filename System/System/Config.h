@@ -71,7 +71,7 @@
 
 namespace Omiscid {
 
-// Ugly for the moment
+// Almost ugly for the moment
 #ifdef OMISCID_TRACE_ENABLE
 	// in trace mode, we plan to trace every thing
 	inline int TraceError(const char * format, ... )

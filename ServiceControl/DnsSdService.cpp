@@ -42,7 +42,7 @@ bool DnsSdService::CheckProtocol( const SimpleString Protocol )
 	int PreviousUnderscore;
 	int ProtocolLenght;
 
-	if ( Protocol == NULL )
+	if ( Protocol.IsEmpty() )
 	{
 		return false;
 	}
@@ -167,7 +167,7 @@ DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const 
 
 	Port = ePort;
 
-	if ( eHostName == NULL )
+	if ( eHostName.IsEmpty() )
 	{
 		SimpleString LocalHost = Socket::GetHostName();
 		strncpy( HostName, LocalHost.GetStr(), ServiceField );
@@ -185,7 +185,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 
 	Empty();
 
-	if ( ServiceName.GetLength() != 0 || eRegType.GetLength() != 0 || ePort == 0 )
+	if ( ServiceName.IsEmpty() || eRegType.IsEmpty() || ePort == 0 )
 	{
 		return;
 	}
@@ -242,7 +242,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 
 	strcpy( Protocol, RegType.GetStr() );
 
-	if ( eDomain == NULL )
+	if ( eDomain.IsEmpty() )
 	{
 		strcpy( Domain, "local." );
 	}
@@ -253,7 +253,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 
 	Port = ePort;
 
-	if ( eHostName == NULL )
+	if ( eHostName.IsEmpty() )
 	{
 		SimpleString LocalHost = Socket::GetHostName();
 		strncpy( HostName, LocalHost.GetStr(), ServiceField );
@@ -268,7 +268,7 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 {
 	Empty();
 
-	if ( eName == NULL || eProtocol == NULL || ePort == 0 || (enTransport != TCP && enTransport != UDP))
+	if ( eName.IsEmpty() || eProtocol.IsEmpty() || ePort == 0 || (enTransport != TCP && enTransport != UDP))
 	{
 		return;
 	}
@@ -290,7 +290,7 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 
 	strcpy( Name, eName.GetStr() );
 
-	if ( eDomain == NULL )
+	if ( eDomain.IsEmpty() )
 	{
 		strcpy( Domain, "local." );
 	}
@@ -311,7 +311,7 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 
 	Port = ePort;
 
-	if ( eHostName == NULL )
+	if ( eHostName.IsEmpty() )
 	{
 		SimpleString LocalHost = Socket::GetHostName();
 		strncpy( HostName, LocalHost.GetStr(), ServiceField );

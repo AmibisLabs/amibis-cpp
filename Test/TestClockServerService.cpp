@@ -1,171 +1,84 @@
 
 /**
- * @brief Illustration for the use of a ControlServer
+ * @brief Illustration for the use of a Service
  *
- * @author Sebastien Pesnel
+ * @author Dominique Vaufreydaz
  */
 
-#include <stdio.h>
+#include <System/Portage.h>
+#include <ServiceControl/Factory.h>
 
-#include <ServiceControl/ControlServer.h>
-#include <ServiceControl/VariableAttribut.h>
-#include <ServiceControl/InOutputAttribut.h>
-#include <ServiceControl/WaitForServices.h>
+using namespace Omiscid;
 
-#include <Com/Message.h>
-#include <Com/MsgManager.h>
-#include <Com/TcpUdpClientServer.h>
-
-#include <System/Thread.h>
-#include <System/SimpleString.h>
-
-#define SYMBOL_NB 4
-static char symb[SYMBOL_NB+1] = "/-\\|";
-
-class MyMsgManager : public MsgManager
+int main(int argc, char * argv[])
 {
- public:
-  MyMsgManager(TcpUdpClientServer* t)
-    {
-      tucs = t;
-    }
+	// Let create a service named "Clock Server"
+	Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 
- protected:
-  void ProcessAMessage(Message* msg)
-    {
-      if(tucs) tucs->SendToAll(msg->GetLength(), msg->GetBuffer(), true);
-    }
- private:
-  TcpUdpClientServer* tucs;
-};
+	// Add a output connector to push clock
+	// Name			= "PushClock"
+	// Description	= "A way to push clock"
+	// Type			= AnOutput
+	if ( ClockServer->AddConnector( "PushClock", "A way to push clock", AnOutput ) == false )
+	{
+		// something goes wrong
+		return -1;
+	}
 
-int main()
-{
-  printf(" ** Test Register **\n");  
+	// Add a read-only variable to count hours
+	// Name					= "Hours"
+	// User readable type	= "integer"
+	// Description			= "Number of hours since start"
+	// Access				= ReadAccess
+	if ( ClockServer->AddVariable( "Hours", "integer", "Number of hours since start", ReadAccess ) == false )
+	{
+		// something goes wrong
+		return -1;
+	}
 
-  printf("Creation of a service named TestRegister...");
-  //creation of a service named TestRegister
-  ControlServer * ctrl = new ControlServer("TestRegister");
-  if(ctrl) printf(" Service Created\n");
-  else
-    {
-      printf(" Creation failed\n");
-      ::exit(1);
-    }
-  
-  printf("The service status is BEGIN : 0 ( = %d)\n", ctrl->GetStatus());
+	// Change value of the Hours variable to 0
+	ClockServer->SetVariableValue( "Hours", "0" );
 
-  printf("Add Attributes to the service : \n");
-  
-  //VARIABLE ATTRIBUTES
-  printf("- Add a variable named var_1\n");
-  VariableAttribut* v1 = ctrl->AddVariable("var_1");
-  v1->SetType("integer");
-  v1->SetDescription("pour la forme");
-  v1->SetDefaultValue("10");
-  v1->SetValueStr("1");
-  v1->SetAccessReadWrite();  
+	// Register and Start the Service
+	// We can not anymore add variable and connector
+	ClockServer->Start();
+	printf( "Started...\n" );
 
-  printf("- Add a variable named var_2\n");
-  VariableAttribut* v = ctrl->AddVariable("var_2");
-  v->SetType("string");
-  v->SetDescription("pour la variete");
-  v->SetDefaultValue("empty");
-  v->SetValueStr("Bonjour");
-  v->SetAccessRead();
-  
-  printf("- Add a variable named var_xml\n");
-  v = ctrl->AddVariable("var_xml");
-  v->SetType("xml");
-  v->SetDescription("pour tester l'envoi de xml");
-  v->SetDefaultValue("");
-  v->SetValueStr("<toto attr=\"value\">Bonjour</toto>");
-  v->SetAccessRead();  
-  
-  //OUTPUT ATTRIBUTE 
-  // create a TCP/UDP output message will be send on this output
-  // and message will receive by this object
-  TcpUdpClientServer* tucs = new TcpUdpClientServer(ctrl->GetServiceId());
-  tucs->Create();
-  // link a msg manager to store message when they arrived
-  MsgManager* msgManager = new MyMsgManager(tucs);
-  tucs->LinkToMsgManager(msgManager);
+	// Now, we will send clock over the PushClock connector	
 
-  printf("- Add an in/output named my_in_output\n");
-  //record the output in the Control Server
-  InOutputAttribut* ioattr = ctrl->AddInOutput("my_in_output", tucs, InOutputAttribut::IN_OUTPUT);
-  ioattr->SetDescription("send received message between **");
+	// First, needed stuff
+	SimpleString TempValue;				// A SimpleString to create the value
+	unsigned int NumberOfSeconds = 0;	// An unsigned integer to computer hours
+	struct timeval now;					// A struct to get the current time of day
 
-  //create TCP server will send message to client  
-  TcpServer* tcpServer = new TcpServer();
-  tcpServer->SetServiceId(ctrl->GetServiceId());
-  tcpServer->Create(0);
+	// Loop forever
+	for(;;)
+	{
+		// retrieve the current time
+		gettimeofday(&now, NULL);
 
-  printf("- Add an output named my_output\n");
-  //record the output in the Control Server
-  ioattr = ctrl->AddInOutput("my_output", tcpServer, InOutputAttribut::OUTPUT);
-  ioattr->SetDescription("send message \"coucou\\n\"");
-  
+		// generate the time message => "time in second since 1/1 of 1970:microseconds"
+		TempValue  = now.tv_sec;
+		TempValue += ":";
+		TempValue += now.tv_usec;
 
-  //add properties to the service
-  ctrl->Properties["toto"];
+		// Send it to all connected clients of the PushClock connector,
+		// in fast mode if possible (can lost message)
+		ClockServer->SendToAllClients( "PushClock", (char*)TempValue.GetStr(), TempValue.GetLength(), true );
 
- 
-  printf("Start the service : Run the server for control, and record the service to DNS-SD...");    
-  if(ctrl->StartServer()) printf(" Service Registered.\n");
-  else
-    { 
-      printf(" Registration failed\n");
-      exit(1);
-    }
-  
-  printf("The service status is INIT : 1 ( = %d)\n", ctrl->GetStatus());
+		// Increase time value for one second more
+		NumberOfSeconds++;
+		if ( (NumberOfSeconds % 30) == 0 )
+		{
+			// One hour ellapse, change value of our Hours variable
+			// All clients who subscribe to this 
+			TempValue = NumberOfSeconds/30;
+			ClockServer->SetVariableValue( "Hours", TempValue );
+		}
 
-  
-  printf("\nThe Control Port number is : %d\n", ctrl->GetPortNb());
-  printf("\nThe port number associated to my_in_output is : TCP:%d / UDP:%d \n",
-	 tucs->GetTcpPort(),tucs->GetUdpPort());
-
-  printf("\nWe do not need to wait for other service,\n");
-  printf("service enter in a processing loop change the status for RUNNING\n");
-
-  ctrl->SetStatus(ControlServer::STATUS_RUNNING);
-  printf("The service status is RUNNING : 2 ( = %d)\n", ctrl->GetStatus());
-
- 
-  printf("\nEnter in processing loop :\n");
-  printf(" -- Control message processing \n");
-  printf(" -- Display message received by the in/output my_in_output\n");
-  printf(" -- my_output sends to all the clients the message \"coucou\\n\"\n");
-  printf(" -- my_in_output sends to all the clients the received message\n");
-  printf(" -- Change the value of var_1\n");
-
-  SimpleString str("coucou\n");
-
-  char tmp[100];
-  int nb = 0;
-
-  int symb_index = 0;
-  fprintf(stderr, "in the loop:  \n\033[1A\033[14C");	  
-  while(1)
-    {
-      Thread::Sleep(2);
-      
-      //process the control message
-      ctrl->ProcessMessages();
-      
-      //resend to all client the received message (received on my_in_output)
-      msgManager->ProcessMessages();
-      
-      //send to all client the message "coucou"
-      tcpServer->SendToAllClients(str.GetLength(), str.GetStr());
-      
-      //change the value of var_1
-      sprintf(tmp, "%d", nb); 
-      nb = (nb+1)% 100;
-      v1->SetValueStr(tmp);
-
-      fprintf(stderr, "\033[1D%c", symb[symb_index]);
-      symb_index = (symb_index+1)%SYMBOL_NB;
-    }
+		// Wait for 1 second
+		Thread::Sleep(1000);
+	}
+	
+	return 0;
 }

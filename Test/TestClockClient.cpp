@@ -1,161 +1,92 @@
 
-#include <stdio.h>
-
-#include <ServiceControl/WaitForServices.h>
-#include <ServiceControl/ControlUtils.h>
-#include <ServiceControl/ControlClient.h>
-#include <ServiceControl/VariableAttribut.h>
-
-#include <Com/Message.h>
-#include <Com/MsgManager.h>
-
-#include <System/SocketException.h>
-
-/** class used by a tcpClient connected on the my_in_output of a service TestRegister.
- * Display the message because we knwon it is a string.
- */
-class MyMsgManager : public MsgManager
-{
-protected:
-  void ProcessAMessage(Message* msg){
-    fprintf(stderr, "-----received from my_in_output-----------\n");
-    MsgManager::ProcessAMessage(msg);
-    fprintf(stderr, "%s", (const char*)msg->GetBuffer());
-    fprintf(stderr, "\n----------------------------------------\n");
-  }
-};
-
 /**
- * Process the control event received by the control client from the control port
+ * @brief Illustration for the use of a Service
+ *
+ * @author Dominique Vaufreydaz
  */
-void controlEventListener(XMLMessage* msg, void* ptr)
+
+#include <ServiceControl/Factory.h>
+#include <ServiceControl/ServiceFilter.h>
+
+using namespace Omiscid;
+
+int main(int argc, char * argv[])
 {
-  ControlClient* ctrl_client = (ControlClient*)ptr;
+	// Let search for a service with the folowing properties
+	// - name is "Clock Server" 
+	// - contain an output connector "PushClock"
+	// - expose a variable "Hours"
 
-  xmlNodePtr node = msg->GetRootNode();
-  xmlNodePtr cur_node = node->children;
-  for(; cur_node; cur_node = cur_node->next)
-    {
-      if(strcmp((const char*)cur_node->name, "variable")==0)
-	{
-	  
-	  xmlAttrPtr attr = XMLMessage::FindAttribute("name", cur_node);
-	  //fprintf(stderr, "find variable : %s\n", (const char*)attr->name);
-	  VariableAttribut* va = ctrl_client->FindVariable((const char*)attr->children->content);
-	  if(va){	    	    
-	    SimpleString old_value(va->GetValueStr().GetStr());
-	    ControlClient::CtrlEventProcess(msg, ctrl_client);
-	    
-	    fprintf(stderr, "in control event listener %s : %s %s\n", (const char*)attr->children->content,
-		    old_value.GetStr(), va->GetValueStr().GetStr());
-	  }
-	}
-    }
-}
+	// First, create a service filter. You *must* not free it after use
+	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasConnector( "PushClock", AnOutput), HasVariable( "Hours" ) );
+	ServiceProxy * ClockServer = Service::FindService( MySearch, 10000 );
 
-int main()
-{
-  printf(" ** Test Client **\n");  
+	return 0;
 
-  CWaitForServices wfs;
-  int index = wfs.NeedService("TestRegister", "_bip._tcp");
-  printf("Wait for a service named \"TestRegister\"\n");
-  if(!wfs[index].IsAvailable())
-  wfs.WaitAll();
+	//// Add a output connector to push clock
+	//// Name			= "PushClock"
+	//// Description	= "A way to push clock"
+	//// Type			= AnOutput
+	//if ( ClockServer->AddConnector( "PushClock", "A way to push clock", AnOutput ) == false )
+	//{
+	//	// something goes wrong
+	//	return -1;
+	//}
 
-  printf("A \"TestRegister\" Service found.\n");
+	//// Add a read-only variable to count hours
+	//// Name					= "Hours"
+	//// User readable type	= "integer"
+	//// Description			= "Number of hours since start"
+	//// Access				= ReadAccess
+	//if ( ClockServer->AddVariable( "Hours", "integer", "Number of hours since start", ReadAccess ) == false )
+	//{
+	//	// something goes wrong
+	//	return -1;
+	//}
 
-  // an id to identify this object in BIP communication
-  unsigned int service_id = ControlUtils::GenerateServiceId();
+	//// Change value of the Hours variable to 0
+	//ClockServer->SetVariableValue( "Hours", "0" );
 
-  printf("Connection to the control port : %s:%d...", wfs[index].HostName, wfs[index].Port);
-  //create a ControlClient object with an id
-  ControlClient ctrlClient(service_id);
-  //add a callback to process control events received from the control port.
-  ctrlClient.SetCtrlEventListener(controlEventListener, &ctrlClient);
-  //connection to the control port
-  if(ctrlClient.ConnectToCtrlServer(wfs[index].HostName, wfs[index].Port))
-    printf(" Connected.\n");
-  else
-    {
-      printf(" Connection failed !!\n");
-      ::exit(1);
-    }
+	//// Register and Start the Service
+	//// We can not anymore add variable and connector
+	//ClockServer->Start();
+	//printf( "Started...\n" );
 
-  printf("Get a global service description... ");
-  if(!ctrlClient.QueryGlobalDescription()){
-    printf("Query the global description failed.\n");
-    exit(1);
-  }else printf("Desscription obtained.");
+	//// Now, we will send clock over the PushClock connector	
 
-  //display the data obtained from the control port
-  printf("\n");
-  printf("-- Variables : ---\n");   
-  ctrlClient.DisplayVariableName();
-  printf("------------------\n");
-  printf("-- Inputs : ------\n");   
-  ctrlClient.DisplayInputName();
-  printf("------------------\n");
-  printf("-- Outputs : -----\n");   
-  ctrlClient.DisplayOutputName();
-  printf("------------------\n");
-  printf("-- In/Outputs : --\n");   
-  ctrlClient.DisplayIn_OutputName();
-  printf("------------------\n");
+	//// First, needed stuff
+	//SimpleString TempValue;				// A SimpleString to create the value
+	//unsigned int NumberOfSeconds = 0;	// An unsigned integer to computer hours
+	//struct timeval now;					// A struct to get the current time of day
 
-  //ask for more data about "var_1" before subscribing to its value modification
-  ctrlClient.QueryVariableDescription("var_1");
-  printf("subscribe to the modification of var_1\n");
-  ctrlClient.Subscribe("var_1");
-  
-  //connection to my_in_output of TestRegister 
-  TcpClient tcpClient;
-  tcpClient.SetServiceId(service_id);
-  MyMsgManager msgManager; // to store the message received by tcpClient
-  tcpClient.SetCallbackReceive(MsgManager::CumulMessage, &msgManager);
-  InOutputAttribut* ioa = ctrlClient.QueryInOutputDescription("my_in_output");
-  if(ioa == NULL) 
-    {
-      printf("no my_in_output !!\n");
-      exit(1);
-    }
-  
-  printf("my_in_output listen on the TCP port : %d\n", ioa->GetTcpPort());
-  printf("Connection to my_in_output on %s:%d... ", wfs[index].HostName, ioa->GetTcpPort());
-  try
-    {
-      tcpClient.ConnectToServer(wfs[index].HostName, ioa->GetTcpPort());
-      printf("Connected\n");
-    }
-  catch(SocketException e)
-    {
-      e.Display();
-      printf("Connection failed\n");
-      exit(1);
-    }
- 
+	//// Loop forever
+	//for(;;)
+	//{
+	//	// retrieve the current time
+	//	gettimeofday(&now, NULL);
 
-  printf("\nEnter in processing loop :\n");
-  printf(" -- Send a message to my_in_output, Receive answer\n");
+	//	// generate the time message => "time in second since 1/1 of 1970:microseconds"
+	//	TempValue  = now.tv_sec;
+	//	TempValue += ":";
+	//	TempValue += now.tv_usec;
 
-  printf("in the loop\n");
+	//	// Send it to all connected clients of the PushClock connector,
+	//	// in fast mode if possible (can lost message)
+	//	ClockServer->SendToAllClients( "PushClock", (char*)TempValue.GetStr(), TempValue.GetLength(), true );
 
-  SimpleString hello_str("Hello");
-  while(1) 
-    {
-      Thread::Sleep(10);
+	//	// Increase time value for one second more
+	//	NumberOfSeconds++;
+	//	if ( (NumberOfSeconds % 30) == 0 )
+	//	{
+	//		// One hour ellapse, change value of our Hours variable
+	//		// All clients who subscribe to this 
+	//		TempValue = NumberOfSeconds/30;
+	//		ClockServer->SetVariableValue( "Hours", TempValue );
+	//	}
 
-      //update the variable description 
-      //redundant with subscribe
-      VariableAttribut* va = ctrlClient.QueryVariableDescription("var_1");
-      if(!va) fprintf(stderr, "va null\n");
-      else fprintf(stderr, "name =%s value=%s\n", va->GetNameCh(), va->GetValueStr().GetStr());
-      
-      
-      if(tcpClient.IsConnected())
-	tcpClient.SendToServer(hello_str.GetLength(), hello_str.GetStr());
-      if(msgManager.HasMessages()) msgManager.ProcessMessages();
-    }
- 
-  return 0;
+	//	// Wait for 1 second
+	//	Thread::Sleep(1000);
+	//}
+	//
+	//return 0;
 }
