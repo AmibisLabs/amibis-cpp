@@ -97,7 +97,7 @@ public:
   void SetValue(const SimpleString value_str);
 
 private:
-  /** @brief Callback call when value changed
+  /** @brief Callback call when value changed. Only accessible to friend class
    * @param user_data_ptr pointer given to the callback when it is called */
   void SetCallbackForControlServer(SignalThatValueChanged callback, void* user_data_ptr);
   //@}

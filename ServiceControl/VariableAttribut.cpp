@@ -116,10 +116,14 @@ void VariableAttribut::Display()
 
 void VariableAttribut::SetValue(const SimpleString value_str)
 {
-	valueStr = value_str; 
-	if( NotifyControlServer.callbackValue)
+	// If I am a part of a Control Server, ask him to change my value
+	if( NotifyControlServer.callbackValue )
 	{
 		NotifyControlServer.callbackValue(this, NotifyControlServer.userDataPtr);
+	}
+	else
+	{
+		valueStr = value_str; 
 	}
 }
 

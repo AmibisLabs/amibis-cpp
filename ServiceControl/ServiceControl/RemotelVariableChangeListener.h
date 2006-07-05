@@ -17,7 +17,7 @@ namespace Omiscid {
  *
  * @author Dominique Vaufreydaz
  */
-class LocalVariableChangeListener
+class RemoteVariableChangeListener
 {
 	friend class Service;
 

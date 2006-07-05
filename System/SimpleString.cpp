@@ -480,6 +480,10 @@ unsigned int SimpleString::StringData::GetLength() const
 
 bool SimpleString::StringData::Equals(const char* str) const
 {
+	if ( str == NULL )
+	{
+		return false;
+	}
 	return strcmp(str, data) == 0; 
 }
 
@@ -490,6 +494,10 @@ bool SimpleString::StringData::Equals(const StringData& sd) const
 
 bool SimpleString::StringData::NotEquals(const char* str) const
 {
+	if ( str == NULL )
+	{
+		return true;
+	}
 	return strcmp(str, data) != 0; 
 }
 
@@ -512,7 +520,7 @@ unsigned int SimpleString::GetLength() const
 
 bool SimpleString::IsEmpty() const
 {
-	return (stringData->GetLength() == 0 );
+	return (stringData == NULL || stringData->GetLength() == 0 );
 }
 
 bool SimpleString::operator==(const SimpleString& str) const

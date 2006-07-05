@@ -6,12 +6,9 @@ using namespace Omiscid;
 
 void SocketException::SocketErrorCheck()
 {
-#ifdef DEBUG
-
-#if 0 // defined WIN32 && defined OMISCID_TRACE_ENABLE
+#if defined DEBUG && defined WIN32
 	SimpleString tmpc;
-	int tmpi = WSAGetLastError();
-	switch( tmpi )
+	switch( err )
 	{
 		case WSANOTINITIALISED:
 			tmpc = "WSANOTINITIALISED";
@@ -47,14 +44,12 @@ void SocketException::SocketErrorCheck()
 
 		default:
 			tmpc  = "UNK ERROR (";
-			tmpc += tmpi;
+			tmpc += err;
 			tmpc += ")\n";
 			return;
 	}
 
 	fprintf( stderr, "%s\n", tmpc.GetStr() );
-#endif
-
 #endif
 }
 

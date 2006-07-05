@@ -15,7 +15,7 @@ SimpleException::SimpleException(const SimpleString m, int i)
 
 SimpleException::SimpleException(const SimpleException& ExceptionToCopy)
 { 
-	if ( ExceptionToCopy.msg != NULL )
+	if ( ExceptionToCopy.msg.IsEmpty() )
 	{
 		msg = ExceptionToCopy.msg;
 	}

@@ -203,7 +203,20 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * only during initialization.
    * @param va [in] contains the data about the variable.
    */
-  virtual void VariableChange( SimpleString NewValue, STATUS status, VariableAttribut* va );
+  void VariableChange( VariableAttribut* va, SimpleString NewValue, STATUS status );
+
+  /**
+   * @brief Called when a request of variable modification is done.
+   *
+   * can be be reimplemented by the user.
+   * The Input or Output is requested to connect to a port on a given host.
+   * @param length [in] number of byte in the buffer
+   * @param buffer [in] contain the new value on 'length' byte.
+   * @param status [in] current status of the service. Useful for the variable that can be modified
+   * only during initialization.
+   * @param va [in] contains the data about the variable.
+   */
+  virtual void VariableHasChanged( VariableAttribut* va, SimpleString NewValue );
 
 
   /**

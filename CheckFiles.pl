@@ -229,6 +229,38 @@ sub FirstDoesNotIncludeStdLibs()
 	close( $fd );
 }
 
+sub FilesShouldContainOnlyOneClassDeclaration()
+{
+ 	my $FileName = shift @_;
+	my $ClassCount = 0;
+ 	
+ 	if ( $FileName =~ /System\/Config.h$/ )
+ 	{
+ 		return;
+ 	}
+ 	
+	open( $fd, "<$FileName" ) or return;
+	while( $CurrentLine = <$fd> )
+	{
+		if ( $CurrentLine =~ /^class\s+/ || $CurrentLine =~ /\s+class\s+/ )
+		{
+			if ( $CurrentLine =~ /class\s+\w+\s*;/ )
+			{
+				next;
+			}
+			
+			$ClassCount++;
+		}
+	}
+	
+	close( $fd );
+	
+	if ( $ClassCount > 1 )
+	{
+		print "$FileName: check if there are not more than 1 class definition.\n";
+	}
+}
+
 sub WorkOnFile()
 {
  	my $CompleteFileName = shift @_;
@@ -266,6 +298,10 @@ sub WorkOnFile()
 		# Check if we have an empty line at end for gcc
 		# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
 		&CheckEmptyLineAtEnd($CompleteFileName);
+		
+		# Check if we have an empty line at end for gcc
+		# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
+		&FilesShouldContainOnlyOneClassDeclaration($CompleteFileName);
 		
 		# Check for unattended include (done in Config.h)
 		&FirstDoesNotIncludeStdLibs($CompleteFileName);

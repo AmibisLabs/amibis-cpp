@@ -407,11 +407,11 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 						{ 
 							// SimpleString val_modif((const char*)val_node->children->content);
 							// VariableAttribut::ModifXmlInStrRevert(val_modif);
-							VariableChange( (const char*)val_node->children->content, GetStatus(), va);
+							VariableChange( va, (const char*)val_node->children->content, GetStatus() );
 						}
 						else
 						{
-							VariableChange( (const char*)val_node->children->content, GetStatus(), va);
+							VariableChange( va, (const char*)val_node->children->content, GetStatus() );
 						}
 					}
 					va->GenerateValueMessage(str_answer);
@@ -552,18 +552,22 @@ void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutpu
 #endif
 }
 
-void ControlServer::VariableChange( SimpleString NewValue, STATUS status, VariableAttribut* va)
+void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue, STATUS status )
 {
 	TraceError( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
-	if ( va->CanBeModified(status) )
-	{
-		va->SetValueFromControls( NewValue );
-		NotifyValueChanged( va, (void*)this );
-	}
+	// Do what we must do...
+}
+
+void ControlServer::VariableHasChanged( VariableAttribut* va, SimpleString NewValue )
+{
 }
 
 VariableAttribut* ControlServer::AddVariable(const SimpleString name)
 {
+	if ( GetStatus() == STATUS_RUNNING )
+	{
+		return NULL;
+	}
 	VariableAttribut* va = new VariableAttribut(name);
 	listVariable.Add(va);
 	va->SetCallbackForControlServer(NotifyValueChanged, this);
@@ -573,6 +577,11 @@ VariableAttribut* ControlServer::AddVariable(const SimpleString name)
 
 InOutputAttribut* ControlServer::AddInOutput(const SimpleString name, ComTools* com_tool, ConnectorKind kind_of_input)
 {
+	if ( GetStatus() == STATUS_RUNNING )
+	{
+		return NULL;
+	}
+
 	unsigned int ConnectorId;
 
 	InOutputAttribut* ioa = new InOutputAttribut(name, com_tool, kind_of_input);
@@ -599,9 +608,6 @@ InOutputAttribut* ControlServer::AddInOutput(const SimpleString name, ComTools* 
 
 bool FUNCTION_CALL_TYPE ControlServer::NotifyValueChanged(VariableAttribut* var, void* user_data)
 {	
-	//	TraceError( "in ControlServer::NotifyValueChanged : Not Yet Implemented\n");
-	//	TraceError( "value changed for %s\n", var->GetName().GetStr() );
-
 	ControlServer* ctrl = (ControlServer*)user_data;
 
 	ctrl->listValueListener.Lock();
