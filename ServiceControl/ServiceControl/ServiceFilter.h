@@ -1,8 +1,9 @@
 
-#ifndef __OMISCID_SERVICE_FILTERS_H__
-#define __OMISCID_SERVICE_FILTERS_H__
+#ifndef __SERVICE_CONTROL_SERVICE_FILTER_H__
+#define __SERVICE_CONTROL_SERVICE_FILTER_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleString.h>
 #include <System/SimpleList.h>
 #include <ServiceControl/ServiceProxy.h>
@@ -140,4 +141,4 @@ ServiceFilter * Or( ServiceFilter * First, ServiceFilter * Second = NULL,
 
 } // namespace Omiscid
 
-#endif  // __OMISCID_SERVICE_FILTERS_H__
+#endif  // __SERVICE_CONTROL_SERVICE_FILTER_H__

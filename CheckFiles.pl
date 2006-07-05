@@ -50,8 +50,12 @@ sub CheckIfDef()
  	my $CurrentHeader;
  	my $EndFound;
  	my $ExpectedHeader;
+ 	my $Folder;
+ 	
+ 	$FileName =~ /([^\/]+)\/[^\/]+$/;
+ 	$Folder = $1;
 
- 	$ExpectedHeader = $ShortFileName;
+ 	$ExpectedHeader = "${Folder}$ShortFileName";
  	$ExpectedHeader =~ s/([A-Z]+)/_$1/g;
  	$ExpectedHeader =~ s/.h$/_H__/;
  	$ExpectedHeader = '_' . $ExpectedHeader;
@@ -116,11 +120,15 @@ sub FirstIncludeofHeaderFileisConfig()
 	my $fd;
  	my $CurrentLine;
  	my $FirstIncludedFile;
+ 	my $Folder;
  	
- 	if ( $FileName =~ /System\/Config.h$/ )
+ 	if ( $FileName =~ /\/Config.h$/ )
  	{
  		return;
  	}
+ 	
+ 	$FileName =~ /([^\/]+)\/[^\/]+$/;
+ 	$Folder = $1;
 
 	open( $fd, "<$FileName" ) or return;
 	while( $CurrentLine = <$fd> )
@@ -130,12 +138,12 @@ sub FirstIncludeofHeaderFileisConfig()
 		if ( $CurrentLine =~ /^\#include\s+\<([^\>]+)\>/ )
 		{
 			$FirstIncludedFile = $1;
-			if ( $FirstIncludedFile ne 'System/Config.h' )
+			if ( $FirstIncludedFile =~ /$Folder\/Config.h$/ )
 			{
-				# print "$CurrentLine : '$FirstIncludedFile'\n";
-				print "$FileName: the first include of an header file *must* be 'System/Config.h'\n";
+				last;
 			}
-			last;
+			# print "$CurrentLine : '$FirstIncludedFile'\n";
+			print "$FileName: the first include of an header file *must* be '$Folder/Config.h'\n";
 		}
 		else
 		{
@@ -287,6 +295,10 @@ sub WorkOnFile()
 			&CheckIfDef($CompleteFileName, $FileName);
 			# print "$CompleteFileName (FirstIncludeofHeaderFileisConfig)\n";
 			&FirstIncludeofHeaderFileisConfig($CompleteFileName);
+			
+			# Check if we have an empty line at end for gcc
+			# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
+			# &FilesShouldContainOnlyOneClassDeclaration($CompleteFileName);
 		}
 		else
 		{
@@ -299,9 +311,7 @@ sub WorkOnFile()
 		# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
 		&CheckEmptyLineAtEnd($CompleteFileName);
 		
-		# Check if we have an empty line at end for gcc
-		# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
-		&FilesShouldContainOnlyOneClassDeclaration($CompleteFileName);
+
 		
 		# Check for unattended include (done in Config.h)
 		&FirstDoesNotIncludeStdLibs($CompleteFileName);

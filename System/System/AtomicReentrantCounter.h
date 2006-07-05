@@ -3,8 +3,8 @@
  * @brief Definition of Mutexed Counter class
  */
 
-#ifndef __MUTEXED_COUNTER_H__
-#define __MUTEXED_COUNTER_H__
+#ifndef __SYSTEM_ATOMIC_REENTRANT_COUNTER_H__
+#define __SYSTEM_ATOMIC_REENTRANT_COUNTER_H__
 
 #include <System/Config.h>
 #include <System/Mutex.h>
@@ -56,4 +56,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __MUTEXED_COUNTER_H__
+#endif // __SYSTEM_ATOMIC_REENTRANT_COUNTER_H__

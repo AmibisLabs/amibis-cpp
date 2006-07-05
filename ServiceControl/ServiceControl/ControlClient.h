@@ -5,10 +5,11 @@
  * @date 2004-2005
  */
 
-#ifndef __CONTROL_CLIENT_H__
-#define __CONTROL_CLIENT_H__
+#ifndef __SERVICE_CONTROL_CONTROL_CLIENT_H__
+#define __SERVICE_CONTROL_CONTROL_CLIENT_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleList.h>
 #include <Com/TcpClient.h>
 #include <ServiceControl/XMLTreeParser.h>
@@ -318,4 +319,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __CONTROL_CLIENT_H__
+#endif // __SERVICE_CONTROL_CONTROL_CLIENT_H__

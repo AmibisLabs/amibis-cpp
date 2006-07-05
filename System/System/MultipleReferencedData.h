@@ -3,8 +3,8 @@
  * @brief Definition of MultipleReferencedData class
  */
 
-#ifndef __MULTIPLE_REFERENCED_DATA_H__
-#define __MULTIPLE_REFERENCED_DATA_H__
+#ifndef __SYSTEM_MULTIPLE_REFERENCED_DATA_H__
+#define __SYSTEM_MULTIPLE_REFERENCED_DATA_H__
 
 #include <System/Config.h>
 #include <System/AtomicCounter.h>
@@ -68,4 +68,4 @@ class MultipleReferencedData
 
 } // namespace Omiscid
 
-#endif // __MULTIPLE_REFERENCED_DATA_H__
+#endif // __SYSTEM_MULTIPLE_REFERENCED_DATA_H__

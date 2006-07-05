@@ -5,10 +5,11 @@
  * @date 2004-2005
  */
 
-#ifndef __ATTRIBUT_H__
-#define __ATTRIBUT_H__
+#ifndef __SERVICE_CONTROL_ATTRIBUT_H__
+#define __SERVICE_CONTROL_ATTRIBUT_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleString.h>
 
 namespace Omiscid {
@@ -116,4 +117,4 @@ class Attribut
 
 } // namespace Omiscid
 
-#endif // __ATTRIBUT_H__
+#endif // __SERVICE_CONTROL_ATTRIBUT_H__

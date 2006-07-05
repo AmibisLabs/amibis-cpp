@@ -5,7 +5,6 @@
 #include <System/SocketException.h>
 #include <ServiceControl/ControlUtils.h>
 #include <ServiceControl/ServicesTools.h>
-#include <ServiceControl/VariableAttribut.h>
 
 #ifndef WIN32
 #include <sys/time.h>
@@ -54,7 +53,6 @@ void ControlServer::InitInstance()
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of thisthis service");
 	ClassVariable = new StringVariableAttribut( va, "" );
-
 
 	va = AddVariable("id");
 	va->SetType("hexadecimal");
@@ -552,14 +550,24 @@ void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutpu
 #endif
 }
 
-void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue, STATUS status )
+void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue, ControlServerStatus status )
 {
 	TraceError( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
 	// Do what we must do...
+
+	// va will call back me to know if I agree to change it's value
+	// va will also notify me that the value has changed (if change have been validated)
+	va->SetValue( NewValue );
 }
 
-void ControlServer::VariableHasChanged( VariableAttribut* va, SimpleString NewValue )
+bool ControlServer::IsAValidChange( VariableAttribut * ChangedVariable, SimpleString newValue )
 {
+	return ChangedVariable->CanBeModified(GetStatus());
+}
+
+void ControlServer::VariableChanged( VariableAttribut * ChangedVariable, void * UserData )
+{
+	NotifyValueChanged( ChangedVariable );
 }
 
 VariableAttribut* ControlServer::AddVariable(const SimpleString name)
@@ -570,7 +578,9 @@ VariableAttribut* ControlServer::AddVariable(const SimpleString name)
 	}
 	VariableAttribut* va = new VariableAttribut(name);
 	listVariable.Add(va);
-	va->SetCallbackForControlServer(NotifyValueChanged, this);
+
+	// I am the first listener
+	va->AddListener( this );
 
 	return va;
 }
@@ -606,12 +616,10 @@ InOutputAttribut* ControlServer::AddInOutput(const SimpleString name, ComTools* 
 
 ////////////// LISTENER ////////////////////////
 
-bool FUNCTION_CALL_TYPE ControlServer::NotifyValueChanged(VariableAttribut* var, void* user_data)
+void ControlServer::NotifyValueChanged(VariableAttribut* var)
 {	
-	ControlServer* ctrl = (ControlServer*)user_data;
-
-	ctrl->listValueListener.Lock();
-	ValueListener* vl = ctrl->FindValueListener(var);
+	listValueListener.Lock();
+	ValueListener* vl = FindValueListener(var);
 	if(vl && vl->HasListener())
 	{
 		SimpleString str("<variable name=\"");
@@ -621,8 +629,8 @@ bool FUNCTION_CALL_TYPE ControlServer::NotifyValueChanged(VariableAttribut* var,
 		for(vl->listListener.First(); vl->listListener.NotAtEnd();
 			vl->listListener.Next())
 		{
-			ctrl->listConnections.Lock();
-			MsgSocket* sock = ctrl->FindClientFromId(vl->listListener.GetCurrent());
+			listConnections.Lock();
+			MsgSocket* sock = FindClientFromId(vl->listListener.GetCurrent());
 			if( sock )
 			{
 				sock->Send(str.GetLength(), str.GetStr());
@@ -631,12 +639,10 @@ bool FUNCTION_CALL_TYPE ControlServer::NotifyValueChanged(VariableAttribut* var,
 			{
 				vl->listListener.RemoveCurrent();
 			}
-			ctrl->listConnections.Unlock();
+			listConnections.Unlock();
 		}
 	}
-	ctrl->listValueListener.Unlock();
-
-	return true;
+	listValueListener.Unlock();
 }
 
 
@@ -651,6 +657,7 @@ void ControlServer::AddListener(VariableAttribut* var, unsigned listener_id)
 	}
 	listValueListener.Unlock();
 }
+
 void ControlServer::RemoveListener(VariableAttribut* var, unsigned int pid)
 {
 	listValueListener.Lock();
@@ -747,12 +754,12 @@ void ControlServer::DisplayServiceGlobalShortDescription()
 	printf("%s\n", str.GetStr());
 }
 
-ControlServer::STATUS ControlServer::GetStatus() const
+ControlServerStatus ControlServer::GetStatus() const
 {
-	return (STATUS)Status; 
+	return (ControlServerStatus)Status; 
 }
 
-void ControlServer::SetStatus(STATUS s)
+void ControlServer::SetStatus(ControlServerStatus s)
 {
 	Status = s; 
 }

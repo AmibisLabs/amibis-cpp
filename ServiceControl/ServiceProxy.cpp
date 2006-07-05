@@ -2,6 +2,7 @@
 
 #include <ServiceControl/ServiceProxy.h>
 
+#include <Servicecontrol/InOutputAttribut.h>
 #include <ServiceControl/VariableAttribut.h>
 
 using namespace Omiscid;

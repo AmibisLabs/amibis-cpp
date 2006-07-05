@@ -7,10 +7,11 @@
  *  \date    2004-2005
  */
 
-#ifndef __SERVICE_PROPERTIES_H__
-#define __SERVICE_PROPERTIES_H__
+#ifndef __SERVICE_CONTROL_SERVICE_PROPERTIES_H__
+#define __SERVICE_CONTROL_SERVICE_PROPERTIES_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <ServiceControl/ServicesCommon.h>
 
 namespace Omiscid {
@@ -198,4 +199,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif // __SERVICE_PROPERTIES_H__
+#endif // __SERVICE_CONTROL_SERVICE_PROPERTIES_H__

@@ -3,10 +3,11 @@
  * @file MsgSocketException.h
  * @brief Definition of MsgSocketException class
  */
-#ifndef __MSG_SOCKET_EXCEPTION_H__
-#define __MSG_SOCKET_EXCEPTION_H__ 
+#ifndef __COM_MSG_SOCKET_EXCEPTION_H__
+#define __COM_MSG_SOCKET_EXCEPTION_H__ 
 
-#include <System/Config.h>
+#include <Com/Config.h>
+
 #include <System/SimpleException.h>
 
 namespace Omiscid {
@@ -35,4 +36,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __MSG_SOCKET_EXCEPTION_H__
+#endif // __COM_MSG_SOCKET_EXCEPTION_H__

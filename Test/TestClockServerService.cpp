@@ -52,7 +52,7 @@ int main(int argc, char * argv[])
 	struct timeval now;					// A struct to get the current time of day
 
 	// Loop forever
-	for(;;)
+	for(int zz=0;zz < 10; zz++)
 	{
 		// retrieve the current time
 		gettimeofday(&now, NULL);
@@ -79,6 +79,8 @@ int main(int argc, char * argv[])
 		// Wait for 1 second
 		Thread::Sleep(1000);
 	}
+
+	delete ClockServer;
 	
 	return 0;
 }

@@ -7,10 +7,11 @@
  *  \date    2004-2005
  */
 
-#ifndef __BROWSE_FOR_DNS_SD_SERVICE_H__
-#define __BROWSE_FOR_DNS_SD_SERVICE_H__
+#ifndef __SERVICE_CONTROL_BROWSE_FOR_DNS_SD_SERVICE_H__
+#define __SERVICE_CONTROL_BROWSE_FOR_DNS_SD_SERVICE_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/Thread.h>
 #include <System/SimpleString.h>
 #include <ServiceControl/DnsSdService.h>
@@ -46,4 +47,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif // __BROWSE_FOR_DNS_SD_SERVICE_H__
+#endif // __SERVICE_CONTROL_BROWSE_FOR_DNS_SD_SERVICE_H__

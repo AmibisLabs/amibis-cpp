@@ -3,10 +3,11 @@
  * @file MsgManager.h
  * @brief Definition of MsgManager class
  */
-#ifndef __MSG_MANAGER_H__
-#define __MSG_MANAGER_H__
+#ifndef __COM_MSG_MANAGER_H__
+#define __COM_MSG_MANAGER_H__
 
-#include <System/Config.h>
+#include <Com/Config.h>
+
 #include <System/SimpleList.h>
 #include <System/Event.h>
 #include <System/Socket.h>
@@ -139,4 +140,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __MSG_MANAGER_H__
+#endif // __COM_MSG_MANAGER_H__

@@ -3,10 +3,11 @@
  * @file TcpClient.h
  * @brief Definition of TcpClient class
  */
-#ifndef __TCP_CLIENT_H__
-#define __TCP_CLIENT_H__
+#ifndef __COM_TCP_CLIENT_H__
+#define __COM_TCP_CLIENT_H__
 
-#include <System/Config.h>
+#include <Com/Config.h>
+
 #include <Com/ComTools.h>
 #include <Com/MsgSocket.h>
 
@@ -88,4 +89,4 @@ class TcpClient : public MsgSocket, public ComTools
 
 } // namespace Omiscid
 
-#endif // __TCP_CLIENT_H__
+#endif // __COM_TCP_CLIENT_H__

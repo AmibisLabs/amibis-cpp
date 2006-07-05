@@ -3,8 +3,8 @@
  * @brief Definition of Mutex class
  */
 
-#ifndef __MUTEX_H__
-#define __MUTEX_H__
+#ifndef __SYSTEM_MUTEX_H__
+#define __SYSTEM_MUTEX_H__
 
 #include <System/Config.h>
 
@@ -86,4 +86,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __MUTEX_H__
+#endif // __SYSTEM_MUTEX_H__

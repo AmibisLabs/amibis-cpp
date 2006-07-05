@@ -5,10 +5,11 @@
  * @date 2004-2005
  */
 
-#ifndef __STRING_VARIABLE_ATTRIBUT_H__
-#define __STRING_VARIABLE_ATTRIBUT_H__
+#ifndef __SERVICE_CONTROL_STRING_VARIABLE_ATTRIBUT_H__
+#define __SERVICE_CONTROL_STRING_VARIABLE_ATTRIBUT_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleString.h>
 #include <Com/ComTools.h>
 #include <ServiceControl/ControlUtils.h>
@@ -54,4 +55,4 @@ class StringVariableAttribut{
 
 } // namespace Omiscid
 
-#endif // __STRING_VARIABLE_ATTRIBUT_H__
+#endif // __SERVICE_CONTROL_STRING_VARIABLE_ATTRIBUT_H__

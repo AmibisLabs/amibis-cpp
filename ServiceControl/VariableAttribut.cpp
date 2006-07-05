@@ -5,24 +5,6 @@
 using namespace Omiscid;
 
 
-VariableAttributCallback::VariableAttributCallback()
-{
-	callbackValue = NULL;
-	userDataPtr   = NULL;
-}
-
-VariableAttributCallback::VariableAttributCallback(VariableAttributCallback&ToCopy)
-{
-	operator=(ToCopy);
-}
-
-VariableAttributCallback& VariableAttributCallback::operator=(VariableAttributCallback&ToCopy)
-{
-	callbackValue = ToCopy.callbackValue;
-	userDataPtr	  = ToCopy.userDataPtr;
-
-	return *this;
-}
 
 const SimpleString VariableAttribut::access_constant_str = "constant";
 const SimpleString VariableAttribut::access_read_str = "read";
@@ -96,40 +78,31 @@ void VariableAttribut::Display()
 	printf("Access : %s\n", AccessToStr(access).GetStr());
 }
 
-// void VariableAttribut::ModifXmlInStr(SimpleString& str)
-// {
-// 	for (unsigned int i = 0 ; i < str.GetLength() ; i++)
-// 	{
-// 		if (str[i] == '<') str[i] = '#';
-// 		else if (str[i]=='>') str[i] = '$';
-// 	}
-// }
-
-// void VariableAttribut::ModifXmlInStrRevert(SimpleString& str)
-// {
-// 	for (unsigned int i = 0 ; i < str.GetLength() ; i++)
-// 	{
-// 		if (str[i] == '#') str[i] = '<';
-// 		else if (str[i]=='$') str[i] = '>';
-// 	}
-// }
 
 void VariableAttribut::SetValue(const SimpleString value_str)
 {
-	// If I am a part of a Control Server, ask him to change my value
-	if( NotifyControlServer.callbackValue )
+	// ask to all listener if we can change the value
+	Listeners.Lock();
+	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
-		NotifyControlServer.callbackValue(this, NotifyControlServer.userDataPtr);
+		if ( Listeners.GetCurrent()->IsAValidChange( this, value_str ) == false )
+		{
+			// someone disagree
+			Listeners.Unlock();
+			return;
+		}
 	}
-	else
-	{
-		valueStr = value_str; 
-	}
-}
 
-void VariableAttribut::SetValueFromControls(const SimpleString value_str)
-{
+	// Ok, change my value
 	valueStr = value_str; 
+
+	// Ok the value has change, send information back to people
+	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
+	{
+		Listeners.GetCurrent()->VariableChanged( this, NULL );
+	}
+
+	Listeners.Unlock();
 }
 
 void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
@@ -248,14 +221,56 @@ SimpleString& VariableAttribut::GetDefaultValue()
 	return defaultValue;
 }
 
-bool VariableAttribut::CanBeModified(ControlServer::STATUS status) const
+bool VariableAttribut::CanBeModified(ControlServerStatus status) const
 { 
-	return (access == ReadWriteAccess || (access == ConstantAccess && status != ControlServer::STATUS_RUNNING)); 
+	return (access == ReadWriteAccess || (access == ConstantAccess && status != STATUS_RUNNING)); 
 }
 
-void VariableAttribut::SetCallbackForControlServer(SignalThatValueChanged callback, void* user_data_ptr)
-{ 
-	NotifyControlServer.callbackValue = callback;
-	NotifyControlServer.userDataPtr = user_data_ptr;
+  /** \brief Add a listener to this variable.
+   *
+   */
+bool VariableAttribut::AddListener( VariableAttributListener * ListenerToAdd )
+{
+	if ( ListenerToAdd == NULL )
+	{
+		return false;
+	}
+
+	Listeners.Lock();
+	// look if it is already there..
+	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
+	{
+		if ( Listeners.GetCurrent() == ListenerToAdd )
+		{
+			Listeners.Unlock();
+			return false;
+		}
+	}
+
+	// add it
+	Listeners.Add( ListenerToAdd );
+
+	Listeners.Unlock();
+
+	return true;
 }
 
+   /** \brief remove a listener to this variable.
+   *
+   */
+bool VariableAttribut::RemoveListener( VariableAttributListener *  ListenerToAdd )
+{
+	bool ret;
+
+	if ( ListenerToAdd == NULL )
+	{
+		return false;
+	}
+
+	// Remove it if any
+	Listeners.Lock();
+	ret = Listeners.Remove(ListenerToAdd);
+	Listeners.Unlock();
+
+	return ret;
+}

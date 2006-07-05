@@ -3,16 +3,16 @@
  * @file ComTools.h
  * @brief Definition of ComTools class
  */
-#ifndef __COM_TOOLS_H__
-#define __COM_TOOLS_H__
+#ifndef __COM_COM_TOOLS_H__
+#define __COM_COM_TOOLS_H__
 
-#include <System/Config.h>
+#include <Com/Config.h>
+
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
 
 namespace Omiscid {
 
-typedef enum ConnectorKind { UnkownConnectorKind = -1, AnInput = 0, AnOutput=1, AnInOutput = 2};
 
 /**
  * @class ComTools ComTools.h Com/ComTools.h
@@ -73,4 +73,4 @@ class ComTools
 
 } // namespace Omiscid
 
-#endif // __COM_TOOLS_H__
+#endif // __COM_COM_TOOLS_H__

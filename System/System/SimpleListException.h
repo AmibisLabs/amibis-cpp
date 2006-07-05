@@ -3,8 +3,8 @@
  * @brief Definition of SimpleListException class
  */
 
-#ifndef __SIMPLE_LIST_EXCEPTION_H__
-#define __SIMPLE_LIST_EXCEPTION_H__
+#ifndef __SYSTEM_SIMPLE_LIST_EXCEPTION_H__
+#define __SYSTEM_SIMPLE_LIST_EXCEPTION_H__
 
 #include <System/Config.h>
 #include <System/SimpleException.h>
@@ -33,4 +33,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __SIMPLE_LIST_EXCEPTION_H__
+#endif // __SYSTEM_SIMPLE_LIST_EXCEPTION_H__

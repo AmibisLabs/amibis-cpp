@@ -1,9 +1,10 @@
 
 
-#ifndef __OMISCID_SERVICE_PROXY_H__
-#define __OMISCID_SERVICE_PROXY_H__
+#ifndef __SERVICE_CONTROL_SERVICE_PROXY_H__
+#define __SERVICE_CONTROL_SERVICE_PROXY_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
 
@@ -127,4 +128,4 @@ private:
 
 } // namespace Omiscid
 
-#endif  // __OMISCID_SERVICE_PROXY_H__
+#endif  // __SERVICE_CONTROL_SERVICE_PROXY_H__

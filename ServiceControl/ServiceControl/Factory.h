@@ -1,9 +1,10 @@
 
 
-#ifndef __OMISCID_SERVICE_REGISTRY_H__
-#define __OMISCID_SERVICE_REGISTRY_H__
+#ifndef __SERVICE_CONTROL_FACTORY_H__
+#define __SERVICE_CONTROL_FACTORY_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleString.h>
 #include <ServiceControl/Service.h>
 
@@ -36,4 +37,4 @@ extern Factory ServiceFactory;
 
 } // namespace Omiscid
 
-#endif  // __OMISCID_SERVICE_REGISTRY_H__
+#endif  // __SERVICE_CONTROL_FACTORY_H__

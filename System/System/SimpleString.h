@@ -2,8 +2,8 @@
  * @file SimpleString.h
  * @brief Definition of SimpleString class
  */
-#ifndef __SIMPLE_STRING_H__
-#define __SIMPLE_STRING_H__
+#ifndef __SYSTEM_SIMPLE_STRING_H__
+#define __SYSTEM_SIMPLE_STRING_H__
 
 #include <System/Config.h>
 #include <System/AtomicReentrantCounter.h>
@@ -228,4 +228,4 @@ SimpleString operator+(const SimpleString& str1, const char* str2);
 
 } // namespace Omiscid
 
-#endif // __SIMPLE_STRING_H__
+#endif // __SYSTEM_SIMPLE_STRING_H__

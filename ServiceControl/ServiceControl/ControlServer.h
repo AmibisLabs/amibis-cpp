@@ -5,24 +5,25 @@
  * @date 2004-2005
  */
 
-#ifndef __CONTROL_SERVER_H__
-#define __CONTROL_SERVER_H__
+#ifndef __SERVICE_CONTROL_CONTROL_SERVER_H__
+#define __SERVICE_CONTROL_CONTROL_SERVER_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
 #include <Com/ComTools.h>
 #include <Com/TcpServer.h>
+#include <ServiceControl/VariableAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/IntVariableAttribut.h>
 #include <ServiceControl/ServicesTools.h>
 #include <ServiceControl/StringVariableAttribut.h>
+#include <ServiceControl/VariableListener.h>
+
 
 namespace Omiscid {
-
-class VariableAttribut;
-
 
 #define HOST_NAME_MAX_SIZE 256
 
@@ -40,11 +41,10 @@ class ValueListener; // declared below, after class ControlServer
  *
  * @author Sebastien Pesnel
  */
-class ControlServer : public TcpServer, public XMLTreeParser		      
+class ControlServer : public TcpServer, public XMLTreeParser, public VariableAttributListener		      
 {
  public:
-  /** @brief Values for the variable 'status' that gives the state of the service */
-  enum STATUS {STATUS_INIT = 1, STATUS_RUNNING = 2};
+
 
   /** @brief Constructor
    *
@@ -162,13 +162,13 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * @brief Access to the service status
    * @return the value of status
    */
-  STATUS GetStatus() const;
+  ControlServerStatus GetStatus() const;
 
   /**
    * @brief Change the value of status
    * @param state [in] the new value.
    */
-  void SetStatus(STATUS state);
+  void SetStatus(ControlServerStatus state);
 
   /** @brief Service Properties. 
    *
@@ -203,7 +203,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * only during initialization.
    * @param va [in] contains the data about the variable.
    */
-  void VariableChange( VariableAttribut* va, SimpleString NewValue, STATUS status );
+  void VariableChange( VariableAttribut* va, SimpleString NewValue, ControlServerStatus status );
 
   /**
    * @brief Called when a request of variable modification is done.
@@ -216,7 +216,11 @@ class ControlServer : public TcpServer, public XMLTreeParser
    * only during initialization.
    * @param va [in] contains the data about the variable.
    */
-  virtual void VariableHasChanged( VariableAttribut* va, SimpleString NewValue );
+  // virtual void VariableHasChanged( VariableAttribut* va, SimpleString NewValue );
+
+  virtual void VariableChanged( VariableAttribut * ChangedVariable, void * UserData );
+
+  virtual bool IsAValidChange( VariableAttribut * ChangedVariable, SimpleString newValue );
 
 
   /**
@@ -257,7 +261,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
    *
    * Callback given to the variable attribut object
    */
-  static bool FUNCTION_CALL_TYPE NotifyValueChanged(VariableAttribut* var, void* userData);
+  void NotifyValueChanged( VariableAttribut* var );
 
   void RefreshLock();
   
@@ -288,7 +292,7 @@ class ControlServer : public TcpServer, public XMLTreeParser
   unsigned int localConnectorId;	 
 
   SimpleString serviceName; /*<! service name */
-  STATUS Status; /*!< default variable structure for the variable status combined with the status value */
+  ControlServerStatus Status; /*!< default variable structure for the variable status combined with the status value */
   
   
   IntVariableAttribut* lockIntVariable; /*!< variable structure for integer to manage the lock state */
@@ -351,4 +355,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __CONTROL_SERVER_H__
+#endif // __SERVICE_CONTROL_CONTROL_SERVER_H__

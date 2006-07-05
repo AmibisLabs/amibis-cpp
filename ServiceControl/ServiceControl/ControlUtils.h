@@ -5,10 +5,11 @@
  * @date 2004-2005
  */
 
-#ifndef __CONTROL_UTILS_H__
-#define __CONTROL_UTILS_H__
+#ifndef __SERVICE_CONTROL_CONTROL_UTILS_H__
+#define __SERVICE_CONTROL_CONTROL_UTILS_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleString.h>
 
 namespace Omiscid {
@@ -30,4 +31,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __CONTROL_UTILS_H__
+#endif // __SERVICE_CONTROL_CONTROL_UTILS_H__

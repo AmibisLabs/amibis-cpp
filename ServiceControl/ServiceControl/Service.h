@@ -1,19 +1,13 @@
 
 
-#ifndef __OMISCID_SERVICE_H__
-#define __OMISCID_SERVICE_H__
+#ifndef __SERVICE_CONTROL_SERVICE_H__
+#define __SERVICE_CONTROL_SERVICE_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
 
-#include <System/SimpleString.h>
 #include <ServiceControl/ControlServer.h>
-#include <ServiceControl/InOutputAttribut.h>
-#include <ServiceControl/VariableAttribut.h>
-#include <ServiceControl/ServiceFilter.h>
-#include <ServiceControl/ServicesTools.h>
-#include <ServiceControl/ServiceProxy.h>
-#include <ServiceControl/MessageListener.h>
-#include <ServiceControl/LocalVariableChangeListener.h>
+#include <ServiceControl/ServiceFilter.h> 
+#include <ServiceControl/MessageListener.h> 
 
 namespace Omiscid {
 
@@ -235,4 +229,4 @@ public:
 
 } // namespace Omiscid
 
-#endif  // __OMISCID_SERVICE_H__
+#endif  // __SERVICE_CONTROL_SERVICE_H__

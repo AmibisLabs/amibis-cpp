@@ -7,10 +7,11 @@
  *  \date    2004-2005
  */
 
-#ifndef __OMISCID_SERVICES_TOOLS_H__
-#define __OMISCID_SERVICES_TOOLS_H__
+#ifndef __SERVICE_CONTROL_SERVICES_TOOLS_H__
+#define __SERVICE_CONTROL_SERVICES_TOOLS_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleString.h>
 #include <ServiceControl/DnsSdService.h>
 #include <ServiceControl/WaitForDnsSdServices.h>
@@ -47,4 +48,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __OMISCID_SERVICES_TOOLS_H__
+#endif // __SERVICE_CONTROL_SERVICES_TOOLS_H__

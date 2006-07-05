@@ -5,10 +5,11 @@
  * @date 2004-2005
  */
 
-#ifndef __XMLTREE_PARSER_H__
-#define __XMLTREE_PARSER_H__
+#ifndef __SERVICE_CONTROL_XMLTREE_PARSER_H__
+#define __SERVICE_CONTROL_XMLTREE_PARSER_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/Event.h>
 #include <System/Thread.h>
 #include <System/Mutex.h>
@@ -207,4 +208,4 @@ class XMLTreeParser : public Thread
 
 } // namespace Omiscid
 
-#endif // __XMLTREE_PARSER_H__
+#endif // __SERVICE_CONTROL_XMLTREE_PARSER_H__

@@ -1,9 +1,10 @@
 
 
-#ifndef __VARIABLE_VALUE_CHECKER_H__
-#define __VARIABLE_VALUE_CHECKER_H__
+#ifndef __SERVICE_CONTROL_VARIABLE_VALUE_CHECKER_H__
+#define __SERVICE_CONTROL_VARIABLE_VALUE_CHECKER_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <Servicecontrol/Variable.h>
 #include <Servicecontrol/Service.h>
 
@@ -12,10 +13,10 @@ namespace Omiscid {
 class VariableValueChecker
 {
 public:
-	virtual bool isAValidChange(Service service, Variable currentVariable, SimpleString newValue) = 0;
+	virtual bool IsAValidChange(Service service, Variable currentVariable, SimpleString newValue) = 0;
 };
 
 
 } // namespace Omiscid
 
-#endif	// __VARIABLE_VALUE_CHECKER_H__
+#endif	// __SERVICE_CONTROL_VARIABLE_VALUE_CHECKER_H__

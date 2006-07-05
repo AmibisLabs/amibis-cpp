@@ -7,10 +7,11 @@
  *  \date    2004-2005
  */
 
-#ifndef __SERVICE_H__
-#define __SERVICE_H__
+#ifndef __SERVICE_CONTROL_DNS_SD_SERVICE_H__
+#define __SERVICE_CONTROL_DNS_SD_SERVICE_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
 #include <System/SimpleString.h>
 
 #include <ServiceControl/ServiceProperties.h>
@@ -80,4 +81,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __SERVICE_H__
+#endif // __SERVICE_CONTROL_DNS_SD_SERVICE_H__

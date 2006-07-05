@@ -3,8 +3,8 @@
  * @brief Definition of ReentrantMutex class
  */
 
-#ifndef __REENTRANT_MUTEX_H__
-#define __REENTRANT_MUTEX_H__
+#ifndef __SYSTEM_REENTRANT_MUTEX_H__
+#define __SYSTEM_REENTRANT_MUTEX_H__
 
 #include <System/Config.h>
 
@@ -54,4 +54,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __REENTRANT_MUTEX_H__
+#endif // __SYSTEM_REENTRANT_MUTEX_H__

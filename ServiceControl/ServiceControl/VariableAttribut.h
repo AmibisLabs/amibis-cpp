@@ -5,44 +5,21 @@
  * @date 2004-2005
  */
 
-#ifndef __VARIABLE_ATTRIBUT_H__
-#define __VARIABLE_ATTRIBUT_H__ 
+#ifndef __SERVICE_CONTROL_VARIABLE_ATTRIBUT_H__
+#define __SERVICE_CONTROL_VARIABLE_ATTRIBUT_H__ 
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
+
+#include <System/SimpleList.h>
 #include <ServiceControl/Attribut.h>
-#include <ServiceControl/ControlServer.h>
+#include <ServiceControl/VariableListener.h>
 
 #include <libxml/parser.h>
 
 namespace Omiscid {
 
-  /** @brief VariableAccess Kind */
-typedef enum VariableAccess
-{
-	  ConstantAccess /*!< constant values */, 
-	  ReadAccess /*!< read only access  the user cannot change the value through the ControlClient */, 
-  	  ReadWriteAccess /*!< read write access  : the user can change the value through the ControlServer*/, 
-	  ReadWriteBeforeInitAccess /*!< the user can change the value through the ControlServer only 
-				  when the status is different than ControlServer::STATUS_RUNNING */
- };
-
+class VariableAttributListener;
 class VariableAttribut;
-
-  /** @brief Callback called when the value changed */
-typedef bool (FUNCTION_CALL_TYPE *SignalThatValueChanged)(VariableAttribut* var, void* user_ptr);
-
-class VariableAttributCallback
-{
-public:
-	VariableAttributCallback();
-	VariableAttributCallback(VariableAttributCallback&ToCopy);
-
-	VariableAttributCallback& operator=(VariableAttributCallback&ToCopy);
-
-	SignalThatValueChanged callbackValue; /*!< the callback method to call when the value changed */
-	void* userDataPtr; /*!< the pointer on data given to the callback */
-};
-
 
 /**
  * @class VariableAttribut VariableAttribut.h ServiceControl/VariableAttribut.h
@@ -99,7 +76,7 @@ public:
 private:
   /** @brief Callback call when value changed. Only accessible to friend class
    * @param user_data_ptr pointer given to the callback when it is called */
-  void SetCallbackForControlServer(SignalThatValueChanged callback, void* user_data_ptr);
+  // void SetCallbackForControlServer(SignalThatValueChanged callback, void* user_data_ptr);
   //@}
 
 public:
@@ -107,7 +84,7 @@ public:
    * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.
    * @return true if access is 'read-write' or 'read-write only before init' and the status is different of STATUS_RUNNING (: 2).
    */
-  bool CanBeModified(ControlServer::STATUS status) const;
+  bool CanBeModified(ControlServerStatus status) const;
 
   /** @brief Associate a SimpleString to a kind of access.
    * @param accesskind [in] access kind that we want to change in SimpleString
@@ -158,7 +135,17 @@ public:
    */
   void Display();
 
-  /** \brief Extract data from a XML node.
+  /** \brief Add a listener to this variable.
+   *
+   */
+  bool AddListener( VariableAttributListener *  ListenerToAdd );
+
+   /** \brief remove a listener to this variable.
+   *
+   */
+  bool RemoveListener( VariableAttributListener *  ListenerToAdd );
+
+ /** \brief Extract data from a XML node.
    *
    * Extract attribute 'name', and child node.
    * \param node A node of service description with the tag VariableAttribut::variable_str
@@ -180,13 +167,9 @@ protected:
   static const SimpleString access_readwrite_str; /*<! SimpleString representation for 'read-write' access (used in XML description)*/
 
 private:
-
-  void SetValueFromControls(const SimpleString value_str);
-
-  VariableAttributCallback NotifyControlServer; /*!< the callback method to call when the value changed */
-  MutexedSimpleList<VariableAttributCallback*> Listeners;
+  MutexedSimpleList<VariableAttributListener*> Listeners;
 };
 
 } // namespace Omiscid
 
-#endif // __VARIABLE_ATTRIBUT_H__
+#endif // __SERVICE_CONTROL_VARIABLE_ATTRIBUT_H__

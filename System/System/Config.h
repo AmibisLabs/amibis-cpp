@@ -1,5 +1,5 @@
-#ifndef __CONFIG_H__
-#define __CONFIG_H__
+#ifndef __SYSTEM_CONFIG_H__
+#define __SYSTEM_CONFIG_H__
 
 /*! \def FUNCTION_CALL_TYPE
  *	\brief DNS-SD callbacks type (WIN32 specific).
@@ -103,4 +103,4 @@ struct timezone {
 
 } // namespace Omiscid
 
-#endif	// __CONFIG_H__
+#endif	// __SYSTEM_CONFIG_H__

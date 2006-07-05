@@ -1,9 +1,9 @@
 
 
-#ifndef __OMISCID_VARIABLE_CHANGE_LISTENER_H__
-#define __OMISCID_VARIABLE_CHANGE_LISTENER_H__
+#ifndef __SERVICE_CONTROL_REMOTE_VARIABLE_CHANGE_LISTENER_H__
+#define __SERVICE_CONTROL_REMOTE_VARIABLE_CHANGE_LISTENER_H__
 
-#include <System/Config.h>
+#include <ServiceControl/Config.h>
 
 #include <ServiceControl/Variable.h>
 #include <ServiceControl/Service.h>
@@ -36,4 +36,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif	// __OMISCID_VARIABLE_CHANGE_LISTENER_H__
+#endif	// __SERVICE_CONTROL_REMOTE_VARIABLE_CHANGE_LISTENER_H__
