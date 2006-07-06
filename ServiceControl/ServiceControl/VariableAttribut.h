@@ -19,7 +19,6 @@
 namespace Omiscid {
 
 class VariableAttributListener;
-class VariableAttribut;
 
 /**
  * @class VariableAttribut VariableAttribut.h ServiceControl/VariableAttribut.h

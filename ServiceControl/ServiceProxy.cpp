@@ -109,13 +109,12 @@ unsigned int ServiceProxy::GetPeerId()
      */
 bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleString Value)
 {
-	VariableAttribut * pVar = FindVariable(VarName.GetStr());
+	VariableAttribut * pVar = QueryVariableModif(VarName, Value);
 	if ( pVar == NULL )
 	{
 		return false;
 	}
 
-	pVar->SetValue( Value );
 	return true;
 }
 

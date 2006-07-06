@@ -35,9 +35,19 @@ int main(int argc, char * argv[])
 		// something goes wrong
 		return -1;
 	}
-
+ 
 	// Change value of the Hours variable to 0
 	ClockServer->SetVariableValue( "Hours", "0" );
+
+	if ( ClockServer->AddVariable( "TestWrite", "integer", "Number of hours since start", ReadWriteAccess ) == false )
+	{
+		// something goes wrong
+		return -1;
+	}
+
+	// Change value of the Hours variable to 0
+	ClockServer->SetVariableValue( "TestWrite", "-" );
+
 
 	// Register and Start the Service
 	// We can not anymore add variable and connector
@@ -52,7 +62,7 @@ int main(int argc, char * argv[])
 	struct timeval now;					// A struct to get the current time of day
 
 	// Loop forever
-	for(int zz=0;zz < 10; zz++)
+	for(int zz=0;zz < 10000; zz++)
 	{
 		// retrieve the current time
 		gettimeofday(&now, NULL);

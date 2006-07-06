@@ -15,11 +15,13 @@ int main(int argc, char * argv[])
 	// Let search for a service with the folowing properties
 	// - name is "Clock Server" 
 	// - contain an output connector "PushClock"
-	// - expose a variable "Hours"
+	// - expose a variable "Hours" 
 
 	// First, create a service filter. You *must* not free it after use
-	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasConnector( "PushClock", AnOutput), HasVariable( "Hours" ) );
+	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasVariable( "TestWrite" ) );
 	ServiceProxy * ClockServer = Service::FindService( MySearch, 10000 );
+
+	ClockServer->SetVariableValue( "TestWrite", "1" );
 
 	return 0;
 
