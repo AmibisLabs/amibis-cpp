@@ -14,20 +14,61 @@
 #include <System/SimpleString.h>
 #include <Com/ComTools.h>
 #include <Com/TcpServer.h>
-#include <ServiceControl/VariableAttribut.h>
-#include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/IntVariableAttribut.h>
 #include <ServiceControl/ServicesTools.h>
 #include <ServiceControl/StringVariableAttribut.h>
-#include <ServiceControl/VariableListener.h>
+#include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/XMLTreeParser.h>
+#include <ServiceControl/VariableAttributListener.h>
 
 
 namespace Omiscid {
 
 #define HOST_NAME_MAX_SIZE 256
 
-class ValueListener; // declared below, after class ControlServer
+/**
+ * @class ValueListener ControlServer.h ServiceControl/ControlServer.h
+ * @brief Group a variable and peer ids
+ *
+ * The peer id identify the peer who want be warned
+ * when there is variable modification.
+ *
+ * @author Sebastien Pesnel
+ */
+class ValueListener
+{
+public:
+  /** @brief Constructor
+   * @param v the variable for this group
+   * @param listener_id an id of peer interest in the variable modification
+   */
+  ValueListener(VariableAttribut* v, unsigned int listener_id);
+
+  /** @brief Destructor */
+  ~ValueListener();
+
+  /** @brief Add a peer interested in the variable modification 
+   * @param listener_id an id of peer interest in the variable modification
+   */
+  void AddListener(unsigned int listener_id);
+  /** @brief Remove a peer 
+   *
+   * Remove a peer no more interested in the variable modification 
+   * or disconnected 
+   * @param listener_id an id of peer to remove
+   */
+  void RemoveListener(unsigned int listener_id);
+
+  /** @brief Test the presence of peer associate to the variable
+   * @return true if there is one peer at least
+   */
+  bool HasListener() const;
+
+  VariableAttribut* var; /*!< the variable for this group */
+  SimpleList<unsigned int> listListener; /*!< the list of listener for this variable */
+};
+
 
 /**
  * @class ControlServer ControlServer.h ServiceControl/ControlServer.h
@@ -44,8 +85,6 @@ class ValueListener; // declared below, after class ControlServer
 class ControlServer : public TcpServer, public XMLTreeParser, public VariableAttributListener		      
 {
  public:
-
-
   /** @brief Constructor
    *
    * Define a service ID for this service.
@@ -218,10 +257,9 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    */
   // virtual void VariableHasChanged( VariableAttribut* va, SimpleString NewValue );
 
-  virtual void VariableChanged( VariableAttribut * ChangedVariable, void * UserData );
+  void VariableChanged( VariableAttribut * ChangedVariable );
 
-  virtual bool IsAValidChange( VariableAttribut * ChangedVariable, SimpleString newValue );
-
+  virtual bool IsValid( VariableAttribut * ChangedVariable, SimpleString newValue );
 
   /**
    * @brief Function called on each message
@@ -311,47 +349,6 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
 };
 
 
-/**
- * @class ValueListener ControlServer.h ServiceControl/ControlServer.h
- * @brief Group a variable and peer ids
- *
- * The peer id identify the peer who want be warned
- * when there is variable modification.
- *
- * @author Sebastien Pesnel
- */
-class ValueListener
-{
-public:
-  /** @brief Constructor
-   * @param v the variable for this group
-   * @param listener_id an id of peer interest in the variable modification
-   */
-  ValueListener(VariableAttribut* v, unsigned int listener_id);
-
-  /** @brief Destructor */
-  ~ValueListener();
-
-  /** @brief Add a peer interested in the variable modification 
-   * @param listener_id an id of peer interest in the variable modification
-   */
-  void AddListener(unsigned int listener_id);
-  /** @brief Remove a peer 
-   *
-   * Remove a peer no more interested in the variable modification 
-   * or disconnected 
-   * @param listener_id an id of peer to remove
-   */
-  void RemoveListener(unsigned int listener_id);
-
-  /** @brief Test the presence of peer associate to the variable
-   * @return true if there is one peer at least
-   */
-  bool HasListener() const;
-
-  VariableAttribut* var; /*!< the variable for this group */
-  SimpleList<unsigned int> listListener; /*!< the list of listener for this variable */
-};
 
 } // namespace Omiscid
 

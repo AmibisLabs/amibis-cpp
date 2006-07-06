@@ -85,7 +85,8 @@ void VariableAttribut::SetValue(const SimpleString value_str)
 	Listeners.Lock();
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
-		if ( Listeners.GetCurrent()->IsAValidChange( this, value_str ) == false )
+		VariableAttributListener * pListener = Listeners.GetCurrent();
+		if ( pListener->IsValid( this, value_str ) == false )
 		{
 			// someone disagree
 			Listeners.Unlock();
@@ -99,7 +100,7 @@ void VariableAttribut::SetValue(const SimpleString value_str)
 	// Ok the value has change, send information back to people
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
-		Listeners.GetCurrent()->VariableChanged( this, NULL );
+		Listeners.GetCurrent()->VariableChanged( this );
 	}
 
 	Listeners.Unlock();

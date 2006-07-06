@@ -71,7 +71,8 @@ sub CheckIfDef()
 			if ( !($CurrentHeader eq $ExpectedHeader) )
 			{
 				print "$FileName: bad prepocessor definition (is '$CurrentHeader' expected '$ExpectedHeader')\n";				
-			}			
+			}
+			$Headers{$CurrentHeader}++;
 			$CurrentLine = <$fd>;
 			if ( !($CurrentLine =~ /^\#define\s+$CurrentHeader[\s\r\n]+$/) )
 			{
@@ -293,6 +294,15 @@ sub WorkOnFile()
 		{
 			# print "$CompleteFileName (CheckIfDef)\n";
 			&CheckIfDef($CompleteFileName, $FileName);
+			
+			foreach $prep ( keys %Headers )
+			{
+				if ( $Headers{$prep} > 1 )
+				{
+					die;
+				}
+			}
+			
 			# print "$CompleteFileName (FirstIncludeofHeaderFileisConfig)\n";
 			&FirstIncludeofHeaderFileisConfig($CompleteFileName);
 			

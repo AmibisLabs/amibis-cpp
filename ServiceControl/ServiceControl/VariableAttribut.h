@@ -12,7 +12,7 @@
 
 #include <System/SimpleList.h>
 #include <ServiceControl/Attribut.h>
-#include <ServiceControl/VariableListener.h>
+#include <ServiceControl/VariableAttributListener.h>
 
 #include <libxml/parser.h>
 

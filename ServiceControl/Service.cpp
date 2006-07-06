@@ -263,7 +263,7 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 	 */
 SimpleString Service::GetVariableDescription(SimpleString VarName)
 {
-	SimpleString Empty("");
+	SimpleString Empty(SimpleString::EmptyString);
 
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -304,7 +304,7 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 	 */
 SimpleString Service::GetVariableValue(SimpleString VarName)
 {
-	SimpleString Empty("");
+	SimpleString Empty(SimpleString::EmptyString);
 
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -325,7 +325,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	 */
 SimpleString Service::GetVariableAccessType(SimpleString VarName)
 {
-	SimpleString Empty("");
+	SimpleString Empty(SimpleString::EmptyString);
 
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -346,10 +346,50 @@ SimpleString Service::GetVariableAccessType(SimpleString VarName)
 	 */
 SimpleString Service::GetVariableType(SimpleString VarName)
 {
-	SimpleString Empty("");
+	SimpleString Empty(SimpleString::EmptyString);
 
 	return Empty;
 }
+
+	/**
+	 * Adds a listener that will be triggered at every variable change
+	 * @param varName the varName
+	 * @param listener the listener
+	 * @throws UnknownBipVariable thrown if the variable has not been declared
+	 */
+bool Service::AddVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener)
+{
+	VariableAttribut * pVar = FindVariable( VarName );
+	if ( pVar == NULL )
+	{
+		return false;
+	}
+
+	// Add a pointer to myself in this listener
+	Listener->SetUserData( this );
+
+	// Ask to add the listenner
+	return pVar->AddListener( Listener );
+}
+
+	/**
+	 * remove a listener that was triggering at every variable change
+	 * @param varName the varName
+	 * @param listener the listener
+	 * @throws UnknownBipVariable thrown if the variable has not been declared
+	 */
+bool Service::RemoveVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener)
+{
+	VariableAttribut * pVar = FindVariable( VarName );
+	if ( pVar == NULL )
+	{
+		return false;
+	}
+
+	// Ask to remove the listener
+	return pVar->RemoveListener( Listener );
+}
+
 
     /**
      * Connects a local connector to a remote connector of a remote service
@@ -473,7 +513,8 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter, unsigned int WaitTim
 
 	MyData.FilterList.Add( Filter );
 
-	WFOS->NeedService( "", WaitForOmiscidServiceCallback, (void*)&MyData);
+	// Ask to work on all service (we do not provide a name)
+	WFOS->NeedService( WaitForOmiscidServiceCallback, (void*)&MyData);
 	WFOS->WaitAll(WaitTime);
 
 	// Delete by ourself the object. Thus we are sure that

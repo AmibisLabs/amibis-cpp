@@ -20,11 +20,14 @@ void ControlServer::InitInstance()
 	port = 0;
 
 	serviceId = ComTools::GeneratePeerId();
+
+	// Change properties of my inherited faces
 	TcpServer::SetServiceId(GetServiceId());
-
 	TcpServer::SetTcpNoDelay(true);
-
 	TcpServer::SetCallBackOnRecv(XMLTreeParser::CumulMessage, (XMLTreeParser*)this);
+
+	// Give a pointer to myself on my VariableAttributListener side
+	VariableAttributListener::SetUserData( this );
 
 	SetStatus( STATUS_INIT );
 
@@ -560,14 +563,17 @@ void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue,
 	va->SetValue( NewValue );
 }
 
-bool ControlServer::IsAValidChange( VariableAttribut * ChangedVariable, SimpleString newValue )
+bool ControlServer::IsValid( VariableAttribut * ChangedVariable, SimpleString newValue )
 {
 	return ChangedVariable->CanBeModified(GetStatus());
 }
 
-void ControlServer::VariableChanged( VariableAttribut * ChangedVariable, void * UserData )
+void ControlServer::VariableChanged( VariableAttribut * ChangedVariable )
 {
-	NotifyValueChanged( ChangedVariable );
+	if ( Status == STATUS_RUNNING )
+	{
+		NotifyValueChanged( ChangedVariable );
+	}
 }
 
 VariableAttribut* ControlServer::AddVariable(const SimpleString name)

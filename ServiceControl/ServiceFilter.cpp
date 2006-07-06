@@ -89,6 +89,16 @@ private:
 	ConnectorKind ConnectorType;
 };
 
+/**
+* Will always return true
+*/
+class ServiceYes : public ServiceFilter
+{
+public:
+	bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
+};
+
 } // namespace Omiscid
 
 ServiceNameIs::ServiceNameIs(SimpleString& Name, bool CaseInsensitive, bool OnlyPrefix)
@@ -397,6 +407,26 @@ ServiceFilter * Omiscid::Or( ServiceFilter * First, ServiceFilter * Second,
 	return pFilter;
 }
 
+bool ServiceYes::IsAGoodService(ServiceProxy& SP)
+{
+	return true;
+}
+
+ServiceFilter * ServiceYes::Duplicate()
+{
+	return new ServiceYes();
+}
+
+/**
+* Create a service Filter that will answer always yes. Usefull
+* when searching all services
+*
+* @return a pointer ServiceFilter
+*/
+ServiceFilter * Omiscid::Yes()
+{
+	return new ServiceYes();
+}
 
 
 

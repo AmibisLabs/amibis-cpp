@@ -8,11 +8,9 @@
 #include <ServiceControl/ControlServer.h>
 #include <ServiceControl/ServiceFilter.h> 
 #include <ServiceControl/MessageListener.h> 
+#include <ServiceControl/LocalVariableListener.h>
 
 namespace Omiscid {
-
-class Factory;
-
 /**
  * @author Dominique Vaufreydaz
  *
@@ -166,6 +164,28 @@ public:
      */
     bool ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, SimpleString RemoteConnector);
 
+	/**
+	 * Add a message listener to a variable
+	 * @param ConnectorName the name of the connector
+	 * @param MsgListener the object that will handle messages sent to this connector
+	 */
+	bool AddConnectorListener(SimpleString ConnectorName, MessageListener * MsgListener);
+
+	/**
+	 * Adds a listener that will be triggered at every variable change
+	 * @param varName the varName
+	 * @param listener the listener
+	 * @throws UnknownBipVariable thrown if the variable has not been declared
+	 */
+	bool AddVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener);
+
+	/**
+	 * remove a listener that was triggering at every variable change
+	 * @param varName the varName
+	 * @param listener the listener
+	 * @throws UnknownBipVariable thrown if the variable has not been declared
+	 */
+	bool Service::RemoveVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener);
 
 	/**
      * Finds a service on the network. The research is based on the service filter
@@ -180,21 +200,6 @@ public:
      */
     static ServiceProxy * FindService(ServiceFilter& Filter, unsigned int WaitTime = 0);
 
-	/**
-	 * Add a message listener to a connector
-	 * @param ConnectorName the name of the connector
-	 * @param MsgListener the object that will handle messages sent to this connector
-	 */
-	bool AddConnectorListener(SimpleString ConnectorName, MessageListener * MsgListener);
-
-	/**
-	 * Adds a listener that will be triggered at every variable change
-	 * @param varName the varName
-	 * @param listener the listener
-	 * @throws UnknownBipVariable thrown if the variable has not been declared
-	 * @see BipService#addVariable
-	 */
-	// bool AddVariableChangeListener(SimpleString VarName, OmiscidAllVariablesListener * listener);
 
 #if 0
 

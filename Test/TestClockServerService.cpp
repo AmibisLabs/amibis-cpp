@@ -7,13 +7,23 @@
 
 #include <System/Portage.h>
 #include <ServiceControl/Factory.h>
+#include <ServiceControl/LocalVariableListener.h>
 
 using namespace Omiscid;
+
+class TestListener : public LocalVariableListener
+{
+public:
+	virtual void VariableChanged(Service& Service, const Variable& ChangedVariable)
+	{
+		printf( "Variable '%s' has change '%s'\n", ChangedVariable.Name.GetStr(), ChangedVariable.Value.GetStr() );
+	}
+};
 
 int main(int argc, char * argv[])
 {
 	// Let create a service named "Clock Server"
-	Service * ClockServer = ServiceFactory.Create( "Clock Server" );
+	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 
 	// Add a output connector to push clock
 	// Name			= "PushClock"
@@ -55,6 +65,8 @@ int main(int argc, char * argv[])
 	printf( "Started...\n" );
 
 	// Now, we will send clock over the PushClock connector	
+	TestListener TL;
+	ClockServer->AddVariableChangeListener( "TestWrite", &TL );
 
 	// First, needed stuff
 	SimpleString TempValue;				// A SimpleString to create the value

@@ -4,7 +4,11 @@
 
 using namespace Omiscid;
 
+namespace Omiscid {
+
 Factory ServiceFactory;
+
+} // namespace Omiscid
 
 /** 
 	* Registers a new Omiscid service. This service will be advertised in DSN-SD

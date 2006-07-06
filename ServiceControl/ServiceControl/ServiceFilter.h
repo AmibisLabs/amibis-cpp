@@ -139,6 +139,14 @@ ServiceFilter * Or( ServiceFilter * First, ServiceFilter * Second = NULL,
 						   ServiceFilter * Third = NULL, ServiceFilter * Fourth = NULL,
 						   ServiceFilter * Fifth = NULL );
 
+/**
+* Create a service Filter that will answer always yes. Usefull
+* when searching all services
+*
+* @return a pointer ServiceFilter
+*/
+ServiceFilter * Yes();
+
 } // namespace Omiscid
 
 #endif  // __SERVICE_CONTROL_SERVICE_FILTER_H__
