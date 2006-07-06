@@ -18,9 +18,16 @@ void LocalVariableListener::VariableChanged( VariableAttribut * ChangedVariable 
 	VariableChanged(*CurrentService, ChangedVariable->GetName(), ChangedVariable->GetValue() );
 }
 
-bool LocalVariableListener::IsValid( VariableAttribut * ChangedVariable, SimpleString newValue )
+bool LocalVariableListener::IsValid( VariableAttribut * ChangedVariable, SimpleString NewValue )
 {
-	// For us, the changes are always legal, we just want to be sure we've got
-	// the changes informations
-	return true;
+	if ( GetUserData() == NULL )
+	{
+		// Bad call, do nothing so say the variable can change...
+		return true;
+	}
+
+	// Do my job
+	Service * CurrentService = static_cast<Service*>(UserData);
+
+	return IsValid(*CurrentService, ChangedVariable->GetName(), NewValue);
 }

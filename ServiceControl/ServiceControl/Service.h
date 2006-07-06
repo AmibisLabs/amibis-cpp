@@ -6,11 +6,15 @@
 #include <ServiceControl/Config.h>
 
 #include <ServiceControl/ControlServer.h>
+#include <ServiceControl/LocalVariableListener.h>
 #include <ServiceControl/ServiceFilter.h> 
 #include <ServiceControl/MessageListener.h> 
-#include <ServiceControl/LocalVariableListener.h>
 
 namespace Omiscid {
+
+class LocalVariableListener;
+class ControlServer;
+
 /**
  * @author Dominique Vaufreydaz
  *

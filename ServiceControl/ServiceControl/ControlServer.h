@@ -69,6 +69,7 @@ public:
   SimpleList<unsigned int> listListener; /*!< the list of listener for this variable */
 };
 
+class VariableAttributListener;
 
 /**
  * @class ControlServer ControlServer.h ServiceControl/ControlServer.h

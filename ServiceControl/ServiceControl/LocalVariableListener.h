@@ -1,16 +1,17 @@
 
 
-#ifndef __SERVICE_CONTROL_LOCAL_VARIABLE_CHANGE_LISTENER_H__
-#define __SERVICE_CONTROL_LOCAL_VARIABLE_CHANGE_LISTENER_H__
+#ifndef __SERVICE_CONTROL_LOCAL_VARIABLE_LISTENER_H__
+#define __SERVICE_CONTROL_LOCAL_VARIABLE_LISTENER_H__
 
 #include <ServiceControl/Config.h>
 
 #include <System/SimpleString.h>
-#include <ServiceControl/Service.h>
-#include <ServiceControl/VariableAttributListener.h>
 #include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/VariableAttributListener.h>
 
 namespace Omiscid {
+
+class Service;
 
 /**
  * Defines the listener interface for all Omiscid variable of a service
@@ -29,7 +30,7 @@ public:
      * @param service the service owning the variable
      * @param variable the information about the variable which value has changed
      */
-    void VariableChanged(Service& ServiceRef, SimpleString VarName, SimpleString NewValue);
+    virtual void VariableChanged(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue) = 0;
     
     /**
      * This method is called when a new value is request on a variable. This method must
@@ -39,7 +40,7 @@ public:
      * @param newValue the new requested value
      * @return true if the new value is accepted, false if rejected.
      */
-    bool IsValid(Service& ServiceRef, SimpleString VarName, SimpleString NewValue);
+    virtual bool IsValid(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue) = 0;
 
 private:
 	void VariableChanged( VariableAttribut * ChangedVariable );
@@ -49,4 +50,4 @@ private:
 
 } // namespace Omiscid
 
-#endif	// __SERVICE_CONTROL_LOCAL_VARIABLE_CHANGE_LISTENER_H__
+#endif	// __SERVICE_CONTROL_LOCAL_VARIABLE_LISTENER_H__

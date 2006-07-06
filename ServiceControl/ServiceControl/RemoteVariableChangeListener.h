@@ -5,8 +5,7 @@
 
 #include <ServiceControl/Config.h>
 
-#include <ServiceControl/Variable.h>
-#include <ServiceControl/Service.h>
+#include <ServiceControl/ServiceProxy.h>
 
 namespace Omiscid {
 
@@ -30,7 +29,7 @@ protected:
      * @param message
      *            the Omiscid message to process
      */
-    virtual void VariableChanged(Service& Service, Variable ChangedVariable) = 0;
+    virtual void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue ) = 0;
 };
 
 

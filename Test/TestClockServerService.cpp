@@ -14,9 +14,15 @@ using namespace Omiscid;
 class TestListener : public LocalVariableListener
 {
 public:
-	virtual void VariableChanged(Service& Service, const Variable& ChangedVariable)
+	virtual bool IsValid(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue )
 	{
-		printf( "Variable '%s' has change '%s'\n", ChangedVariable.Name.GetStr(), ChangedVariable.Value.GetStr() );
+		printf( "I answer yes to change '%s' to '%s'\n", VarName.GetStr(), NewValue.GetStr() );
+		return true;
+	}
+
+	virtual void VariableChanged(Service& Service, const SimpleString VarName, const SimpleString NewValue)
+	{
+		printf( "Variable '%s' has change '%s'\n", VarName.GetStr(), NewValue.GetStr() );
 	}
 };
 
