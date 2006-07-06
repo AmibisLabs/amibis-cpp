@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef __SERVICE_CONTROL_CONTROL_CLIENT_H__
-#define __SERVICE_CONTROL_CONTROL_CLIENT_H__
+#ifndef __CONTROL_CLIENT_H__
+#define __CONTROL_CLIENT_H__
 
 #include <ServiceControl/Config.h>
 
@@ -319,4 +319,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __SERVICE_CONTROL_CONTROL_CLIENT_H__
+#endif // __CONTROL_CLIENT_H__

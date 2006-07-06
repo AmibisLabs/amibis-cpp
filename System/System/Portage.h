@@ -1,5 +1,5 @@
-#ifndef __SYSTEM_PORTAGE_H__
-#define __SYSTEM_PORTAGE_H__
+#ifndef __PORTAGE_H__
+#define __PORTAGE_H__
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
@@ -50,4 +50,4 @@ private:
 
 } // namespace Omiscid
 
-#endif	// __SYSTEM_PORTAGE_H__
+#endif	// __PORTAGE_H__

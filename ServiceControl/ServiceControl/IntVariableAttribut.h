@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef __SERVICE_CONTROL_INT_VARIABLE_ATTRIBUT_H__
-#define __SERVICE_CONTROL_INT_VARIABLE_ATTRIBUT_H__
+#ifndef __INT_VARIABLE_ATTRIBUT_H__
+#define __INT_VARIABLE_ATTRIBUT_H__
 
 #include <ServiceControl/Config.h>
 
@@ -62,4 +62,4 @@ class IntVariableAttribut{
 
 } // namespace Omiscid
 
-#endif // __SERVICE_CONTROL_INT_VARIABLE_ATTRIBUT_H__
+#endif // __INT_VARIABLE_ATTRIBUT_H__

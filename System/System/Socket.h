@@ -3,8 +3,8 @@
  * @file Socket.h
  * @brief Definition of Socket class
  */
-#ifndef __SYSTEM_SOCKET_H__
-#define __SYSTEM_SOCKET_H__
+#ifndef __SOCKET_H__
+#define __SOCKET_H__
 
 #include <System/Config.h>
 #include <System/SimpleString.h>
@@ -161,4 +161,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __SYSTEM_SOCKET_H__
+#endif // __SOCKET_H__

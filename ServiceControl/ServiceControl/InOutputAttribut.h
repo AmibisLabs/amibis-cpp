@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef __SERVICE_CONTROL_IN_OUTPUT_ATTRIBUT_H__
-#define __SERVICE_CONTROL_IN_OUTPUT_ATTRIBUT_H__
+#ifndef __IN_OUTPUT_ATTRIBUT_H__
+#define __IN_OUTPUT_ATTRIBUT_H__
 
 #include <ServiceControl/Config.h>
 
@@ -118,4 +118,4 @@ unsigned int peerId; /*!< needed in case of distant usage, because we do not hav
 
 } // namespace Omiscid
 
-#endif // __SERVICE_CONTROL_IN_OUTPUT_ATTRIBUT_H__
+#endif // __IN_OUTPUT_ATTRIBUT_H__

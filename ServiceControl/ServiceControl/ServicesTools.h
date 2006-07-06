@@ -7,8 +7,8 @@
  *  \date    2004-2005
  */
 
-#ifndef __SERVICE_CONTROL_SERVICES_TOOLS_H__
-#define __SERVICE_CONTROL_SERVICES_TOOLS_H__
+#ifndef __SERVICES_TOOLS_H__
+#define __SERVICES_TOOLS_H__
 
 #include <ServiceControl/Config.h>
 
@@ -54,4 +54,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __SERVICE_CONTROL_SERVICES_TOOLS_H__
+#endif // __SERVICES_TOOLS_H__

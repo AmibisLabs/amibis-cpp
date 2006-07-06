@@ -3,8 +3,8 @@
  * @file TcpUdpClientServer.h
  * @brief Definition of TcpUdpClientServer class, ClientConnection class
  */
-#ifndef __COM_TCP_UDP_CLIENT_SERVER_H__
-#define __COM_TCP_UDP_CLIENT_SERVER_H__
+#ifndef __TCP_UDP_CLIENT_SERVER_H__
+#define __TCP_UDP_CLIENT_SERVER_H__
 
 #include <Com/Config.h>
 
@@ -229,4 +229,4 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
 
 } // namespace Omiscid
 
-#endif // __COM_TCP_UDP_CLIENT_SERVER_H__
+#endif // __TCP_UDP_CLIENT_SERVER_H__

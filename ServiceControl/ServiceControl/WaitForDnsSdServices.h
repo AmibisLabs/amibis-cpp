@@ -7,8 +7,8 @@
  *  \date    2004-2005
  */
 
-#ifndef __SERVICE_CONTROL_WAIT_FOR_DNS_SD_SERVICES_H__
-#define __SERVICE_CONTROL_WAIT_FOR_DNS_SD_SERVICES_H__
+#ifndef __WAIT_FOR_DNS_SD_SERVICES_H__
+#define __WAIT_FOR_DNS_SD_SERVICES_H__
 
 #include <ServiceControl/Config.h>
 
@@ -95,4 +95,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif // __SERVICE_CONTROL_WAIT_FOR_DNS_SD_SERVICES_H__
+#endif // __WAIT_FOR_DNS_SD_SERVICES_H__

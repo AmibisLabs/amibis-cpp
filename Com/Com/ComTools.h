@@ -3,8 +3,8 @@
  * @file ComTools.h
  * @brief Definition of ComTools class
  */
-#ifndef __COM_COM_TOOLS_H__
-#define __COM_COM_TOOLS_H__
+#ifndef __COM_TOOLS_H__
+#define __COM_TOOLS_H__
 
 #include <Com/Config.h>
 
@@ -73,4 +73,4 @@ class ComTools
 
 } // namespace Omiscid
 
-#endif // __COM_COM_TOOLS_H__
+#endif // __COM_TOOLS_H__

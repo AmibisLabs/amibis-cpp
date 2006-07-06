@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef __SERVICE_CONTROL_CONTROL_SERVER_H__
-#define __SERVICE_CONTROL_CONTROL_SERVER_H__
+#ifndef __CONTROL_SERVER_H__
+#define __CONTROL_SERVER_H__
 
 #include <ServiceControl/Config.h>
 
@@ -353,4 +353,4 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
 
 } // namespace Omiscid
 
-#endif // __SERVICE_CONTROL_CONTROL_SERVER_H__
+#endif // __CONTROL_SERVER_H__

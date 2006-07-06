@@ -4,8 +4,8 @@
  * SimpleList class and MutexedSimpleList class.
  */
 
-#ifndef __SYSTEM_SIMPLE_LIST_H__
-#define __SYSTEM_SIMPLE_LIST_H__
+#ifndef __SIMPLE_LIST_H__
+#define __SIMPLE_LIST_H__
 
 #include <System/Config.h>
 #include <System/Mutex.h>
@@ -460,4 +460,4 @@ bool MutexedSimpleList<TYPE>::Unlock()
 
 } // namespace Omiscid
 
-#endif // __SYSTEM_SIMPLE_LIST_H__
+#endif // __SIMPLE_LIST_H__

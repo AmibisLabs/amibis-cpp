@@ -3,8 +3,8 @@
  * @file TcpServer.h
  * @brief Definition of TcpServer class
  */
-#ifndef __COM_TCP_SERVER_H__
-#define __COM_TCP_SERVER_H__
+#ifndef __TCP_SERVER_H__
+#define __TCP_SERVER_H__
 
 #include <Com/Config.h>
 
@@ -194,4 +194,4 @@ class TcpServer :public MsgSocket, virtual public ComTools
 
 } // namespace Omiscid
 
-#endif // __COM_TCP_SERVER_H__
+#endif // __TCP_SERVER_H__

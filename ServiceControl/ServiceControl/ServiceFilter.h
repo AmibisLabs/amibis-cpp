@@ -1,6 +1,6 @@
 
-#ifndef __SERVICE_CONTROL_SERVICE_FILTER_H__
-#define __SERVICE_CONTROL_SERVICE_FILTER_H__
+#ifndef __SERVICE_FILTER_H__
+#define __SERVICE_FILTER_H__
 
 #include <ServiceControl/Config.h>
 
@@ -149,4 +149,4 @@ ServiceFilter * Yes();
 
 } // namespace Omiscid
 
-#endif  // __SERVICE_CONTROL_SERVICE_FILTER_H__
+#endif  // __SERVICE_FILTER_H__

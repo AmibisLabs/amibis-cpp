@@ -3,8 +3,8 @@
  * @file Message.h
  * @brief Definition of Message class
  */
-#ifndef __COM_MESSAGE_H__
-#define __COM_MESSAGE_H__
+#ifndef __MESSAGE_H__
+#define __MESSAGE_H__
 
 #include <Com/Config.h>
 
@@ -67,4 +67,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __COM_MESSAGE_H__
+#endif // __MESSAGE_H__

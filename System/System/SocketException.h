@@ -3,8 +3,8 @@
  * @file SocketException.h
  * @brief Definition of SocketException class
  */
-#ifndef __SYSTEM_SOCKET_EXCEPTION_H__ 
-#define __SYSTEM_SOCKET_EXCEPTION_H__ 
+#ifndef __SOCKET_EXCEPTION_H__ 
+#define __SOCKET_EXCEPTION_H__ 
 
 #include <System/Config.h>
 #include <System/SimpleException.h>
@@ -40,4 +40,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif // __SYSTEM_SOCKET_EXCEPTION_H__
+#endif // __SOCKET_EXCEPTION_H__

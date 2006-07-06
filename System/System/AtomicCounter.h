@@ -3,8 +3,8 @@
  * @brief Definition of AtomicCounter class
  */
 
-#ifndef __SYSTEM_ATOMIC_COUNTER_H__
-#define __SYSTEM_ATOMIC_COUNTER_H__
+#ifndef __ATOMIC_COUNTER_H__
+#define __ATOMIC_COUNTER_H__
 
 #include <System/Config.h>
 #include <System/Mutex.h>
@@ -56,4 +56,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __SYSTEM_ATOMIC_COUNTER_H__
+#endif // __ATOMIC_COUNTER_H__

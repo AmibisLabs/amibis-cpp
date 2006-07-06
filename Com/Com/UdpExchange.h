@@ -4,8 +4,8 @@
  * @brief Definition of UdpExchange class
  */
 
-#ifndef __COM_UDP_EXCHANGE_H__
-#define __COM_UDP_EXCHANGE_H__
+#ifndef __UDP_EXCHANGE_H__
+#define __UDP_EXCHANGE_H__
 
 #include <Com/Config.h>
 
@@ -164,4 +164,4 @@ class UdpExchange : public MsgSocket, virtual public ComTools
 
 } // namespace Omiscid
 
-#endif // __COM_UDP_EXCHANGE_H__
+#endif // __UDP_EXCHANGE_H__

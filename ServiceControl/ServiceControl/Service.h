@@ -1,7 +1,7 @@
 
 
-#ifndef __SERVICE_CONTROL_SERVICE_H__
-#define __SERVICE_CONTROL_SERVICE_H__
+#ifndef __SERVICE_H__
+#define __SERVICE_H__
 
 #include <ServiceControl/Config.h>
 
@@ -238,4 +238,4 @@ public:
 
 } // namespace Omiscid
 
-#endif  // __SERVICE_CONTROL_SERVICE_H__
+#endif  // __SERVICE_H__

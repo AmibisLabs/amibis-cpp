@@ -1,11 +1,13 @@
-#ifndef __SERVICE_CONTROL_VARIABLE_ATTRIBUT_LISTENER_H__
-#define __SERVICE_CONTROL_VARIABLE_ATTRIBUT_LISTENER_H__
+#ifndef __VARIABLE_ATTRIBUT_LISTENER_H__
+#define __VARIABLE_ATTRIBUT_LISTENER_H__
 
 #include <ServiceControl/Config.h>
 
 #include <ServiceControl/VariableAttribut.h>
 
 namespace Omiscid {
+
+class VariableAttribut;
 
 class VariableAttributListener
 {
@@ -34,4 +36,4 @@ private:
 
 } // namespace Omiscid
 
-#endif	// __SERVICE_CONTROL_VARIABLE_ATTRIBUT_LISTENER_H__
+#endif	// __VARIABLE_ATTRIBUT_LISTENER_H__

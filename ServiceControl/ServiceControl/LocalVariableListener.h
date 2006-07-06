@@ -1,7 +1,7 @@
 
 
-#ifndef __SERVICE_CONTROL_LOCAL_VARIABLE_LISTENER_H__
-#define __SERVICE_CONTROL_LOCAL_VARIABLE_LISTENER_H__
+#ifndef __LOCAL_VARIABLE_LISTENER_H__
+#define __LOCAL_VARIABLE_LISTENER_H__
 
 #include <ServiceControl/Config.h>
 
@@ -50,4 +50,4 @@ private:
 
 } // namespace Omiscid
 
-#endif	// __SERVICE_CONTROL_LOCAL_VARIABLE_LISTENER_H__
+#endif	// __LOCAL_VARIABLE_LISTENER_H__

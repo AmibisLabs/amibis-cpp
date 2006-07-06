@@ -1,7 +1,7 @@
 
 
-#ifndef __SERVICE_CONTROL_MESSAGE_LISTENER_H__
-#define __SERVICE_CONTROL_MESSAGE_LISTENER_H__
+#ifndef __MESSAGE_LISTENER_H__
+#define __MESSAGE_LISTENER_H__
 
 #include <ServiceControl/Config.h>
 
@@ -42,4 +42,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif	// __SERVICE_CONTROL_MESSAGE_LISTENER_H__
+#endif	// __MESSAGE_LISTENER_H__

@@ -55,7 +55,15 @@ sub CheckIfDef()
  	$FileName =~ /([^\/]+)\/[^\/]+$/;
  	$Folder = $1;
 
- 	$ExpectedHeader = "${Folder}$ShortFileName";
+	if ( $FileName =~ /\/Config.h$/ )
+	{
+ 		$ExpectedHeader = "${Folder}$ShortFileName";
+ 	}
+ 	else
+ 	{
+ 		$ExpectedHeader = $ShortFileName;
+ 	}
+ 	
  	$ExpectedHeader =~ s/([A-Z]+)/_$1/g;
  	$ExpectedHeader =~ s/.h$/_H__/;
  	$ExpectedHeader = '_' . $ExpectedHeader;

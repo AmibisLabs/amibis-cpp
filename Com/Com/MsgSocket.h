@@ -4,8 +4,8 @@
  * @brief Definition of MsgSocket class, MsgSocketCallBackData class,
  * UdpConnection class
  */
-#ifndef __COM_MSG_SOCKET_H__
-#define __COM_MSG_SOCKET_H__
+#ifndef __MSG_SOCKET_H__
+#define __MSG_SOCKET_H__
 
 #include <Com/Config.h>
 
@@ -452,4 +452,4 @@ protected:
 
 } // namespace Omiscid
 
-#endif // __COM_MSG_SOCKET_H__
+#endif // __MSG_SOCKET_H__

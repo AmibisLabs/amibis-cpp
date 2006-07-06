@@ -5,8 +5,8 @@
  * @date 2004-2005
  */
 
-#ifndef __SERVICE_CONTROL_VARIABLE_ATTRIBUT_H__
-#define __SERVICE_CONTROL_VARIABLE_ATTRIBUT_H__ 
+#ifndef __VARIABLE_ATTRIBUT_H__
+#define __VARIABLE_ATTRIBUT_H__ 
 
 #include <ServiceControl/Config.h>
 
@@ -171,4 +171,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __SERVICE_CONTROL_VARIABLE_ATTRIBUT_H__
+#endif // __VARIABLE_ATTRIBUT_H__
