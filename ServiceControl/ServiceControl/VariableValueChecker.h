@@ -5,8 +5,8 @@
 
 #include <ServiceControl/Config.h>
 
-#include <ServiceControlVariable.h>
-#include <ServiceControlService.h>
+#include <ServiceControl/Variable.h>
+#include <ServiceControl/Service.h>
 
 namespace Omiscid {
 
