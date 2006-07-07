@@ -18,6 +18,7 @@
 
 namespace Omiscid {
 
+// For cyclic include problems
 class VariableAttributListener;
 
 /**
