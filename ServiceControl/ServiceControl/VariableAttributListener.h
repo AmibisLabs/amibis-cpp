@@ -19,8 +19,9 @@ private:
 	friend class VariableAttribut;
 	friend class ControlServer;
 	friend class Service;
+	friend class ServiceProxy;
 	friend class LocalVariableListener;
-	friend class RemoteVariableListener;
+	friend class RemoteVariableChangeListener;
 
 	// Get and Set user data
 	void SetUserData( void * eUserData );

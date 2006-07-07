@@ -229,12 +229,14 @@ void SimpleString::CopyStringData(StringData* to_copy)
 }
 
 SimpleString::SimpleString()
-{ 
+{
+	stringData = NULL;
 	CopyStringData( StringData::GetEmptyStringData() );
 }
 
 SimpleString::SimpleString(const char* str)
 { 
+	stringData = NULL;
 	if ( str && str[0] != '\0' )
 	{
 		stringData = new StringData(str);
@@ -247,6 +249,7 @@ SimpleString::SimpleString(const char* str)
 
 SimpleString::SimpleString(const char* str1, const char* str2)
 { 
+	stringData = NULL;
 	if(str1 == (const char*)NULL && str2 == (const char*)NULL)
 		CopyStringData(StringData::GetEmptyStringData());
 	else
@@ -255,12 +258,49 @@ SimpleString::SimpleString(const char* str1, const char* str2)
 
 SimpleString::SimpleString(const SimpleString& to_copy)
 {
+	stringData = NULL;
 	CopyStringData(to_copy.stringData);
 }
 
 SimpleString::SimpleString(StringData* sd)
 {
+	stringData = NULL;
 	CopyStringData(sd);
+}
+
+SimpleString::SimpleString(int i)
+{
+	stringData = NULL;
+	Empty();
+	operator+=(i);
+}
+
+SimpleString::SimpleString(unsigned int ui)
+{
+	stringData = NULL;
+	Empty();
+	operator+=(ui);
+}
+
+SimpleString::SimpleString(long int li)
+{
+	stringData = NULL;
+	Empty();
+	operator+=(li);
+}
+
+SimpleString::SimpleString(float f)
+{
+	stringData = NULL;
+	Empty();
+	operator+=(f);
+}
+
+SimpleString::SimpleString(double d)
+{
+	stringData = NULL;
+	Empty();
+	operator+=(d);
 }
 
 SimpleString::~SimpleString()
@@ -275,10 +315,16 @@ void SimpleString::Empty()
 
 void SimpleString::DestroyStringData()
 {
+	if ( stringData == NULL )
+	{
+		return;
+	}
+
 	if ( stringData->RemoveReference() <= 0 )
 	{
         delete stringData;
 	}
+
 	stringData = NULL;
 }
 
@@ -330,7 +376,7 @@ const SimpleString& SimpleString::operator= (float f)
 
 const SimpleString& SimpleString::operator= (double d)
 {
-	operator=("");
+	Empty();
 	return operator+=(d);
 }
 

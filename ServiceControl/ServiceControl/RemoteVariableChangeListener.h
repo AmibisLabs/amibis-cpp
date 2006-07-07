@@ -5,9 +5,13 @@
 
 #include <ServiceControl/Config.h>
 
+#include <System/SimpleString.h>
 #include <ServiceControl/ServiceProxy.h>
+#include <ServiceControl/VariableAttributListener.h>
 
 namespace Omiscid {
+
+class ServiceProxy;
 
 /**
  * Defines the listener interface for all Omiscid variable of a service
@@ -16,9 +20,9 @@ namespace Omiscid {
  *
  * @author Dominique Vaufreydaz
  */
-class RemoteVariableChangeListener
+class RemoteVariableChangeListener : public VariableAttributListener
 {
-	friend class Service;
+	friend class ServiceProxy;
 
 protected:
     /**
@@ -30,8 +34,30 @@ protected:
      *            the Omiscid message to process
      */
     virtual void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue ) = 0;
-};
 
+private:
+	/**
+    * This method is called when a new value is request on a variable. This method must
+     * check that this new value is a valid value. As we are a remote componant, we
+	 * do not care about change. So we always say yes...
+     * @param service the service owning the variable
+     * @param currentVariable the current value of the variable
+     * @param newValue the new requested value
+     * @return true if the new value is accepted, false if rejected.
+     */
+    bool IsValid( VariableAttribut * ChangedVariable, SimpleString newValue );
+
+	/**
+    * This method is called when the value has change is request on a variable. This method must
+     * check that this new value is a valid value. As we are a remote componant, we
+	 * do not care about change. So we always say yes...
+     * @param service the service owning the variable
+     * @param currentVariable the current value of the variable
+     * @param newValue the new requested value
+     * @return true if the new value is accepted, false if rejected.
+     */
+	void VariableChanged( VariableAttribut * ChangedVariable );
+};
 
 } // namespace Omiscid
 

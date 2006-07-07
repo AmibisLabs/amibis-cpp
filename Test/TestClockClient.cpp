@@ -7,8 +7,18 @@
 
 #include <ServiceControl/Factory.h>
 #include <ServiceControl/ServiceFilter.h>
+#include <ServiceControl/RemoteVariableChangeListener.h>
 
 using namespace Omiscid;
+
+class TestListener : public RemoteVariableChangeListener
+{
+public:
+	void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
+	{
+		printf( "VariableChange '%s' => '%s'\n", VarName.GetStr(), NewValue.GetStr() );
+	}
+};
 
 int main(int argc, char * argv[])
 {
@@ -17,11 +27,27 @@ int main(int argc, char * argv[])
 	// - contain an output connector "PushClock"
 	// - expose a variable "Hours" 
 
+	TestListener TL;
+
 	// First, create a service filter. You *must* not free it after use
 	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasVariable( "TestWrite" ) );
 	ServiceProxy * ClockServer = Service::FindService( MySearch, 10000 );
 
-	ClockServer->SetVariableValue( "TestWrite", "1" );
+	ClockServer->AddVariableChangeListener( "TestWrite", &TL );
+
+	Thread::Sleep( 10000 );
+
+	printf( "Remove listener\n" );
+
+	ClockServer->RemoveVariableChangeListener( "TestWrite", &TL );
+
+	Thread::Sleep( 5000 );
+
+	ClockServer->AddVariableChangeListener( "TestWrite", &TL );
+
+	Mutex MyLock;
+	MyLock.EnterMutex();
+	MyLock.EnterMutex();
 
 	return 0;
 

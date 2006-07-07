@@ -72,12 +72,6 @@ public:
    * @param value_str [in] the new string representaion of the value */
   void SetValue(const SimpleString value_str);
 
-private:
-  /** @brief Callback call when value changed. Only accessible to friend class
-   * @param user_data_ptr pointer given to the callback when it is called */
-  // void SetCallbackForControlServer(SignalThatValueChanged callback, void* user_data_ptr);
-  //@}
-
 public:
   /** @brief define if a variable can be modified according to its kid of access.
    * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.
@@ -143,6 +137,11 @@ public:
    *
    */
   bool RemoveListener( VariableAttributListener *  ListenerToAdd );
+
+  /** \brief remove a listener to this variable.
+   *
+   */
+  unsigned int GetNumberOfListeners();
 
  /** \brief Extract data from a XML node.
    *

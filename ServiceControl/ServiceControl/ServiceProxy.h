@@ -8,11 +8,12 @@
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
 
-#include <Com/TcpUdpClientServer.h>
-
 #include <ServiceControl/ControlClient.h>
+#include <ServiceControl/RemoteVariableChangeListener.h>
 
 namespace Omiscid {
+
+class RemoteVariableChangeListener;
 
 /**
  * @author 
@@ -85,17 +86,31 @@ public:
 	
 	/**
      * Sets the new value of a remote variable
-     * @param varName the name of the remote variable
+     * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-    bool SetVariableValue(const SimpleString varName, const SimpleString value);
+    bool SetVariableValue(const SimpleString VarName, const SimpleString value);
 
 	/**
      * Gets the value of a remote variable
-     * @param varName the name of the remote variable
+     * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-    bool GetVariableValue(const SimpleString varName, SimpleString& value);
+    bool GetVariableValue(const SimpleString VarName, SimpleString& value);
+
+	/**
+     * Add a listener to monitor variable changes
+     * @param VarName the name of the remote variable
+     * @param value the value (SimpleString format)
+     */
+    bool AddVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener );
+
+	/**
+     * Remove a listener to monitor variable changes
+     * @param VarName the name of the remote variable
+     * @param value the value (SimpleString format)
+     */
+    bool RemoveVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener );
 
 	/**
      * search for a connector on the remote Omiscid service

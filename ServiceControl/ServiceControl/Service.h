@@ -86,7 +86,7 @@ public:
 
 	/**
 	 * Creates a new Omiscid Variable
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @param type the variable type (or null if no type is associated)
 	 * @param accessType the access type of the variable
 	 * name has already been declated
@@ -95,7 +95,7 @@ public:
 
 	/**
 	 * Change a description to an existing variable
-	 * @param varName the var name
+	 * @param VarName the var name
 	 * @param varDescription the description
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 */
@@ -103,7 +103,7 @@ public:
 
 	/**
 	 * Returns the description associated to a variable
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the description
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
@@ -112,25 +112,25 @@ public:
 
 	/**
 	 * Sets the value of a service variable
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @param varValue the variable value
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-	bool SetVariableValue(SimpleString varName, SimpleString varValue);
+	bool SetVariableValue(SimpleString VarName, SimpleString varValue);
 
 	/**
 	 * Returns the variable value
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the variable value
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
-	SimpleString GetVariableValue(SimpleString varName);
+	SimpleString GetVariableValue(SimpleString VarName);
 
 	/**
 	 * Returns the variable access type
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the access type (SimpleString version)
 	 * @throws UnknownBipVariable thrown if the variable has not been decladed
 	 * @see BipService#addVariable
@@ -139,7 +139,7 @@ public:
 
 	/**
 	 * Returns the string version of the variable type
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the variable type
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
@@ -177,19 +177,19 @@ public:
 
 	/**
 	 * Adds a listener that will be triggered at every variable change
-	 * @param varName the varName
+	 * @param VarName the VarName
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-	bool AddVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener);
+	bool AddVariableListener(SimpleString VarName, LocalVariableListener * Listener);
 
 	/**
 	 * remove a listener that was triggering at every variable change
-	 * @param varName the varName
+	 * @param VarName the VarName
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-	bool Service::RemoveVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener);
+	bool RemoveVariableListener(SimpleString VarName, LocalVariableListener * Listener);
 
 	/**
      * Finds a service on the network. The research is based on the service filter
@@ -209,12 +209,12 @@ public:
 
 	/**
 	 * Removes a listener on a variable change
-	 * @param varName the varName
+	 * @param VarName the VarName
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
 	 */
-	public void removeVariableChangeListener(SimpleString varName, VariableChangeListener listener)
+	public void removeVariableChangeListener(SimpleString VarName, VariableChangeListener listener)
 			throws UnknownBipVariable ;
 
 	/**

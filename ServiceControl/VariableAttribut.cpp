@@ -275,3 +275,14 @@ bool VariableAttribut::RemoveListener( VariableAttributListener *  ListenerToAdd
 
 	return ret;
 }
+
+unsigned int VariableAttribut::GetNumberOfListeners()
+{
+	unsigned int ret;
+
+	Listeners.Lock();
+	ret = Listeners.GetNumberOfElements();
+	Listeners.Unlock();
+
+	return ret;
+}

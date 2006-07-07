@@ -2,6 +2,7 @@
 
 #include <ServiceControl/ServiceProxy.h>
 
+#include <Com/TcpUdpClientServer.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/VariableAttribut.h>
 
@@ -102,9 +103,10 @@ unsigned int ServiceProxy::GetPeerId()
 {
 	return ControlClient::GetPeerId();
 }
+
     /**
      * Sets the new value of a remote variable
-     * @param varName the name of the remote variable
+     * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
 bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleString Value)
@@ -120,7 +122,7 @@ bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleStri
 
 	/**
      * Gets the value of a remote variable
-     * @param varName the name of the remote variable
+     * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
 bool ServiceProxy::GetVariableValue(const SimpleString VarName, SimpleString& Value)
@@ -134,6 +136,84 @@ bool ServiceProxy::GetVariableValue(const SimpleString VarName, SimpleString& Va
 	Value = pVar->GetValue();
 	return true;
 }
+
+	/**
+     * Add a listener to monitor variable changes
+     * @param VarName the name of the remote variable
+     * @param value the value (SimpleString format)
+     */
+bool ServiceProxy::AddVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener )
+{
+	// Serach the variable
+	VariableAttribut * pVar = FindVariable( VarName );
+	if ( pVar == NULL )
+	{
+		// not found
+		return false;
+	}
+
+	// Add information about me
+	Listener->SetUserData( this );
+
+	// If we can not add the listener
+	if ( pVar->AddListener( Listener ) == false )
+	{
+		// Add information about me
+		Listener->SetUserData( NULL );
+
+		// Say there was a problem
+		return false;
+	}
+
+	// If it is the first listenner, subscribe to the variable changes
+	if ( pVar->GetNumberOfListeners() == 1 )
+	{
+		// first listener
+		// Subscribe to the variable changes
+		Subscribe( VarName );
+	}
+
+	// ok
+	return true;
+}
+
+	/**
+     * Remove a listener to monitor variable changes
+     * @param VarName the name of the remote variable
+     * @param value the value (SimpleString format)
+     */
+bool ServiceProxy::RemoveVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener )
+{
+	bool ret;
+
+	// Serach for the variable
+	VariableAttribut * pVar = FindVariable( VarName );
+	if ( pVar == NULL )
+	{
+		// Not found	
+		return false;
+	}
+
+	// Aswk to remove the listener
+	ret = pVar->RemoveListener( Listener );
+	if ( ret == false )
+	{
+		// something goes wrong
+		return false;
+	}
+
+	// Do we have any listener left ?
+	if ( pVar->GetNumberOfListeners() == 0 )
+	{
+		// If no, unsubscribe to the variable changes
+		Unsubscribe( VarName );
+	}
+
+	// say, it was ok
+	return true;
+}
+
+
 
 	/**
      * search for a connector on the remote Omiscid service

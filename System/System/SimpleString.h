@@ -43,6 +43,7 @@ private:
 		StringData(const StringData&);
 		StringData(const StringData&, int begin, int end);
 		StringData(const char* str1, const char* str2);
+
 		//@}
 		
 		/** @brief Destructor
@@ -126,6 +127,11 @@ public:
 	SimpleString(const char* str1, const char* str2);
 	/*! Copy the the string */
 	SimpleString(const SimpleString& to_copy);
+	SimpleString(int i);
+	SimpleString(unsigned int ui);
+	SimpleString(long int li);
+	SimpleString(float f);
+	SimpleString(double d);
 	//@}
 	
 	/** @brief Destructor */

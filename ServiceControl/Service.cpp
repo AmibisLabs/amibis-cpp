@@ -206,7 +206,7 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 
    /**
 	* Creates a new Omiscid Variable
-	* @param varName the variable name
+	* @param VarName the variable name
 	* @param type the variable type (or null if no type is associated)
 	* @param accessType the access type of the variable
 	* name has already been declated
@@ -237,7 +237,7 @@ bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString 
 
    /**
 	* Change a description to an existing variable
-	* @param varName the var name
+	* @param VarName the var name
 	* @param varDescription the description
 	* @throws UnknownBipVariable thrown if the variable has not been created
 	*/
@@ -256,7 +256,7 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 
 	/**
 	 * Returns the description associated to a variable
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the description
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
@@ -277,7 +277,7 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 
 	/**
 	 * Sets the value of a service variable
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @param varValue the variable value
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
@@ -297,7 +297,7 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 
 	/**
 	 * Returns the variable value
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the variable value
 	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
@@ -318,7 +318,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 
 	/**
 	 * Returns the variable access type
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the access type (SimpleString version)
 	 * @throws UnknownBipVariable thrown if the variable has not been decladed
 	 * @see BipService#addVariable
@@ -339,7 +339,7 @@ SimpleString Service::GetVariableAccessType(SimpleString VarName)
 
 	/**
 	 * Returns the string version of the variable type
-	 * @param varName the variable name
+	 * @param VarName the variable name
 	 * @return the variable type
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 * @see BipService#addVariable
@@ -353,11 +353,11 @@ SimpleString Service::GetVariableType(SimpleString VarName)
 
 	/**
 	 * Adds a listener that will be triggered at every variable change
-	 * @param varName the varName
+	 * @param VarName the VarName
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-bool Service::AddVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener)
+bool Service::AddVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -374,11 +374,11 @@ bool Service::AddVariableChangeListener(SimpleString VarName, LocalVariableListe
 
 	/**
 	 * remove a listener that was triggering at every variable change
-	 * @param varName the varName
+	 * @param VarName the VarName
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-bool Service::RemoveVariableChangeListener(SimpleString VarName, LocalVariableListener * Listener)
+bool Service::RemoveVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )

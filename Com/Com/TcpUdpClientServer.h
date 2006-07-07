@@ -17,20 +17,6 @@
 
 namespace Omiscid {
 
-	// Definition of a connection point. Will be extended for Shared memory
-class ConnectionInfos
-{
-public:
-	ConnectionInfos();
-	ConnectionInfos(ConnectionInfos& ToCopy);
-
-	ConnectionInfos& operator=(ConnectionInfos& ToCopy);
-
-	int TcpPort;
-	int UdpPort;
-	ConnectorKind Type;
-};
-
 /** 
  * @class ClientConnection TcpUdpClientServer.h Com/TcpUdpClientServer.h
  * \brief Group Data about Conection TCP and UDP.

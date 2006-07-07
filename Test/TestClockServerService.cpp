@@ -96,13 +96,15 @@ int main(int argc, char * argv[])
 
 		// Increase time value for one second more
 		NumberOfSeconds++;
-		if ( (NumberOfSeconds % 30) == 0 )
+		if ( (NumberOfSeconds % 3600) == 0 )
 		{
 			// One hour ellapse, change value of our Hours variable
 			// All clients who subscribe to this 
-			TempValue = NumberOfSeconds/30;
+			TempValue = NumberOfSeconds/3600;
 			ClockServer->SetVariableValue( "Hours", TempValue );
 		}
+
+		ClockServer->SetVariableValue( "TestWrite", NumberOfSeconds );
 
 		// Wait for 1 second
 		Thread::Sleep(1000);

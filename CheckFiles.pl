@@ -278,6 +278,29 @@ sub FilesShouldContainOnlyOneClassDeclaration()
 	}
 }
 
+sub GenerateIncludeGraph()
+{
+ 	my $FileName = shift @_;
+  	my $ShortFileName = shift @_;
+	
+ 	if ( $FileName =~ /System\/Config.h$/ )
+ 	{
+ 		return;
+ 	}
+ 	
+	open( $fd, "<$FileName" ) or return;
+	while( $CurrentLine = <$fd> )
+	{
+		if ( $CurrentLine =~ /^\#include\s+\<([^\>]+)\>/ )
+		{
+			$IncludeGraphe{$ShortFileName} .= "$1;";
+		}
+	}
+	
+	close( $fd );
+
+}
+
 sub WorkOnFile()
 {
  	my $CompleteFileName = shift @_;
@@ -303,16 +326,10 @@ sub WorkOnFile()
 			# print "$CompleteFileName (CheckIfDef)\n";
 			&CheckIfDef($CompleteFileName, $FileName);
 			
-			foreach $prep ( keys %Headers )
-			{
-				if ( $Headers{$prep} > 1 )
-				{
-					die;
-				}
-			}
-			
 			# print "$CompleteFileName (FirstIncludeofHeaderFileisConfig)\n";
 			&FirstIncludeofHeaderFileisConfig($CompleteFileName);
+			
+			&GenerateIncludeGraph($CompleteFileName, $FileName);
 			
 			# Check if we have an empty line at end for gcc
 			# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
@@ -344,3 +361,25 @@ sub WorkOnFile()
 &RecurseWork::RecurseWork( 'System', 0 );
 &RecurseWork::RecurseWork( 'Com', 0 );
 &RecurseWork::RecurseWork( 'ServiceControl', 0 );
+
+foreach $prep ( keys %Headers )
+{
+	if ( $Headers{$prep} > 1 )
+	{
+		die;
+	}
+}
+
+open( $IG, '>IncludeGraphe.dot' ) or exit;
+print $IG "digraph SmartRoom {\n";
+foreach $fic ( keys %IncludeGraphe )
+{
+	@value = split /\;/, $IncludeGraphe{$fic};
+	foreach $val ( @value )
+	{
+		print $IG "\"$fic\" -> \"$val\";\n";
+	}
+}
+print $IG "}\n";
+close( $IG );
+
