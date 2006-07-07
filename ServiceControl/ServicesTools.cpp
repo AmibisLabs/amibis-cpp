@@ -37,11 +37,6 @@ RegisterOmiscidService::RegisterOmiscidService( const SimpleString ServiceName, 
 	Init(AutoRegister);
 }
 
-void RegisterOmiscidService::SetOwner()
-{
-	Properties["owner"] = GetLoggedUser().GetStr();
-}
-
 WaitForOmiscidServices::WaitForOmiscidServices()
 : WaitForDnsSdServices()
 {

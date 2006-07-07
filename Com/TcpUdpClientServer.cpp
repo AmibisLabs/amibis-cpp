@@ -85,7 +85,7 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 			// he = Socket::GetHostByName(ConnectedHost.GetStr());
 			// udpConnection.addr.sin_addr = *((struct in_addr*)he->h_addr);
 			// memset(&(udpConnection.addr.sin_zero), 0, 8);
-			Socket::FillAddrIn(&udpConnection.addr, ConnectedHost.GetStr(), tmpudp );
+			Socket::FillAddrIn(&udpConnection.addr, ConnectedHost, tmpudp );
 
 			pThis->AcceptConnection( udpConnection, true );
 		}

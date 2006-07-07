@@ -56,6 +56,7 @@ void VariableAttribut::GenerateLongDescription(SimpleString& str)
 	str = str + "</variable>";
 }
 
+/* 
 void VariableAttribut::GenerateValueMessage(SimpleString& str)
 {
 	GenerateHeaderDescription(variable_str, GetName(), str, false);
@@ -66,8 +67,7 @@ void VariableAttribut::GenerateValueMessage(SimpleString& str)
 
 	str = str + "</variable>";
 }
-
-
+*/
 
 void VariableAttribut::Display()
 {

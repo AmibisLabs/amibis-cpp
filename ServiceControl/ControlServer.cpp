@@ -67,7 +67,7 @@ void ControlServer::InitInstance()
 }
 
 ControlServer::ControlServer(const SimpleString service_name)
-:	serviceName( service_name.GetStr() )
+:	serviceName( service_name )
 {
 	InitInstance();
 }
@@ -133,6 +133,9 @@ bool ControlServer::StartServer()
 { 
 	try
 	{
+		// To prevent adding variable, inputs...
+		SetStatus(STATUS_RUNNING);
+
 		Create(0);
 
 		port = GetSocket()->GetPortNb();
@@ -144,7 +147,6 @@ bool ControlServer::StartServer()
 		SimpleString input_record("");
 		SimpleString output_record("") ;
 		SimpleString in_output_record("") ;
-		SimpleString tmp;
 
 		for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
 		{
@@ -180,20 +182,107 @@ bool ControlServer::StartServer()
 
 		// Add Constant variable
 		// The desctiption if full by default
-		registerDnsSd->Properties["desc"] = "part"; // Will be set to full if possible
+		registerDnsSd->Properties["desc"] = "full"; // Will be set to part if not full
 
-		// Add peerID
+		// Add peerID value
 		TemporaryMemoryBuffer tmp_peerid(30);	// To prevent buffer overflow
 		snprintf( tmp_peerid, 30, "%08x", GetServiceId());        
-		registerDnsSd->Properties["id"]= tmp_peerid;
 		PeerIdVariable->SetValue( (char*)tmp_peerid );
 
-		// Add owner
-		registerDnsSd->SetOwner();
-
+		// Add owner value
 		OwnerVariable->SetValue( GetLoggedUser() );
 
-		// 
+		// Add Class value
+		registerDnsSd->Properties["class"] = ".Void";
+
+		SimpleString tmp;
+		bool TxtRecordIsFull = false;
+
+		// Add Constant variable
+		for( listVariable.First(); TxtRecordIsFull != true && listVariable.NotAtEnd(); listVariable.Next() )
+		{
+			if ( listVariable.GetCurrent()->GetAccess() == ConstantAccess )
+			{
+				registerDnsSd->Properties[listVariable.GetCurrent()->GetName()] = listVariable.GetCurrent()->GetValue();
+				TxtRecordIsFull = registerDnsSd->Properties.TxtRecordIsFull();
+				if ( TxtRecordIsFull )
+				{
+					// undefine the last add
+					registerDnsSd->Properties.Undefine( listVariable.GetCurrent()->GetName() );
+					// Say the definition is partial
+					registerDnsSd->Properties["desc"] = "part";
+				}
+			}
+		}
+
+		// Add inputs/outputs/inoutputs
+		if ( TxtRecordIsFull != true )
+		{
+			// Add Constant variable
+			for( listInOutput.First(); TxtRecordIsFull != true && listInOutput.NotAtEnd(); listInOutput.Next() )
+			{
+				ConnectorKind KindOfInOutput = listInOutput.GetCurrent()->GetType();
+				switch( KindOfInOutput )
+				{
+					case AnInput:
+						tmp = "i/";
+						break;
+
+					case AnOutput:
+						tmp = "o/";
+						break;
+
+					case AnInOutput:
+						tmp = "d/";
+						break;
+				}
+
+				tmp += listInOutput.GetCurrent()->GetTcpPort();
+				registerDnsSd->Properties[listInOutput.GetCurrent()->GetName()] = tmp;
+				TxtRecordIsFull = registerDnsSd->Properties.TxtRecordIsFull();
+				if ( TxtRecordIsFull )
+				{
+					// undefine the last add
+					registerDnsSd->Properties.Undefine( listInOutput.GetCurrent()->GetName() );
+					// Say the definition is partial
+					registerDnsSd->Properties["desc"] = "part";
+				}
+			}		
+		}
+
+		// Add non constant variable
+		if ( TxtRecordIsFull != true )
+		{
+			// Add Constant variable
+			for( listVariable.First(); TxtRecordIsFull != true && listVariable.NotAtEnd(); listVariable.Next() )
+			{
+				VariableAccess VarAccess = listVariable.GetCurrent()->GetAccess();
+				switch( VarAccess )
+				{
+					case ReadAccess:
+						tmp = "r";
+						break;
+
+					case ReadWriteAccess:
+						tmp = "w";
+						break;
+
+					case ConstantAccess:
+						// already done
+						continue;
+				}
+
+				registerDnsSd->Properties[listVariable.GetCurrent()->GetName()] = tmp;
+				TxtRecordIsFull = registerDnsSd->Properties.TxtRecordIsFull();
+				if ( TxtRecordIsFull )
+				{
+					// undefine the last add
+					registerDnsSd->Properties.Undefine( listVariable.GetCurrent()->GetName() );
+					// Say the definition is partial
+					registerDnsSd->Properties["desc"] = "part";
+				}
+			}		
+		}
 
 
 #if 0
@@ -218,21 +307,27 @@ bool ControlServer::StartServer()
 			NameVariable->SetValue( serviceName );
 			// Copy back Properties from RegisterDnsSd to parent, so this object
 			// Properties.ImportTXTRecord( registerDnsSd->Properties.GetTXTRecordLength(), registerDnsSd->Properties.ExportTXTRecord() );
+			StartThreadProcessMsg();
+			return true;
 		}
-		else
-		{
-			TraceError( "registered failed\n");}
+
+		TraceError( "registered failed\n");
 	}
 	catch(SocketException e)
 	{
 		e.Display();
-		return false;
 	}
 
-	StartThreadProcessMsg();
-	SetStatus(STATUS_RUNNING);
+	if ( registerDnsSd )
+	{
+		// Delete DNS-SD object
+		delete registerDnsSd;
+		registerDnsSd = NULL;
+	}
 
-	return true;
+	// An error occurred, back to init mode
+	SetStatus( STATUS_INIT );
+	return false;
 }
 
 void ControlServer::StartThreadProcessMsg()
@@ -396,7 +491,9 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 		if(va)
 		{
 			if(node->children == NULL)
+			{
 				va->GenerateLongDescription(str_answer);
+			}
 			else
 			{
 				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", node);
@@ -415,7 +512,7 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 							VariableChange( va, (const char*)val_node->children->content, GetStatus() );
 						}
 					}
-					va->GenerateValueMessage(str_answer);
+					va->GenerateLongDescription(str_answer);
 				}
 			}
 		}

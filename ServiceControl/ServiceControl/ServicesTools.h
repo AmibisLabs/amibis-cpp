@@ -28,8 +28,6 @@ public:
 	RegisterOmiscidService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
  	RegisterOmiscidService( const SimpleString ServiceName, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
 
-	void SetOwner();
-
 private:
 	void Init( bool AutoRegister );
 };

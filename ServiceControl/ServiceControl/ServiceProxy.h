@@ -22,7 +22,7 @@ class RemoteVariableChangeListener;
 class ServiceProxy  : protected ControlClient
 {
 public:
-	ServiceProxy( SimpleString eHostname, int eControlPort );
+	ServiceProxy( unsigned int PeerId, SimpleString eHostname, int eControlPort );
 
 	~ServiceProxy();
 

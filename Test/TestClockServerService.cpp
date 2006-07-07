@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
 
 	// Now, we will send clock over the PushClock connector	
 	TestListener TL;
-	ClockServer->AddVariableChangeListener( "TestWrite", &TL );
+	ClockServer->AddVariableListener( "TestWrite", &TL );
 
 	// First, needed stuff
 	SimpleString TempValue;				// A SimpleString to create the value

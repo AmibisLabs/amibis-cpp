@@ -415,6 +415,9 @@ bool RegisterService::Register()
 	err = DNSServiceRegister( &DnsSdConnection, 0, 0, Name, ProtocolAndTransport, Domain, NULL, (uint16_t)htons(Port),
 		Properties.GetTXTRecordLength(), Properties.ExportTXTRecord(), DnsRegisterReply, (void*)this );
 
+//	err = DNSServiceRegister( &DnsSdConnection, 0, 0, Name, ProtocolAndTransport, Domain, NULL, (uint16_t)htons(Port),
+//		0, "", DnsRegisterReply, (void*)this );
+
 	if ( err == kDNSServiceErr_NoError )
 	{
 		// We did connection to the DNS-SD Daemon

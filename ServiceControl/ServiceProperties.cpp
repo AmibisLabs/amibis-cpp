@@ -26,20 +26,15 @@ using namespace Omiscid;
 void ServiceProperty::Empty()
 {
 	Length = 1;
-	BinaryLength = 0;
-	NameLength = 0;
-	ValueLength = 0;
-
-#ifdef DEBUG
-	memset( &Hash[1], 0, sizeof(Hash)-1 );
-#endif
+	Name.Empty();
+	Value.Empty();
 }
 
 /*! \brief Default constructor.
  *
  *	The default constructor constructs an empty property (see ServiceProperty#Empty).
  */
-ServiceProperty::ServiceProperty() : BinaryLength( (*(unsigned char*)Hash) )
+ServiceProperty::ServiceProperty()
 {
 	// Just call the empty function
 	Empty();
@@ -52,7 +47,7 @@ ServiceProperty::ServiceProperty() : BinaryLength( (*(unsigned char*)Hash) )
  *
  *	This constructor takes a name and optionaly a value for the new constructed property. See ServiceProperty#SetProperty.
  */
-ServiceProperty::ServiceProperty( const char * Name, const char * Value ) : BinaryLength( (*(unsigned char*)Hash) )
+ServiceProperty::ServiceProperty( const SimpleString Name, const SimpleString Value )
 {
 	// Call the virtual function SetProperty
 	if ( SetProperty( Name, Value ) == false )
@@ -76,119 +71,66 @@ ServiceProperty::~ServiceProperty()
  *  \li \c if #Name equals "Property" and #Value is "", we will have an empty property : "Property=".
  *  \li \c if #Name equals "Property" and #Value is "something", we will have : "Property=something".
  */
-bool ServiceProperty::SetProperty( const char * Name, const char * Value )
+bool ServiceProperty::SetProperty( const SimpleString eName, const SimpleString eValue )
 {
 	// First of all, empty the property
 	Empty();
 
-	if ( Name == NULL )
+	// Empty names are illegals
+	// Name + '=' + value must be 255 long at max !!!
+	if ( eName.GetLength() == 0 || (eName.GetLength()+1+eValue.GetLength()) > 255 )
 	{
 		return false;
 	}
 
-	size_t tmp_name_length = strlen( Name );
-	if ( tmp_name_length > 255 )
-	{
-	    NameLength = 0;
-	    return false;
-	}
-	else
-	{
-	    NameLength = (unsigned char)tmp_name_length;	    
-	}
+	// Set Name
+	Name = eName;
 
-	BinaryLength = NameLength;
-	strcpy( &Hash[1], Name );
+	// Set length to the Value of the name
+	Length = Name.GetLength() + 1;
 
-	UpdateProperty( Value );
+	if ( UpdateProperty( Value ) == false )
+	{
+		Empty();
+	}
 
 	return true;
 }
 
-bool ServiceProperty::UpdateProperty( const char * Value )
+bool ServiceProperty::UpdateProperty( const SimpleString eValue )
 {
-	unsigned int tmpLength;
-
-	if ( NameLength == 0 )
+	if ( Name.GetLength() == 0 )
 	{
 		return false;
 	}
 
-#ifdef DEBUG
-	// In real life, we do not care about padding...
-	// Only Lengths attributes (including BinaryLength) are usefull...
-	// +1 because of the binarylength at the begining of Hash
-	memset( &Hash[NameLength+1], 0, sizeof(Hash)-NameLength);
-#endif
+	Value = eValue;
 
-	BinaryLength = NameLength;
-
-	if ( Value == NULL )
-	{
-		Hash[NameLength+1] = '\0';
-	}
-	else
-	{
-		// There is a value
-		tmpLength = (unsigned int)strlen(Value);
-		if ( (tmpLength + (unsigned int)NameLength + (unsigned int)sizeof("=")) > 255 )
-		{
-			Empty();
-			return false;
-		}
-		// ok, everything is fine
-		ValueLength = (unsigned char)tmpLength;
-		BinaryLength += sizeof( '=' ) + ValueLength;
-		// '\0' is automatically added by sprintf
-		sprintf( &Hash[1+NameLength], "=%s", Value );
-	}
-
-	Length = BinaryLength + 1;
+	Length = Name.GetLength()+1+Value.GetLength() + 1;
 
 	return true;
 }
 
-const char * ServiceProperty::operator= ( const char * rvalue )
+const SimpleString ServiceProperty::operator= ( const SimpleString rvalue )
 {
 	UpdateProperty( rvalue );
 	return rvalue;
 }
 
-int ServiceProperty::operator= ( int rvalue )
+const SimpleString ServiceProperty::GetValue()
 {
-	if ( (const char*)rvalue != NULL )
-	{
-		throw ServicePropertiesException( "Bad r-value : must be NULL (or 0)" );
-	}
+	if ( Value.GetLength() == 0 )
+		return SimpleString::EmptyString;
 
-	UpdateProperty( (const char*)rvalue );
-	return rvalue;
-}
-
-const char * ServiceProperty::GetValue()
-{
-	if ( BinaryLength == NameLength )
-		return NULL;
-
-	return (const char*)&Hash[2+NameLength];
-}
-
-ServiceProperty:: operator char*()
-{
-	return (char*)GetValue();
-}
-
-ServiceProperty:: operator const char*()
-{
-	return GetValue();
+	return Value;
 }
 
 ServicePropertyNotify::ServicePropertyNotify() : ServiceProperty(), Container(NULL)
 {
 }
 
-ServicePropertyNotify::ServicePropertyNotify( const char * Name, const char * Value, ServiceProperties * Parent )
-: ServiceProperty( Name, Value ), Container(Parent)
+ServicePropertyNotify::ServicePropertyNotify( const SimpleString eName, const SimpleString eValue, ServiceProperties * Parent )
+: ServiceProperty( eName, eValue ), Container(Parent)
 {
 }
 
@@ -200,9 +142,9 @@ void ServicePropertyNotify::SetNotify( ServiceProperties * Parent )
 	Container = Parent;
 }
 
-bool ServicePropertyNotify::SetProperty( const char * Name, const char * Value )
+bool ServicePropertyNotify::SetProperty( const SimpleString eName, const SimpleString eValue )
 {
-	bool ret = ServiceProperty::SetProperty( Name, Value );
+	bool ret = ServiceProperty::SetProperty( eName, eValue );
 	if ( Container && ret )
 	{
 		Container->NotifyChanges();
@@ -212,9 +154,9 @@ bool ServicePropertyNotify::SetProperty( const char * Name, const char * Value )
 }
 
 
-bool ServicePropertyNotify::UpdateProperty( const char * Value )
+bool ServicePropertyNotify::UpdateProperty( const SimpleString eValue )
 {
-	bool ret = ServiceProperty::UpdateProperty( Value );
+	bool ret = ServiceProperty::UpdateProperty( eValue );
 	if ( Container && ret )
 	{
 		Container->NotifyChanges();
@@ -223,21 +165,10 @@ bool ServicePropertyNotify::UpdateProperty( const char * Value )
 	return ret;
 }
 
-const char * ServicePropertyNotify::operator= ( const char * rvalue )
+const SimpleString ServicePropertyNotify::operator= ( const SimpleString rvalue )
 {
-	const char * ret = ServiceProperty::operator=( rvalue );
-	if ( Container && ret )
-	{
-		Container->NotifyChanges();
-	}
-
-	return ret;
-}
-
-int ServicePropertyNotify::operator= ( int rvalue )
-{
-	int ret = ServiceProperty::operator=( rvalue );
-	if ( Container && ret )
+	const SimpleString ret = ServiceProperty::operator=( rvalue );
+	if ( Container && ret.GetLength() != 0 )
 	{
 		Container->NotifyChanges();
 	}
@@ -323,7 +254,7 @@ int ServiceProperties::GetTXTRecordLength()
 	return TXTRecordLength;
 }
 
-ServiceProperty& ServiceProperties::operator[]( const char * Name )
+ServiceProperty& ServiceProperties::operator[]( const SimpleString Name )
 {
 	int Pos;
 	
@@ -374,7 +305,7 @@ ServiceProperty& ServiceProperties::operator[]( const char * Name )
 		Properties = tmpProperties;
 	}
 
-	Properties[NbProperties].SetProperty( Name, NULL );
+	Properties[NbProperties].SetProperty( Name, SimpleString::EmptyString );
 
 	NbProperties++;
 
@@ -385,21 +316,14 @@ ServiceProperty& ServiceProperties::operator[]( const char * Name )
 
 const ServiceProperty& ServiceProperty::operator= ( const ServiceProperty& rvalue )
 {
-	if ( rvalue.NameLength == 0 )
+	if ( rvalue.Name.GetLength() == 0 )
 	{
 		Empty();
 		return *this;
 	}
 
-	if ( rvalue.BinaryLength == rvalue.NameLength )
-	{
-		// Just a flag
-		UpdateProperty( NULL );		
-	}
-	else
-	{
-		UpdateProperty( &rvalue.Hash[rvalue.NameLength+2] ); // BinaryLength + '-' = 2 bytes
-	}
+	// Copy the ServiceProperty
+	Copy(rvalue);
 
 	return *this;
 }
@@ -407,20 +331,17 @@ const ServiceProperty& ServiceProperty::operator= ( const ServiceProperty& rvalu
 void ServiceProperty::Copy( const ServiceProperty& rvalue )
 {
 	// Copy only the needed bytes from the hash
-	memcpy( Hash, rvalue.Hash, rvalue.Length ); // rvalue.Length is at least 1
-
+	Name = rvalue.Name;
+	Value = rvalue.Value;
 	Length = rvalue.Length;
-	// BinaryLength is already set by copying bytes from the ravlue.Hash
-	NameLength = rvalue.NameLength;
-	ValueLength = rvalue.ValueLength;
 }
 
-bool ServiceProperties::IsDefined( const char * Name )
+bool ServiceProperties::IsDefined( const SimpleString Name )
 {
 	return (Find(Name) != -1);
 }
 
-bool ServiceProperties::Undefine( const char * Name )
+bool ServiceProperties::Undefine( const SimpleString Name )
 {
 	int Pos = Find( Name );
 
@@ -440,19 +361,18 @@ bool ServiceProperties::Undefine( const char * Name )
 	return true;
 }
 
-int ServiceProperties::Find( const char * Name, bool ReadOnly )
+int ServiceProperties::Find( const SimpleString eName, bool ReadOnly )
 {
 	int Pos;
-	int NameLen;
 
-	if ( Name == NULL || (NameLen = (int)strlen(Name)) == 0 )
+	if ( eName.IsEmpty() )
 	{
 		throw ServicePropertiesException( "Bad parameter" );
 	}
 
 	for( Pos = 0; Pos < NbProperties; Pos++ )
 	{
-		if ( strncasecmp( &Properties[Pos].Hash[1], Name, NameLen ) == 0 )
+		if ( strcasecmp( eName.GetStr(), Properties[Pos].Name.GetStr() ) == 0 )
 			return Pos;
 	}
 
@@ -470,26 +390,48 @@ void ServiceProperties::NotifyChanges()
 	}
 }
 
+bool ServiceProperties::TxtRecordIsFull()
+{
+	if ( TXTRecordLength > MaxTxtRecordSize )
+		return true;
+
+	return false;
+}
+
 const char * ServiceProperties::ExportTXTRecord()
 {
 	int i;
 	int CopyHere;
+	unsigned char * SetPropertyLength;
+	SimpleString    TmpProperty;
 
 	if ( TXTRecordLength == 0 )
 	{
 		return NULL;
 	}
 
-	if ( TXTRecordLength > MaxTxtRecordSize )
+	if ( TxtRecordIsFull() )
 	{
 		throw ServicePropertiesException( "Properties list is too big" );
 	}
 
 	for( CopyHere = 0, i = 0; i < NbProperties; i++ )
 	{
-		if ( Properties[i].Length != 0 )
+		if ( Properties[i].Length != 0 || Properties[i].Length > 256 )
 		{
-            memcpy( &TXTRecord[CopyHere], Properties[i].Hash, Properties[i].Length );
+			// Set the property length in the buffer
+			SetPropertyLength  = (unsigned char*)&TXTRecord[CopyHere];
+			*SetPropertyLength = Properties[i].Length-1;
+            
+			// Let's generate and copy the propertie
+			TmpProperty  = Properties[i].Name;
+			TmpProperty += "=";
+			if ( Properties[i].Value.GetLength() != 0 )
+			{
+				TmpProperty += Properties[i].Value;
+			}
+			// Copy after the length the value of the property
+			memcpy( &TXTRecord[CopyHere+1], TmpProperty.GetStr(), Properties[i].Length-1 );
 			CopyHere += Properties[i].Length;
 		}
 	}
@@ -530,20 +472,13 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
 			    KeyName, &valueLen, (const void**)&value ) == kDNSServiceErr_NoError )
 		{
 			// Is it a simple flag ?
-			if ( value == NULL )
+			if ( value == NULL || valueLen == 0 )
 			{
-				(*this)[KeyName] = (char*)NULL;
-				continue;
-			}
-			// Is it an empty value ?
-			if ( valueLen == 0 )
-			{
-				(*this)[KeyName] = "";
+				(*this)[KeyName] = SimpleString::EmptyString;
 				continue;
 			}
 
 			// General case
-			strncpy( KeyValue, value, valueLen );
 			KeyValue[valueLen] = '\0';
 			(*this)[KeyName] = KeyValue;
 		}

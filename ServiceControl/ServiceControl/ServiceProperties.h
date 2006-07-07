@@ -12,6 +12,7 @@
 
 #include <ServiceControl/Config.h>
 
+#include <System/SimpleString.h>
 #include <ServiceControl/ServicesCommon.h>
 
 namespace Omiscid {
@@ -66,8 +67,8 @@ public:
      *
 	 *	This constructor takes a name and optionaly a value for the new constructed property. See ServiceProperty#SetProperty.
 	*/
-	ServiceProperty( const char * Name, const char * Value = (const char*)NULL );
-
+	ServiceProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString );
+	
 	virtual ~ServiceProperty();
 
 	/*! \brief Empty a property.
@@ -91,7 +92,7 @@ public:
 	 *  \li \c if #Name equals "Property" and #Value is "", we will have an empty property : "Property=".
 	 *  \li \c if #Name equals "Property" and #Value is "something", we will have : "Property=something".
 	 */
-	virtual bool SetProperty( const char * Name, const char * Value = (const char*)NULL );	// Set a property with a name and optionaly a value
+	virtual bool SetProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString );	// Set a property with a name and optionaly a value
 
 	/*! \brief Change a value for a property that have already a name.
 	 *	\param[in] Value an mandatory const c-SimpleString containing the value of the property
@@ -100,31 +101,23 @@ public:
 	 *	This function changes value for a property. If a problem occurs, the
 	 *	property will be empty.<BR> See ServiceProperty#SetProperty for possible values.
 	 */
-	virtual bool UpdateProperty( const char * Value );
-	virtual const char * operator= ( const char * rvalue );
-	virtual int operator= ( int rvalue );
+	virtual bool UpdateProperty( const SimpleString Value );
+	virtual const SimpleString operator= ( const SimpleString rvalue );
 	virtual const ServiceProperty& operator= ( const ServiceProperty& rvalue );
 
-	const char * GetValue();
-
-	operator char*();
-	operator const char*();
+	const SimpleString GetValue();
 
 protected:
 	// Total length of this Property (size included)
-	unsigned short Length;
+	unsigned char Length;
 
 	virtual void Copy( const ServiceProperty& rvalue );
-
-	// Lengths of subfields...
-	unsigned char & BinaryLength;
-	unsigned char NameLength;
-	unsigned char ValueLength;
 
 	// Buffer ready
 	// Size consists in 1 byte for length + 255 for content and 1 byte for '\0'
 	// because we will use strcpy and co...
-	char Hash[256+1];
+	SimpleString Name;
+	SimpleString Value;
 };
 
 class ServicePropertyNotify : public ServiceProperty
@@ -134,13 +127,12 @@ class ServicePropertyNotify : public ServiceProperty
 
 public:
 	ServicePropertyNotify();
-	ServicePropertyNotify(const char * Name, const char * Value = NULL, ServiceProperties * Parent = (ServiceProperties*)NULL );
+	ServicePropertyNotify(const SimpleString Name, const SimpleString Value = SimpleString::EmptyString, ServiceProperties * Parent = (ServiceProperties*)NULL );
 	virtual ~ServicePropertyNotify();
 
-	virtual bool SetProperty( const char * Name, const char * Value = NULL );
-	virtual bool UpdateProperty( const char * Value );
-	virtual const char * operator= ( const char * rvalue );
-	virtual int operator= ( int rvalue );
+	virtual bool SetProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString );
+	virtual bool UpdateProperty( const SimpleString Value );
+	virtual const SimpleString operator= ( const SimpleString rvalue );
 	virtual const ServiceProperty& operator= ( const ServiceProperty& rvalue );
 	virtual const ServicePropertyNotify& operator= ( const ServicePropertyNotify& rvalue );
 
@@ -160,10 +152,11 @@ public:
 	virtual ~ServiceProperties();
 
 	// ServiceProperty & operator[]( int Elem );
-	ServiceProperty & operator[]( const char * Name );
+	ServiceProperty & operator[]( const SimpleString Name );
+
 	// To check if a properties exists
-	bool IsDefined( const char * Name );
-	bool Undefine( const char * Name );
+	bool IsDefined( const SimpleString Name );
+	bool Undefine( const SimpleString Name );
 
 	int GetNumberOfProperties() { return NbProperties; }
 
@@ -175,6 +168,7 @@ public:
 	operator unsigned char*();
 	operator const unsigned char*();
 
+	bool TxtRecordIsFull();
 	bool ImportTXTRecord( int RecordLength, const char * Record );
 
 	void NotifyChanges();
@@ -186,7 +180,7 @@ protected:
 	// but not on multicast usage
 	enum SizeOfBuffers { MaxTxtRecordSize = 1024 }; 
 
-	virtual int Find( const char * Name, bool ReadOnly = true );
+	virtual int Find( const SimpleString Name, bool ReadOnly = true );
 
 	// Max size of the TXT record field
 	int TXTRecordLength;

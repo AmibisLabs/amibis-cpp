@@ -25,7 +25,7 @@ void Attribut::AddTagDescriptionToStr(SimpleString& str)
   if(formatDescription != "")
     {
       str += "<formatDescription>";
-      PutAValueInCData(formatDescription.GetStr(), str);
+      PutAValueInCData(formatDescription, str);
       str += "</formatDescription>";
     }
 }

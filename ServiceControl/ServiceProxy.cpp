@@ -8,8 +8,8 @@
 
 using namespace Omiscid;
 
-ServiceProxy::ServiceProxy( SimpleString eHostName, int eControlPort )
-	: ControlClient(ComTools::GeneratePeerId())
+ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eControlPort )
+	: ControlClient(PeerId)
 {
 	HostName	= eHostName;
 	ControlPort	= eControlPort;
@@ -17,7 +17,6 @@ ServiceProxy::ServiceProxy( SimpleString eHostName, int eControlPort )
 	{
 		throw "ServiceProxy failed";
 	}
-	// UpdateDescription();
 }
 
 ServiceProxy::~ServiceProxy()

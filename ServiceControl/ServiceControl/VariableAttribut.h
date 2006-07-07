@@ -120,7 +120,7 @@ public:
     </variable> @endverbatim
    * @param str [in, out] the SimpleString where add the description.
    */
-  void GenerateValueMessage(SimpleString& str);
+  // void GenerateValueMessage(SimpleString& str);
   //@}
 
   /** \brief Display on standard output the data about the variable.

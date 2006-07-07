@@ -29,9 +29,11 @@ int main(int argc, char * argv[])
 
 	TestListener TL;
 
+	Omiscid::Service * MyService = ServiceFactory.Create( "Clock Client" );
+
 	// First, create a service filter. You *must* not free it after use
 	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasVariable( "TestWrite" ) );
-	ServiceProxy * ClockServer = Service::FindService( MySearch, 10000 );
+	ServiceProxy * ClockServer = MyService->FindService( MySearch, 10000 );
 
 	ClockServer->AddVariableChangeListener( "TestWrite", &TL );
 

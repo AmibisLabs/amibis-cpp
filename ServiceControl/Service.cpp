@@ -18,6 +18,7 @@ public:
 	~OmiscidServiceSearchData();
 
 	CascadeServiceFilters FilterList;
+	unsigned int PeerId;
 	ServiceProxy * Proxy;
 };
 
@@ -27,7 +28,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 
 	SimpleString Host(hosttarget);
 
-	ServiceProxy * Proxy = new ServiceProxy( Host, port );
+	ServiceProxy * Proxy = new ServiceProxy( MyData->PeerId, Host, port );
 	if ( Proxy == NULL )
 	{
 		return false;
@@ -52,6 +53,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 OmiscidServiceSearchData::OmiscidServiceSearchData()
 {
 	Proxy = NULL;
+	PeerId = 0;
 }
 
 OmiscidServiceSearchData::~OmiscidServiceSearchData()
@@ -72,7 +74,6 @@ Service::~Service()
 void Service::Start()
 {
 	StartServer();
-	StartThreadProcessMsg();
 }
 
 /**
@@ -511,6 +512,8 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter, unsigned int WaitTim
 	WaitForOmiscidServices * WFOS = new WaitForOmiscidServices;
 	OmiscidServiceSearchData MyData;
 
+	// Ok, I will ask for services
+	MyData.PeerId = GetServiceId();
 	MyData.FilterList.Add( Filter );
 
 	// Ask to work on all service (we do not provide a name)
