@@ -133,8 +133,6 @@ bool ControlServer::StartServer()
 { 
 	try
 	{
-		// To prevent adding variable, inputs...
-		SetStatus(STATUS_RUNNING);
 
 		Create(0);
 
@@ -192,8 +190,13 @@ bool ControlServer::StartServer()
 		// Add owner value
 		OwnerVariable->SetValue( GetLoggedUser() );
 
+		NameVariable->SetValue( serviceName );
+
 		// Add Class value
 		registerDnsSd->Properties["class"] = ".Void";
+
+		// To prevent adding variable, inputs...
+		SetStatus(STATUS_RUNNING);
 
 		SimpleString tmp;
 		bool TxtRecordIsFull = false;
