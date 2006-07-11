@@ -78,7 +78,13 @@ public:
    * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.
    * @return true if access is 'read-write' or 'read-write only before init' and the status is different of STATUS_RUNNING (: 2).
    */
-  bool CanBeModified(ControlServerStatus status) const;
+  bool CanBeModifiedFromInside(ControlServerStatus status) const;
+
+  /** @brief define if a variable can be modified according to its kid of access.
+   * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.
+   * @return true if access is 'read-write' or 'read-write only before init' and the status is different of STATUS_RUNNING (: 2).
+   */
+  bool CanBeModifiedFromOutside(ControlServerStatus status) const;
 
   /** @brief Associate a SimpleString to a kind of access.
    * @param accesskind [in] access kind that we want to change in SimpleString

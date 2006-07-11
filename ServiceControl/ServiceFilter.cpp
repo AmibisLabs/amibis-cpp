@@ -102,7 +102,10 @@ ServiceNameIs::ServiceNameIs(SimpleString& Name, bool CaseInsensitive, bool Only
 bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceName;
-	ServiceName = SP.GetName();
+	if ( SP.GetVariableValue("name",ServiceName) == false )
+	{
+		return false;
+	}
 
 	if ( OnlyPrefix )
 	{

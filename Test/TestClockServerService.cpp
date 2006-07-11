@@ -76,7 +76,7 @@ int main(int argc, char * argv[])
 	struct timeval now;					// A struct to get the current time of day
 
 	// Loop forever
-	for(int zz=0;zz < 10000; zz++)
+	for(;;)
 	{
 		// retrieve the current time
 		gettimeofday(&now, NULL);

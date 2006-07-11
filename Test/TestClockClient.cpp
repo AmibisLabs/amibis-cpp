@@ -32,11 +32,13 @@ int main(int argc, char * argv[])
 	Omiscid::Service * MyService = ServiceFactory.Create( "Clock Client" );
 
 	// First, create a service filter. You *must* not free it after use
-	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasVariable( "TestWrite" ) );
+	ServiceFilter * MySearch = And( NameIs("Clock Server") );
 	ServiceProxy * ClockServer = MyService->FindService( MySearch, 10000 );
 
 	if ( ClockServer == NULL )
 		return 0;
+
+	ClockServer->SetVariableValue( "Hours", "12" );
 
 	MyService->AddConnector( "In", "in", AnInput );
 	MyService->ConnectTo( "In", ClockServer, "PushClock" );
@@ -54,11 +56,11 @@ int main(int argc, char * argv[])
 
 	Thread::Sleep( 5000 );
 	printf( "Delete Service\n" );
-	delete MyService;
+	// delete MyService;
 
-	Mutex MyLock;
-	MyLock.EnterMutex();
-	MyLock.EnterMutex();
+	// Mutex MyLock;
+	// MyLock.EnterMutex();
+	// MyLock.EnterMutex();
 
 	return 0;
 

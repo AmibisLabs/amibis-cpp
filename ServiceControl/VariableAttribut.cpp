@@ -222,12 +222,21 @@ SimpleString& VariableAttribut::GetDefaultValue()
 	return defaultValue;
 }
 
-bool VariableAttribut::CanBeModified(ControlServerStatus status) const
+bool VariableAttribut::CanBeModifiedFromInside(ControlServerStatus status) const
+{
+	if ( access == ConstantAccess && status == STATUS_RUNNING )
+	{
+		return false;
+	}
+	return true; 
+}
+
+ bool VariableAttribut::CanBeModifiedFromOutside(ControlServerStatus status) const
 { 
 	return (access == ReadWriteAccess || (access == ConstantAccess && status != STATUS_RUNNING)); 
 }
 
-  /** \brief Add a listener to this variable.
+ /** \brief Add a listener to this variable.
    *
    */
 bool VariableAttribut::AddListener( VariableAttributListener * ListenerToAdd )

@@ -149,43 +149,7 @@ bool ControlServer::StartServer()
 		port = GetSocket()->GetPortNb();
 		// GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
 
-#if 0
-		// creer les infos pour le Champ TXT
-		// -- input, output
-		SimpleString input_record("");
-		SimpleString output_record("") ;
-		SimpleString in_output_record("") ;
-
-		for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
-		{
-			tmp = (listInOutput.GetCurrent())->GetName();
-			if((listInOutput.GetCurrent())->IsAnInput())
-			{
-				input_record = input_record + tmp + ",";
-			}
-			else
-			{
-				if ( (listInOutput.GetCurrent())->IsAnOutput() )
-				{
-					output_record = output_record + tmp + ",";
-				}
-				else 
-				{
-					in_output_record = in_output_record + tmp + ",";
-				}
-			}
-
-			SimpleString recordData;
-			listInOutput.GetCurrent()->GenerateRecordData(recordData);
-			Properties[tmp.GetStr()] = recordData.GetStr();
-		}
-		if(input_record.GetLength() > 0)
-			input_record = input_record.SubString(0, input_record.GetLength()-1);  
-
-		if(output_record.GetLength()>0)
-			output_record = output_record.SubString(0, output_record.GetLength()-1);
-#endif
-
+		// Create an object to register the service
 		registerDnsSd = new RegisterOmiscidService( serviceName.GetStr(), "local.", (unsigned short)port, false);
 
 		// Add Constant variable
@@ -201,9 +165,6 @@ bool ControlServer::StartServer()
 		OwnerVariable->SetValue( GetLoggedUser() );
 
 		NameVariable->SetValue( serviceName );
-
-		// Add Class value
-		registerDnsSd->Properties["class"] = ".Void";
 
 		// To prevent adding variable , inputs from another thread...
 		SetStatus(STATUS_RUNNING);
@@ -297,33 +258,20 @@ bool ControlServer::StartServer()
 			}		
 		}
 
-
-#if 0
-		// Override inputs, outputs, inouputs properties
-		SimpleString DnsSdField;
-
-		// ad an s to the names
-		DnsSdField = InOutputAttribut::input_str+"s";
-		registerDnsSd->Properties[DnsSdField.GetStr()] = input_record.GetStr();
-		DnsSdField = InOutputAttribut::output_str+"s";
-		registerDnsSd->Properties[DnsSdField.GetStr()] = output_record.GetStr();
-		DnsSdField = InOutputAttribut::inoutput_str+"s";
-		registerDnsSd->Properties[DnsSdField.GetStr()] = in_output_record.GetStr();
-#endif
-
+		// Actually register
 		registerDnsSd->Register();
 
-		if(registerDnsSd->IsRegistered())
+		// Check if everything goes fine
+		if( registerDnsSd->IsRegistered() )
 		{
 			TraceError( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
-			serviceName = registerDnsSd->RegisteredName;
-			NameVariable->SetValue( serviceName );
-			// Copy back Properties from RegisterDnsSd to parent, so this object
-			// Properties.ImportTXTRecord( registerDnsSd->Properties.GetTXTRecordLength(), registerDnsSd->Properties.ExportTXTRecord() );
+			// serviceName = registerDnsSd->RegisteredName;
+			// NameVariable->SetValue( serviceName );
 			StartThreadProcessMsg();
 			return true;
 		}
 
+		// Something was wrong...
 		TraceError( "registered failed\n");
 	}
 	catch(SocketException e)
@@ -361,22 +309,21 @@ void ControlServer::GenerateGlobalShortDescription(SimpleString& str)
 	}
 }
 
-InOutputAttribut* ControlServer::FindInOutput(const SimpleString name)
+InOutputAttribut* ControlServer::FindInOutput(const SimpleString InOutputName)
 {
-
 	for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
 	{
-		if(name == (listInOutput.GetCurrent())->GetName()) 
+		if ( strcasecmp(InOutputName.GetStr(), listInOutput.GetCurrent()->GetName().GetStr() ) == 0 )
 			return listInOutput.GetCurrent();
 	}
 	return NULL;
 }
 
-VariableAttribut* ControlServer::FindVariable(const SimpleString name)
+VariableAttribut* ControlServer::FindVariable(const SimpleString VarName)
 { 
 	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
 	{
-		if(name == (listVariable.GetCurrent())->GetName()) 
+		if( strcasecmp( VarName.GetStr(), listVariable.GetCurrent()->GetName().GetStr() ) == 0 )
 			return listVariable.GetCurrent();
 	}
 	return NULL;
@@ -512,7 +459,7 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", node);
 				if(val_node)
 				{
-					if(LockOk(pid) && va->CanBeModified(GetStatus()))
+					if(LockOk(pid) && va->CanBeModifiedFromOutside(GetStatus()))
 					{
 						if(va->GetType() == "xml")
 						{ 
@@ -675,7 +622,8 @@ void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue,
 
 bool ControlServer::IsValid( VariableAttribut * ChangedVariable, SimpleString newValue )
 {
-	return ChangedVariable->CanBeModified(GetStatus());
+	// OIutside check is done when receiving external modification is asked
+	return ChangedVariable->CanBeModifiedFromInside(GetStatus());
 }
 
 void ControlServer::VariableChanged( VariableAttribut * ChangedVariable )
@@ -686,13 +634,30 @@ void ControlServer::VariableChanged( VariableAttribut * ChangedVariable )
 	}
 }
 
-VariableAttribut* ControlServer::AddVariable(const SimpleString name)
+VariableAttribut* ControlServer::AddVariable(const SimpleString VarName)
 {
-	if ( GetStatus() == STATUS_RUNNING )
+	if ( GetStatus() == STATUS_RUNNING || VarName.IsEmpty() )
 	{
 		return NULL;
 	}
-	VariableAttribut* va = new VariableAttribut(name);
+
+	// Look for a Varible of an Input with the same name
+	if ( FindVariable( VarName ) != NULL )
+	{
+		// Already exists
+		TraceError( "A variable with the same name already exists.\n" );
+		return NULL;
+	}
+
+	// Look for a Varible of an Input with the same name
+	if ( FindInOutput( VarName ) != NULL )
+	{
+		// Already exists
+		TraceError( "A connector with the same name already exists. Could not add variable.\n" );
+		return NULL;
+	}
+
+	VariableAttribut* va = new VariableAttribut(VarName);
 	listVariable.Add(va);
 
 	// I am the first listener
@@ -701,16 +666,33 @@ VariableAttribut* ControlServer::AddVariable(const SimpleString name)
 	return va;
 }
 
-InOutputAttribut* ControlServer::AddInOutput(const SimpleString name, ComTools* com_tool, ConnectorKind kind_of_input)
+InOutputAttribut* ControlServer::AddInOutput(const SimpleString InOutputName, ComTools* com_tool, ConnectorKind kind_of_input)
 {
-	if ( GetStatus() == STATUS_RUNNING )
+	if ( GetStatus() == STATUS_RUNNING || InOutputName.IsEmpty() )
 	{
 		return NULL;
 	}
 
+	// Look for a Varible of an Input with the same name
+	if ( FindInOutput( InOutputName ) != NULL )
+	{
+		// Already exists
+		TraceError( "A connector with the same name already exists.\n" );
+		return NULL;
+	}
+
+	// Look for a Varible of an Input with the same name
+	if ( FindVariable( InOutputName ) != NULL )
+	{
+		// Already exists
+		TraceError( "A variable with the same name already exists. Could not add connector.\n" );
+		return NULL;
+	}
+
+	// Add the connector
 	unsigned int ConnectorId;
 
-	InOutputAttribut* ioa = new InOutputAttribut(name, com_tool, kind_of_input);
+	InOutputAttribut* ioa = new InOutputAttribut(InOutputName, com_tool, kind_of_input);
 	if ( com_tool )
 	{
 		// Incr number for the Connector
