@@ -5,7 +5,7 @@
 usage()
 {
     cat <<EOF
-Usage primasystem-config [OPTION] mode ...
+Usage OmiscidSystem-config [OPTION] mode ...
 
 mode:
     --help                print this message
@@ -45,7 +45,7 @@ case "$1" in
 	exit 0
 	;;
     --libs)
-	echo "-L@libdir@ -lprimasystem"
+	echo "-L@libdir@"
 	exit 0
 	;;
     --libs-only-L)
@@ -53,7 +53,7 @@ case "$1" in
 	exit 0
 	;;
     --libs-only-l)
-	echo "-lprimasystem"
+	echo ""
 	exit 0
 	;;
     --libdir)

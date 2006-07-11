@@ -5,7 +5,7 @@
 usage()
 {
     cat <<EOF
-Usage primacontrol-config [OPTION] mode ...
+Usage OmiscidControl-config [OPTION] mode ...
 
 mode:
     --help                print this message
@@ -38,15 +38,15 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo "-I@includedir@ `primacom-config --cflags` `xml2-config --cflags`"
+	echo "-I@includedir@ `OmiscidCom-config --cflags` `xml2-config --cflags`"
 	exit 0
 	;;
     --cflags-only-I)
-	echo "-I@includedir@ `primacom-config --cflags-only-I`"
+	echo "-I@includedir@ `OmiscidCom-config --cflags-only-I`"
 	exit 0
 	;;
     --libs)
-	echo "-L@libdir@ -lcontrol `xml2-config --libs`"
+	echo "-L@libdir@ -lOmiscidCom `xml2-config --libs`"
 	exit 0
 	;;
     --libs-only-L)
@@ -54,7 +54,7 @@ case "$1" in
 	exit 0
 	;;
     --libs-only-l)
-	echo "-lcontrol"
+	echo "-lOmiscidCom"
 	exit 0
 	;;
     --libdir)
