@@ -66,7 +66,7 @@ void InOutputAttribut::GenerateLongDescription(SimpleString& str)
       str = str + "<udp>"+tmp+"</udp>";
     }
 
-	snprintf( tmp, 30, "%x", comTool->GetServiceId() );
+	snprintf( tmp, 30, "%.8x", comTool->GetServiceId() );
 	str = str + "<peerid>" + tmp+ "</peerid>";
 
   AddTagDescriptionToStr(str);
@@ -87,7 +87,7 @@ void InOutputAttribut::GenerateLongDescription(SimpleString& str)
 
   str = str + "</" + KindToStr() +">";
 
-  listPeer.Clear();
+  listPeer.Empty();
 }
 
 void InOutputAttribut::GenerateRecordData(SimpleString& str)
@@ -129,7 +129,7 @@ const SimpleList<unsigned int>& InOutputAttribut::GetListPeerId()
 { 
   if(comTool)
     {
-      listPeerId.Clear();
+      listPeerId.Empty();
       comTool->GetListPeerId(listPeerId);
     }
   return listPeerId;
@@ -186,7 +186,7 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 		  }
 		  else if (strcmp(cur_name, "peerid")==0)
 		  {
-			  sscanf( XMLMessage::ExtractTextContent(cur_node->children).GetStr(), "%x", &peerId );
+			  sscanf( XMLMessage::ExtractTextContent(cur_node->children).GetStr(), "%.x", &peerId );
 		  }
 		  else if (strcmp(cur_name,"peers")==0)
 		  {
@@ -196,7 +196,7 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 				  if((node_peer->type == XML_ELEMENT_NODE) && strcmp((const char*)node_peer->name, "peer") == 0)
 				  {
 					  unsigned int ConnectedPeerId;
-					  sscanf( XMLMessage::ExtractTextContent(node_peer->children).GetStr(), "%x", &ConnectedPeerId );
+					  sscanf( XMLMessage::ExtractTextContent(node_peer->children).GetStr(), "%.x", &ConnectedPeerId );
 					  AddPeer(ConnectedPeerId);
 				  }
 			  }

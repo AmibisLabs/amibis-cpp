@@ -10,9 +10,23 @@
 
 namespace Omiscid {
 
-/**
- * @author 
+/** 
+ * @defgroup UserFriendly User friendly API for Omiscid Service Control 
  *
+ */
+
+/**
+ * @class Factory Factory.cpp ServiceControl/Factory.h
+ * @ingroup UserFriendly
+ * @ingroup ServiceControl
+ * @brief High level user friendly class to create Omiscid services.
+ *
+ * This class is used to create a service. One have to invoque
+ * static function Factory#Create(const SimpleString ServiceName) of
+ * Factory#CreateFromXML(SimpleString XmlDesc) directly using
+ * "Factory::Create..." or "ServiceFactory.Create..." syntax.
+ * 
+ * @author Dominique Vaufreydaz
  */
 class Factory
 {

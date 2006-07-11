@@ -71,7 +71,7 @@ public:
 	 *
 	 * Build an empty list
 	 */
-        SimpleList();
+	SimpleList();
 
 	/** \brief Destructor */
 	virtual ~SimpleList();
@@ -87,7 +87,7 @@ public:
 	 */
 	unsigned int GetNumberOfElements() const;
 
-	/** \name First, Next, GetCurrent, RemoveCurrent */
+	/** \name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
 	//@{
 	/** \brief Set position to the first element */
 	void First();
@@ -145,8 +145,8 @@ public:
 	bool Remove(const TYPE& Element);
 
 
-	/** \brief  Clear (so empty) the whole list */
-	void Clear();
+	/** \brief  Empty (so empty) the whole list */
+	void Empty();
 
  protected:
 	/** \brief Obtain a new SimpleListElement object 
@@ -187,7 +187,7 @@ SimpleList<TYPE>::SimpleList()
 template <typename TYPE>
 SimpleList<TYPE>::~SimpleList()
 {
-	Clear();
+	Empty();
 }
 
 // Access fonction
@@ -367,7 +367,7 @@ bool SimpleList<TYPE>::Remove(const TYPE& Element)
 }
 
 template <typename TYPE>
-void SimpleList<TYPE>::Clear()
+void SimpleList<TYPE>::Empty()
 {
 	SimpleListElement<TYPE> * tmp;
 	// On libere tous les elements de la liste

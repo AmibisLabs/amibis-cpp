@@ -8,7 +8,7 @@
 #include <ServiceControl/ControlServer.h>
 #include <ServiceControl/LocalVariableListener.h>
 #include <ServiceControl/ServiceFilter.h> 
-#include <ServiceControl/MessageListener.h> 
+#include <ServiceControl/ConnectorListener.h> 
 
 namespace Omiscid {
 
@@ -16,8 +16,16 @@ class LocalVariableListener;
 class ControlServer;
 
 /**
- * @author Dominique Vaufreydaz
+ * @class Service Service.cpp ServiceControl/Service.h
+ * @ingroup UserFriendly
+ * @ingroup ServiceControl
+ * @brief High level user friendly class to manage an Omiscid service.
  *
+ * This class is used to create a service and register it. It can not
+ * be created directly by the end user. One should invoque the
+ * Factory#Create(const SimpleString ServiceName) to create a new service.
+ * 
+ * @author Dominique Vaufreydaz
  */
 class Service : protected ControlServer
 {
@@ -25,7 +33,7 @@ class Service : protected ControlServer
 	friend class Factory;
 
 private:
-	Service(const SimpleString ServiceName);
+	Service(const SimpleString ServiceName, const SimpleString ClassName = SimpleString::EmptyString );
 
 	// Every one can destroy an Service
 public:
@@ -173,7 +181,15 @@ public:
 	 * @param ConnectorName the name of the connector
 	 * @param MsgListener the object that will handle messages sent to this connector
 	 */
-	bool AddConnectorListener(SimpleString ConnectorName, MessageListener * MsgListener);
+	bool AddConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener);
+
+	/**
+	 * Remove a message listener from a connector
+	 * @param ConnectorName the name of the connector
+	 * @param MsgListener the object that will handle messages sent to this connector
+	 */
+	bool RemoveConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener);
+
 
 	/**
 	 * Adds a listener that will be triggered at every variable change

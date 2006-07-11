@@ -5,9 +5,9 @@
 #include <Com/MsgManager.h>
 #include <Com/TcpUdpClientServer.h>
 #include <ServiceControl/WaitForDnsSdServices.h>
+#include <ServiceControl/ConnectorListener.h>
 
 using namespace Omiscid;
-// using namespace Omiscid::CascadeServiceFilters;
 
 namespace Omiscid {
 
@@ -60,15 +60,21 @@ OmiscidServiceSearchData::~OmiscidServiceSearchData()
 {
 }
 
-Service::Service(const SimpleString ServiceName)
+Service::Service(const SimpleString ServiceName, const SimpleString ClassName)
 	: ControlServer( ServiceName )
 {
-
+	if ( ClassName.IsEmpty() )
+	{
+		SetClass( "Service" );
+	}
+	else
+	{
+		SetClass( ClassName );
+	}
 }
 
 Service::~Service()
 {
-
 }
 
 void Service::Start()
@@ -463,13 +469,12 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, Si
 	return ConnectTo(LocalConnector, *ServProxy, RemoteConnector);
 }
 
-
 	/**
 	 * Add a message listener to a connector
 	 * @param ConnectorName the name of the connector
 	 * @param MsgListener the object that will handle messages sent to this connector
 	 */
-bool Service::AddConnectorListener(SimpleString ConnectorName, MessageListener * MsgListener)
+bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener)
 {
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
@@ -487,13 +492,33 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, MessageListener *
 	// Get the connector
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
-	// Link to receive messages
-	pConnector->LinkToMsgManager( MsgListener );
-	MsgListener->StartThread();
+	MsgListener->ServiceOfTheConnector = this;
+	MsgListener->ConnectorName = ConnectorName;
 
-	return false;
+	// Link to receive messages
+	return pConnector->AddCallbackObject( MsgListener );
 }
 
+	/**
+	 * Remove a message listener from a connector
+	 * @param ConnectorName the name of the connector
+	 * @param MsgListener the object that will handle messages sent to this connector
+	 */
+bool Service::RemoveConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener)
+{
+	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
+	if ( pAtt == NULL )
+	{
+		TraceError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
+		return false;
+	}
+
+	// Get the connector
+	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
+
+	// Link to receive messages
+	return pConnector->RemoveCallbackObject( MsgListener );
+}
 
 // Utility function
 

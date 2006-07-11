@@ -1,21 +1,21 @@
 #ifndef __SYSTEM_CONFIG_H__
 #define __SYSTEM_CONFIG_H__
 
-/*! \def FUNCTION_CALL_TYPE
- *	\brief DNS-SD callbacks type (WIN32 specific).
- *
- *	As WIN32 plateform supports many function call types, we must use the right
- *	one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
- *	the callback type is __stdcall.	On other plateform, this define is empty.
- */
-/*! \def strcasecmp
- *	\brief Wrapper for the unix strcasecmp function (WIN32 only).
+/** 
+ * @defgroup System Omiscid multiplateform System layer. 
  *
  */
-/*! \def strncasecmp
- *	\brief Wrapper for the unix strncasecmp function (WIN32 only).
+
+/*! @def WIN32
+ *	@ingroup System
+ *	@brief Define the WIN32 symbol
  *
+ *	In order to be sure to have the correct WIN32 symbol.
  */
+#if defined _WIN32 && ! defined WIN32
+	#define WIN32	// WIN32 is more interesting for us
+#endif
+
 #ifdef WIN32
 	#ifdef USE_AFX
 		#include "StdAfx.h"
@@ -27,9 +27,19 @@
 	#include <Winsock2.h>
 	#include <process.h>		// Process action
 
+   /*!	@def FUNCTION_CALL_TYPE
+    *	@ingroup System
+	*	@brief DNS-SD callbacks type (WIN32 specific).
+	*
+	*	As WIN32 plateform supports many function call types, we must use the right
+	*	one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
+	*	the callback type is __stdcall.	On other plateform, this define is empty.
+	*/
 	#define FUNCTION_CALL_TYPE __stdcall
-	/*! \def DEBUG
-	 *	\brief Define the gcc like debug symbol (WIN32 only).
+
+	/*! @def DEBUG
+     *	@ingroup System
+	 *	@brief Define the gcc like debug symbol (WIN32 only).
      *
 	 *	In order to have portable DEBUG support, we need to define a common
 	 *	debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
@@ -38,18 +48,44 @@
 		#define DEBUG	// let Visual Studio be gcc -g compliant
 	#endif
 
-	#if defined _WIN32 && ! defined WIN32
-		#define WIN32	// WIN32 is more interesting for us
-	#endif
+	/*! @def strcasecmp
+     *	@ingroup System
+	 *	@brief Define the WIN32 symbol
+     *
+	 *	For multiplateform source code.
+	 */
 
+	/*! @def strncasecmp
+     *	@ingroup System
+	 *	@brief Define the WIN32 symbol
+     *
+	 *	For multiplateform source code.
+	 */
+
+	/*! @def _snprintf
+     *	@ingroup System
+	 *	@brief Define the WIN32 symbol
+     *
+	 *	For snprintf source code.
+	 */
 	#define strcasecmp stricmp
 	#define strncasecmp strnicmp
 	#define snprintf _snprintf
-	// #define fprintf _fprintf
+
+	/*! @def SOCKET
+     *	@ingroup System
+	 *	@brief Define the SOCKET type as on WIN32 plateform.
+     *
+	 *	For multiplateform source code.
+	 */
+	/*! @def SOCKET_ERROR
+     *	@ingroup System
+	 *	@brief Define the socket error symbol as on WIN32 plateform.
+     *
+	 *	For multiplateform source code.
+	 */
 
 #else
-	#define FUNCTION_CALL_TYPE
-
 	#include <sys/types.h>
 	#include <sys/time.h>
 
@@ -57,11 +93,75 @@
 	#include <netinet/in.h>
 	#include <arpa/inet.h>
 	
+   /*!	@def FUNCTION_CALL_TYPE
+    *	@ingroup System
+	*	@brief DNS-SD callbacks type (WIN32 specific).
+	*
+	*	As WIN32 plateform supports many function call types, we must use the right
+	*	one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
+	*	the callback type is __stdcall.	On other plateform, this define is empty.
+	*/
+	#define FUNCTION_CALL_TYPE
+
+	/*! @def SOCKET
+     *	@ingroup System
+	 *	@brief Define the SOCKET type as on WIN32 plateform.
+     *
+	 *	For multiplateform source code.
+	 */
+	/*! @def SOCKET_ERROR
+     *	@ingroup System
+	 *	@brief Define the socket error symbol as on WIN32 plateform.
+     *
+	 *	For multiplateform source code.
+	 */
 	typedef int SOCKET;
 	#define SOCKET_ERROR (-1)
 
-	#include <unistd.h>
+	/*! @def DEBUG
+     *	@ingroup System
+	 *	@brief Define the gcc like debug symbol (WIN32 only).
+     *
+	 *	In order to have portable DEBUG support, we need to define a common
+	 *	debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
+	 */
+	#if defined DEBUG
+		#undef DEBUG
+		#define DEBUG
+	#endif
 
+	/*! @def WIN32
+     *	@ingroup System
+	 *	@brief Define the WIN32 symbol
+     *
+	 *	In order to be sure to have the correct WIN32 symbol.
+	 */
+	#if defined WIN32
+		#define WIN32	// WIN32 is more interesting for us
+	#endif
+
+	/*! @def strcasecmp
+     *	@ingroup System
+	 *	@brief Define the WIN32 symbol
+     *
+	 *	For multiplateform source code.
+	 */
+
+	/*! @def strncasecmp
+     *	@ingroup System
+	 *	@brief Define the WIN32 symbol
+     *
+	 *	For multiplateform source code.
+	 */
+
+	/*! @def _snprintf
+     *	@ingroup System
+	 *	@brief Define the WIN32 symbol
+     *
+	 *	For snprintf source code.
+	 */
+
+	#include <unistd.h>
 	#include <pthread.h>
 #endif
 

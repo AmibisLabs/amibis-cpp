@@ -21,6 +21,7 @@ public:
 	ConnectorKind Type;
 };
 
+typedef enum MessageOrigine { UnknownOrigine, FromUDP, FromTCP, FromSharedMemory };
 
 
 } // namespace Omiscid 

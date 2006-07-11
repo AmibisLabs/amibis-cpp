@@ -12,6 +12,8 @@
 #include <System/Event.h>
 #include <System/Socket.h>
 
+#include <Com/MsgSocket.h>
+
 namespace Omiscid {
 
 class MsgSocketCallBackData;
@@ -31,7 +33,7 @@ class Message;
  * The destructor destroy the no read message.
  * @author Sebastien Pesnel
  */
-class MsgManager
+class MsgManager : public MsgSocketCallbackObject
 {
 
 public:
@@ -91,16 +93,16 @@ public:
    * @param ptr pointer on a MsgSocketCallBackData object
    * @see MsgSocketCallBackData
    */
-  static void FUNCTION_CALL_TYPE CumulMessage(MsgSocketCallBackData* ptr);
+  void Receive(MsgSocketCallBackData& ptr);
   
-  /** @brief Set the callback method of a MasgSocket object
+  /** @brief Set the callback method of a MsgSocket object
    *
    * call the method SetCallBackOnRecv of the tools of communication (derived 
    * from MsgSocket)
    * with the function CumulMessage and this object MsgManager
    * @param ms communication tool who will provide the message
    */
-  void LinkToMsgSocketObject(MsgSocket* ms);
+  // void LinkToMsgSocketObject(MsgSocket* ms);
 
   /** @brief Wait for new message
    *

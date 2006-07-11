@@ -2,13 +2,14 @@
 
 #include <ServiceControl/ServiceFilter.h>
 
+#include <System/Portage.h>
+#include <Com/ComTools.h>
+
 using namespace Omiscid;
 
 namespace Omiscid {
 
-/**
-* Tests whether a service has the good name
-*/
+/* Tests whether a service has the good name */
 class ServiceNameIs : public ServiceFilter
 {
 public:
@@ -24,9 +25,7 @@ private:
 };
 
 
-/**
-* Tests whether a service has the good owner
-*/
+/* Tests whether a service has the good owner */
 class ServiceOwnerIs : public ServiceFilter
 {
 public:
@@ -40,9 +39,7 @@ private:
 	bool CaseInsensitive;
 };
 
-/**
-* Tests whether a service run on the rigth computer
-*/
+/* Tests whether a service run on the rigth computer */
 class ServiceHostIs : public ServiceFilter
 {
 public:
@@ -55,9 +52,7 @@ private:
 	SimpleString Hostname;
 };
 
-/**
-* Tests whether a service has a variable and even a variable with the rigth value
-*/
+/* Tests whether a service has a variable and even a variable with the rigth value */
 class ServiceHasVariable : public ServiceFilter
 {
 public:
@@ -73,9 +68,7 @@ private:
 	bool CheckValue;
 };
 
-/**
-* Tests whether a service has a variable and even a variable with the rigth value
-*/
+/* Tests whether a service has a variable and even a variable with the rigth value */
 class ServiceHasConnector : public ServiceFilter
 {
 public:
@@ -89,9 +82,7 @@ private:
 	ConnectorKind ConnectorType;
 };
 
-/**
-* Will always return true
-*/
+/* Will always return true */
 class ServiceYes : public ServiceFilter
 {
 public:
@@ -265,6 +256,49 @@ ServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensitive)
 }
 
 /**
+* Tests whether the service peerid
+*
+* @param String
+* @return
+*/
+ServiceFilter * Omiscid::PeerIdIs(unsigned int PeerId)
+{
+	SimpleString VarName( "id" );
+	SimpleString VarValue;
+	
+	// generate PeerId string
+	TemporaryMemoryBuffer Buffer(30);
+	snprintf( Buffer, 30, "%.8x", PeerId & ComTools::SERVICE_PEERID );
+	VarValue = (char*)Buffer;
+
+	return new ServiceHasVariable( VarName, VarValue );
+}
+
+/**
+* Tests whether the service class
+*
+* @param String
+* @return
+*/
+ServiceFilter * Omiscid::ClassIs( const SimpleString ClassName )
+{
+	SimpleString VarName( "class" );
+	SimpleString LocalClassName;
+
+	// If no class given, use the default class
+	if ( ClassName.IsEmpty() )
+	{
+		LocalClassName = "Service";
+	}
+	else
+	{
+		LocalClassName = ClassName;
+	}
+
+	return new ServiceHasVariable( VarName, LocalClassName );
+}
+
+/**
 * Tests whether the service owner
 *
 * @param String
@@ -427,8 +461,6 @@ ServiceFilter * Omiscid::Yes()
 {
 	return new ServiceYes();
 }
-
-
 
 
 CascadeServiceFilters::CascadeServiceFilters(CascadeServiceFiltersType CreationType)

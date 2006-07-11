@@ -7,16 +7,16 @@
 
 #include <ServiceControl/Factory.h>
 #include <ServiceControl/ServiceFilter.h>
-#include <ServiceControl/RemoteVariableChangeListener.h>
+#include <ServiceControl/ConnectorListener.h>
 
 using namespace Omiscid;
 
-class TestListener : public RemoteVariableChangeListener
+class TestListener : public ConnectorListener
 {
 public:
-	void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
+	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 	{
-		printf( "VariableChange '%s' => '%s'\n", VarName.GetStr(), NewValue.GetStr() );
+		printf( "Receive '%s' :: '%s'\n%5.5s\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.buffer );
 	}
 };
 
@@ -35,17 +35,23 @@ int main(int argc, char * argv[])
 	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasVariable( "TestWrite" ) );
 	ServiceProxy * ClockServer = MyService->FindService( MySearch, 10000 );
 
-	ClockServer->AddVariableChangeListener( "TestWrite", &TL );
+	MyService->AddConnector( "In", "in", AnInput );
+	MyService->ConnectTo( "In", ClockServer, "PushClock" );
 
-	Thread::Sleep( 10000 );
-
-	printf( "Remove listener\n" );
-
-	ClockServer->RemoveVariableChangeListener( "TestWrite", &TL );
+	printf( "Add listener\n" );
+	MyService->AddConnectorListener( "In", &TL );
 
 	Thread::Sleep( 5000 );
+	printf( "Remove listener\n" );
+	MyService->RemoveConnectorListener( "In", &TL );
 
-	ClockServer->AddVariableChangeListener( "TestWrite", &TL );
+	Thread::Sleep( 5000 );
+	printf( "Add listener\n" );
+	MyService->AddConnectorListener( "In", &TL );
+
+	Thread::Sleep( 5000 );
+	printf( "Delete Service\n" );
+	delete MyService;
 
 	Mutex MyLock;
 	MyLock.EnterMutex();

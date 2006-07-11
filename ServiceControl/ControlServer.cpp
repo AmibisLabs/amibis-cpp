@@ -24,7 +24,7 @@ void ControlServer::InitInstance()
 	// Change properties of my inherited faces
 	TcpServer::SetServiceId(GetServiceId());
 	TcpServer::SetTcpNoDelay(true);
-	TcpServer::SetCallBackOnRecv(XMLTreeParser::CumulMessage, (XMLTreeParser*)this);
+	TcpServer::AddCallbackObject( this ); // Will use my XMLTreeParser side
 
 	// Give a pointer to myself on my VariableAttributListener side
 	VariableAttributListener::SetUserData( this );
@@ -43,7 +43,7 @@ void ControlServer::InitInstance()
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Registered name of this service");
-	NameVariable = new StringVariableAttribut( va, "" );
+	NameVariable = new StringVariableAttribut( va, serviceName );
 
 	va = AddVariable("owner");
 	va->SetType("string");
@@ -52,10 +52,10 @@ void ControlServer::InitInstance()
 	OwnerVariable = new StringVariableAttribut( va, "none" );
 
 	va = AddVariable("class");
-	va->SetType("string");
+	va->SetType("class");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of thisthis service");
-	ClassVariable = new StringVariableAttribut( va, "" );
+	ClassVariable = new StringVariableAttribut( va, "Service" );
 
 	va = AddVariable("id");
 	va->SetType("hexadecimal");
@@ -115,7 +115,6 @@ ControlServer::~ControlServer()
 		delete listVariable.GetCurrent();
 		listVariable.RemoveCurrent();
 	}
-
 
 	listValueListener.Lock();
 	for(listValueListener.First(); listValueListener.NotAtEnd(); 
@@ -195,7 +194,7 @@ bool ControlServer::StartServer()
 		// Add Class value
 		registerDnsSd->Properties["class"] = ".Void";
 
-		// To prevent adding variable, inputs...
+		// To prevent adding variable , inputs from another thread...
 		SetStatus(STATUS_RUNNING);
 
 		SimpleString tmp;
@@ -732,8 +731,7 @@ void ControlServer::NotifyValueChanged(VariableAttribut* var)
 		str = str + var->GetName()+"\"><value>"+ var->GetValue()+"</value></variable>";
 		str = "<controlEvent>" + str + "</controlEvent>";
 
-		for(vl->listListener.First(); vl->listListener.NotAtEnd();
-			vl->listListener.Next())
+		for(vl->listListener.First(); vl->listListener.NotAtEnd(); vl->listListener.Next())
 		{
 			listConnections.Lock();
 			MsgSocket* sock = FindClientFromId(vl->listListener.GetCurrent());
@@ -803,7 +801,7 @@ ValueListener::ValueListener(VariableAttribut* v, unsigned int pid)
 ValueListener::~ValueListener()
 { 
 	var = NULL;
-	listListener.Clear();
+	listListener.Empty();
 }
 
 void ValueListener::AddListener(unsigned int listener_id)
@@ -885,4 +883,22 @@ const SimpleString& ControlServer::GetRegisteredServiceName()
 	{
 		return SimpleString::EmptyString;
 	}
+}
+
+  /** @brief Set service class. The class can be used for search.
+   *
+   * @param [in] Class of the service
+   */
+void ControlServer::SetClass( const SimpleString Class )
+{
+	ClassVariable->SetValue( Class );
+}
+
+  /** @brief Retrieve the service class.
+   *
+   * @return Class of the service
+   */
+const SimpleString ControlServer::GetClass()
+{
+	return ClassVariable->GetValue();
 }

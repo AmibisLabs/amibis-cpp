@@ -17,15 +17,15 @@ using namespace Omiscid;
 Thread::Thread(bool autostart)
 {
 #ifdef WIN32
-	m_ThreadID = 0;
-	m_pThread  = NULL;
-	m_isRunning = false;	
-	m_stopRequired = false;
+	ThreadID = 0;
+	ThreadHandle  = NULL;
+	IsRunning = false;	
+	StopWasAsked = false;
 	
 	// Event event;
 #else
-	m_isRunning = false;	
-	m_stopRequired = false;
+	IsRunning = false;	
+	StopWasAsked = false;
 	
 	if(pthread_mutex_init(&mutex, NULL) != 0)
 		throw "Error Mutex Init";
@@ -47,17 +47,17 @@ Thread::~Thread()
 
 bool Thread::StartThread()
 {
-	// restart thread if already running
+	// do nothing if already running
 	if (Running())
-		StopThread();
+		return false;
 
-	m_isRunning = false;	
-	m_stopRequired = false;
+	IsRunning = false;	
+	StopWasAsked = false;
 
 #ifdef WIN32
-	m_ThreadID = 0;
-	m_pThread = CreateThread( NULL, 0, CallRun, (void*)this, 0, &m_ThreadID );
-	return (m_pThread != NULL);
+	ThreadID = 0;
+	ThreadHandle = CreateThread( NULL, 0, CallRun, (void*)this, 0, &ThreadID );
+	return (ThreadHandle != NULL);
 #else
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -73,27 +73,27 @@ bool Thread::StopThread(int wait_ms)
 #ifdef WIN32	
 	if (Running())
 	{
-		m_stopRequired = true;
+		StopWasAsked = true;
 		if ( event.Wait(wait_ms) == false )
 		{
 			// Timeout !!!
-			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d)\n", m_ThreadID, wait_ms );
+			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d)\n", ThreadID, wait_ms );
 		}
 
 		// Close the Thread handle
-		CloseHandle( m_pThread );
+		CloseHandle( ThreadHandle );
 
-		m_ThreadID = 0;
-		m_pThread = NULL;
-		m_isRunning = false;	
-		m_stopRequired = false;
+		ThreadID = 0;
+		ThreadHandle = NULL;
+		IsRunning = false;	
+		StopWasAsked = false;
 
 	}
 #else
 	pthread_mutex_lock(&mutex);
 	if (Running())
 	{
-		m_stopRequired = true;
+		StopWasAsked = true;
 		
 		if(wait_ms != 0)
 		{
@@ -138,8 +138,8 @@ unsigned long __stdcall Thread::CallRun(void* ptr)
 	t->Run();
 
 	// revert my data
-	t->m_ThreadID = 0;
-	t->m_pThread = 0;
+	t->ThreadID = 0;
+	t->ThreadHandle = 0;
 	
 	// signal, my job is over
 	t->event.Signal();
@@ -155,10 +155,10 @@ void* Thread::CallRun(void* ptr)
 	// init thread random generator
 	RandomInit();
 
-	t->m_isRunning = true;
+	t->IsRunning = true;
 	t->Run();
 	pthread_mutex_lock(&(t->mutex));
-	t->m_isRunning = false;
+	t->IsRunning = false;
 	pthread_cond_broadcast(&(t->condition));	
 	pthread_mutex_unlock(&(t->mutex));
 	pthread_exit(NULL);
@@ -178,13 +178,13 @@ void Thread::Sleep(int nb_ms)
 bool Thread::Running() const 
 { 
 #ifdef WIN32
-	return (m_pThread != 0); 
+	return (ThreadHandle != 0); 
 #else
-	return m_isRunning;
+	return IsRunning;
 #endif
 }
 
 bool Thread::StopPending() const 
 { 
-	return m_stopRequired;
+	return StopWasAsked;
 }

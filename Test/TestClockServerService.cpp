@@ -70,10 +70,6 @@ int main(int argc, char * argv[])
 	ClockServer->Start();
 	printf( "Started...\n" );
 
-	// Now, we will send clock over the PushClock connector	
-	TestListener TL;
-	ClockServer->AddVariableListener( "TestWrite", &TL );
-
 	// First, needed stuff
 	SimpleString TempValue;				// A SimpleString to create the value
 	unsigned int NumberOfSeconds = 0;	// An unsigned integer to computer hours

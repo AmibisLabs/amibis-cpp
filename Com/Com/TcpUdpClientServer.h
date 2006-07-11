@@ -98,21 +98,21 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
    * \brief Send a message on all the existing connection.
    * \param len [in] the length of the message
    * \param buf [in] the buffer that contains the message.
-   * \param udp [in] if false the TCP connection is used, else if there is an UDP connection, 
+   * \param fastsend [in] if true unsafe UDP connection may be used, 
    * it is this connection where the data are sent.
    */
-  void SendToAll(int len, const char* buf, bool udp = false);
+  void SendToAll(int len, const char* buf, bool fastsend = false);
 
   /**
    * \brief Send a message to a particular client define par its identifier.
    * \param len [in] the length of the message
    * \param buf [in] the buffer that contains the message.
    * \param pid [in] the identifier of the destination peer
-   * \param udp [in] if false the TCP connection is used, else if there is an UDP connection, 
+   * \param fastsend [in] if true unsafe UDP connection may be used, 
    * it is this connection where the data are sent.
    * \return the number of byte sent.
    */
-  int SendToPeer(int len, const char* buf, unsigned int pid, bool udp = false);
+  int SendToPeer(int len, const char* buf, unsigned int pid, bool fastsend = false);
 
 
   /** \brief Define the service identifier associated to this object
@@ -156,9 +156,13 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
    * \param user_data1 the value for the second parameter of the callback function
    * \param user_data2 the value for the third parameter of the callback function
    */
-  void SetCallBackOnRecv(Callback_Receive fct, 
-			 void* user_data1,
-			 void* user_data2 = NULL);
+  bool AddCallbackObject(MsgSocketCallbackObject * CallbackObject);
+
+  /** \brief Retrieve the callback for message reception
+   *
+   */
+  bool RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject);
+
 
   /** \brief Set a MsgManager object as callback for message reception
    *
@@ -167,7 +171,12 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
    * \param msgManager [in, out] object where the message are sent when they arrive.
    * \see SetCallBackOnRecv
    */
-  void LinkToMsgManager(MsgManager* msgManager);
+  bool LinkToMsgManager(MsgManager* msgManager);
+
+    /** \brief Remove a MsgManager object as callback for message reception
+   *
+   */
+  bool UnlinkFromMsgManager(MsgManager* msgManager);
 
   int GetMaxMessageSizeForTCP();
   void SetMaxMessageSizeForTCP(int max);
@@ -206,9 +215,7 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
 
   /** \name Callback information */
   //@{
-  Callback_Receive fct_callback; /*!< the callback function called when new messages are received*/
-  void* userData1; /*!< user parameter for the callback function */
-  void* userData2; /*!< user parameter for the callback function */
+  MsgSocketCallbackObject * CallbackObject; /*!< the callback object called when new messages are received*/
   //@}
 };
 

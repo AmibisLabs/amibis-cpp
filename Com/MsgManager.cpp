@@ -89,24 +89,22 @@ void MsgManager::ProcessAMessage(Message* msg)
 }
 
 
-void FUNCTION_CALL_TYPE MsgManager::CumulMessage(MsgSocketCallBackData* cd)
+void MsgManager::Receive(MsgSocketCallBackData& cd)
 {
-  if(cd->userData1)
-    {
-      Message* msg = new Message(cd->len + 1);
-      msg->len = cd->len;
-      memcpy(msg->buffer, cd->buffer, cd->len + 1);
-      msg->origUdp = cd->origUdp;
-      msg->pid = cd->pid;
-      msg->mid = cd->mid;
-      ((MsgManager*)cd->userData1)->PushMessage(msg);
-    }
+    Message* msg = new Message(cd.Msg.len + 1);
+    msg->len = cd.Msg.len;
+    memcpy(msg->buffer, cd.Msg.buffer, cd.Msg.len + 1);
+    msg->origine = cd.Msg.origine;
+    msg->pid = cd.Msg.pid;
+    msg->mid = cd.Msg.mid;
+    PushMessage(msg);
 }
 
-void MsgManager::LinkToMsgSocketObject(MsgSocket* ms)
-{
-  ms->SetCallbackReceive(MsgManager::CumulMessage, this, NULL);
-}
+//
+//void MsgManager::LinkToMsgSocketObject(MsgSocket* ms)
+//{
+//	ms->AddCallbackObject( this );
+//}
 
 bool MsgManager::WaitForMessage(unsigned long timer)
 {  

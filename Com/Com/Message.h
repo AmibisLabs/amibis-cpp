@@ -31,7 +31,7 @@ public:
    * on a buffer of length 'size'.
    * @param size [in] the size of the buffer containing the message
    */
-  Message(int size);
+  Message(int size = 0);
 
   /** @brief Destructor
    *
@@ -41,10 +41,10 @@ public:
 
   /** \name Access to information */
   //@{
-  char* GetBuffer();/*!< pointer on the beginning of message data */
-  int GetLength();/*!< message length */
-  bool GetOrigUdp();/*!< \see origUdp*/
-  unsigned int GetPid() const;/*!< peer id */
+  char* GetBuffer(); /*!< pointer on the beginning of message data */
+  int GetLength(); /*!< message length */
+  MessageOrigine GetOrigine(); /*!< the origine (udp, tcp, shared memory) */
+  unsigned int GetPid() const; /*!< peer id */
   unsigned int GetMid() const; /*!< message id */
   //@}
 
@@ -54,7 +54,7 @@ public:
   /** give if the message has been sent by UDP or TCP. 
    * Can be used to answer the message by the same source. 
    */
-  bool origUdp;
+  MessageOrigine origine;
   unsigned int pid; /*!< peer id */
   unsigned int mid; /*!< message id */
 
@@ -62,7 +62,8 @@ public:
   /** the buffer allocated for the message with a byte before 
    * the message data. (Rq : buffer = realBuffer + 1)
    */
-  char* realBuffer; 
+  char* realBuffer;
+  int OriginalSize;
 };
 
 } // namespace Omiscid

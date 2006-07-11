@@ -16,6 +16,8 @@
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
 
+#include <Com/MsgSocket.h>
+
 #include <libxml/tree.h>
 
 
@@ -55,7 +57,7 @@ class XMLMessage
   XMLMessage(const XMLMessage& msg);
   
   xmlDocPtr doc; /*!< pointer on the XML tree created with the XML message received*/
-  bool origUdp; /*!< pointer on the source of the message (MsgSocket or UdpConnection object)*/
+  MessageOrigine origine; /*!< pointer on the source of the message (MsgSocket or UdpConnection object)*/
   unsigned int pid; /*!< peer identifier*/
   unsigned int mid; /*!< message identifier*/
   
@@ -109,7 +111,7 @@ class XMLMessage
  * This class is used also to call parse method of the library XML 2 (example ParseFile)
  * @author Sebastien Pesnel
  */
-class XMLTreeParser : public Thread
+class XMLTreeParser : public Thread, public MsgSocketCallbackObject
 {
  public:
   /** @brief Constructor */
@@ -184,7 +186,7 @@ class XMLTreeParser : public Thread
    * The user parameters will be present in the MsgSocketCallBackData object.
    * @param cd a MsgSocketCallBackData object who contains the pointer define by user, and the new message buffer.
    */
-  static void FUNCTION_CALL_TYPE CumulMessage(MsgSocketCallBackData* cd);
+  void Receive(MsgSocketCallBackData& cd);
 
   /** @brief Loop where message are processed when they arrive.
    *

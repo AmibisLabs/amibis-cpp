@@ -43,7 +43,7 @@ XMLMessage::~XMLMessage()
 XMLMessage::XMLMessage(const XMLMessage& msg)
 {
 	doc = msg.doc;
-	origUdp = msg.origUdp;
+	origine = msg.origine;
 	pid = msg.pid;
 	mid = msg.mid;
 }
@@ -154,22 +154,17 @@ xmlDocPtr XMLTreeParser::ParseMessage(int length, unsigned char* buffer)
 }
 
 
-void FUNCTION_CALL_TYPE XMLTreeParser::CumulMessage(MsgSocketCallBackData* cd)
+void XMLTreeParser::Receive(MsgSocketCallBackData& cd)
 {
-	if(cd->userData1)
+	xmlDocPtr doc = ParseMessage(cd.Msg.len, (unsigned char*)cd.Msg.buffer);
+	if( doc )
 	{
-
-		xmlDocPtr doc = ((XMLTreeParser*)cd->userData1)->ParseMessage(cd->len,
-			cd->buffer);
-		if(doc)
-		{
-			XMLMessage* msg = new XMLMessage();
-			msg->doc = doc;
-			msg->origUdp = cd->origUdp;
-			msg->pid = cd->pid;
-			msg->mid = cd->mid;
-			((XMLTreeParser*)cd->userData1)->PushMessage(msg);
-		}
+		XMLMessage* msg = new XMLMessage();
+		msg->doc = doc;
+		msg->origine = cd.Msg.origine;
+		msg->pid = cd.Msg.pid;
+		msg->mid = cd.Msg.mid;
+		PushMessage(msg);
 	}
 }
 

@@ -22,7 +22,8 @@ ControlClient::ControlClient(unsigned int serviceId)
 	xmlAnswer = NULL;
 	TcpClient::SetServiceId(serviceId);
 
-	TcpClient::SetCallbackReceive(XMLTreeParser::CumulMessage, (XMLTreeParser*)this);
+	// Ask to receive messge on my XMLTreeParser side
+	TcpClient::AddCallbackObject( this );
 
 	XMLTreeParser::StartThread();
 
@@ -369,9 +370,9 @@ unsigned int ControlClient::BeginEndTag(SimpleString& str)
 
 void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 {
-	listVariableName.Clear();
-	listInputName.Clear();
-	listOutputName.Clear();
+	listVariableName.Empty();
+	listInputName.Empty();
+	listOutputName.Empty();
 
 	xmlNodePtr cur_node = xml_msg->GetRootNode()->children;
 	for(; cur_node; cur_node = cur_node->next)

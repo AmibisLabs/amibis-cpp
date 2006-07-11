@@ -3,6 +3,11 @@
 
 #include <Com/Config.h>
 
+/** 
+ * @defgroup ServiceControl Omiscid Service Control layer. 
+ *
+ */
+
 namespace Omiscid {
 
 typedef enum ControlServerStatus { STATUS_INIT = 1, STATUS_RUNNING = 2 };

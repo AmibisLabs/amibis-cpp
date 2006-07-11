@@ -298,8 +298,32 @@ sub GenerateIncludeGraph()
 	}
 	
 	close( $fd );
-
 }
+
+sub ConstantStringCount()
+{
+ 	my $FileName = shift @_;
+	my $fd;
+ 	my $CurrentLine;
+ 	my $String;
+ 	
+	$PreviousLineWasEndedByReturn = 0;
+	open( $fd, "<$FileName" ) or return;
+	while( $CurrentLine = <$fd> )
+	{
+		while ( $CurrentLine =~ /^[^\"]*\"([^\"]*)\"(.+)[\r\n]*$/ )
+		{
+			$String = $1;
+			$CurrentLine = $2;
+			
+			$StringsTable{$String}++;
+			
+			# print "\"$String\"\n";
+		}
+	}
+	close( $fd );
+}
+
 
 sub WorkOnFile()
 {
@@ -329,11 +353,7 @@ sub WorkOnFile()
 			# print "$CompleteFileName (FirstIncludeofHeaderFileisConfig)\n";
 			&FirstIncludeofHeaderFileisConfig($CompleteFileName);
 			
-			&GenerateIncludeGraph($CompleteFileName, $FileName);
-			
-			# Check if we have an empty line at end for gcc
-			# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
-			# &FilesShouldContainOnlyOneClassDeclaration($CompleteFileName);
+			# &GenerateIncludeGraph($CompleteFileName, $FileName);
 		}
 		else
 		{
@@ -346,7 +366,7 @@ sub WorkOnFile()
 		# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
 		&CheckEmptyLineAtEnd($CompleteFileName);
 		
-
+		&ConstantStringCount($CompleteFileName);
 		
 		# Check for unattended include (done in Config.h)
 		&FirstDoesNotIncludeStdLibs($CompleteFileName);
@@ -370,16 +390,24 @@ foreach $prep ( keys %Headers )
 	}
 }
 
-open( $IG, '>IncludeGraphe.dot' ) or exit;
-print $IG "digraph SmartRoom {\n";
-foreach $fic ( keys %IncludeGraphe )
+foreach $String ( keys %StringsTable )
 {
-	@value = split /\;/, $IncludeGraphe{$fic};
-	foreach $val ( @value )
+	if ( $StringsTable{$String} > 1 && $String ne '' )
 	{
-		print $IG "\"$fic\" -> \"$val\";\n";
+		print "WARNING constant string \"$String\" defined $StringsTable{$String} times. Consider using variable.\n";
 	}
 }
-print $IG "}\n";
-close( $IG );
 
+# open( $IG, '>IncludeGraphe.dot' ) or exit;
+# print $IG "digraph SmartRoom {\n";
+# foreach $fic ( keys %IncludeGraphe )
+# {
+# 	@value = split /\;/, $IncludeGraphe{$fic};
+# 	foreach $val ( @value )
+# 	{
+# 		print $IG "\"$fic\" -> \"$val\";\n";
+# 	}
+# }
+# print $IG "}\n";
+# close( $IG );
+# 

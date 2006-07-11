@@ -27,7 +27,7 @@ namespace Omiscid {
  *
  * \author Sebastien Pesnel
  */
-class TcpServer :public MsgSocket, virtual public ComTools
+class TcpServer : public MsgSocket, virtual public ComTools
 {
  public:
   /** \brief Constructor 
@@ -123,20 +123,22 @@ class TcpServer :public MsgSocket, virtual public ComTools
    * (reimplemented from MsgSocket)
    * @param msgsocket [in] object MsgSocket associated to the new connection.
    */
-  void AcceptConnection(MsgSocket* msgsocket);
+  bool AcceptConnection(MsgSocket* msgsocket);
 
-  /** \brief Define Callback for message reception
+  /** \brief Add a callback object for notification
    *
-   * Define the callback function called on each new data received for each connection.
-   * (reimplemented from Server)
-   * The (void*) pointer gives to the callback function is here a pointer on a  MsgSocketCallBackData object.
-   * \param fct [in] pointer on the callback function.
-   * \param user_data1 [in] this value is in the object given to the callback. It enables to the user to have an access to his data.
-   * \param user_data2 [in] as user_data1
    */
-  void SetCallBackOnRecv(MsgSocket::Callback_Receive fct, 
-			 void* user_data1,
-			 void* user_data2 = NULL);
+  bool AddCallbackObject(MsgSocketCallbackObject * CallbackObject);
+
+  /** \brief Remove a callback object for notification
+   *
+   */
+  bool RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject);
+
+  /** \brief Remove all callback objects for notification
+   *
+   */
+  void RemoveAllCallbackObjects();
 
   /**
    * \brief Define the service Id used in the header of each sent messages.

@@ -12,6 +12,8 @@
 #include <System/Thread.h>
 #include <System/Socket.h>
 #include <System/SimpleString.h>
+#include <System/SimpleList.h>
+#include <Com/Message.h>
 
 namespace Omiscid {
 
@@ -28,11 +30,7 @@ class MsgSocket;
 class MsgSocketCallBackData
 {
 public:
-  int len; /*!< the message length*/
-  unsigned char* buffer;/*!< a pointer on an array containing the message byte. */
-  bool origUdp;/*!< true if the source is UDP, false else*/
-  unsigned int pid;/*!< the peer identifier */
-  unsigned int mid;/*!< the message identifier (protocol BIP) */
+  Message Msg;
   void* userData1;/*!< first user parameter */
   void* userData2;/*!< second user parameter */
 };
@@ -82,6 +80,20 @@ class UdpConnection
 };
 
 /** 
+ * @class MsgSocketCallbackObject MsgSocket.h Com/MsgSocket.h
+ * \brief Callback object in order to retrieve information
+ * about msg socket state information
+ *
+ *
+ * \author Dominique Vaufreydaz
+ */
+class MsgSocketCallbackObject
+{
+public:
+	virtual void Receive(MsgSocketCallBackData& CallbackData) = 0;
+};
+
+/** 
  * @class MsgSocket MsgSocket.h Com/MsgSocket.h
  * \brief Socket with an implementation of Basic Interconnection Protocol
  * to exchange message.
@@ -115,7 +127,6 @@ class MsgSocket : public Thread
 #endif
 
   /** \brief Callback for the message reception */
-  typedef void (FUNCTION_CALL_TYPE *Callback_Receive)(MsgSocketCallBackData*);
   typedef void (FUNCTION_CALL_TYPE *Callback_SyncLink)(MsgSocketCallBackData*,MsgSocket *);
 
   /** \brief Kind of use of a MsgSocket object */
@@ -169,12 +180,26 @@ class MsgSocket : public Thread
   void InitForUdpExchange(int port);
 
   /** \brief define callback function called in receive 
+   * \param [in] a callback object to notify
+   */
+  bool AddCallbackObject(MsgSocketCallbackObject * CallbackObject);
+
+  
+  /** \brief Remove the callback for message reception
+   * \param [in] a callback object to remove from notification list
+   */
+  bool RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject);
+
+  /** \brief Remove all the callback object for notification
+   */
+  void RemoveAllCallbackObjects();
+
+
+  /** \brief define callback function called in receive 
    * \param cr the callback call on receive message
    * \param user_data1 pointer on data (will be found in the callback parameter)
    * \param user_data2 pointer on data (will be found in the callback parameter)
    */
-  void SetCallbackReceive(Callback_Receive cr, void* user_data1, void* user_data2 = NULL);
-
   void SetCallbackSyncLink(Callback_SyncLink cr, void* user_data1 = NULL, void* user_data2 = NULL);
 
   /** \brief method call when the Thread is started
@@ -316,11 +341,13 @@ protected:
 
   /** \brief Accept new TCP connection 
    *
-   * method called by TCP server when it accepts new connection.
+   * method called by TCP or TcpUdpClientServer server when it accepts new connection.
    * (method called by AcceptConnection())
    * Default Implementation : Close the connection.
-   * \param s object created with the new accepted TCP connection */
-  virtual void AcceptConnection(MsgSocket* s);
+   * \param s object created with the new accepted TCP connection 
+   * @return true if the connection is accepted
+   */
+  virtual bool AcceptConnection(MsgSocket* s);
 
   /** \brief Accept new UDP connection 
    *
@@ -335,14 +362,14 @@ protected:
    * \param msg_empty [in] true if udp_connect is the source of an empty message
    * \return NULL if refuse the message, else return an object linked to the same source
    */
-  virtual UdpConnection* AcceptConnection(const UdpConnection& udp_connect, bool msg_empty);
+ virtual UdpConnection* AcceptConnection(const UdpConnection& udp_connect, bool msg_empty);
  
 
-  Mutex mutex; /*!< mutex to protect the callback access */
-  Callback_Receive callbackReceive;/*!< callback call when messages arrive*/
-  MsgSocketCallBackData callbackData; /*!< structure given to the callback methods */
+  MutexedSimpleList<MsgSocketCallbackObject*>   CallbackObjects;	/*!< callback call when messages arrive*/
+  MsgSocketCallBackData							callbackData;		/*!< structure given to the callback methods */
 
-  Callback_SyncLink callbackSyncLinkFct;/*!< callback call when messages arrive*/
+  Mutex mutex;									/*!< mutex to protect the callback access */
+  Callback_SyncLink callbackSyncLinkFct;		/*!< callback call when messages arrive*/
   MsgSocketCallBackData callbackSyncLinkData;
   SimpleString SyncLinkData;
   SimpleString PeerSyncLinkData;

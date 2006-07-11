@@ -70,7 +70,7 @@ public:
 	bool StopPending() const;
 
 #ifdef WIN32
-	unsigned long GetThreadId() { return m_ThreadID; };
+	unsigned long GetThreadId() { return ThreadID; };
 #endif
 
 protected:
@@ -84,12 +84,12 @@ protected:
 	virtual void Run() = 0;
 
 private:
-	bool m_stopRequired; /*!< store if stop is required */
-	bool m_isRunning; /*!< state of the thread */
+	bool StopWasAsked; /*!< store if stop is required */
+	bool IsRunning; /*!< state of the thread */
 	
 #ifdef WIN32
-	unsigned long	m_ThreadID;
-	HANDLE m_pThread;
+	unsigned long	ThreadID;
+	HANDLE ThreadHandle;
 	
 	Event event;
 	

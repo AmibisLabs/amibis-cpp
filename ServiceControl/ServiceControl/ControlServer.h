@@ -210,14 +210,17 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    */
   void SetStatus(ControlServerStatus state);
 
-  /** @brief Service Properties. 
+  /** @brief Set service class. The class can be used for search.
    *
-   * Enable user to add field in the TXT record send to DNS-SD.
-   * Reserved fields : owner, inputs, outputs, inoutputs.
-   * Added by Doms
-   * Finally removed by Doms ;-P
+   * @param [in] Class of the service
    */
-  // ServiceProperties Properties;
+  void SetClass( const SimpleString Class );
+
+  /** @brief Retrieve the service class.
+   *
+   * @return Class of the service
+   */
+  const SimpleString GetClass();
 
  protected:
 
@@ -332,7 +335,6 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
 
   SimpleString serviceName; /*<! service name */
   ControlServerStatus Status; /*!< default variable structure for the variable status combined with the status value */
-  
   
   IntVariableAttribut* lockIntVariable; /*!< variable structure for integer to manage the lock state */
   StringVariableAttribut* NameVariable; /*!< variable structure for exporting the name of this service */

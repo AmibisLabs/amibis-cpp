@@ -7,15 +7,23 @@ Message::Message(int size)
   realBuffer = NULL;
   buffer = NULL;
   len = 0;
-  origUdp = false;
+  origine = UnknownOrigine;
+  OriginalSize = size;
 
-  realBuffer = new char[size+1];
-  buffer = realBuffer+1;
+  if ( OriginalSize > 0 )
+  {
+	realBuffer = new char[size+1];
+	buffer = realBuffer+1;
+
+  }
 }
 
 Message::~Message()
 {
-  delete [] realBuffer;
+	if ( OriginalSize != 0 )
+	{
+		delete [] realBuffer;
+	}
 }
   
 char* Message::GetBuffer() 
@@ -28,9 +36,9 @@ int Message::GetLength()
 	return len;
 }
 
-bool Message::GetOrigUdp()
+MessageOrigine Message::GetOrigine()
 {
-	return origUdp; 
+	return origine;
 }
 
 unsigned int Message::GetPid() const

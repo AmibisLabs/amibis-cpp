@@ -68,6 +68,22 @@ ServiceFilter * NameIs(SimpleString Name, bool CaseInsensitive = false);
 ServiceFilter * NamePrefixIs(SimpleString Name, bool CaseInsensitive = false);
 
 /**
+* Tests whether the service peerid
+*
+* @param String
+* @return
+*/
+ServiceFilter * PeerIdIs(unsigned int PeerId);
+
+/**
+* Tests whether the service class
+*
+* @param String
+* @return
+*/
+ServiceFilter * ClassIs( const SimpleString ClassName );
+
+/**
 * Tests whether the service owner
 *
 * @param String
