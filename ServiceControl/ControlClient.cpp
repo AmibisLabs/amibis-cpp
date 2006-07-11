@@ -34,6 +34,9 @@ ControlClient::ControlClient(unsigned int serviceId)
 
 ControlClient::~ControlClient()
 {
+	TcpClient::RemoveAllCallbackObjects();
+	TcpClient::Stop();
+
 	for(listVariableAttr.First(); listVariableAttr.NotAtEnd();
 		listVariableAttr.Next())
 	{

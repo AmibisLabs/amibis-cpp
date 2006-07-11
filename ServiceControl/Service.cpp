@@ -75,6 +75,13 @@ Service::Service(const SimpleString ServiceName, const SimpleString ClassName)
 
 Service::~Service()
 {
+	// Remove all connector
+	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next() )
+	{
+		delete listInOutput.GetCurrent()->GetComTool();
+		delete listInOutput.GetCurrent();
+		listInOutput.RemoveCurrent();
+	}
 }
 
 void Service::Start()

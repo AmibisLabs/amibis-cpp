@@ -49,7 +49,7 @@ void TcpServer::Disconnect()
 
 void TcpServer::Close()
 {
-	StopThread(1000);
+	StopThread();
 	GetSocket()->Close();
 }
 
@@ -198,31 +198,8 @@ int TcpServer::GetNbConnections()
 
 bool TcpServer::AcceptConnection(MsgSocket* sock)
 {
-	//MsgSocket * ms;
-
 	// TraceError( "in TcpServer::acceptConnection(MsgSocket*) %u\n", sock->GetPeerPid());
 	listConnections.Lock();
-	/*
-	//test connection sous le meme id
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-	ms = listConnections.GetCurrent();
-	if( ms != sock && ms->GetPeerPid() == sock->GetPeerPid() )
-	{	  
-	if( ms->IsConnected() )
-	{
-	TraceError( "Other Connection with same id [connected]\n");
-	listConnections.RemoveCurrent();
-	delete ms;
-	}
-	else
-	{	      
-	listConnections.RemoveCurrent();
-	delete ms;
-	}
-	}
-	}
-	*/
 
 	// Init the socket
 	// REVIEW: Inherit my SyndLink data
@@ -237,6 +214,7 @@ bool TcpServer::AcceptConnection(MsgSocket* sock)
 		sock->SetCallbackSyncLink( callbackSyncLinkFct, callbackSyncLinkData.userData1, callbackSyncLinkData.userData2 );
 	}
 	mutex.LeaveMutex();
+
 	// Add all my listener to the new socket
 	CallbackObjects.Lock();
 	for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )

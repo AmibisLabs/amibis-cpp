@@ -74,25 +74,53 @@ ControlServer::ControlServer(const SimpleString service_name)
 
 ControlServer::~ControlServer()
 {
-	if(lockIntVariable != NULL)
+	// Stop myself
+	TcpServer::RemoveAllCallbackObjects();
+	TcpServer::Close();
+	XMLTreeParser::StopThread();
+
+	listValueListener.Lock();
+	for(listValueListener.First(); listValueListener.NotAtEnd(); 
+		listValueListener.Next())
+	{
+		delete listValueListener.GetCurrent();
+		listValueListener.RemoveCurrent();
+	}
+	listValueListener.Unlock();
+
+	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
+	{
+		delete listVariable.GetCurrent();
+		listVariable.RemoveCurrent();
+	}
+
+	// Remove all inoutput !
+	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
+	{
+		delete listInOutput.GetCurrent();
+		listInOutput.RemoveCurrent();
+	}
+
+	// Destroy data
+	if( lockIntVariable != NULL )
 	{
 		delete lockIntVariable;
 		lockIntVariable = NULL;
 	}
 
-	if(NameVariable != NULL)
+	if( NameVariable != NULL )
 	{
 		delete NameVariable;
 		NameVariable = NULL;
 	}
 
-	if(OwnerVariable != NULL)
+	if( OwnerVariable != NULL )
 	{
 		delete OwnerVariable;
 		OwnerVariable = NULL;
 	}
 
-	if(ClassVariable != NULL)
+	if( ClassVariable != NULL )
 	{
 		delete ClassVariable;
 		ClassVariable = NULL;
@@ -104,28 +132,11 @@ ControlServer::~ControlServer()
 		PeerIdVariable = NULL;
 	}
 
-	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
+	if( registerDnsSd )
 	{
-		delete listInOutput.GetCurrent();
-		listInOutput.RemoveCurrent();
+		delete registerDnsSd;
+		registerDnsSd = NULL;
 	}
-
-	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
-	{
-		delete listVariable.GetCurrent();
-		listVariable.RemoveCurrent();
-	}
-
-	listValueListener.Lock();
-	for(listValueListener.First(); listValueListener.NotAtEnd(); 
-		listValueListener.Next())
-	{
-		delete listValueListener.GetCurrent();
-		listValueListener.RemoveCurrent();
-	}
-	listValueListener.Unlock();
-
-	if(registerDnsSd){ delete registerDnsSd; registerDnsSd = NULL; }
 }
 
 bool ControlServer::StartServer()
@@ -545,15 +556,15 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 			xmlNodePtr cur_node = node->children;
 			for(; cur_node; cur_node = cur_node->next)
 			{
-				const char* name = (const char*)(cur_node->name);
-				if(strcmp(name, "host") == 0)
+				const char* nodename = (const char*)(cur_node->name);
+				if(strcmp(nodename, "host") == 0)
 				{
 					host = SimpleString((const char*)cur_node->children->content);
 					found_host = true;
 				}	
-				else if((strcmp(name,"tcp") == 0) || (strcmp(name,"udp")==0) )
+				else if((strcmp(nodename,"tcp") == 0) || (strcmp(nodename,"udp")==0) )
 				{
-					tcp = (strcmp(name, "tcp") == 0);
+					tcp = (strcmp(nodename, "tcp") == 0);
 					found_port = true;
 					port = atoi((const char*)(cur_node->children->content));
 				}

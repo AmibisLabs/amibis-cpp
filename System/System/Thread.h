@@ -52,7 +52,7 @@ public:
 	 * If 'wait_ms' is not null, wait during a limited time of 'wait_ms' milliseconds.
 	 * @param wait_ms time to wait (0 for infinite time)
 	 */
-	virtual bool StopThread(int wait_ms = 0);
+	virtual bool StopThread(int wait_ms = DEFAULT_THREAD_DESTRUCTOR_TIMEOUT);
 
 	/** @brief the calling thread sleep
 	 * \param nb_ms [in] number of milliseconds to sleep
@@ -62,7 +62,7 @@ public:
 	/** @brief Return if the thread is running
 	 * @return true if the thread is running
 	 */
-	bool Running() const;
+	bool IsRunning() const;
 	
 	/** @brief Return if stop is required
 	 * @return true if the thread should stop
@@ -85,7 +85,7 @@ protected:
 
 private:
 	bool StopWasAsked; /*!< store if stop is required */
-	bool IsRunning; /*!< state of the thread */
+	bool ThreadIsRunning; /*!< state of the thread */
 	
 #ifdef WIN32
 	unsigned long	ThreadID;

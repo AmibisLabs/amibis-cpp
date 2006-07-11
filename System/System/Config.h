@@ -17,6 +17,11 @@
 #endif
 
 #ifdef WIN32
+
+	// To prevent warning about printf in Visual Studio 2005, etc...
+	#define _CRT_SECURE_NO_DEPRECATE
+	#pragma warning(disable : 4996)
+
 	#ifdef USE_AFX
 		#include "StdAfx.h"
 	#else

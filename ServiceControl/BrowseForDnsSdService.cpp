@@ -132,7 +132,7 @@ void BrowseForDNSSDService::Run()
 
 void BrowseForDNSSDService::Start()
 {
-	if ( ! Running() )
+	if ( ! IsRunning() )
 	{
 		StartThread();
 	}

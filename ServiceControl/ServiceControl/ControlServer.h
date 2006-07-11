@@ -328,6 +328,8 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    */
   ValueListener* FindValueListener(VariableAttribut* var); 
 
+protected:
+
   int port; /*!< number of the control port */
   // char* hostname[HOST_NAME_MAX_SIZE]; /*<! name of the host */
   unsigned int serviceId; /*<! service identifier */

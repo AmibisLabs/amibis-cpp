@@ -198,7 +198,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	strcpy( Name, ServiceName.GetStr() );
 
 	RegType = eRegType;
-	Search = strstr( RegType.GetStr(), "._tcp" );
+	Search = strstr( (char*)RegType.GetStr(), "._tcp" );
 	if ( Search )
 	{
 		// TCP DnsSdService
@@ -207,7 +207,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	}
 	else
 	{
-		Search = strstr( RegType.GetStr(), "._udp" );
+		Search = strstr( (char*)RegType.GetStr(), "._udp" );
 		if ( Search )
 		{
 			// UDP DnsSdService

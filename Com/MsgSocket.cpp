@@ -100,20 +100,23 @@ MsgSocket::~MsgSocket()
 
 	Stop();
 
-	socket->Close();
-	delete socket;
+	if ( socket )
+	{
+		socket->Close();
+		delete socket;
+	}
 
-	if(buffer)
+	if( buffer )
 	{
 		delete[] buffer;
 		buffer = NULL;
 	}
-	if(buffer_udp_send)
+	if( buffer_udp_send )
 	{
 		delete[] buffer_udp_send;
 		buffer_udp_send = NULL;
 	}
-	if(start_tag) 
+	if( start_tag ) 
 	{
 		delete[] start_tag;
 		start_tag = NULL;
@@ -515,6 +518,7 @@ void MsgSocket::Run()
 			AcceptConnection();
 		}
 		break;
+
 	case TCP_CLIENT_KIND:
 		while(connected && !StopPending())
 		{
@@ -522,12 +526,14 @@ void MsgSocket::Run()
 			Receive();
 		}
 		break;
+
 	case UDP_EXCHANGE_KIND:
 		while(connected && !StopPending())
 		{
 			ReceiveUdpExchange();
 		}
 		break;
+
 	default:
 		TraceError( "run : unknown type of connection\n");
 		break;
@@ -537,7 +543,7 @@ void MsgSocket::Run()
 void MsgSocket::Stop()
 {
 	connected = false;
-	Thread::StopThread(1000);
+	Thread::StopThread();
 }
 
 void MsgSocket::Receive()

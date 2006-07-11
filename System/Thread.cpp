@@ -19,12 +19,12 @@ Thread::Thread(bool autostart)
 #ifdef WIN32
 	ThreadID = 0;
 	ThreadHandle  = NULL;
-	IsRunning = false;	
+	ThreadIsRunning = false;	
 	StopWasAsked = false;
 	
 	// Event event;
 #else
-	IsRunning = false;	
+	ThreadIsRunning = false;	
 	StopWasAsked = false;
 	
 	if(pthread_mutex_init(&mutex, NULL) != 0)
@@ -39,19 +39,19 @@ Thread::Thread(bool autostart)
 
 Thread::~Thread()
 {
-	if(Running())
+	if(IsRunning())
 	{
-		StopThread(DEFAULT_THREAD_DESTRUCTOR_TIMEOUT);
+		StopThread();
 	}
 }
 
 bool Thread::StartThread()
 {
 	// do nothing if already running
-	if (Running())
+	if (IsRunning())
 		return false;
 
-	IsRunning = false;	
+	ThreadIsRunning = false;	
 	StopWasAsked = false;
 
 #ifdef WIN32
@@ -71,13 +71,14 @@ bool Thread::StartThread()
 bool Thread::StopThread(int wait_ms)
 {
 #ifdef WIN32	
-	if (Running())
+	if (IsRunning())
 	{
 		StopWasAsked = true;
 		if ( event.Wait(wait_ms) == false )
 		{
 			// Timeout !!!
-			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d)\n", ThreadID, wait_ms );
+			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d). Kill it.\n", ThreadID, wait_ms );
+			TerminateThread( ThreadHandle, 0 );
 		}
 
 		// Close the Thread handle
@@ -85,13 +86,13 @@ bool Thread::StopThread(int wait_ms)
 
 		ThreadID = 0;
 		ThreadHandle = NULL;
-		IsRunning = false;	
+		ThreadIsRunning = false;	
 		StopWasAsked = false;
 
 	}
 #else
 	pthread_mutex_lock(&mutex);
-	if (Running())
+	if (IsRunning())
 	{
 		StopWasAsked = true;
 		
@@ -155,10 +156,10 @@ void* Thread::CallRun(void* ptr)
 	// init thread random generator
 	RandomInit();
 
-	t->IsRunning = true;
+	t->ThreadIsRunning = true;
 	t->Run();
 	pthread_mutex_lock(&(t->mutex));
-	t->IsRunning = false;
+	t->ThreadIsRunning = false;
 	pthread_cond_broadcast(&(t->condition));	
 	pthread_mutex_unlock(&(t->mutex));
 	pthread_exit(NULL);
@@ -175,12 +176,12 @@ void Thread::Sleep(int nb_ms)
 #endif
 }
 
-bool Thread::Running() const 
+bool Thread::IsRunning() const 
 { 
 #ifdef WIN32
 	return (ThreadHandle != 0); 
 #else
-	return IsRunning;
+	return ThreadIsRunning;
 #endif
 }
 

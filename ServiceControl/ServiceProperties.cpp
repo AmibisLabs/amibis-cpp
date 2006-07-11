@@ -417,7 +417,7 @@ const char * ServiceProperties::ExportTXTRecord()
 
 	for( CopyHere = 0, i = 0; i < NbProperties; i++ )
 	{
-		if ( Properties[i].Length != 0 || Properties[i].Length > 256 )
+		if ( Properties[i].Length != 0 && Properties[i].Length < 255 )
 		{
 			// Set the property length in the buffer
 			SetPropertyLength  = (unsigned char*)&TXTRecord[CopyHere];

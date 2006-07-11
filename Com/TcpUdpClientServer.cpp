@@ -24,6 +24,14 @@ TcpUdpClientServer::TcpUdpClientServer(int a_pid)
 
 TcpUdpClientServer::~TcpUdpClientServer()
 {
+	// Stop all other activities...
+	TcpServer::RemoveAllCallbackObjects();
+	TcpServer::Stop();
+	TcpServer::Disconnect();
+	UdpExchange::RemoveAllCallbackObjects();
+	UdpExchange::Stop();
+	UdpExchange::Disconnect();
+
 	listClient.Lock();  
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
 	{
@@ -96,7 +104,7 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 	tcpclient->SetServiceId(GetServiceId());
 
 	// REVIEW
-	// Do we plan to use UDP ? if yes, open first a UDP port for us
+	// Do we plan to use UDP ?  yes, open first a UDP port for us
 	UdpConnection* udp_connect = NULL;
 	if ( port_udp != 0 )
 	{
@@ -125,7 +133,7 @@ unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int p
 		Thread::Sleep(5);
 	}
 
-	// Copy my callback objects to the nex connection
+	// Copy my callback objects to the neW connection
 	TcpServer::CallbackObjects.Lock();
 	for( TcpServer::CallbackObjects.First(); TcpServer::CallbackObjects.NotAtEnd(); TcpServer::CallbackObjects.Next() )
 	{
