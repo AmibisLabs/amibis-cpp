@@ -124,7 +124,7 @@ bool Thread::StopThread(int wait_ms)
 }
 
 #ifdef WIN32
-unsigned long __stdcall Thread::CallRun(void* ptr)
+unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 {
 	Thread* t = (Thread*)ptr;
 

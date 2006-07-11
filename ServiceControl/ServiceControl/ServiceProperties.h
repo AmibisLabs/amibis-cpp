@@ -109,7 +109,7 @@ public:
 
 protected:
 	// Total length of this Property (size included)
-	unsigned char Length;
+	unsigned int Length;
 
 	virtual void Copy( const ServiceProperty& rvalue );
 

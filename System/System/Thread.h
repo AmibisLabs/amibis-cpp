@@ -93,7 +93,7 @@ private:
 	
 	Event event;
 	
-	static unsigned long __stdcall CallRun(void* ptr);
+	static unsigned long FUNCTION_CALL_TYPE CallRun(void* ptr);
 #else
 
 	pthread_t m_thread; /*!< the Posix thread*/

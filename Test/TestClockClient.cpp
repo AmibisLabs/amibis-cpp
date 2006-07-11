@@ -35,6 +35,9 @@ int main(int argc, char * argv[])
 	ServiceFilter * MySearch = And( NameIs("Clock Server"), HasVariable( "TestWrite" ) );
 	ServiceProxy * ClockServer = MyService->FindService( MySearch, 10000 );
 
+	if ( ClockServer == NULL )
+		return 0;
+
 	MyService->AddConnector( "In", "in", AnInput );
 	MyService->ConnectTo( "In", ClockServer, "PushClock" );
 
