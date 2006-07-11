@@ -45,7 +45,7 @@ case "$1" in
 	exit 0
 	;;
     --libs)
-	echo "-L@libdir@ -lOmiscidSystem"
+	echo "-L@libdir@ -lOmiscidCom"
 	exit 0
 	;;
     --libs-only-L)
@@ -53,7 +53,7 @@ case "$1" in
 	exit 0
 	;;
     --libs-only-l)
-	echo "-lOmiscidSystem"
+	echo "-lOmiscidCom"
 	exit 0
 	;;
     --libdir)

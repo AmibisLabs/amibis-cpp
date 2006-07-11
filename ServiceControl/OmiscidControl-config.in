@@ -46,7 +46,7 @@ case "$1" in
 	exit 0
 	;;
     --libs)
-	echo "-L@libdir@ -lOmiscidCom `xml2-config --libs`"
+	echo "-L@libdir@ -lOmiscidControl `xml2-config --libs`"
 	exit 0
 	;;
     --libs-only-L)
@@ -54,7 +54,7 @@ case "$1" in
 	exit 0
 	;;
     --libs-only-l)
-	echo "-lOmiscidCom"
+	echo "-lOmiscidControl"
 	exit 0
 	;;
     --libdir)
