@@ -9,7 +9,10 @@ AtomicReentrantCounter::AtomicReentrantCounter(int init_value)
 	mutex.LeaveMutex();
 }
 	
-	
+AtomicReentrantCounter::~AtomicReentrantCounter()
+{
+}
+
 int AtomicReentrantCounter::operator++()
 {
 	mutex.EnterMutex();

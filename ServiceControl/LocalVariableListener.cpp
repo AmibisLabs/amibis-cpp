@@ -4,6 +4,10 @@
 
 using namespace Omiscid;
 
+LocalVariableListener::~LocalVariableListener()
+{
+}
+
 void LocalVariableListener::VariableChanged( VariableAttribut * ChangedVariable )
 {
 	if ( GetUserData() == NULL )

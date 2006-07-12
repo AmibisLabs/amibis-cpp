@@ -30,6 +30,9 @@ class MsgSocket;
 class MsgSocketCallBackData
 {
 public:
+	// Virtual destructor always
+	virtual ~MsgSocketCallBackData();
+
   Message Msg;
   void* userData1;/*!< first user parameter */
   void* userData2;/*!< second user parameter */
@@ -56,6 +59,9 @@ class UdpConnection
    * \param udp_connect [in] the UdpConnection object to copy.
    */
   UdpConnection(const UdpConnection& udp_connect);
+
+  /** @brief Destructor */
+  virtual ~UdpConnection();
 
   /** \brief Compare two UdpConnection objects.
    * Comparaison of the structure address.
@@ -90,6 +96,9 @@ class UdpConnection
 class MsgSocketCallbackObject
 {
 public:
+	// Virtual destructor always
+	virtual ~MsgSocketCallbackObject();
+
 	virtual void Receive(MsgSocketCallBackData& CallbackData) = 0;
 };
 
@@ -157,7 +166,7 @@ class MsgSocket : public Thread
   MsgSocket(Socket::SocketKind type);
 
   /** \brief Destructor */
-  ~MsgSocket();
+  virtual ~MsgSocket();
   
   /** \brief Initialization for TCP Client 
    *

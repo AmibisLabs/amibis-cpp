@@ -19,6 +19,9 @@
 #include <netdb.h>
 
 #include <errno.h>
+
+// #include <iostream>
+
 #endif
 
 #ifdef __APPLE__
@@ -28,7 +31,6 @@
 
 #include <System/SocketException.h>
 
-#include <iostream>
 
 #define BACKLOG 5
 

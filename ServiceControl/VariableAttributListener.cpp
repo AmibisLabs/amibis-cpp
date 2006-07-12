@@ -3,6 +3,9 @@
 
 using namespace Omiscid;
 
+VariableAttributListener::~VariableAttributListener()
+{
+}
 
 VariableAttributListener::VariableAttributListener()
 {

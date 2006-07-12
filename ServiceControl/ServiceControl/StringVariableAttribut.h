@@ -35,6 +35,9 @@ class StringVariableAttribut{
    */
   StringVariableAttribut(VariableAttribut* va, SimpleString value);
 
+	// Virtual destructor always
+	virtual ~StringVariableAttribut();
+
   /** @brief Read access to the integer value
    * @return the integer value */
   SimpleString GetValue() const;

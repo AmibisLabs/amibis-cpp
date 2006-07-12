@@ -30,7 +30,7 @@ class ServicePropertiesException  : public ServiceException
   ServicePropertiesException(const SimpleString Message, int Err = UnkownSimpleExceptionCode ) : ServiceException( Message, UnkownSimpleExceptionCode ) {};
 
   /** @brief Destructor */
-  virtual ~ServicePropertiesException() {};
+  virtual ~ServicePropertiesException();
 
  protected:
   /** @brief Return a human readable exception type */

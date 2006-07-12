@@ -28,6 +28,9 @@ public:
 	RegisterOmiscidService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
  	RegisterOmiscidService( const SimpleString ServiceName, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
 
+	// Virtual destructor always
+	virtual ~RegisterOmiscidService();
+
 private:
 	void Init( bool AutoRegister );
 };

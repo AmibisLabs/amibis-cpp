@@ -35,6 +35,10 @@ InOutputAttribut::InOutputAttribut(const SimpleString a_name, ConnectorKind kind
   tcpPort = 0; udpPort = 0;
 }
 
+InOutputAttribut::~InOutputAttribut()
+{
+}
+
 unsigned int InOutputAttribut::GetPeerId()
 {
 	if ( comTool )

@@ -14,6 +14,9 @@ class VariableAttributListener
 public:
 	VariableAttributListener();
 
+  /** @brief Destructor */
+	virtual ~VariableAttributListener();
+
 private:
 	// To prevent usuage of SetUSerData from the user side
 	friend class VariableAttribut;

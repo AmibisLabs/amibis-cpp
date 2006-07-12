@@ -20,28 +20,11 @@ protected:
 	ServiceFilter() {};
 
 public:
+	virtual ~ServiceFilter();
+
+public:
 	virtual bool IsAGoodService(ServiceProxy& SP) = 0;
 	virtual ServiceFilter * Duplicate() = 0;
-};
-
-class CascadeServiceFilters : public ServiceFilter,
-									 public SimpleList<ServiceFilter*>
-{
-public:
-
-	typedef enum CascadeServiceFiltersType { IsAND, IsOR }; 
-
-	CascadeServiceFilters(CascadeServiceFiltersType CreationType = IsAND);
-	~CascadeServiceFilters();
-
-// Abstracted function
-	virtual bool IsAGoodService(ServiceProxy& SP);
-	virtual ServiceFilter * Duplicate();
-
-	void Empty();
-
-private:
-	CascadeServiceFiltersType Type;
 };
 
 /**
@@ -56,7 +39,7 @@ private:
 * @param nameRegexp
 * @return
 */
-ServiceFilter * NameIs(SimpleString Name, bool CaseInsensitive = false);
+ServiceFilter * NameIs(const SimpleString Name, bool CaseInsensitive = false );
 
 /**
 * Tests whether the service name (with possible trailing dnssd number
@@ -65,7 +48,7 @@ ServiceFilter * NameIs(SimpleString Name, bool CaseInsensitive = false);
 * @param nameRegexp
 * @return
 */
-ServiceFilter * NamePrefixIs(SimpleString Name, bool CaseInsensitive = false);
+ServiceFilter * NamePrefixIs( const SimpleString Name, bool CaseInsensitive = false );
 
 /**
 * Tests whether the service peerid
@@ -73,7 +56,7 @@ ServiceFilter * NamePrefixIs(SimpleString Name, bool CaseInsensitive = false);
 * @param String
 * @return
 */
-ServiceFilter * PeerIdIs(unsigned int PeerId);
+ServiceFilter * PeerIdIs( unsigned int PeerId );
 
 /**
 * Tests whether the service class
@@ -89,7 +72,7 @@ ServiceFilter * ClassIs( const SimpleString ClassName );
 * @param String
 * @return
 */
-ServiceFilter * OwnerIs(SimpleString Name, bool CaseInsensitive = false);
+ServiceFilter * OwnerIs( const SimpleString Name, bool CaseInsensitive = false );
 
 /**
 * Tests whether the service hostname
@@ -97,7 +80,7 @@ ServiceFilter * OwnerIs(SimpleString Name, bool CaseInsensitive = false);
 * @param String
 * @return
 */
-ServiceFilter * HostPrefixIs(SimpleString Hostname);
+ServiceFilter * HostPrefixIs( const SimpleString Hostname );
 
 /**
 * Tests whether the service contain a variable
@@ -105,7 +88,7 @@ ServiceFilter * HostPrefixIs(SimpleString Hostname);
 * @param String
 * @return
 */
-ServiceFilter * HasVariable(SimpleString VarName);
+ServiceFilter * HasVariable( const SimpleString VarName );
 
 /**
 * Tests whether the service contain a variable (we do not care about value)
@@ -114,7 +97,7 @@ ServiceFilter * HasVariable(SimpleString VarName);
 * @param String
 * @return
 */
-ServiceFilter * HasVariable(SimpleString VarName, SimpleString Value);
+ServiceFilter * HasVariable( const SimpleString VarName, const SimpleString Value );
 
 /**
 * Tests whether the service contain a connector (we do not care if it is an input or so...)
@@ -123,7 +106,7 @@ ServiceFilter * HasVariable(SimpleString VarName, SimpleString Value);
 * @param ConnectorKind
 * @return
 */
-ServiceFilter * HasConnector( SimpleString ConnectorName );
+ServiceFilter * HasConnector( const SimpleString ConnectorName );
 
 /**
 * Tests whether the service contain a connector (with a specific type)
@@ -132,7 +115,7 @@ ServiceFilter * HasConnector( SimpleString ConnectorName );
 * @param ConnectorKind
 * @return
 */
-ServiceFilter * HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector );
+ServiceFilter * HasConnector( const SimpleString ConnectorName, ConnectorKind KindOfConnector );
 
 
 /**
@@ -162,6 +145,13 @@ ServiceFilter * Or( ServiceFilter * First, ServiceFilter * Second = NULL,
 * @return a pointer ServiceFilter
 */
 ServiceFilter * Yes();
+
+/**
+* Create a boolean not operator
+*
+* @return a pointer ServiceFilter
+*/
+ServiceFilter * Not(ServiceFilter * SF);
 
 } // namespace Omiscid
 

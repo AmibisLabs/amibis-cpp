@@ -39,7 +39,7 @@ class ClientConnection
   ClientConnection(TcpClient* tcp_client, UdpConnection* udp_connect = NULL);
 
   /** \brief Destructor */
-  ~ClientConnection();
+  virtual ~ClientConnection();
   
   /** \brief Access to the identifer of the peer for this connection
    * \return the identifer of the peer for this connection. */
@@ -70,7 +70,7 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
   TcpUdpClientServer(int a_pid = 0);
 
   /** \brief Destructor. */
-  ~TcpUdpClientServer();
+  virtual ~TcpUdpClientServer();
 
   /**
    * \brief Run a TcpServer, an UdpExchange object

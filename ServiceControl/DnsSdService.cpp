@@ -20,6 +20,10 @@
 
 using namespace Omiscid;
 
+DnsSdService::~DnsSdService()
+{
+}
+
 void DnsSdService::Init()
 {
 	Name[0] = '\0';

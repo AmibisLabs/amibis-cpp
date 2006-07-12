@@ -134,7 +134,7 @@ VariableAttribut* ControlClient::QueryVariableModif(const SimpleString var_name,
 	VariableAttribut* var_attr = FindVariable(var_name);
 	if(!var_attr)
 	{    
-		TraceError( "Unknown Variable '%s' : Not Available Description : %s\n", var_name.GetStr());
+		TraceError( "Unknown Variable '%s' : Not Available Description.\n", var_name.GetStr());
 		return NULL;
 	}
 

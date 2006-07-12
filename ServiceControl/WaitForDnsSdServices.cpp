@@ -27,6 +27,10 @@ SearchService::SearchService()
 	UserData = NULL;
 }
 
+SearchService::~SearchService()
+{
+}
+
 WaitForDnsSdServices::WaitForDnsSdServices()
 	: ServicesUsed(MaxSearchServices)
 {

@@ -12,6 +12,10 @@ class ServiceFromXML : public ControlServer
 {
  public:
   ServiceFromXML(const SimpleString file_name);
+
+	// Virtual destructor always
+	virtual ~ServiceFromXML();
+
  private:
   void InitServiceFromXml(xmlNodePtr root_node);
   void ProcessVariableAttribut(xmlNodePtr node);

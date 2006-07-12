@@ -29,7 +29,7 @@ namespace Omiscid {
  *  package. All derived classes must define their own exception type (const char*)
  *  by rewriting the virtual function ServiceException#GetExceptionType.
  */
-	class ServiceException : public SimpleException
+class ServiceException : public SimpleException
 {
  public:
   /** \brief Constructor 

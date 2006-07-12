@@ -23,6 +23,9 @@ class Service;
 class LocalVariableListener : public VariableAttributListener
 {
 public:
+	// Virtual destructor always
+	virtual ~LocalVariableListener();
+
 	/**
      * This method is called when the value of a variable
      * changes

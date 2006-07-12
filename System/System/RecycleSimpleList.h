@@ -29,7 +29,7 @@ class SimpleRecycleList : public SimpleList<TYPE>
   SimpleRecycleList();
   
   /** @brief Destructor */
-  ~SimpleRecycleList();
+  virtual ~SimpleRecycleList();
   
   /** @brief Delete all the available cells */
   static void DeleteTheAvailableCells()
@@ -100,7 +100,9 @@ template <typename TYPE>
 SimpleRecycleList<TYPE>::SimpleRecycleList(){}
 
 template <typename TYPE>
-SimpleRecycleList<TYPE>::~SimpleRecycleList(){}
+SimpleRecycleList<TYPE>::~SimpleRecycleList()
+{
+}
 
 template <typename TYPE>
 SimpleListElement<TYPE>* SimpleRecycleList<TYPE>::GetNewSimpleListElement() const
@@ -129,6 +131,9 @@ template <typename TYPE>
 class MutexedSimpleRecycleList : public SimpleRecycleList<TYPE>
 {
 public:
+	// Virtual destructor always
+	virtual ~MutexedSimpleRecycleList();
+
         /** \brief Lock the access to the list
 	 *
 	 * Wait until the mutex can be locked.
@@ -146,6 +151,11 @@ public:
 private:
 	Mutex mutex; /*!< the mutex to protect access to the list*/
 };
+
+template <typename TYPE>
+MutexedSimpleRecycleList<TYPE>::~MutexedSimpleRecycleList()
+{
+}
 
 template <typename TYPE>
 bool MutexedSimpleRecycleList<TYPE>::Lock()

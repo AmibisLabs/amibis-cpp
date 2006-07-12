@@ -25,6 +25,27 @@ public:
 
 static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
 
+MemoryBufferException::MemoryBufferException( SimpleString Msg, int i )
+	: SimpleException( Msg, i )
+{
+}
+
+MemoryBufferException::~MemoryBufferException()
+{
+}
+
+MemoryBufferException::MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy )
+	: SimpleException( MemoryBufferExceptionToCopy )
+{
+}
+
+SimpleString MemoryBufferException::GetExceptionType() const
+{
+	return SimpleString("MemoryBufferException");
+}
+
+
+
 
 // class for Allocate/Unallocation memory buffer
 TemporaryMemoryBuffer::TemporaryMemoryBuffer( size_t SizeOfBuffer )
@@ -123,23 +144,5 @@ SimpleString Omiscid::GetLoggedUser()
 
 	return Login;
 }
-
-
-MemoryBufferException::MemoryBufferException( SimpleString Msg, int i )
-	: SimpleException( Msg, i )
-{
-}
-
-MemoryBufferException::MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy )
-	: SimpleException( MemoryBufferExceptionToCopy )
-{
-}
-
-SimpleString MemoryBufferException::GetExceptionType() const
-{
-	return SimpleString("MemoryBufferException");
-}
-
-
 
 

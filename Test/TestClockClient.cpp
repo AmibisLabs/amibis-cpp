@@ -8,12 +8,17 @@
 #include <ServiceControl/Factory.h>
 #include <ServiceControl/ServiceFilter.h>
 #include <ServiceControl/ConnectorListener.h>
+#include <Com/TcpUdpClientServer.h>
 
 using namespace Omiscid;
 
 class TestListener : public ConnectorListener
 {
 public:
+	~TestListener()
+	{
+	}
+
 	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 	{
 		printf( "Receive '%s' :: '%s'\n%5.5s\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.buffer );
@@ -22,21 +27,27 @@ public:
 
 int main(int argc, char * argv[])
 {
-	// Let search for a service with the folowing properties
-	// - name is "Clock Server" 
-	// - contain an output connector "PushClock"
-	// - expose a variable "Hours" 
+	StartTrackingMemoryLeaks();
 
 	TestListener TL;
 
 	Omiscid::Service * MyService = ServiceFactory.Create( "Clock Client" );
 
 	// First, create a service filter. You *must* not free it after use
-	ServiceFilter * MySearch = And( NameIs("Clock Server") );
-	ServiceProxy * ClockServer = MyService->FindService( MySearch, 10000 );
+	// SimpleList<ServiceFilter *> MySearch;
+
+	// MySearch.Add( NameIs("Clock Server") );
+	// MySearch.Add( NameIs("Clock Server") );
+
+	SimpleString Name("Clock Server");
+
+	ServiceProxy * ClockServer = MyService->FindService( NameIs(Name), 3000 );
 
 	if ( ClockServer == NULL )
+	{
+		delete MyService;
 		return 0;
+	}
 
 	ClockServer->SetVariableValue( "Hours", "12" );
 
@@ -56,7 +67,9 @@ int main(int argc, char * argv[])
 
 	Thread::Sleep( 5000 );
 	printf( "Delete Service\n" );
-	// delete MyService;
+	delete MyService;
+
+	delete ClockServer;
 
 	// Mutex MyLock;
 	// MyLock.EnterMutex();

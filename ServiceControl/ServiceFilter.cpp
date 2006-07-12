@@ -9,11 +9,37 @@ using namespace Omiscid;
 
 namespace Omiscid {
 
+ServiceFilter::~ServiceFilter()
+{
+}
+
+class CascadeServiceFilters : public ServiceFilter,	 public SimpleList<ServiceFilter*>
+{
+public:
+
+	typedef enum CascadeServiceFiltersType { IsAND, IsOR }; 
+
+	CascadeServiceFilters(CascadeServiceFiltersType CreationType = IsAND);
+	virtual ~CascadeServiceFilters();
+
+// Abstracted function
+	virtual bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
+
+	void Empty();
+
+private:
+	CascadeServiceFiltersType Type;
+};
+
 /* Tests whether a service has the good name */
 class ServiceNameIs : public ServiceFilter
 {
 public:
 	ServiceNameIs(SimpleString& Name, bool CaseInsensitive = false, bool OnlyPrefix = false);
+
+	// Virtual destructor always
+	virtual ~ServiceNameIs();
 
 	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
@@ -31,6 +57,9 @@ class ServiceOwnerIs : public ServiceFilter
 public:
 	ServiceOwnerIs(SimpleString& Owner, bool CaseInsensitive = false);
 
+	// Virtual destructor always
+	virtual ~ServiceOwnerIs();
+
 	bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
@@ -45,6 +74,9 @@ class ServiceHostIs : public ServiceFilter
 public:
 	ServiceHostIs(SimpleString& Hostname);
 
+	// Virtual destructor always
+	virtual ~ServiceHostIs();
+
 	bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
@@ -58,6 +90,9 @@ class ServiceHasVariable : public ServiceFilter
 public:
 	ServiceHasVariable(SimpleString& VariableName);
 	ServiceHasVariable(SimpleString& VariableName, SimpleString& VariableValue);
+
+	// Virtual destructor always
+	virtual ~ServiceHasVariable();
 
 	bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
@@ -74,6 +109,9 @@ class ServiceHasConnector : public ServiceFilter
 public:
 	ServiceHasConnector(SimpleString& ConnectorName, ConnectorKind ConnectorType = UnkownConnectorKind );
 
+	// Virtual destructor always
+	virtual ~ServiceHasConnector();
+
 	bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
@@ -83,20 +121,108 @@ private:
 };
 
 /* Will always return true */
-class ServiceYes : public ServiceFilter
+class ServiceAlwaysAnswerYes : public ServiceFilter
 {
 public:
+	// Virtual destructor always
+	virtual ~ServiceAlwaysAnswerYes();
+
 	bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 };
 
+/* A boolean not operator true */
+class ServiceBooleanNot : public ServiceFilter
+{
+public:
+	ServiceBooleanNot(ServiceFilter *SF);
+	virtual ~ServiceBooleanNot();
+
+	bool IsAGoodService(ServiceProxy& SP);
+	virtual ServiceFilter * Duplicate();
+
+private:
+	ServiceFilter * ApplyNotOn;
+};
+
+
 } // namespace Omiscid
+
+CascadeServiceFilters::CascadeServiceFilters(CascadeServiceFiltersType CreationType)
+{
+	Type = CreationType;
+}
+
+CascadeServiceFilters::~CascadeServiceFilters()
+{
+	Empty();
+}
+
+void CascadeServiceFilters::Empty()
+{
+	for( First(); NotAtEnd(); Next() )
+	{
+		delete GetCurrent();
+		RemoveCurrent();
+	}
+}
+
+bool CascadeServiceFilters::IsAGoodService(ServiceProxy& SP)
+{
+	if ( Type == IsAND )
+	{
+		// IsAND : at first false, the final answer is false
+		for( First(); NotAtEnd(); Next() )
+		{
+			if ( GetCurrent()->IsAGoodService(SP) == false )
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	else
+	{
+		// IsOr : at first true, the final answer is true
+		for( First(); NotAtEnd(); Next() )
+		{
+			if ( GetCurrent()->IsAGoodService(SP) == true )
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+}
+
+ServiceFilter * CascadeServiceFilters::Duplicate()
+{
+	// Create a copy
+	CascadeServiceFilters * Copy = new CascadeServiceFilters();
+	if ( Copy == NULL )
+	{
+		return NULL;
+	}
+
+	// Duplicate all child into the copy
+	for( First(); NotAtEnd(); Next() )
+	{
+		Copy->Add( GetCurrent()->Duplicate() );
+	}
+
+	// Return the copy
+	return Copy;
+}
 
 ServiceNameIs::ServiceNameIs(SimpleString& Name, bool CaseInsensitive, bool OnlyPrefix)
 {
 	this->Name			  = Name;
 	this->CaseInsensitive = CaseInsensitive;
 	this->OnlyPrefix	  = OnlyPrefix;
+}
+
+ServiceNameIs::~ServiceNameIs()
+{
 }
 
 bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
@@ -136,6 +262,10 @@ ServiceOwnerIs::ServiceOwnerIs(SimpleString& Owner, bool CaseInsensitive)
 	this->CaseInsensitive = CaseInsensitive;
 }
 
+ServiceOwnerIs::~ServiceOwnerIs()
+{
+}
+
 bool ServiceOwnerIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceOwner;
@@ -161,6 +291,10 @@ ServiceHostIs::ServiceHostIs(SimpleString& Hostname)
 	this->Hostname = Hostname;
 }
 
+ServiceHostIs::~ServiceHostIs()
+{
+}
+
 bool ServiceHostIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceHostname = SP.GetHostName();
@@ -177,6 +311,10 @@ ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName)
 {
 	this->VariableName = VariableName;
 	this->CheckValue   = false;
+}
+
+ServiceHasVariable::~ServiceHasVariable()
+{
 }
 
 ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName, SimpleString& VariableValue)
@@ -215,6 +353,10 @@ ServiceHasConnector::ServiceHasConnector(SimpleString& ConnectorName, ConnectorK
 {
 	this->ConnectorName = ConnectorName;
 	this->ConnectorType = ConnectorType;
+}
+
+ServiceHasConnector::~ServiceHasConnector()
+{
 }
 
 bool ServiceHasConnector::IsAGoodService(ServiceProxy& SP)
@@ -444,14 +586,18 @@ ServiceFilter * Omiscid::Or( ServiceFilter * First, ServiceFilter * Second,
 	return pFilter;
 }
 
-bool ServiceYes::IsAGoodService(ServiceProxy& SP)
+ServiceAlwaysAnswerYes::~ServiceAlwaysAnswerYes()
+{
+}
+
+bool ServiceAlwaysAnswerYes::IsAGoodService(ServiceProxy& SP)
 {
 	return true;
 }
 
-ServiceFilter * ServiceYes::Duplicate()
+ServiceFilter * ServiceAlwaysAnswerYes::Duplicate()
 {
-	return new ServiceYes();
+	return new ServiceAlwaysAnswerYes();
 }
 
 /**
@@ -462,72 +608,36 @@ ServiceFilter * ServiceYes::Duplicate()
 */
 ServiceFilter * Omiscid::Yes()
 {
-	return new ServiceYes();
+	return new ServiceAlwaysAnswerYes();
 }
 
-
-CascadeServiceFilters::CascadeServiceFilters(CascadeServiceFiltersType CreationType)
+ServiceBooleanNot::ServiceBooleanNot( ServiceFilter * SF )
 {
-	Type = CreationType;
+	ApplyNotOn = SF;
 }
 
-CascadeServiceFilters::~CascadeServiceFilters()
+ServiceBooleanNot::~ServiceBooleanNot()
 {
-	Empty();
+	delete ApplyNotOn;
 }
 
-void CascadeServiceFilters::Empty()
+bool ServiceBooleanNot::IsAGoodService(ServiceProxy& SP)
 {
-	for( First(); NotAtEnd(); Next() )
-	{
-		delete GetCurrent();
-		RemoveCurrent();
-	}
+	return !(ApplyNotOn->IsAGoodService(SP));
 }
 
-bool CascadeServiceFilters::IsAGoodService(ServiceProxy& SP)
+ServiceFilter * ServiceBooleanNot::Duplicate()
 {
-	if ( Type == IsAND )
-	{
-		// IsAND : at first false, the final answer is false
-		for( First(); NotAtEnd(); Next() )
-		{
-			if ( GetCurrent()->IsAGoodService(SP) == false )
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	else
-	{
-		// IsOr : at first true, the final answer is true
-		for( First(); NotAtEnd(); Next() )
-		{
-			if ( GetCurrent()->IsAGoodService(SP) == true )
-			{
-				return true;
-			}
-		}
-		return false;
-	}
+	return new ServiceBooleanNot( ApplyNotOn->Duplicate() );
 }
 
-ServiceFilter * CascadeServiceFilters::Duplicate()
+/**
+* Create a boolean not operator
+*
+* @return a pointer ServiceFilter
+*/
+ServiceFilter * Omiscid::Not(ServiceFilter * SF)
 {
-	// Create a copy
-	CascadeServiceFilters * Copy = new CascadeServiceFilters();
-	if ( Copy == NULL )
-	{
-		return NULL;
-	}
-
-	// Duplicate all child into the copy
-	for( First(); NotAtEnd(); Next() )
-	{
-		Copy->Add( GetCurrent()->Duplicate() );
-	}
-
-	// Return the copy
-	return Copy;
+	return new ServiceBooleanNot( SF );
 }
+

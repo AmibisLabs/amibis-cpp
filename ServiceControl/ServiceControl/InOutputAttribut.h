@@ -52,6 +52,9 @@ class InOutputAttribut : public Attribut
   InOutputAttribut(const SimpleString a_name, ConnectorKind kind_of_input);
   //@}
 
+	// Virtual destructor always
+	virtual ~InOutputAttribut();
+
   /** \name Read Accessors */
   //@{
   bool IsAnInput() const; /*!< test if the object kind is AnInput*/

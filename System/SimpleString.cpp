@@ -216,16 +216,9 @@ const SimpleString SimpleString::EmptyString("");
 
 void SimpleString::CopyStringData(StringData* to_copy)
 {
-/*
-	if ( to_copy == StringData::GetEmptyStringData() )
-	{
-		stringData = new StringData(*to_copy);
-	}
-	else */
-	{
-		to_copy->AddReference();
-		stringData = to_copy;
-	}
+	DestroyStringData();
+	to_copy->AddReference();
+	stringData = to_copy;
 }
 
 SimpleString::SimpleString()
@@ -386,7 +379,7 @@ void SimpleString::Append(const char* str)
 	{
 		StringData* tmp = new StringData(GetStr(), str);
 		DestroyStringData();
-		CopyStringData( tmp );
+		stringData = tmp;
 	}
 }
 
@@ -410,7 +403,7 @@ char& SimpleString::operator[](int i)
 	{
 		StringData* tmp = new StringData(*stringData);
 		DestroyStringData();
-		CopyStringData( tmp );
+		stringData = tmp;
 	}
 	return *(stringData->GetDataPtr()+i);
 }

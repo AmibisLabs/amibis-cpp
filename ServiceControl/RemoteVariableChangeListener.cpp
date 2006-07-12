@@ -4,6 +4,10 @@
 
 using namespace Omiscid;
 
+RemoteVariableChangeListener::~RemoteVariableChangeListener()
+{
+}
+
 void RemoteVariableChangeListener::VariableChanged( VariableAttribut * ChangedVariable )
 {
 	if ( GetUserData() == NULL )

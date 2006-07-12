@@ -27,6 +27,9 @@ SimpleString GetLoggedUser();
 class MemoryBufferException : public SimpleException
 {
 public:
+	// Virtual destructor always
+	virtual ~MemoryBufferException();
+
 	MemoryBufferException( SimpleString Msg, int i = UnkownSimpleExceptionCode );
 	MemoryBufferException::MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy );
 
@@ -37,7 +40,7 @@ class TemporaryMemoryBuffer
 {
 public:
 	TemporaryMemoryBuffer( size_t SizeOfBuffer );
-	~TemporaryMemoryBuffer();
+	virtual ~TemporaryMemoryBuffer();
 
 	operator char*() const;
 	operator unsigned char*() const;

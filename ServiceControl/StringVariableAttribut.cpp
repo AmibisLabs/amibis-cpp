@@ -5,6 +5,10 @@
 
 using namespace Omiscid;
 
+StringVariableAttribut::~StringVariableAttribut()
+{
+}
+
 StringVariableAttribut::StringVariableAttribut(VariableAttribut* va, SimpleString value)
 {
   VariableAtt = va;

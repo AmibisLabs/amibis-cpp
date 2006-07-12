@@ -47,12 +47,18 @@ public:
 	}
 
 	/** \brief Destructor */
-	~SimpleListElement() {};
+	virtual ~SimpleListElement();
 
 private:
 	TYPE ElementContainer; /*!< the data contains by the cell */
  	SimpleListElement<TYPE> * NextElement; /*!< a pointer on the next cell in the list */
 };
+
+/** \brief Default Constructor */
+template <typename TYPE>
+SimpleListElement<TYPE>::~SimpleListElement()
+{
+}
 
 /**
  * @class SimpleList SimpleList.h System/SimpleList.h
@@ -533,7 +539,7 @@ public:
 		IsLocked = false; // MutexedSimpleList is not lock, the boolean is always false
 	}
 
-	~MutexedSimpleList()
+	virtual ~MutexedSimpleList()
 	{
 		IsLocked = true; // MutexedSimpleList is not lock, the boolean is always false
 		// All operation will be permitted to destroy the list

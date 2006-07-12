@@ -49,6 +49,10 @@ private:
   //@}
 
 public:
+
+  /** @brief Destructor */
+	virtual ~VariableAttribut() {};
+
   /** @name Read Accessors */
   //@{
   SimpleString& GetType();

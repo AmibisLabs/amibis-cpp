@@ -8,7 +8,11 @@ AtomicCounter::AtomicCounter(int init_value)
 	counter = init_value;
 	mutex.LeaveMutex();
 }
-	
+
+AtomicCounter::~AtomicCounter()
+{
+}
+
 int AtomicCounter::operator++()
 {
 	mutex.EnterMutex();

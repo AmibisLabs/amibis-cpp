@@ -45,3 +45,7 @@ WaitForOmiscidServices::WaitForOmiscidServices()
 WaitForOmiscidServices::~WaitForOmiscidServices(void)
 {
 }
+
+RegisterOmiscidService::~RegisterOmiscidService()
+{
+}

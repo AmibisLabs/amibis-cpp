@@ -25,6 +25,9 @@ class ConnectorListener : public MsgSocketCallbackObject
 	friend class Service;
 
 public:
+	// Virtual destructor always
+	virtual ~ConnectorListener();
+
 	/**
      * Processes a received Omiscid message. As a given message could be processed
      * by several others listeners, the message must not be modified by its

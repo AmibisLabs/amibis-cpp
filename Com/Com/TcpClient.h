@@ -38,6 +38,9 @@ class TcpClient : public MsgSocket, public ComTools
    * @see ConnectToServer
    */
   TcpClient(const SimpleString addr, int port);
+
+	// Virtual destructor always
+	virtual ~TcpClient();
   
   /**
    * @brief Connect to Server.

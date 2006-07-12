@@ -21,6 +21,10 @@ UdpConnection::UdpConnection(const UdpConnection& udp_connect)
 	memcpy(&addr, &(udp_connect.addr), sizeof(struct sockaddr_in));
 }
 
+UdpConnection::~UdpConnection()
+{
+}
+
 UdpConnection::UdpConnection(const SimpleString an_addr, int port)
 {
 	//REVIEW
@@ -35,6 +39,14 @@ UdpConnection::UdpConnection(const SimpleString an_addr, int port)
 void UdpConnection::SetAddr(const struct sockaddr_in* nv_addr)
 {
 	memcpy(&addr, nv_addr, sizeof(struct sockaddr_in));
+}
+
+MsgSocketCallBackData::~MsgSocketCallBackData()
+{
+}
+
+MsgSocketCallbackObject::~MsgSocketCallbackObject()
+{
 }
 
 const char* MsgSocket::tag_start1 = "BIP/1.0";

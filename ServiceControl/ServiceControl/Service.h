@@ -37,7 +37,7 @@ private:
 
 	// Every one can destroy an Service
 public:
-	~Service();
+	virtual ~Service();
 
 	/**
 	 * Starts the corresponding service
@@ -220,36 +220,12 @@ public:
      */
     ServiceProxy * FindService(ServiceFilter& Filter, unsigned int WaitTime = 0);
 
-
-#if 0
-
 	/**
-	 * Removes a listener on a variable change
-	 * @param VarName the VarName
-	 * @param listener the listener
-	 * @throws UnknownBipVariable thrown if the variable has not been declared
-	 * @see BipService#addVariable
-	 */
-	public void removeVariableChangeListener(SimpleString VarName, VariableChangeListener listener)
-			throws UnknownBipVariable ;
-
-	/**
-	 * Removes a connector listener
-	 * @param connector the connector name
-	 * @param listener the connector listener
-	 * @throws UnknownBipConnector the connector does not exist
-	 */
-	public void removeConnectorListener(SimpleString connector, BipMessageListener listener) throws UnknownBipConnector ;
-
-    /**
-     * Finds a list of services on the network. The research is based on the service names (as registered in DNS_SD)
-     * @param services the array of service names
-     * @return the list of associated services proxy
-     * @see BipServiceProxy
+     * Finds services on the network. The research is based on a list of service filters
+     * @return a list of service Proxy. User is responsible for deleting each ServiceProxy
+	 * and the list itself.
      */
-    public HashMap<SimpleString, BipServiceProxy> findServices(SimpleString[] services, ServiceFilter[] filters) ;
-#endif
-
+	SimpleList<ServiceProxy *>* FindServices( SimpleList<ServiceFilter *>& Filters, unsigned int WaitTime );
 };
 
 } // namespace Omiscid

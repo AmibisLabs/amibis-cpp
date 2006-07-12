@@ -31,6 +31,9 @@ public:
    */
   SocketException(const SocketException& ExceptionToCopy);
 
+	// Virtual destructor always
+	virtual ~SocketException();
+
   /** \brief Return a human readable exception type */
   SimpleString GetExceptionType() const;
 

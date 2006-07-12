@@ -12,6 +12,10 @@ IntVariableAttribut::IntVariableAttribut(VariableAttribut* va, int value)
   SetValue(value);
 }
 
+IntVariableAttribut::~IntVariableAttribut()
+{
+}
+
 void IntVariableAttribut::SetValue( int value )
 {
   if(IntegerValue != value)

@@ -4,14 +4,19 @@ using namespace Omiscid;
 
 TcpClient::TcpClient()
 : MsgSocket(Socket::TCP)
-{}
+{
+}
 
 TcpClient::TcpClient(const SimpleString addr, int port)
  : MsgSocket(Socket::TCP)
 {
   ConnectToServer(addr, port);
 }
-  
+
+TcpClient::~TcpClient()
+{
+}
+
 void TcpClient::ConnectToServer(const SimpleString addr, int port)
 {
   MsgSocket::InitForTcpClient(addr, port);

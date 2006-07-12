@@ -14,6 +14,10 @@ ConnectionInfos::ConnectionInfos(ConnectionInfos& ToCopy)
 	operator=(ToCopy);
 }
 
+ConnectionInfos::~ConnectionInfos()
+{
+}
+
 ConnectionInfos& ConnectionInfos::operator=(ConnectionInfos& ToCopy)
 {
 	TcpPort = ToCopy.TcpPort;

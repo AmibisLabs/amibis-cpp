@@ -27,6 +27,9 @@ public:
 	 * @param init_value [in] the initial value for the counter (0 by default).
 	 */
 	AtomicCounter(int init_value = 0);
+
+	// Virtual destructor always
+	virtual ~AtomicCounter();
 	
 	/** @name Operators */
 	//@{
@@ -50,7 +53,7 @@ public:
 	//@}
 
 private:
-	ReentrantMutex mutex; /*!< the mutex to protect the access */
+	Mutex mutex; /*!< the mutex to protect the access */
 	int counter; /*!< the integer used to store the counter value*/
 };
 

@@ -24,7 +24,7 @@ class ServiceProxy  : protected ControlClient
 public:
 	ServiceProxy( unsigned int PeerId, SimpleString eHostname, int eControlPort );
 
-	~ServiceProxy();
+	virtual ~ServiceProxy();
 
    /**
 	 * Returns the list of variables

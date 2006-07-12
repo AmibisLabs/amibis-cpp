@@ -791,6 +791,7 @@ ValueListener::ValueListener(VariableAttribut* v, unsigned int pid)
 	var = v;
 	AddListener(pid);
 }
+
 ValueListener::~ValueListener()
 { 
 	var = NULL;

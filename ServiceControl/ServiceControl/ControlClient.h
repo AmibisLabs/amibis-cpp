@@ -51,7 +51,7 @@ class ControlClient : public TcpClient, public XMLTreeParser
   ControlClient(unsigned int serviceId);
 
   /** \brief Desctructor */
-  ~ControlClient();
+  virtual ~ControlClient();
 
   /** \brief Connection t a Control Server
    * \param host [in] host where is the control server

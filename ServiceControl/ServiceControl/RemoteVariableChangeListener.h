@@ -24,6 +24,10 @@ class RemoteVariableChangeListener : public VariableAttributListener
 {
 	friend class ServiceProxy;
 
+public:
+	// Virtual destructor always
+	virtual ~RemoteVariableChangeListener();
+
 protected:
     /**
      * Processes a received Omiscid message. As a given message could be processed

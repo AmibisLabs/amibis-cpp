@@ -14,6 +14,9 @@ public:
 	ConnectionInfos();
 	ConnectionInfos(ConnectionInfos& ToCopy);
 
+	// Virtual destructor always
+	virtual ~ConnectionInfos();
+
 	ConnectionInfos& operator=(ConnectionInfos& ToCopy);
 
 	int TcpPort;

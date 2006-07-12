@@ -7,7 +7,7 @@
 #define __ATOMIC_REENTRANT_COUNTER_H__
 
 #include <System/Config.h>
-#include <System/Mutex.h>
+#include <System/ReentrantMutex.h>
 
 namespace Omiscid {
 
@@ -27,6 +27,9 @@ public:
 	 * @param init_value [in] the initial value for the counter (0 by default).
 	 */
 	AtomicReentrantCounter(int init_value = 0);
+
+	// Virtual destructor always
+	virtual ~AtomicReentrantCounter();
 	
 	/** @name Operators */
 	//@{

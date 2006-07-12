@@ -23,7 +23,7 @@ public:
 	/** @brief Constructor */
 	Event();
 	/** @brief Destructor */
-	~Event();
+	virtual ~Event();
 	
 	/** @brief Signal all the threads waiting on this event*/
 	void Signal();

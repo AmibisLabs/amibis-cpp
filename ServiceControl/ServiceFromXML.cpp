@@ -4,6 +4,10 @@
 
 using namespace Omiscid;
 
+ServiceFromXML::~ServiceFromXML()
+{
+}
+
 ServiceFromXML::ServiceFromXML(const SimpleString file_name)
 {
   XMLTreeParser xmlTreeParser;

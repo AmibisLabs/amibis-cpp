@@ -31,6 +31,9 @@ public:
 	DnsSdService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
 	DnsSdService( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
 
+	// Virtual destructor always
+	virtual ~DnsSdService();
+
 	char CompleteServiceName[ServiceNameLength];	// Complete service Name
 	SimpleString RegisteredName;
 	ServiceProperties Properties;
@@ -66,7 +69,8 @@ public:
 	RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
 	RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
 	RegisterService( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
-	~RegisterService();
+
+	virtual ~RegisterService();
 
 	bool Register();
 	bool IsRegistered();

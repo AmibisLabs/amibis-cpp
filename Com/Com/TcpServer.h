@@ -50,7 +50,7 @@ class TcpServer : public MsgSocket, virtual public ComTools
    * destroy all the connections.
    * @see Disconnect, Close
    */
-  ~TcpServer();
+  virtual ~TcpServer();
 
   /** \brief Lauch the TCP Server
    *

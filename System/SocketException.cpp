@@ -59,6 +59,10 @@ SocketException::SocketException(const SimpleString m, int i)
 	SocketErrorCheck();
 }
 
+SocketException::~SocketException()
+{
+}
+
 SocketException::SocketException(const SocketException& ExceptionToCopy)
  : SimpleException(ExceptionToCopy)
 {

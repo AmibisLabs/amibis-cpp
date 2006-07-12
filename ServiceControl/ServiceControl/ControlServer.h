@@ -46,7 +46,7 @@ public:
   ValueListener(VariableAttribut* v, unsigned int listener_id);
 
   /** @brief Destructor */
-  ~ValueListener();
+  virtual ~ValueListener();
 
   /** @brief Add a peer interested in the variable modification 
    * @param listener_id an id of peer interest in the variable modification

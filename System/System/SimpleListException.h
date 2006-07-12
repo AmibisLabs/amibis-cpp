@@ -27,6 +27,9 @@ public:
   /** \brief Copy Constrcutor */
   SimpleListException(const SimpleListException& ExceptionToCopy);
 
+	// Virtual destructor always
+	virtual ~SimpleListException();
+
   /** \brief Return a human readable exception type */
   SimpleString GetExceptionType() const;
 };

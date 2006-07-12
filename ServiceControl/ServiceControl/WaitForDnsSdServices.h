@@ -33,8 +33,13 @@ class WaitForDnsSdServices;
 class SearchService : public DnsSdService
 {
 	friend class WaitForDnsSdServices;
+	friend class Service;
+
 public:
 	SearchService();
+
+	// Virtual destructor always
+	virtual ~SearchService();
 
 	bool StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 

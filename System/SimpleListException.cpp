@@ -8,6 +8,10 @@ SimpleListException::SimpleListException(const SimpleString m, int i)
 {
 }
 
+SimpleListException::~SimpleListException()
+{
+}
+
 SimpleListException::SimpleListException(const SimpleListException& ExceptionToCopy)
  : SimpleException(ExceptionToCopy)
 {

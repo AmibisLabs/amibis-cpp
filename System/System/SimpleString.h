@@ -50,7 +50,7 @@ private:
 		 *
 		 * free the buffer of character allocated for the string
 		 */
-		~StringData();
+		/* virtual */ ~StringData();
 
 		/** \return the pointer on the buffer of characters */
 		char* GetDataPtr() const;
@@ -135,7 +135,7 @@ public:
 	//@}
 	
 	/** @brief Destructor */
-	~SimpleString();
+	virtual ~SimpleString();
 
 	//* @brief To empty a string */
 	void Empty();

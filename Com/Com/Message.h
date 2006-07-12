@@ -37,7 +37,7 @@ public:
    *
    * free the buffer.
    */
-  ~Message();
+  virtual ~Message();
 
   /** \name Access to information */
   //@{

@@ -26,7 +26,7 @@ public:
 	ReentrantMutex();
 
 	/** @brief Destructor */
-	~ReentrantMutex();
+	virtual ~ReentrantMutex();
 
 		/**
 	 * @brief Lock the mutex. 

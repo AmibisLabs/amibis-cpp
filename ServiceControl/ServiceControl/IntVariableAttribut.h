@@ -34,6 +34,9 @@ class IntVariableAttribut{
    */
   IntVariableAttribut(VariableAttribut* va, int value);
 
+	// Virtual destructor always
+	virtual ~IntVariableAttribut();
+
   /** @brief Read access to the integer value
    * @return the integer value */
   int GetValue() const;

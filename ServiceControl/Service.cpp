@@ -6,6 +6,7 @@
 #include <Com/TcpUdpClientServer.h>
 #include <ServiceControl/WaitForDnsSdServices.h>
 #include <ServiceControl/ConnectorListener.h>
+#include <ServiceControl/ServiceFilter.h>
 
 using namespace Omiscid;
 
@@ -17,7 +18,7 @@ public:
 	OmiscidServiceSearchData();
 	~OmiscidServiceSearchData();
 
-	CascadeServiceFilters FilterList;
+	ServiceFilter * Filter;
 	unsigned int PeerId;
 	ServiceProxy * Proxy;
 };
@@ -34,13 +35,10 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 		return false;
 	}
 
-	for( MyData->FilterList.First(); MyData->FilterList.NotAtEnd(); MyData->FilterList.Next() )
+	if ( MyData->Filter->IsAGoodService( *Proxy ) == false )
 	{
-		if ( MyData->FilterList.GetCurrent()->IsAGoodService( *Proxy ) == false )
-		{
-			delete Proxy;
-			return false;
-		}
+		delete Proxy;
+		return false;
 	}
 
 	// Return the found service
@@ -52,7 +50,8 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 
 OmiscidServiceSearchData::OmiscidServiceSearchData()
 {
-	Proxy = NULL;
+	Proxy  = NULL;
+	Filter = NULL;
 	PeerId = 0;
 }
 
@@ -542,24 +541,119 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter, unsigned int WaitTim
 	// We want to be sure that we destroy data in the rigth order
 	// Let's do it by ourself
 	WaitForOmiscidServices * WFOS = new WaitForOmiscidServices;
+	if ( WFOS == NULL )
+	{
+		return NULL;
+	}
+
+	// Add serach information
 	OmiscidServiceSearchData MyData;
 
 	// Ok, I will ask for services
 	MyData.PeerId = GetServiceId();
-	MyData.FilterList.Add( Filter );
+	MyData.Filter = Filter;
 
 	// Ask to work on all service (we do not provide a name)
 	WFOS->NeedService( WaitForOmiscidServiceCallback, (void*)&MyData);
 	WFOS->WaitAll(WaitTime);
 
 	// Delete by ourself the object. Thus we are sure that
-	// we will find
+	// we will do it at the right time
 	delete WFOS;
 
+	// Delete the filter
+	delete Filter;
+
+	// If not found, return NULL
 	return MyData.Proxy;
 }
 
 ServiceProxy * Service::FindService(ServiceFilter& Filter, unsigned int WaitTime)
 {
 	return FindService(Filter.Duplicate());
+}
+
+SimpleList<ServiceProxy *>* Service::FindServices(SimpleList<ServiceFilter *>& Filters, unsigned int WaitTime )
+{
+	int i;
+
+	if ( Filters.GetNumberOfElements() == 0 )
+	{
+		return NULL;
+	}
+
+	// We want to be sure that we destroy data in the rigth order
+	// Let's do it by ourself
+	WaitForOmiscidServices *    WFOS = new WaitForOmiscidServices;
+	OmiscidServiceSearchData  * MyData;
+
+	if ( WFOS == NULL )
+	{
+		return NULL;
+	}
+
+	for( Filters.First(); Filters.NotAtEnd(); Filters.Next() )
+	{
+		MyData = new OmiscidServiceSearchData;
+		if ( MyData == NULL )
+		{
+			// delete WaitForOmiscidServices object
+			delete WFOS;
+
+			// delete all filters
+			for( Filters.First(); Filters.NotAtEnd(); Filters.Next() )
+			{
+				// delete the current filter
+				delete Filters.GetCurrent();
+				// Remove it from the list
+				Filters.RemoveCurrent();
+			}
+			// Problem, return nothing
+			return NULL;
+		}
+
+		// Ok, I will ask for services
+		MyData->PeerId = GetServiceId();
+		MyData->Filter = Filters.GetCurrent();
+
+		// Ask to work on all service (we do not provide a name)
+		WFOS->NeedService( WaitForOmiscidServiceCallback, (void*)MyData);
+	}
+
+	// The final result
+	SimpleList<ServiceProxy *>* ResultServicesProxy = NULL;
+
+	// Let's serach for the services
+	bool ret = WFOS->WaitAll(WaitTime);
+
+	if ( ret == true && (ResultServicesProxy = new SimpleList<ServiceProxy *>) != NULL )
+	{
+		// We found what we need and we manadge to construct a list
+		// Add the resulting proxy to the list
+		for( i = 0; i < WFOS->GetNbOfSearchedServices(); i++ )
+		{
+			ResultServicesProxy->Add( (static_cast<OmiscidServiceSearchData*>(WFOS->operator [](i).UserData))->Proxy );
+		}
+	}
+
+	// delete search object
+	delete WFOS;
+
+	// Delete all OmiscidServiceSearchData used
+	for( i = 0; i < WFOS->GetNbOfSearchedServices(); i++ )
+	{
+		// delete the current i-th OmiscidServiceSearchData
+		delete static_cast<OmiscidServiceSearchData*>(WFOS->operator [](i).UserData);
+	}
+
+	// Delete all filters
+	for( Filters.First(); Filters.NotAtEnd(); Filters.Next() )
+	{
+		// delete the current filter
+		delete Filters.GetCurrent();
+		// Remove it from the list
+		Filters.RemoveCurrent();
+	}
+
+	return ResultServicesProxy;
 }

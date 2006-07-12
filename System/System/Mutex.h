@@ -25,42 +25,9 @@ public:
 	/** @brief Constructor */
 	Mutex();
 	/** @brief Destructor */
-	~Mutex();
+	virtual ~Mutex();
 
 	/**
-	 * @brief Lock the mutex. 
-	 *
-	 * Wait if the mutex is already locked, until it is unlocked, and then locks the mutex
-	 * @return false if an error occured
-	 */
-	bool EnterMutex();
-	
-	/**
-	 * @brief Unlock the mutex
-	 *
-	 * Enables other clients to use the critical section protected by this mutex.
-	 */
-	bool LeaveMutex();
-	
-private:
-#ifdef WIN32
-	HANDLE mutex;
-	DWORD OwnerId;
-#else
-	pthread_mutex_t mutex; /*!< Posix Mutex*/
-#endif /* WIN32 */
-};
-
-class ReentrantMutex
-{
-public:
-	/** @brief Constructor */
-	ReentrantMutex();
-
-	/** @brief Destructor */
-	~ReentrantMutex();
-
-		/**
 	 * @brief Lock the mutex. 
 	 *
 	 * Wait if the mutex is already locked, until it is unlocked, and then locks the mutex

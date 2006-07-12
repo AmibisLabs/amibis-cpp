@@ -23,6 +23,7 @@
 	#pragma warning(disable : 4996)
 
 	#ifdef USE_AFX
+		#define  WINVER 0x0501
 		#include "StdAfx.h"
 	#else
 		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
@@ -174,7 +175,10 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+// #include <System/TrackingMemoryLeaks.h>
+
 namespace Omiscid {
+
 
 // Almost ugly for the moment
 #ifdef OMISCID_TRACE_ENABLE

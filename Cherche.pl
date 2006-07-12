@@ -33,7 +33,7 @@ sub WorkOnFile()
 		{
 			$NumLine++;
 			# if ( $CurrentLine =~ /char\s*\*/ || $CurrentLine =~ /char\s*\w+(\s)?\[/)
-			if ( $CurrentLine =~ /SimpleString\s*\&/)
+			if ( $CurrentLine =~ /\~.[^\{]+{\}/)
 			{
 				$CurrentLine =~  s/[\r\n]+$//;
 				print "$FileName [$NumLine]: $CurrentLine\n";

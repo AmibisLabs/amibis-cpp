@@ -48,7 +48,7 @@ public:
    * Close the socket by calling Close.
    * @see Close
    */
-  ~Socket();
+  virtual ~Socket();
 
   /**
    * @brief Define the socket descriptor, and retrieve data about this to set the socket type.
