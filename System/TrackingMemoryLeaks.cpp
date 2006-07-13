@@ -32,9 +32,9 @@ class MemoryBlockInfos
 {
 public:
 	void*	address;
-	unsigned int	size;
+	size_t	size;
 	char	file[128];
-	int	line;
+	int		line;
 };
 
 typedef list<MemoryBlockInfos*> AllocList;
@@ -50,7 +50,7 @@ void StopTrackingMemoryLeaks()
 	Tracking = false;
 }
 
-void AddTrack(void* addr,  unsigned int asize,  const char *fname, int lnum)
+void AddTrack(void* addr,  size_t asize,  const char *fname, int lnum)
 {
 	MemoryBlockInfos *info;
 
@@ -105,7 +105,7 @@ void DumpUnfreed()
 
 		void * tmpv = (*i)->address;
 		char * tmpc = (char*)tmpv;
-		int taille = (*i)->size;
+		int taille = (int)(*i)->size;
 		for( int j = 0; j < taille && j < 20; j++)
 		{
 			sprintf(buf, "%c", tmpc[j] );
@@ -114,7 +114,7 @@ void DumpUnfreed()
 		sprintf(buf, "\n" );
 		OutputDebugString(buf);
 
-		totalSize += (*i)->size;
+		totalSize += (unsigned int)taille;
 	}
 	sprintf(buf, "-----------------------------------------------------------\n");
 	OutputDebugString(buf);
