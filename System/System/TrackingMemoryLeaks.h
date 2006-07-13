@@ -5,6 +5,14 @@
 void StartTrackingMemoryLeaks();
 void StopTrackingMemoryLeaks();
 
+// Only for non Windows plateforme
+#if defined WIN32 || defined _WIN32
+	#define OperatorCallConvention __cdecl 
+#else
+	#define OperatorCallConvention
+#endif
+
+
 // Only in debug mode
 #ifdef DEBUG
 
@@ -13,14 +21,14 @@ void StopTrackingMemoryLeaks();
 	void AddTrack(void* addr,  unsigned int asize,  const char *fname, int lnum);
 	void RemoveTrack(void* addr);
 
-	inline void * __cdecl operator new(unsigned int size, const char *file, int line )
+	inline void * OperatorCallConvention operator new(unsigned int size, const char *file, int line )
 	{
 		void *ptr = (void *)malloc(size);
 		AddTrack(ptr, size, file, line);
 		return(ptr);
 	};
 
-	inline void __cdecl operator delete(void *p)
+	inline void OperatorCallConvention operator delete(void *p)
 	{
 		RemoveTrack(p);
 		free(p);

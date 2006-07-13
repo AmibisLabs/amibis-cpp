@@ -154,6 +154,10 @@ public:
 	/** \brief  Empty (so empty) the whole list */
 	void Empty();
 
+#ifdef DEBUG
+	bool IsLocked; /*!< for debugging purpose of MutexedSimpleList */
+#endif
+
  protected:
 	/** \brief Obtain a new SimpleListElement object 
 	 *
@@ -175,10 +179,6 @@ public:
 	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
 	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
 
-#ifdef DEBUG
-protected:
-	bool IsLocked; /*!< for debugging purpose of MutexedSimpleList */
-#endif
 };
 
 template <typename TYPE>

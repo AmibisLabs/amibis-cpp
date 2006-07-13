@@ -1,6 +1,8 @@
 #ifndef __SYSTEM_CONFIG_H__
 #define __SYSTEM_CONFIG_H__
 
+#define DEBUG
+
 /** 
  * @defgroup System Omiscid multiplateform System layer. 
  *

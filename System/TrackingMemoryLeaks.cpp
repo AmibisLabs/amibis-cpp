@@ -9,7 +9,7 @@
 	#include <windows.h>
 	#include <winbase.h>
 #else
-	inline OutputDebugString(const char * OutputString)
+	inline void OutputDebugString(const char * OutputString)
 	{
 		if ( OutputString )
 		{
