@@ -195,7 +195,7 @@ template <typename TYPE>
 SimpleList<TYPE>::SimpleList()
 {
 #ifdef DEBUG
-	SetLock(true); // SimpleList can not be locked, the boolean must be always true
+	SimpleList<TYPE>::SetLock(true); // SimpleList can not be locked, the boolean must be always true
 #endif
 
 	// There is nothing in the list
@@ -561,13 +561,17 @@ public:
 #ifdef DEBUG
 	MutexedSimpleList()
 	{
-		SetLock(false); // MutexedSimpleList is not lock
+		SimpleList<TYPE>::SetLock(false); // MutexedSimpleList is not lock
 	}
 
 	virtual ~MutexedSimpleList()
 	{
-		SetLock(true); // MutexedSimpleList is not lock anymore,
+		SimpleList<TYPE>::SetLock(true); // MutexedSimpleList is not lock anymore,
 		// All operation will be permitted to destroy the list
+	}
+#else
+	virtual ~MutexedSimpleList()
+	{
 	}
 #endif
 
@@ -595,7 +599,7 @@ bool MutexedSimpleList<TYPE>::Lock()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// we ask the lock ?
-	SetLock(true);
+	SimpleList<TYPE>::SetLock(true);
 #endif
 
 	return mutex.EnterMutex();
@@ -607,7 +611,7 @@ bool MutexedSimpleList<TYPE>::Unlock()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// we ask the lock ?
-	SetLock(false);
+	SimpleList<TYPE>::SetLock(false);
 #endif
 
 	return mutex.LeaveMutex();
