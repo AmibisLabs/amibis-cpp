@@ -27,7 +27,7 @@ public:
 
 int main(int argc, char * argv[])
 {
-	StartTrackingMemoryLeaks();
+	StartTrackingMemoryLeaks(); 
 
 	TestListener TL;
 
@@ -39,9 +39,7 @@ int main(int argc, char * argv[])
 	// MySearch.Add( NameIs("Clock Server") );
 	// MySearch.Add( NameIs("Clock Server") );
 
-	SimpleString Name("Clock Server");
-
-	ServiceProxy * ClockServer = MyService->FindService( NameIs(Name), 3000 );
+	ServiceProxy * ClockServer = MyService->FindService( NameIs("Clock Server"), 3000 );
 
 	if ( ClockServer == NULL )
 	{
