@@ -1,8 +1,7 @@
-//      -*- C++ -*-
-
-/*! @file 
+/* @file 
+ * @ingroup ServiceControl
  * @brief Header of the common classes and values for the OMiSCID service package
- * @date 2004-2005
+ * @date 2004-2006
  */
 
 #ifndef __CONTROL_CLIENT_H__
@@ -294,6 +293,7 @@ private:
 
   unsigned int id; /*!< query id */
 
+protected:
   /** \name List of name */
   //@{
   SimpleList<SimpleString> listVariableName; /*!< list of variable name */
@@ -310,6 +310,7 @@ private:
   SimpleList<InOutputAttribut*> listInOutputAttr; /*!< list of inoutput attribute*/
   //@}
 
+private:
   XMLMessage* xmlAnswer; /*! pointer on a answer to a query */
   Event answerEvent; /*!< event use to signal a new */
   

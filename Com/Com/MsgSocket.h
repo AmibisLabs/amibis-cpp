@@ -1,9 +1,10 @@
-//      -*- C++ -*-
 /**
  * @file MsgSocket.h
+ * @ingroup Com
  * @brief Definition of MsgSocket class, MsgSocketCallBackData class,
  * UdpConnection class
  */
+
 #ifndef __MSG_SOCKET_H__
 #define __MSG_SOCKET_H__
 

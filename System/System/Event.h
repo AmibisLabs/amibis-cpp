@@ -1,5 +1,6 @@
 /**
  * @file Event.h
+ * @ingroup System
  * @brief Definition of Event class
  */
 #ifndef __EVENT_H__

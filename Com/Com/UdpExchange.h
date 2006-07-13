@@ -1,6 +1,6 @@
-//      -*- C++ -*-
 /**
  * @file UdpExchange.h
+ * @ingroup Com
  * @brief Definition of UdpExchange class
  */
 

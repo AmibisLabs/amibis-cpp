@@ -1,8 +1,10 @@
-//      -*- C++ -*-
 /**
  * @file Message.h
+ * @ingroup Com
+ * @ingroup UserFriendly
  * @brief Definition of Message class
  */
+
 #ifndef __MESSAGE_H__
 #define __MESSAGE_H__
 

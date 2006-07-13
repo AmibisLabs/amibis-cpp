@@ -1,4 +1,9 @@
-
+/* @file LocalVariableListener.h
+ * @ingroup ServiceControl
+ * @ingroup UserFriendly
+ * @brief Class definition for variable listenning (in a service)
+ * @date 2004-2006
+ */
 
 #ifndef __LOCAL_VARIABLE_LISTENER_H__
 #define __LOCAL_VARIABLE_LISTENER_H__

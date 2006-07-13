@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file MsgManager.h
+ * @ingroup Com
  * @brief Definition of MsgManager class
  */
+
 #ifndef __MSG_MANAGER_H__
 #define __MSG_MANAGER_H__
 

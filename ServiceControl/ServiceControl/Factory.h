@@ -1,4 +1,7 @@
-
+/** 
+ * @defgroup UserFriendly User friendly high-level API for Omiscid
+ *
+ */
 
 #ifndef __FACTORY_H__
 #define __FACTORY_H__
@@ -9,11 +12,6 @@
 #include <ServiceControl/Service.h>
 
 namespace Omiscid {
-
-/** 
- * @defgroup UserFriendly User friendly API for Omiscid Service Control 
- *
- */
 
 /**
  * @class Factory Factory.cpp ServiceControl/Factory.h

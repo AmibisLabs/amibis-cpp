@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file TcpServer.h
+ * @ingroup Com
  * @brief Definition of TcpServer class
  */
+
 #ifndef __TCP_SERVER_H__
 #define __TCP_SERVER_H__
 

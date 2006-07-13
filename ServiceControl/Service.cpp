@@ -224,7 +224,7 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 	* @param accessType the access type of the variable
 	* name has already been declated
 	*/
-bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString VarDescription, VariableAccess AccessType)
+bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString VarDescription, VariableAccessType AccessType)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar != NULL )
@@ -336,7 +336,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	 * @throws UnknownBipVariable thrown if the variable has not been decladed
 	 * @see BipService#addVariable
 	 */
-SimpleString Service::GetVariableAccessType(SimpleString VarName)
+SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 {
 	SimpleString Empty(SimpleString::EmptyString);
 

@@ -1,4 +1,9 @@
-
+/* @file Service.h
+ * @ingroup ServiceControl
+ * @ingroup UserFriendly
+ * @brief Definition of class Service. Used for creating/use services
+ * @date 2004-2006
+ */
 
 #ifndef __SERVICE_H__
 #define __SERVICE_H__
@@ -99,7 +104,7 @@ public:
 	 * @param accessType the access type of the variable
 	 * name has already been declated
 	 */
-	bool AddVariable(SimpleString VarName, SimpleString type, SimpleString VarDescription, VariableAccess AccessType);
+	bool AddVariable(SimpleString VarName, SimpleString type, SimpleString VarDescription, VariableAccessType AccessType);
 
 	/**
 	 * Change a description to an existing variable
@@ -143,7 +148,7 @@ public:
 	 * @throws UnknownBipVariable thrown if the variable has not been decladed
 	 * @see BipService#addVariable
 	 */
-	SimpleString GetVariableAccessType(SimpleString VarName);
+	SimpleString GetVariableAccessTypeType(SimpleString VarName);
 
 	/**
 	 * Returns the string version of the variable type

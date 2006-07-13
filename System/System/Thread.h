@@ -1,6 +1,6 @@
-//      -*- C++ -*-
 /**
  * @file Thread.h
+ * @ingroup System
  * @brief interface for the Thread class.
  */
 

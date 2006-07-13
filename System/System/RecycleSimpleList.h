@@ -1,7 +1,9 @@
 /**
  * @file RecycleSimpleList.h
+ * @ingroup System
  * @brief Definition of SimpleRecycleList class and MutexedSimpleRecycleList class
  */
+
 #ifndef __RECYCLE_SIMPLE_LIST_H__
 #define __RECYCLE_SIMPLE_LIST_H__
 

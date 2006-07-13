@@ -1,5 +1,6 @@
 /**
  * @file AtomicCounter.h
+ * @ingroup System
  * @brief Definition of AtomicCounter class
  */
 

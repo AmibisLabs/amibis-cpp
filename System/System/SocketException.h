@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file SocketException.h
+ * @ingroup System
  * @brief Definition of SocketException class
  */
+
 #ifndef __SOCKET_EXCEPTION_H__ 
 #define __SOCKET_EXCEPTION_H__ 
 

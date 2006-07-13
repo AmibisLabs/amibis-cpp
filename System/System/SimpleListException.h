@@ -1,5 +1,6 @@
 /**
  * @file SimpleListException.h
+ * @ingroup System
  * @brief Definition of SimpleListException class
  */
 

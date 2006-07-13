@@ -1,4 +1,9 @@
-
+/* @file ConnectorListener.h
+ * @ingroup ServiceControl
+ * @ingroup UserFriendly
+ * @brief Class definition for connector listenning
+ * @date 2004-2006
+ */
 
 #ifndef __CONNECTOR_LISTENER_H__
 #define __CONNECTOR_LISTENER_H__

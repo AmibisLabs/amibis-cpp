@@ -1,3 +1,15 @@
+/** 
+ * @defgroup Com Omiscid multiplateform Communication layer. 
+ *
+ */
+
+/** 
+ * @file Com/Config.h
+ * @ingroup Com
+ * @brief this file is the first file included in the Communication layer.
+ * it defines all mandatory includes. it include 'System/Config.h'.
+ */
+
 #ifndef __COM_CONFIG_H__
 #define __COM_CONFIG_H__
 

@@ -23,7 +23,7 @@ VariableAttribut::VariableAttribut(const SimpleString a_name)
 	access = ReadAccess; 
 }
 
-const SimpleString& VariableAttribut::AccessToStr(VariableAccess a)
+const SimpleString& VariableAttribut::AccessToStr(VariableAccessType a)
 {
 	if(a == ConstantAccess) return access_constant_str;
 	if(a == ReadAccess) return access_read_str;
@@ -177,7 +177,7 @@ void VariableAttribut::SetType(const SimpleString t)
 	type = t; 
 }
 
-void VariableAttribut::SetAccess(VariableAccess a)
+void VariableAttribut::SetAccess(VariableAccessType a)
 {
 	access = a;
 }
@@ -212,7 +212,7 @@ SimpleString& VariableAttribut::GetType()
 	return type; 
 }
 
-VariableAccess VariableAttribut::GetAccess() 
+VariableAccessType VariableAttribut::GetAccess() 
 {
 	return access; 
 }

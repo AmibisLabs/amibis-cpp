@@ -1,5 +1,6 @@
 /**
  * @file Mutex.h
+ * @ingroup System
  * @brief Definition of Mutex class
  */
 

@@ -1,5 +1,6 @@
 /**
  * @file ReentrantMutex.h
+ * @ingroup System
  * @brief Definition of ReentrantMutex class
  */
 

@@ -235,6 +235,31 @@ bool ServiceProxy::HasConnector( const SimpleString ConnectorName, ConnectorKind
      */
 SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 {
+	// Serach for the connector
+	for( listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next() )
+	{
+		if ( listInputAttr.GetCurrent()->GetPeerId() == PeerId )
+		{
+			return listInputAttr.GetCurrent()->GetName();
+		}
+	}
+
+	for( listOutputAttr.First(); listOutputAttr.NotAtEnd(); listOutputAttr.Next() )
+	{
+		if ( listOutputAttr.GetCurrent()->GetPeerId() == PeerId )
+		{
+			return listOutputAttr.GetCurrent()->GetName();
+		}
+	}
+
+	for( listInOutputAttr.First(); listInOutputAttr.NotAtEnd(); listInOutputAttr.Next() )
+	{
+		if ( listInOutputAttr.GetCurrent()->GetPeerId() == PeerId )
+		{
+			return listInOutputAttr.GetCurrent()->GetName();
+		}
+	}
+
 	return SimpleString::EmptyString;
 }
 

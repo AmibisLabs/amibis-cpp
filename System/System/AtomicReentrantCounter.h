@@ -1,6 +1,7 @@
 /**
- * @file Counter.h
- * @brief Definition of Mutexed Counter class
+ * @file AtomicReentrantCounter.h
+ * @ingroup System
+ * @brief Definition of Mutexed Counter class using reentrant mutex
  */
 
 #ifndef __ATOMIC_REENTRANT_COUNTER_H__

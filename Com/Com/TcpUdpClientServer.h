@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file TcpUdpClientServer.h
+ * @ingroup Com
  * @brief Definition of TcpUdpClientServer class, ClientConnection class
  */
+
 #ifndef __TCP_UDP_CLIENT_SERVER_H__
 #define __TCP_UDP_CLIENT_SERVER_H__
 

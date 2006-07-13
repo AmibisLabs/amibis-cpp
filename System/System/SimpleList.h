@@ -1,5 +1,7 @@
 /**
  * @file SimpleList.h
+ * @ingroup System
+ * @ingroup UserFriendly
  * @brief Definition of SimpleListElement class, 
  * SimpleList class and MutexedSimpleList class.
  */

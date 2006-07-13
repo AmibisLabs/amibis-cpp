@@ -1,8 +1,7 @@
-//      -*- C++ -*-
-
-/*! @file IntVariableAttribut.h
- * @brief Header of the common classes and values for the OMiSCID service package
- * @date 2004-2005
+/* @file IntVariableAttribut.h
+ * @ingroup ServiceControl
+ * @brief Header of the string manupulation abstraction for variables
+ * @date 2004-2006
  */
 
 #ifndef __STRING_VARIABLE_ATTRIBUT_H__

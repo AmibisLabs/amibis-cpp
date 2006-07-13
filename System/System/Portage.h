@@ -1,3 +1,9 @@
+/**
+ * @file Portage.h
+ * @ingroup System
+ * @brief Definition of portable functions for multiplateforme purpose
+ */
+
 #ifndef __PORTAGE_H__
 #define __PORTAGE_H__
 

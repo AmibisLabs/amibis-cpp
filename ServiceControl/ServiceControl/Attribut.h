@@ -1,8 +1,7 @@
-//      -*- C++ -*-
-
-/*! @file Attribut.h
+/* @file Attribut.h
+ * @ingroup ServiceControl
  * @brief Header of the common classes and values for the OMiSCID service package
- * @date 2004-2005
+ * @date 2004-2006
  */
 
 #ifndef __ATTRIBUT_H__

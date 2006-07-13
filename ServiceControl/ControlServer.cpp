@@ -233,7 +233,7 @@ bool ControlServer::StartServer()
 			// Add Constant variable
 			for( listVariable.First(); TxtRecordIsFull != true && listVariable.NotAtEnd(); listVariable.Next() )
 			{
-				VariableAccess VarAccess = listVariable.GetCurrent()->GetAccess();
+				VariableAccessType VarAccess = listVariable.GetCurrent()->GetAccess();
 				switch( VarAccess )
 				{
 					case ReadAccess:

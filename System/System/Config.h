@@ -1,12 +1,16 @@
-#ifndef __SYSTEM_CONFIG_H__
-#define __SYSTEM_CONFIG_H__
-
-#define DEBUG
-
 /** 
  * @defgroup System Omiscid multiplateform System layer. 
  *
  */
+
+/** 
+ * @file System/Config.h
+ * @ingroup System
+ * @brief this file is the first file included in the System layer. it defines all mandatory includes.
+ */
+
+#ifndef __SYSTEM_CONFIG_H__
+#define __SYSTEM_CONFIG_H__
 
 /*! @def WIN32
  *	@ingroup System

@@ -1,4 +1,11 @@
-
+/* @file
+ * @ingroup ServiceControl
+ * @ingroup UserFriendly
+ * @brief Defines ServiceProxy class in order to interact/query properties of other services
+ * @author Dominique Vaufreydaz
+ * @version 1.0
+ * @date    2004-2006
+ */
 
 #ifndef __SERVICE_PROXY_H__
 #define __SERVICE_PROXY_H__
@@ -95,6 +102,13 @@ public:
      * @param value the value (SimpleString format)
      */
     bool GetVariableValue(const SimpleString VarName, SimpleString& value);
+
+	/**
+     * Gets the value of a remote variable
+     * @param VarName the name of the remote variable
+     * @param value the value (SimpleString format)
+     */
+    VariableAccessType GetVariableAccessTypeType(const SimpleString VarName);
 
 	/**
      * Add a listener to monitor variable changes

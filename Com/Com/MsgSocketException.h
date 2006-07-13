@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file MsgSocketException.h
+ * @ingroup Com
  * @brief Definition of MsgSocketException class
  */
+
 #ifndef __MSG_SOCKET_EXCEPTION_H__
 #define __MSG_SOCKET_EXCEPTION_H__ 
 

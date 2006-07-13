@@ -1,7 +1,10 @@
 /**
  * @file SimpleString.h
+ * @ingroup System
+ * @ingroup UserFriendly
  * @brief Definition of SimpleString class
  */
+
 #ifndef __SIMPLE_STRING_H__
 #define __SIMPLE_STRING_H__
 

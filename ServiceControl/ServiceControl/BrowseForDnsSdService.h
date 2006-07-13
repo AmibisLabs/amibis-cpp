@@ -1,10 +1,11 @@
-/*! \file
- *  \brief Header of the common classes and values for the OMiSCID service package
- *  \author Dominique Vaufreydaz
- *  \author Special thanks to Sébastien Pesnel for debugging and testing
- *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
- *  \version 1.0
- *  \date    2004-2005
+/* @file
+ * @brief Header of the common classes and values for the OMiSCID service package
+ * @ingroup ServiceControl
+ * @author Dominique Vaufreydaz
+ * @author Special thanks to Sébastien Pesnel for debugging and testing
+ * @author Special thanks to Julien Letessier for his kind help about DNS-SD
+ * @version 1.0
+ * @date    2004-2006
  */
 
 #ifndef __BROWSE_FOR_DNS_SD_SERVICE_H__

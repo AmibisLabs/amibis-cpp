@@ -1,4 +1,9 @@
-
+/* @file LocalVariableListener.h
+ * @ingroup ServiceControl
+ * @ingroup UserFriendly
+ * @brief Class definition for variable listenning (in a remote way using ServiceProxy#)
+ * @date 2004-2006
+ */
 
 #ifndef __REMOTE_VARIABLE_CHANGE_LISTENER_H__
 #define __REMOTE_VARIABLE_CHANGE_LISTENER_H__

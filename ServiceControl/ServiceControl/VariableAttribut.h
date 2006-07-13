@@ -1,8 +1,7 @@
-//      -*- C++ -*-
-
-/*! @file VariableAttribut.h
- * @brief Header of the common classes and values for the OMiSCID service package
- * @date 2004-2005
+/* @file VariableAttribut.h
+ * @ingroup ServiceControl
+ * @brief Header of the internal variable attribut classes
+ * @date 2004-2006
  */
 
 #ifndef __VARIABLE_ATTRIBUT_H__
@@ -58,7 +57,7 @@ public:
   SimpleString& GetType();
   SimpleString& GetValue();
   SimpleString& GetDefaultValue();
-  VariableAccess GetAccess();
+  VariableAccessType GetAccess();
   //@}
 
 
@@ -67,7 +66,7 @@ public:
   void SetType(const SimpleString str);
   void SetDefaultValue(const SimpleString str);
 
-  void SetAccess(VariableAccess);
+  void SetAccess(VariableAccessType);
   void SetAccessConstant();
   void SetAccessRead();
   void SetAccessReadWrite();
@@ -94,7 +93,7 @@ public:
    * @param accesskind [in] access kind that we want to change in SimpleString
    * @return the associated SimpleString
    */
-  static const SimpleString& AccessToStr(VariableAccess accesskind);
+  static const SimpleString& AccessToStr(VariableAccessType accesskind);
 
   /** @name XML Generation */
   //@{
@@ -168,7 +167,7 @@ public:
 protected:
   SimpleString type; /*!< type of the variable */
   SimpleString defaultValue; /*!< default value*/
-  VariableAccess access; /*!< kind of access.*/
+  VariableAccessType access; /*!< kind of access.*/
   SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
 
   static const SimpleString VariableAttribut::access_constant_str; /*<! SimpleString representation for 'constant' access (used in XML description)*/

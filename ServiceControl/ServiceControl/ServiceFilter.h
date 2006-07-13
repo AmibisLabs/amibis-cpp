@@ -1,3 +1,9 @@
+/* @file ServiceFilter.h
+ * @ingroup ServiceControl
+ * @ingroup UserFriendly
+ * @brief Definition of Service Filter classes. Used when seraching services
+ * @date 2004-2006
+ */
 
 #ifndef __SERVICE_FILTER_H__
 #define __SERVICE_FILTER_H__

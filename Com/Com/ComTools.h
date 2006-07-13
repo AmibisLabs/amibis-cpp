@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file ComTools.h
- * @brief Definition of ComTools class
+ * @ingroup Com
+ * @brief Definition of ComTools class which contains common declarations
  */
+
 #ifndef __COM_TOOLS_H__
 #define __COM_TOOLS_H__
 

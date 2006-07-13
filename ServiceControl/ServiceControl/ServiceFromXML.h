@@ -1,3 +1,9 @@
+/* @file ServiceFromXML.h
+ * @ingroup ServiceControl
+ * @brief Create a service using its XML description. Not implemented yet.
+ * @date 2004-2006
+ */
+
 #ifndef __SERVICE_FROM_XML_H__
 #define __SERVICE_FROM_XML_H__
 

@@ -1,8 +1,8 @@
-//      -*- C++ -*-
-
-/*! @file InOutputAttribut.h
+/* @file InOutputAttribut.h
+ * @ingroup ServiceControl
+ * @ingroup UserFriendly
  * @brief Header of the common classes and values for the OMiSCID service package
- * @date 2004-2005
+ * @date 2004-2006
  */
 
 #ifndef __IN_OUTPUT_ATTRIBUT_H__
@@ -111,7 +111,7 @@ public:
   ConnectorKind kindOfInput; /*!< 0 if input, 1 of output, 2 if input/output*/
 
   ComTools* comTool; /*!< the pointer on the tool of communication associated to this input or output object */
-unsigned int peerId; /*!< needed in case of distant usage, because we do not have a comtool */
+  unsigned int peerId; /*!< needed in case of distant usage, because we do not have a comtool */
 
   unsigned short tcpPort; /*!< port number for TCP */
   unsigned short udpPort; /*!< port number for UDP */

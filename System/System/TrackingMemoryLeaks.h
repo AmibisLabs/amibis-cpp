@@ -1,6 +1,11 @@
+/**
+ * @file TrackingMemoryLeaks.h
+ * @ingroup System
+ * @brief A way to discover memory leaks in Omiscid code.
+ */
+
 #ifndef __TRACKING_MEMORY_LEAKS_H__
 #define __TRACKING_MEMORY_LEAKS_H__
-
 
 void StartTrackingMemoryLeaks();
 void StopTrackingMemoryLeaks();

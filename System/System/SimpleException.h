@@ -1,7 +1,9 @@
 /**
  * @file SimpleException.h
- * @brief Definition of SimpleException class
+ * @ingroup System
+ * @brief Definition of SimpleException class. This clas is the mother class of all Omiscid exceptions.
  */
+
 #ifndef __SIMPLE_EXCEPTION_H__
 #define __SIMPLE_EXCEPTION_H__ 
 

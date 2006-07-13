@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file TcpClient.h
+ * @ingroup Com
  * @brief Definition of TcpClient class
  */
+
 #ifndef __TCP_CLIENT_H__
 #define __TCP_CLIENT_H__
 

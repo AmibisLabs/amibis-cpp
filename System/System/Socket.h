@@ -1,8 +1,9 @@
-//      -*- C++ -*-
 /**
  * @file Socket.h
+ * @ingroup System
  * @brief Definition of Socket class
  */
+
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
 

@@ -4,7 +4,7 @@
  *  \author Special thanks to Sébastien Pesnel for debugging and testing
  *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
  *  \version 1.0
- *  \date    2004-2005
+ *  \date    2004-2006
  */
 
 #include <ServiceControl/WaitForDnsSdServices.h>
