@@ -3,7 +3,7 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = O3MiSCID
+PROJECT_NAME           = OMiSCID (aka O3MiSCID)
 PROJECT_NUMBER         = 1.0
 OUTPUT_DIRECTORY       = Doc
 CREATE_SUBDIRS         = NO
@@ -82,19 +82,17 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 INPUT                  = ./System/System/Config.h \
                          ./System/System/SimpleString.h \
-                         ./System/SimpleString.cpp \
                          ./System/System/SimpleList.h \
                          ./ServiceControl/ServiceControl/Config.h \
                          ./Com/Com/Config.h \
                          ./ServiceControl/ServiceControl/Config.h \
-                         ./ServiceControl/ServiceControl/Service.h \
-                         ./ServiceControl/Service.cpp \
+                         ./ServiceControl/ServiceControl/ConnectorListener.h \
                          ./ServiceControl/ServiceControl/Factory.h \
-                         ./ServiceControl/Factory.cpp \
+                         ./ServiceControl/ServiceControl/LocalVariableListener.h \
+                         ./ServiceControl/ServiceControl/RemoteVariableChangeListener.h \
+                         ./ServiceControl/ServiceControl/Service.h \
                          ./ServiceControl/ServiceControl/ServiceProxy.h \
-                         ./ServiceControl/ServiceProxy.cpp \
-                         ./ServiceControl/ServiceControl/ServiceFilter.h \
-                         ./ServiceControl/ServiceFilter.cpp
+                         ./ServiceControl/ServiceControl/ServiceFilter.h
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 
