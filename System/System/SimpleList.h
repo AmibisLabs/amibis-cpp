@@ -154,9 +154,6 @@ public:
 	/** \brief  Empty (so empty) the whole list */
 	void Empty();
 
-#ifdef DEBUG
-	bool IsLocked; /*!< for debugging purpose of MutexedSimpleList */
-#endif
 
  protected:
 	/** \brief Obtain a new SimpleListElement object 
@@ -179,13 +176,26 @@ public:
 	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
 	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
 
+	// gcc do not work nicely with inheritance od template. Do it ugly for it :-(
+#ifdef DEBUG
+public:
+	// Change lock value
+	void SetLock(bool vSet);
+
+	// Retrive the locking stat
+	bool IsLocked() const;
+
+private:
+	bool AmILocked; /*!< for debugging purpose of MutexedSimpleList */
+#endif
+
 };
 
 template <typename TYPE>
 SimpleList<TYPE>::SimpleList()
 {
 #ifdef DEBUG
-	IsLocked = true; // SimpleList is not lock, the boolean is always true
+	SetLock(true); // SimpleList can not be locked, the boolean must be always true
 #endif
 
 	// There is nothing in the list
@@ -212,7 +222,7 @@ bool SimpleList<TYPE>::Add( const TYPE& Val )
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of Add on a non lock list.\n" );
 	}
@@ -259,7 +269,7 @@ void SimpleList<TYPE>::First()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of First on a non lock list.\n" );
 	}
@@ -277,7 +287,7 @@ bool SimpleList<TYPE>::Next()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of Next on a non lock list.\n" );
 	}
@@ -316,7 +326,7 @@ bool SimpleList<TYPE>::AtEnd() const
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of AtEnd on a non lock list.\n" );
 	}
@@ -336,7 +346,7 @@ bool SimpleList<TYPE>::NotAtEnd() const
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of NotAtEnd on a non lock list.\n" );
 	}
@@ -356,7 +366,7 @@ TYPE& SimpleList<TYPE>::GetCurrent() const
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of GetCurrent on a non lock list.\n" );
 	}
@@ -374,7 +384,7 @@ bool SimpleList<TYPE>::RemoveCurrent()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of RemoveCurrent on a non lock list.\n" );
 	}
@@ -436,7 +446,7 @@ bool SimpleList<TYPE>::Remove(const TYPE& Element)
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of Remove on a non lock list.\n" );
 	}
@@ -459,7 +469,7 @@ void SimpleList<TYPE>::Empty()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of Empty on a non lock list.\n" );
 	}
@@ -490,7 +500,7 @@ TYPE SimpleList<TYPE>::ExtractFirst()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// Do we get the lock ?
-	if ( IsLocked != true )
+	if ( IsLocked() != true )
 	{
 		TraceError( "Usage of ExtractFirst on a non lock list.\n" );
 	}
@@ -518,8 +528,23 @@ SimpleListElement<TYPE>*  SimpleList<TYPE>::GetNewSimpleListElement() const
 { return new SimpleListElement<TYPE>; }
 
 template <typename TYPE>
-void  SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
+void SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
 { delete elt; }
+
+#ifdef DEBUG
+template <typename TYPE>
+void SimpleList<TYPE>::SetLock(bool vSet)
+{
+	AmILocked = vSet;
+}
+
+template <typename TYPE>
+bool SimpleList<TYPE>::IsLocked() const
+{
+	return AmILocked;
+}
+#endif
+
 
 /**
  * @class MutexedSimpleList SimpleList.h System/SimpleList.h
@@ -536,12 +561,12 @@ public:
 #ifdef DEBUG
 	MutexedSimpleList()
 	{
-		IsLocked = false; // MutexedSimpleList is not lock, the boolean is always false
+		SetLock(false); // MutexedSimpleList is not lock
 	}
 
 	virtual ~MutexedSimpleList()
 	{
-		IsLocked = true; // MutexedSimpleList is not lock, the boolean is always false
+		SetLock(true); // MutexedSimpleList is not lock anymore,
 		// All operation will be permitted to destroy the list
 	}
 #endif
@@ -570,7 +595,7 @@ bool MutexedSimpleList<TYPE>::Lock()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// we ask the lock ?
-	IsLocked = true;
+	SetLock(true);
 #endif
 
 	return mutex.EnterMutex();
@@ -582,7 +607,7 @@ bool MutexedSimpleList<TYPE>::Unlock()
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
 	// we ask the lock ?
-	IsLocked = false;
+	SetLock(false);
 #endif
 
 	return mutex.LeaveMutex();
