@@ -1,10 +1,23 @@
+#if defined WIN32 || defined _WIN32
 #define _CRT_SECURE_NO_DEPRECATE
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <windows.h>
-#include <winbase.h>
+#if defined WIN32 || defined _WIN32
+	#include <windows.h>
+	#include <winbase.h>
+#else
+	inline OutputDebugString(const char * OutputString)
+	{
+		if ( OutputString )
+		{
+			fprintf( stderr, OutputString );
+		}
+	}
+#endif
+
 
 #include <System/TrackingMemoryLeaks.h>
 
@@ -15,7 +28,7 @@ using namespace std;
 
 static bool Tracking = false;
 
-class ALLOC_INFO
+class MemoryBlockInfos
 {
 public:
 	void*	address;
@@ -24,7 +37,7 @@ public:
 	int	line;
 };
 
-typedef list<ALLOC_INFO*> AllocList;
+typedef list<MemoryBlockInfos*> AllocList;
 AllocList *allocList;
 
 void StartTrackingMemoryLeaks()
@@ -39,7 +52,7 @@ void StopTrackingMemoryLeaks()
 
 void AddTrack(void* addr,  unsigned int asize,  const char *fname, int lnum)
 {
-	ALLOC_INFO *info;
+	MemoryBlockInfos *info;
 
 	if ( ! Tracking )
 	{
@@ -50,7 +63,7 @@ void AddTrack(void* addr,  unsigned int asize,  const char *fname, int lnum)
 	{
 		allocList = new(AllocList);
 	}
-	info = new(ALLOC_INFO);
+	info = new(MemoryBlockInfos);
 	info->address = addr;
 	strncpy(info->file, fname, 127);
 	info->line = lnum;
