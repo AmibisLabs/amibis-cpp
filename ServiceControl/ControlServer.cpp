@@ -189,6 +189,9 @@ bool ControlServer::StartServer()
 			}
 		}
 
+		// remove Name variable from TxtRecord list, when using DNS-SD, we've got the name
+		registerDnsSd->Properties.Undefine( "name" );
+
 		// Add inputs/outputs/inoutputs
 		if ( TxtRecordIsFull != true )
 		{
@@ -265,8 +268,8 @@ bool ControlServer::StartServer()
 		if( registerDnsSd->IsRegistered() )
 		{
 			TraceError( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
-			// serviceName = registerDnsSd->RegisteredName;
-			// NameVariable->SetValue( serviceName );
+			serviceName = registerDnsSd->RegisteredName;
+			NameVariable->SetValue( serviceName );
 			StartThreadProcessMsg();
 			return true;
 		}

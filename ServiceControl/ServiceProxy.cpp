@@ -80,11 +80,6 @@ SimpleString ServiceProxy::GetHostName()
 	return HostName;
 }
 
-unsigned int ServiceProxy::GetControlPort()
-{
-	return ControlPort;
-}
-
 SimpleString ServiceProxy::GetName()
 {
 	SimpleString ServiceName;
@@ -141,7 +136,7 @@ bool ServiceProxy::GetVariableValue(const SimpleString VarName, SimpleString& Va
      * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool ServiceProxy::AddVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener )
+bool ServiceProxy::AddRemoteVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener )
 {
 	// Serach the variable
 	VariableAttribut * pVar = FindVariable( VarName );
@@ -181,7 +176,7 @@ bool ServiceProxy::AddVariableChangeListener(const SimpleString VarName, RemoteV
      * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool ServiceProxy::RemoveVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener )
+bool ServiceProxy::RemoveRemoteVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener )
 {
 	bool ret;
 
@@ -219,9 +214,18 @@ bool ServiceProxy::RemoveVariableChangeListener(const SimpleString VarName, Remo
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */
-bool ServiceProxy::HasConnector(const SimpleString ConnectorName )
+bool ServiceProxy::HasConnector( const SimpleString ConnectorName, ConnectorKind ItsKind /* UnkownConnectorKind */ )
 {
-	return (FindConnector(ConnectorName) != NULL);
+	InOutputAttribut * pAtt = FindConnector(ConnectorName);
+	if ( pAtt == NULL )
+	{
+		return false;
+	}
+	if ( ItsKind != UnkownConnectorKind && pAtt->GetType() != ItsKind )
+	{
+		return false;
+	}
+	return true;
 }
 
 		/**
@@ -229,14 +233,9 @@ bool ServiceProxy::HasConnector(const SimpleString ConnectorName )
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */
-ConnectorKind ServiceProxy::GetConnectorKind(const SimpleString ConnectorName )
+SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 {
-	InOutputAttribut * pAtt = FindConnector(ConnectorName);
-	if ( pAtt == NULL )
-	{
-		return UnkownConnectorKind;
-	}
-	return pAtt->GetType();
+	return SimpleString::EmptyString;
 }
 
 bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection )

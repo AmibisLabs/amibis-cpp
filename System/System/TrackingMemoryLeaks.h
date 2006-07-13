@@ -5,16 +5,14 @@
 void StartTrackingMemoryLeaks();
 void StopTrackingMemoryLeaks();
 
-// Only for non Windows plateforme
-#if defined WIN32 || defined _WIN32
-	#define OperatorCallConvention __cdecl 
-#else
-	#define OperatorCallConvention
-#endif
-
-
 // Only in debug mode
 #ifdef DEBUG
+	// Only for non Windows plateforme
+	#if defined WIN32 || defined _WIN32
+		#define OperatorCallConvention __cdecl 
+	#else
+		#define OperatorCallConvention
+	#endif
 
 	#pragma warning(disable : 4291)
 

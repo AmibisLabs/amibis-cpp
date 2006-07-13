@@ -14,6 +14,7 @@
 namespace Omiscid {
 
 class RemoteVariableChangeListener;
+class Service;
 
 /**
  * @author 
@@ -21,6 +22,9 @@ class RemoteVariableChangeListener;
  */
 class ServiceProxy  : protected ControlClient
 {
+	// In order to access to GetConnectionInfos
+	friend class Service;
+
 public:
 	ServiceProxy( unsigned int PeerId, SimpleString eHostname, int eControlPort );
 
@@ -67,12 +71,6 @@ public:
 
 
     /**
-     * Retrieve the control port of this service
-     * @return the control port
-     */
-	unsigned int GetControlPort();
-
-    /**
      * The Peer Id of the remote Omiscid service
      * @return the peer id
      */
@@ -103,28 +101,28 @@ public:
      * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-    bool AddVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener );
+    bool AddRemoteVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener );
 
 	/**
      * Remove a listener to monitor variable changes
      * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-    bool RemoveVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener );
+    bool RemoveRemoteVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener );
 
 	/**
      * search for a connector on the remote Omiscid service
      * @param ConnectorName the name of the remote variable
      * @return true or false
      */
-    bool HasConnector(const SimpleString ConnectorName );
+    bool HasConnector(const SimpleString ConnectorName, ConnectorKind ItsKind = UnkownConnectorKind );
 
-		/**
-     * search for a connector on the remote Omiscid service
-     * @param ConnectorName the name of the remote variable
-     * @return UnknowKind if the connecotr do not exists, AnInput, AnOutput, AnInOutput otherwise
+	/**
+     * Find a connector using its full or local PeerId
      */
-    ConnectorKind GetConnectorKind(const SimpleString ConnectorName );
+	SimpleString FindConnector( unsigned int PeerId );
+
+private:
 
 	/**
      * Gets the connection points of a remote connector
@@ -132,7 +130,6 @@ public:
      */
 	bool GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection );
 
-private:
 	SimpleString HostName;
 	unsigned int ControlPort;
 

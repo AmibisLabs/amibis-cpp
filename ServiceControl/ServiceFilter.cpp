@@ -361,16 +361,9 @@ ServiceHasConnector::~ServiceHasConnector()
 
 bool ServiceHasConnector::IsAGoodService(ServiceProxy& SP)
 {
-	if ( SP.HasConnector( ConnectorName ) == false )
+	if ( SP.HasConnector( ConnectorName, ConnectorType ) == false )
 	{
 		return false;
-	}
-	if ( ConnectorType != UnkownConnectorKind )
-	{
-		if ( SP.GetConnectorKind( ConnectorName ) != ConnectorType )
-		{
-			return false;
-		}
 	}
 	return true;
 }

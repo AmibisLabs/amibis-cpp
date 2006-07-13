@@ -370,7 +370,7 @@ SimpleString Service::GetVariableType(SimpleString VarName)
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-bool Service::AddVariableListener(SimpleString VarName, LocalVariableListener * Listener)
+bool Service::AddLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -391,7 +391,7 @@ bool Service::AddVariableListener(SimpleString VarName, LocalVariableListener * 
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-bool Service::RemoveVariableListener(SimpleString VarName, LocalVariableListener * Listener)
+bool Service::RemoveLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )

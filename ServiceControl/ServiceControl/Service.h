@@ -59,9 +59,9 @@ public:
 	 * @param connectorName the name of the connector sending the message
 	 * @param Buffer the message to send
 	 * @param BufferLen the length of message to send
-	 * @param FastSend should Omiscid send data maybe faster but with possibly message lost
+	 * @param UnreliableButFastSend should Omiscid send data maybe faster but with possibly message lost
 	 */
-	bool SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool FastSend = false );
+	bool SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool UnreliableButFastSend = false );
 
 
 	/**
@@ -74,7 +74,15 @@ public:
 	 * @param BufferLen the length of message to send
 	 * @param PeerId : the identification of the client that must receive the message
 	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool FastSend = false );
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool UnreliableButFastSend = false );
+
+	/**
+	 * Sends a mesage to a particular client. This client is identified by BipServiceProxy because
+	 * we have been looking for it to create the connexion.
+	 * @param connectorName the name of the connector that will send the message
+	 * @param msg the message to send
+	 */
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool UnreliableButFastSend = false );
 
 	/**
 	 * Sends a message to a particular client. This client is identified by BipServiceProxy because
@@ -82,15 +90,7 @@ public:
 	 * @param connectorName the name of the connector that will send the message
 	 * @param msg the message to send
 	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool FastSend = false );
-
-	/**
-	 * Sends a message to a particular client. This client is identified by BipServiceProxy because
-	 * we have been looking for it to create the connexion.
-	 * @param connectorName the name of the connector that will send the message
-	 * @param msg the message to send
-	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy * ServProxy, bool FastSend = false );
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy * ServProxy, bool UnreliableButFastSend = false );
 
 	/**
 	 * Creates a new Omiscid Variable
@@ -197,7 +197,7 @@ public:
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-	bool AddVariableListener(SimpleString VarName, LocalVariableListener * Listener);
+	bool AddLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener);
 
 	/**
 	 * remove a listener that was triggering at every variable change
@@ -205,7 +205,7 @@ public:
 	 * @param listener the listener
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
-	bool RemoveVariableListener(SimpleString VarName, LocalVariableListener * Listener);
+	bool RemoveLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener);
 
 	/**
      * Finds a service on the network. The research is based on the service filter
