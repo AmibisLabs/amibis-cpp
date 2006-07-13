@@ -26,6 +26,13 @@ void StopTrackingMemoryLeaks();
 		return(ptr);
 	};
 
+	inline void * OperatorCallConvention operator new[](unsigned int size, const char *file, int line )
+	{
+		void *ptr = (void *)malloc(size);
+		AddTrack(ptr, size, file, line);
+		return(ptr);
+	};
+
 	inline void OperatorCallConvention operator delete(void *p)
 	{
 		RemoveTrack(p);
