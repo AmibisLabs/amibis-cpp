@@ -10,29 +10,35 @@ Factory ServiceFactory;
 
 } // namespace Omiscid
 
-   /** 
-	* Registers a new Omiscid service. This service will be advertised in DSN-SD
-	* @param serviceName the name of the service as it will appear in DNS-SD
-	* @return the bip service. All access to the service will be through this object
-	*/
-Service * Factory::Create( const SimpleString ServiceName )
+	/** 
+	 * Create a new Omiscid service. This service will not be advertised in DSN-SD
+	 * until the Service#Start method is called.
+	 * @param ServiceName the name of the service as it will appear in DNS-SD (maybe
+	 * suffixed by a number automatically added).
+	 * @param ClassName The classe name of this service. Can be usefull in order
+	 * to search for services. By default, class is 'Service'.
+	 * @return the Omiscid service. All access to the service will be through this object
+	 */
+Service * Factory::Create( const SimpleString ServiceName, const SimpleString ClassName )
 {
 	if ( ServiceName.IsEmpty() )
 	{
 		return NULL;
 	}
 
-	Service * NewOmiscidService = new Service(ServiceName);
+	// construct the service
+	Service * NewOmiscidService = new Service(ServiceName, ClassName);
 
+	// Return the service
 	return NewOmiscidService;
 }
 
-   /** 
-	* Registers a new Omiscid service. This service will be advertised in DSN-SD
-	* @param stream the input stream of the xml service description
-	* @return the bip service. All access to the service will be through this object
-	* -------------------            Not implemented yet         -----------
-	*/
+	/** 
+	 * Create a new Omiscid service. This service will not be advertised in DSN-SD
+	 * until the Service#Start method is called.
+	 * @param XmlDesc the input stream of the full xml service description
+	 * @return the Omiscid service. All access to the service will be through this object
+	 */
 Service * Factory::CreateFromXML( SimpleString XmlDesc )
 {
 	return NULL;

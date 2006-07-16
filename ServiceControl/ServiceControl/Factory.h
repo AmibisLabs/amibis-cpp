@@ -23,6 +23,7 @@ namespace Omiscid {
  * static function Factory#Create(const SimpleString ServiceName) of
  * Factory#CreateFromXML(SimpleString XmlDesc) directly using
  * "Factory::Create..." or "ServiceFactory.Create..." syntax.
+ * Factory#CreateFromXML is not accessible yet (under work).
  * 
  * @author Dominique Vaufreydaz
  */
@@ -30,21 +31,29 @@ class Factory
 {
 public:
 	/** 
-	 * Registers a new Omiscid service. This service will be advertised in DSN-SD
-	 * @param serviceName the name of the service as it will appear in DNS-SD
-	 * @return the bip service. All access to the service will be through this object
+	 * Create a new Omiscid service. This service will not be advertised in DSN-SD
+	 * until the Service#Start method is called.
+	 * @param ServiceName the name of the service as it will appear in DNS-SD (maybe
+	 * suffixed by a number automatically added).
+	 * @param ClassName The classe name of this service. Can be usefull in order
+	 * to search for services. By default, class is Service.
+	 * @return the Omiscid service. All access to the service will be through this object
 	 */
-	static Service * Create(const SimpleString ServiceName);
+	static Service * Create(const SimpleString ServiceName, const SimpleString ClassName = "Service" );
 	
 	/** 
-	 * Registers a new Bip service. This service will be advertised in DSN-SD
-	 * @param stream the input stream of the xml service description
-	 * @return the bip service. All access to the service will be through this object
+	 * Create a new Omiscid service. This service will not be advertised in DSN-SD
+	 * until the Service#Start method is called.
+	 * @param XmlDesc the input stream of the full xml service description
+	 * @return the Omiscid service. All access to the service will be through this object
 	 */
 	static Service * CreateFromXML(SimpleString XmlDesc);
 
 };
 
+/** 
+ * An global object in order to invoque Factory# method.
+ */
 extern Factory ServiceFactory;
 
 } // namespace Omiscid
