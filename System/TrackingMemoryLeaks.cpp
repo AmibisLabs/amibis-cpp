@@ -9,7 +9,7 @@ using namespace std;
 	#include <winbase.h>
 #else
 namespace Omiscid {
-	inLine void OutputDebugString(const char * OutputString)
+	inline void OutputDebugString(const char * OutputString)
 	{
 		if ( OutputString )
 		{
