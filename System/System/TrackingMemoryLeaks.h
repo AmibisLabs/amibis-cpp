@@ -7,8 +7,22 @@
 #ifndef __TRACKING_MEMORY_LEAKS_H__
 #define __TRACKING_MEMORY_LEAKS_H__
 
+#if defined WIN32 || defined _WIN32
+#define _CRT_SECURE_NO_DEPRECATE
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+
+namespace Omiscid {
+
 void StartTrackingMemoryLeaks();
 void StopTrackingMemoryLeaks();
+
+void AddMemoryBlock(void* addr,  size_t asize,  const char *fname, int lnum);
+void RemoveMemoryBlock(void* addr);
+
+} // namespace Omiscid
 
 // Only in debug mode
 #ifdef DEBUG
@@ -21,26 +35,23 @@ void StopTrackingMemoryLeaks();
 
 	#pragma warning(disable : 4291)
 
-	void AddTrack(void* addr,  size_t asize,  const char *fname, int lnum);
-	void RemoveTrack(void* addr);
-
 	inline void * OperatorCallConvention operator new(size_t size, const char *file, int line )
 	{
 		void *ptr = (void *)malloc(size);
-		AddTrack(ptr, size, file, line);
+		Omiscid::AddMemoryBlock(ptr, size, file, line);
 		return(ptr);
 	};
 
 	inline void * OperatorCallConvention operator new[](size_t size, const char *file, int line )
 	{
 		void *ptr = (void *)malloc(size);
-		AddTrack(ptr, size, file, line);
+		Omiscid::AddMemoryBlock(ptr, size, file, line);
 		return(ptr);
 	};
 
 	inline void OperatorCallConvention operator delete(void *p)
 	{
-		RemoveTrack(p);
+		Omiscid::RemoveMemoryBlock(p);
 		free(p);
 	};
 

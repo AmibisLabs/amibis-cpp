@@ -1,56 +1,59 @@
-#if defined WIN32 || defined _WIN32
-#define _CRT_SECURE_NO_DEPRECATE
-#endif
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <System/TrackingMemoryLeaks.h>
+
+#include <list>
+using namespace std;
 
 #if defined WIN32 || defined _WIN32
 	#include <windows.h>
 	#include <winbase.h>
 #else
-	inline void OutputDebugString(const char * OutputString)
+namespace Omiscid {
+	inLine void OutputDebugString(const char * OutputString)
 	{
 		if ( OutputString )
 		{
 			fprintf( stderr, OutputString );
 		}
 	}
+} // namespace Omiscid
 #endif
 
+// Local Omiscid declaration
+namespace Omiscid {
 
-#include <System/TrackingMemoryLeaks.h>
+void DumpUnfreed();
 
-#include <list>
-
-
-using namespace std;
 
 static bool Tracking = false;
 
 class MemoryBlockInfos
 {
 public:
-	void*	address;
-	size_t	size;
-	char	file[128];
-	int		line;
+	void*	Where;
+	size_t	Size;
+	char	Filename[256];
+	int		Line;
 };
 
 typedef list<MemoryBlockInfos*> AllocList;
-AllocList *allocList;
+static AllocList *allocList;
 
-void StartTrackingMemoryLeaks()
+} // namespace Omiscid
+
+using namespace Omiscid;
+
+void Omiscid::StartTrackingMemoryLeaks()
 {
 	Tracking = true;
 }
 
-void StopTrackingMemoryLeaks()
+void Omiscid::StopTrackingMemoryLeaks()
 {
 	Tracking = false;
 }
 
-void AddTrack(void* addr,  size_t asize,  const char *fname, int lnum)
+void Omiscid::AddMemoryBlock(void* addr,  size_t aSize,  const char *fname, int lnum)
 {
 	MemoryBlockInfos *info;
 
@@ -64,14 +67,14 @@ void AddTrack(void* addr,  size_t asize,  const char *fname, int lnum)
 		allocList = new(AllocList);
 	}
 	info = new(MemoryBlockInfos);
-	info->address = addr;
-	strncpy(info->file, fname, 127);
-	info->line = lnum;
-	info->size = asize;
+	info->Where = addr;
+	strncpy(info->Filename, fname, 127);
+	info->Line = lnum;
+	info->Size = aSize;
 	allocList->insert(allocList->begin(), info);
 };
 
-void RemoveTrack(void* addr)
+void Omiscid::RemoveMemoryBlock(void* addr)
 {
 	AllocList::iterator i;
 
@@ -80,7 +83,7 @@ void RemoveTrack(void* addr)
 
 	for(i = allocList->begin(); i != allocList->end(); i++)
 	{
-		if((*i)->address == addr)
+		if((*i)->Where == addr)
 		{
 			allocList->remove((*i));
 			break;
@@ -88,7 +91,7 @@ void RemoveTrack(void* addr)
 	}
 };
 
-void DumpUnfreed()
+void Omiscid::DumpUnfreed()
 {
 	AllocList::iterator i;
 	unsigned int totalSize = 0;
@@ -100,12 +103,12 @@ void DumpUnfreed()
 	for(i = allocList->begin(); i != allocList->end(); i++) 
 	{
 		sprintf(buf, "%-50s:\t\tLINE %d,\t\tADDRESS %p\t%u unfreed\n",
-			(*i)->file, (*i)->line, (*i)->address, (*i)->size);
+			(*i)->Filename, (*i)->Line, (*i)->Where, (*i)->Size);
 		OutputDebugString(buf);
 
-		void * tmpv = (*i)->address;
+		void * tmpv = (*i)->Where;
 		char * tmpc = (char*)tmpv;
-		int taille = (int)(*i)->size;
+		int taille = (int)(*i)->Size;
 		for( int j = 0; j < taille && j < 20; j++)
 		{
 			sprintf(buf, "%c", tmpc[j] );
@@ -116,7 +119,7 @@ void DumpUnfreed()
 
 		totalSize += (unsigned int)taille;
 	}
-	sprintf(buf, "-----------------------------------------------------------\n");
+	sprintf(buf, "-+-+-+-\n");
 	OutputDebugString(buf);
 	if ( totalSize < 1024 )
 	{
@@ -137,6 +140,8 @@ void DumpUnfreed()
 	OutputDebugString(buf);
 };
 
+namespace Omiscid {
+
 class UnfreedPrint
 {
 public:
@@ -147,3 +152,5 @@ public:
 };
 
 static UnfreedPrint PrintUnfreed;
+
+} // namespace Omiscid

@@ -41,11 +41,20 @@ void UdpConnection::SetAddr(const struct sockaddr_in* nv_addr)
 	memcpy(&addr, nv_addr, sizeof(struct sockaddr_in));
 }
 
+// Nothing specific to do
 MsgSocketCallBackData::~MsgSocketCallBackData()
 {
 }
 
 MsgSocketCallbackObject::~MsgSocketCallbackObject()
+{
+}
+
+void MsgSocketCallbackObject::Connected(unsigned int PeerId)
+{
+}
+
+void MsgSocketCallbackObject::Disconnected(unsigned int PeerId)
 {
 }
 

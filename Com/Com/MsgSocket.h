@@ -100,6 +100,9 @@ public:
 	// Virtual destructor always
 	virtual ~MsgSocketCallbackObject();
 
+	virtual void Connected(unsigned int PeerId);
+	virtual void Disconnected(unsigned int PeerId);
+
 	virtual void Receive(MsgSocketCallBackData& CallbackData) = 0;
 };
 
