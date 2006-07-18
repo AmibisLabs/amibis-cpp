@@ -98,7 +98,7 @@ private:
 		 * return an object StringData containing an empty string : "".
 		 * Add a reference on this object.
 		 */
-		static StringData* GetEmptyStringData();
+		// static StringData* GetEmptyStringData();
 
 		void Lock(); // Lock my Protect mutex
 		void Unlock(); // Unlock my Protect mutex
@@ -120,7 +120,7 @@ private:
 		AtomicReentrantCounter * nbReferences; /*!< number of reference on the buffer */
 		char * data; /*!< the character buffer */
 		unsigned int length;/*!< the length of the string */
-		static StringData EmptyStringData; /*!< object StringData for empty string "" */
+		// static StringData EmptyStringData; /*!< object StringData for empty string "" */
 	};
 
 public:

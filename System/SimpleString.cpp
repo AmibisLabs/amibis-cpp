@@ -5,13 +5,13 @@
 
 using namespace Omiscid;
 
-SimpleString::StringData SimpleString::StringData::EmptyStringData("");
-
-SimpleString::StringData* SimpleString::StringData::GetEmptyStringData()
-{
-	// EmptyStringData.AddReference(); 
-	return &EmptyStringData;
-}
+//SimpleString::StringData SimpleString::StringData::EmptyStringData("");
+//
+//SimpleString::StringData* SimpleString::StringData::GetEmptyStringData()
+//{
+//	// EmptyStringData.AddReference(); 
+//	return &EmptyStringData;
+//}
 
 SimpleString::StringData::StringData()
 {
@@ -343,14 +343,22 @@ const SimpleString SimpleString::EmptyString("");
 void SimpleString::CopyStringData(StringData* to_copy)
 {
 	DestroyStringData();
-	to_copy->AddReference();
-	stringData = to_copy;
+	// Nothing to copy, set an empty string...
+	if ( to_copy == NULL )
+	{
+		stringData = new StringData( "" );
+	}
+	else
+	{
+		to_copy->AddReference();
+		stringData = to_copy;
+	}
 }
 
 SimpleString::SimpleString()
 {
 	stringData = NULL;
-	CopyStringData( StringData::GetEmptyStringData() );
+	CopyStringData( SimpleString::EmptyString.stringData );
 }
 
 SimpleString::SimpleString(const char* str)
@@ -362,7 +370,7 @@ SimpleString::SimpleString(const char* str)
 	}
 	else
 	{
-		CopyStringData( StringData::GetEmptyStringData() );
+		CopyStringData( SimpleString::EmptyString.stringData );
 	}
 }
 
@@ -370,7 +378,7 @@ SimpleString::SimpleString(const char* str1, const char* str2)
 { 
 	stringData = NULL;
 	if(str1 == (const char*)NULL && str2 == (const char*)NULL)
-		CopyStringData(StringData::GetEmptyStringData());
+		CopyStringData( SimpleString::EmptyString.stringData );
 	else
 		stringData = new StringData(str1, str2);
 }
@@ -459,7 +467,7 @@ const SimpleString& SimpleString::operator= (const char* str)
 	DestroyStringData();
 	if(str == NULL)
 	{
-		CopyStringData( StringData::GetEmptyStringData() );
+		CopyStringData( SimpleString::EmptyString.stringData );
 	}
 	else
 	{
