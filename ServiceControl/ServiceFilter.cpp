@@ -228,7 +228,8 @@ ServiceNameIs::~ServiceNameIs()
 bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceName;
-	if ( SP.GetVariableValue("name",ServiceName) == false )
+	ServiceName = SP.GetVariableValue("name");
+	if ( ServiceName.IsEmpty() )
 	{
 		return false;
 	}
@@ -269,7 +270,8 @@ ServiceOwnerIs::~ServiceOwnerIs()
 bool ServiceOwnerIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceOwner;
-	if ( SP.GetVariableValue( "owner", ServiceOwner ) == false )
+	ServiceOwner = SP.GetVariableValue( "owner" );
+	if ( ServiceOwner.IsEmpty() )
 	{
 		return false;
 	}
@@ -327,7 +329,8 @@ ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName, SimpleString&
 bool ServiceHasVariable::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString RemoteValue;
-	if ( SP.GetVariableValue( VariableName, RemoteValue ) == false )
+	RemoteValue = SP.GetVariableValue( VariableName );
+	if ( RemoteValue.IsEmpty() )
 	{
 		return false;
 	}

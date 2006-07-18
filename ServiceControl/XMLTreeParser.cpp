@@ -66,8 +66,10 @@ xmlAttrPtr XMLMessage::FindAttribute(const SimpleString name, xmlNodePtr node)
 		xmlAttrPtr current = node->properties;
 		while(current)
 		{
-			if(strcmp((const char*)current->name, name.GetStr()) == 0)
+			if( name == (const char*)current->name )
+			{
 				return current;
+			}
 			current = current->next;
 		}
 	}
@@ -81,8 +83,10 @@ xmlNodePtr XMLMessage::FindFirstChild(const SimpleString name, xmlNodePtr node)
 		xmlNodePtr current = node->children;
 		while(current)
 		{
-			if((current->type == XML_ELEMENT_NODE) && 
-				(strcmp((const char*)current->name, name.GetStr()) == 0)) return current;
+			if( (current->type == XML_ELEMENT_NODE) && (name == (const char*)current->name) )
+			{
+				return current;
+			}
 			current = current->next;
 		}
 	}
@@ -156,14 +160,14 @@ xmlDocPtr XMLTreeParser::ParseMessage(int length, unsigned char* buffer)
 
 void XMLTreeParser::Receive(MsgSocketCallBackData& cd)
 {
-	xmlDocPtr doc = ParseMessage(cd.Msg.len, (unsigned char*)cd.Msg.buffer);
+	xmlDocPtr doc = ParseMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
 	if( doc )
 	{
 		XMLMessage* msg = new XMLMessage();
 		msg->doc = doc;
-		msg->origine = cd.Msg.origine;
-		msg->pid = cd.Msg.pid;
-		msg->mid = cd.Msg.mid;
+		msg->origine = cd.Msg.GetOrigine();
+		msg->pid = cd.Msg.GetPeerId();
+		msg->mid = cd.Msg.GetMsgId();
 		PushMessage(msg);
 	}
 }

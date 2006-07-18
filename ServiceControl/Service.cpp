@@ -114,7 +114,7 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 
 	// Create TCP and UDP ports
 	pConnector->Create();
-	pAtt = AddInOutput( ConnectorName.GetStr(), pConnector, ConnectorKind );
+	pAtt = AddInOutput( ConnectorName, pConnector, ConnectorKind );
 	pAtt->SetDescription( ConnectorDescription );
 
 	return true;
@@ -233,7 +233,7 @@ bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString 
 		return false;
 	}
 
-	pVar = ControlServer::AddVariable( VarName.GetStr() );
+	pVar = ControlServer::AddVariable( VarName );
 	if ( pVar == NULL )
 	{
 		TraceError( "Could not allocate a new variable\n" );
@@ -460,7 +460,7 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, Si
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
 	// Let's connect to him
-	pConnector->ConnectTo( ServProxy.GetHostName().GetStr(), Connection.TcpPort, Connection.UdpPort );
+	pConnector->ConnectTo( ServProxy.GetHostName(), Connection.TcpPort, Connection.UdpPort );
 
 	return false;
 }

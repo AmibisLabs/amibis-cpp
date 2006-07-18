@@ -1,5 +1,5 @@
 /**
- * @file Event.h
+ * @file System/Event.h
  * @ingroup System
  * @brief Definition of Event class
  */
@@ -11,7 +11,7 @@
 namespace Omiscid {
 
 /** 
- * @class Event Event.h System/Event.h
+ * @class Event Event.cpp System/Event.h
  * @brief Event or condition implementation.
  *
  * Enable a thread to wait on a condition, until be awoken by another thread.

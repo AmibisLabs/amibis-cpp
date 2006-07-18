@@ -1,5 +1,5 @@
 /** 
- * @defgroup Com Omiscid multiplateform Communication layer. 
+ * @defgroup Com Layer 1 : Omiscid multiplateform Communication layer. 
  *
  */
 

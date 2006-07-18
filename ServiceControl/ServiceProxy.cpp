@@ -13,7 +13,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 {
 	HostName	= eHostName;
 	ControlPort	= eControlPort;
-	if ( ConnectToCtrlServer(HostName.GetStr(), ControlPort) == false )
+	if ( ConnectToCtrlServer(HostName, ControlPort) == false )
 	{
 		throw "ServiceProxy failed";
 	}
@@ -82,11 +82,7 @@ SimpleString ServiceProxy::GetHostName()
 
 SimpleString ServiceProxy::GetName()
 {
-	SimpleString ServiceName;
-
-	GetVariableValue( "name", ServiceName );
-
-	return ServiceName;
+	return GetVariableValue( "name" );
 }
 
 /**
@@ -119,16 +115,15 @@ bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleStri
      * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-bool ServiceProxy::GetVariableValue(const SimpleString VarName, SimpleString& Value)
+SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 {
-	VariableAttribut * pVar = FindVariable(VarName.GetStr());
+	VariableAttribut * pVar = FindVariable(VarName);
 	if ( pVar == NULL )
 	{
-		return false;
+		return SimpleString::EmptyString;
 	}
 
-	Value = pVar->GetValue();
-	return true;
+	return pVar->GetValue();
 }
 
 	/**
@@ -228,7 +223,7 @@ bool ServiceProxy::HasConnector( const SimpleString ConnectorName, ConnectorKind
 	return true;
 }
 
-		/**
+	/**
      * search for a connector on the remote Omiscid service
      * @param ConnectorName the name of the remote variable
      * @return true or false
@@ -282,10 +277,10 @@ bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionI
 // Utility functions
 VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 {
-	VariableAttribut * pVar = ControlClient::FindVariable(VarName.GetStr());
+	VariableAttribut * pVar = ControlClient::FindVariable(VarName);
 	if ( pVar == NULL )
 	{
-		pVar = ControlClient::QueryVariableDescription( VarName.GetStr() );
+		pVar = ControlClient::QueryVariableDescription( VarName );
 	}
 	if ( pVar == NULL )
 	{
@@ -301,12 +296,12 @@ InOutputAttribut * ServiceProxy::FindConnector( SimpleString ConnectortName )
 	InOutputAttribut * pAtt;
 
 	
-	if (   (pAtt = FindInput(ConnectortName.GetStr())) != NULL					// Is is an Input ?
-		|| (pAtt = QueryInputDescription(ConnectortName.GetStr())) != NULL		// again
-		|| (pAtt = FindOutput(ConnectortName.GetStr())) != NULL					// Is it an Output
-		|| (pAtt = QueryOutputDescription(ConnectortName.GetStr())) != NULL		// again
-		|| (pAtt = FindInOutput(ConnectortName.GetStr())) != NULL				// Is is an InOutput ?
-		|| (pAtt = QueryInOutputDescription(ConnectortName.GetStr())) != NULL	// again
+	if (   (pAtt = FindInput(ConnectortName)) != NULL					// Is is an Input ?
+		|| (pAtt = QueryInputDescription(ConnectortName)) != NULL		// again
+		|| (pAtt = FindOutput(ConnectortName)) != NULL					// Is it an Output
+		|| (pAtt = QueryOutputDescription(ConnectortName)) != NULL		// again
+		|| (pAtt = FindInOutput(ConnectortName)) != NULL				// Is is an InOutput ?
+		|| (pAtt = QueryInOutputDescription(ConnectortName)) != NULL	// again
 		)
 	{
 		// We found it

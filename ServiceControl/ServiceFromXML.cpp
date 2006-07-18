@@ -30,14 +30,14 @@ void ServiceFromXML::InitServiceFromXml(xmlNodePtr root_node)
     {
       if (cur_node->type == XML_ELEMENT_NODE)
 	{	  
-	  const char* cur_name = (const char*)cur_node->name;
-	  if(strcmp(cur_name, VariableAttribut::variable_str.GetStr()) == 0)
+	  SimpleString cur_name = (const char*)cur_node->name;
+	  if( cur_name == VariableAttribut::variable_str )
 	    {
 	      ProcessVariableAttribut(cur_node);
 	    }
-	  else if((strcmp(cur_name,  InOutputAttribut::input_str.GetStr()) == 0) ||
-		  (strcmp(cur_name,  InOutputAttribut::output_str.GetStr()) == 0) ||
-		  (strcmp(cur_name,  InOutputAttribut::inoutput_str.GetStr()) == 0))
+	  else if( cur_name == InOutputAttribut::input_str ||
+		   cur_name == InOutputAttribut::output_str ||
+		  cur_name == InOutputAttribut::inoutput_str )
 	    {
 	      ProcessInOutputAttribut(cur_node);
 	    }
@@ -62,12 +62,12 @@ void ServiceFromXML::ProcessVariableAttribut(xmlNodePtr node)
 void ServiceFromXML::ProcessInOutputAttribut(xmlNodePtr node)
 {
   ConnectorKind kind_of_input = AnInOutput;
-  const char* node_name = (const char*)node->name;
-  if (strcmp(node_name,  InOutputAttribut::input_str.GetStr()) == 0)
+  SimpleString node_name = (const char*)node->name;
+  if ( node_name == InOutputAttribut::input_str )
   {
     kind_of_input = AnInput;
   }
-  else if (strcmp(node_name,  InOutputAttribut::output_str.GetStr()) == 0)
+  else if ( node_name == InOutputAttribut::output_str )
   {
     kind_of_input = AnOutput;
   }

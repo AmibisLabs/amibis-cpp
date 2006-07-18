@@ -1,5 +1,5 @@
 /** 
- * @defgroup System Omiscid multiplateform System layer. 
+ * @defgroup System Layer 0 : Omiscid multiplateform System layer. 
  *
  */
 
@@ -12,15 +12,17 @@
 #ifndef __SYSTEM_CONFIG_H__
 #define __SYSTEM_CONFIG_H__
 
-/*! @def WIN32
- *	@ingroup System
- *	@brief Define the WIN32 symbol
- *
- *	In order to be sure to have the correct WIN32 symbol.
- */
 #if defined _WIN32 && ! defined WIN32
-	#define WIN32	// WIN32 is more interesting for us
+   /**
+	* @def WIN32
+	* @ingroup System
+	* @brief Define the WIN32 symbol
+	*
+	* In order to be sure to have the correct WIN32 symbol.
+	*/
+	#define WIN32	// WIN32 is more general for us
 #endif
+
 
 #ifdef WIN32
 
@@ -28,6 +30,7 @@
 	#define _CRT_SECURE_NO_DEPRECATE
 	#pragma warning(disable : 4996)
 
+	// If U are using MFC and co...
 	#ifdef USE_AFX
 		#define  WINVER 0x0501
 		#include "StdAfx.h"
@@ -39,7 +42,7 @@
 	#include <Winsock2.h>
 	#include <process.h>		// Process action
 
-   /*!	@def FUNCTION_CALL_TYPE
+   /**	@def FUNCTION_CALL_TYPE
     *	@ingroup System
 	*	@brief DNS-SD callbacks type (WIN32 specific).
 	*
@@ -49,7 +52,7 @@
 	*/
 	#define FUNCTION_CALL_TYPE __stdcall
 
-	/*! @def DEBUG
+	/** @def DEBUG
      *	@ingroup System
 	 *	@brief Define the gcc like debug symbol (WIN32 only).
      *
@@ -66,6 +69,7 @@
      *
 	 *	For multiplateform source code.
 	 */
+	
 
 	/*! @def strncasecmp
      *	@ingroup System
@@ -181,14 +185,16 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#include <System/TrackingMemoryLeaks.h>
+// #include <System/TrackingMemoryLeaks.h>
 
 namespace Omiscid {
 
 
 // Almost ugly for the moment
 #ifdef OMISCID_TRACE_ENABLE
-	// in trace mode, we plan to trace every thing
+	/** @fct TraceError
+	 *  @brief used to warn messages
+	 */
 	inline int TraceError(const char * format, ... )
 	{
 	   va_list args;

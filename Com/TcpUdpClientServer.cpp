@@ -64,10 +64,10 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 	}
 
 	// Check if the data if Empty
-	if ( MsgData->Msg.len != 0 )
+	if ( MsgData->Msg.GetLength() != 0 )
 	{
 		// Ok, we've got the Linc Data
-		SimpleString tmpBuf((const char*)MsgData->Msg.buffer);
+		SimpleString tmpBuf((const char*)MsgData->Msg.GetBuffer());
 		SimpleString tmpUdp = MagicUdp;
 
 		SimpleString UDPPort = ValueFromKey( tmpBuf, tmpUdp );
@@ -75,7 +75,7 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 		if ( UDPPort.GetLength() != 0 )
 		{
 			UdpConnection udpConnection;
-			udpConnection.pid = MsgData->Msg.pid;
+			udpConnection.pid = MsgData->Msg.GetPeerId();
 
 			// Ok, we have an UDP port at the oposite side
 			// Try to accept it
@@ -98,7 +98,7 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 	}
 }
 
-unsigned int TcpUdpClientServer::ConnectTo(const char* addr, int port_tcp, int port_udp)
+unsigned int TcpUdpClientServer::ConnectTo(const SimpleString addr, int port_tcp, int port_udp)
 {
 	TcpClient* tcpclient = new TcpClient();
 	tcpclient->SetServiceId(GetServiceId());

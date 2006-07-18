@@ -83,8 +83,8 @@ WARN_LOGFILE           =
 INPUT                  = ./System/System/Config.h \
                          ./System/System/SimpleString.h \
                          ./System/System/SimpleList.h \
-                         ./ServiceControl/ServiceControl/Config.h \
                          ./Com/Com/Config.h \
+                         ./Com/Com/Message.h \
                          ./ServiceControl/ServiceControl/Config.h \
                          ./ServiceControl/ServiceControl/ConnectorListener.h \
                          ./ServiceControl/ServiceControl/Factory.h \
@@ -92,7 +92,7 @@ INPUT                  = ./System/System/Config.h \
                          ./ServiceControl/ServiceControl/RemoteVariableChangeListener.h \
                          ./ServiceControl/ServiceControl/Service.h \
                          ./ServiceControl/ServiceControl/ServiceProxy.h \
-                         ./ServiceControl/ServiceControl/ServiceFilter.h
+                         ./ServiceControl/ServiceControl/ServiceFilter.h                         
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 

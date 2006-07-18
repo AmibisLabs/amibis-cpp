@@ -1,5 +1,5 @@
 /**
- * @file AtomicReentrantCounter.h
+ * @file System/AtomicReentrantCounter.h
  * @ingroup System
  * @brief Definition of Mutexed Counter class using reentrant mutex
  */
@@ -13,7 +13,7 @@
 namespace Omiscid {
 
 /**
- * @class AtomicReentrantCounter AtomicReentrantCounter.h System/AtomicReentrantCounter.h
+ * @class AtomicReentrantCounter AtomicReentrantCounter.cpp System/AtomicReentrantCounter.h
  * @brief Counter with access protected by mutex.
  *
  * Can be incremented, decremented and, of course, accessed.

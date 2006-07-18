@@ -1,5 +1,5 @@
 /**
- * @file Mutex.h
+ * @file System/Mutex.h
  * @ingroup System
  * @brief Definition of Mutex class
  */
@@ -12,7 +12,7 @@
 namespace Omiscid {
 
 /**
- * @class Mutex Mutex.h System/Mutex.h
+ * @class Mutex Mutex.cpp System/Mutex.h
  * @brief Mutex Implementation
  *
  * Mutex enables to lock some code section to avoid multiple access by several threads.

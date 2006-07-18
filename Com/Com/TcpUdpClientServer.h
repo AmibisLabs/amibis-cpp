@@ -93,7 +93,7 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
    * \return the peer identifier.
    * \see TcpClient::ConnectToServer
    */
-  unsigned int ConnectTo(const char* addr, int port_tcp, int port_udp = 0);
+  unsigned int ConnectTo(const SimpleString addr, int port_tcp, int port_udp = 0);
 
   /**
    * \brief Send a message on all the existing connection.

@@ -1,5 +1,5 @@
 /** 
- * @defgroup ServiceControl Omiscid multiplateform Service Control layer. 
+ * @defgroup ServiceControl Layer 2 : Omiscid multiplateform Service Control layer. 
  *
  */
 

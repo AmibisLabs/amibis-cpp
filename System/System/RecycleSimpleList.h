@@ -1,5 +1,5 @@
 /**
- * @file RecycleSimpleList.h
+ * @file System/RecycleSimpleList.h
  * @ingroup System
  * @brief Definition of SimpleRecycleList class and MutexedSimpleRecycleList class
  */
@@ -13,7 +13,7 @@
 namespace Omiscid {
 
 /** 
- * @class SimpleRecycleList RecycleSimpleList.h System/RecycleSimpleList.h
+ * @class SimpleRecycleList RecycleSimpleList.cpp System/RecycleSimpleList.h
  * @brief Template class to manage list object
  *
  * The cells used to build the list are not created and deleted, but stored in a static object.

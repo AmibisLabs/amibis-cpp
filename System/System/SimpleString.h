@@ -17,9 +17,11 @@ namespace Omiscid {
 
 /**
  * @class SimpleString  SimpleString.h  System/SimpleString.h
- * @brief Storage and manipulation of character string.
+ * @ingroup System
+ * @ingroup UserFriendly
+ * @brief Storage and manipulation of character strings.
  *
- * The character string are duplicate only when they are modified.
+ * The character strings are duplicate only when they are modified.
  * The copy are done only if necessary. 
  * (Use of a counter of reference on the character string)
  *
@@ -31,7 +33,7 @@ class SimpleString
 {
 private:
 	/**
-	 * \brief Storage of characters, with a counter of reference.
+	 * @brief Storage of characters, with a counter of reference.
 	 */
 	class StringData
 	{
@@ -122,25 +124,32 @@ private:
 	};
 
 public:
-	/** @name Constructors */
-	//@{
 	SimpleString(); /*!< build an empty string */
 	SimpleString(const char* str); /*!< build a string with the value 'str'*/
 	/*! Build a String with the value 'str1' followed by 'str2'*/
 	SimpleString(const char* str1, const char* str2);
-	/*! Copy the the string */
+	/*! Copy constructor of the string */
 	SimpleString(const SimpleString& to_copy);
+	/*! Creating a string representing an interger */
 	SimpleString(int i);
+	/*! Creating a string representing an unsigned interger */
 	SimpleString(unsigned int ui);
+	/*! Creating a string representing a long interger */
 	SimpleString(long int li);
+	/*! Creating a string representing a float*/
 	SimpleString(float f);
+	/*! Creating a string representing a double */
 	SimpleString(double d);
-	//@}
-	
-	/** @brief Destructor */
-	virtual ~SimpleString();
+protected:
+	SimpleString(StringData*); /*!< used by SubString*/
 
-	//* @brief To empty a string */
+public:
+	/*! Destructor (free if necessary, the underlying buffer) */
+	virtual ~SimpleString(); 
+
+	/**
+	 * @brief To empty a string
+	 */
 	void Empty();
 
 	/** @name Data Access */
@@ -149,9 +158,6 @@ public:
 	const char* GetStr() const;
 	/** @return the length of the string */
 	unsigned int GetLength() const;
-
-	/** @return true if the string is empty, false otherwise */
-	bool IsEmpty() const;
 
 	/** read access on the characters
 	 * @param i [in] the index of the character between 0 and GetLength()-1
@@ -163,6 +169,29 @@ public:
 	char& operator[](int i);
 	//@}
 	
+	/**
+	 * @return true if the string is empty, false otherwise
+	 */
+	bool IsEmpty() const;
+
+	/** @name Affectation */
+	//@{
+	/*! assign 'str' as content for this string */
+	const SimpleString& operator= (const char* str);
+	/*! assign 'str' as content for this string */
+	const SimpleString& operator= (const SimpleString& str);
+	/*! assign a string representation of an interger as content for this string */
+	const SimpleString& operator= (int i);
+	/*! assign a string representation of an unsigned interger as content for this string */
+	const SimpleString& operator= (unsigned int ui);
+	/*! assign a string representation of a long interger as content for this string */
+	const SimpleString& operator= (long int li);
+	/*! assign a string representation of a float as content for this string */
+	const SimpleString& operator= (float f);
+	/*! assign a string representation of double as content for this string */
+	const SimpleString& operator= (double d);
+	//@}
+
 	/** @name Data Manipulation : Append String */
 	//@{
 	/*! add 'str' to the end of this string */
@@ -187,37 +216,31 @@ public:
 	
 	/** @name Data Comparaison */
 	//@{
+	/*! Compare (case sensitive) 2 strings to check if they are equals */
 	bool operator==(const SimpleString& str) const;
+	/*! Compare (case sensitive) 2 strings to check if they are equals */
 	bool operator==(const char* str) const;
+	/*! Compare (case sensitive) 2 strings to check if they are *not* equals */
 	bool operator!=(const SimpleString& str) const;
+	/*! Compare (case sensitive) 2 strings to check if they are *not* equals */
 	bool operator!=(const char* str) const;
-	//@}
-
-	/** @name Affectation */
-	//@{
-	const SimpleString& operator= (const char* str);
-	const SimpleString& operator= (const SimpleString& str);
-	const SimpleString& operator= (int i);
-	const SimpleString& operator= (unsigned int ui);
-	const SimpleString& operator= (long int li);
-	const SimpleString& operator= (float f);
-	const SimpleString& operator= (double d);
+	// to do
+	// bool CompareNoCase(const char* str) const;
+	// bool CompareNoCase(const SimpleString& str) const;
 	//@}
 	
 	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer );
 
-	// REVIEW
+	/*! All empty string refer to this unique value, can be used by user */
 	static const SimpleString EmptyString;
 
 	/** @brief Extract a string of  this string
-	 * \param begin index of the first character included in the result string
-	 * \param end index of the first excluded character
+	 * @param [in] begin index of the first character included in the result string
+	 * @param [in] end index of the first excluded character
+	 * return A new string conaining the sub-string
 	 */
 	SimpleString SubString(int begin, int end) const;
 
-protected:
-	SimpleString(StringData*); /*!< used by SubString*/
-	
 private:
 	/** \brief Remove the reference on the StringData object.
 	 *
@@ -230,10 +253,27 @@ private:
 	StringData* stringData; /*!< pointer on the object containing the characters*/
 };
 
-
-SimpleString operator+(const SimpleString& str1, const SimpleString& str2);
-SimpleString operator+(const char* str1, const SimpleString& str2);
-SimpleString operator+(const SimpleString& str1, const char* str2);
+/*
+ * @brief An operator+ to collapse 2 strings
+ * @param [in] str1, a SimpleString
+ * @param [in] str2, a SimpleString
+ * @return Returns a SimpleString
+ */
+const SimpleString operator+(const SimpleString& str1, const SimpleString& str2);
+/*
+ * @brief An operator+ to collapse a char buffer and a string string
+ * @param [in] str1, a char * buffer (ended by '0')
+ * @param [in] str2, a SimpleString
+ * @return Returns a SimpleString
+ */
+const SimpleString operator+(const char* str1, const SimpleString& str2);
+/*
+ * @brief An operator+ to collapse a char buffer and a string string
+ * @param [in] str1, a SimpleString
+ * @param [in] str2, a char * buffer (ended by '0')
+ * @return Returns a SimpleString
+ */
+const SimpleString operator+(const SimpleString& str1, const char* str2);
 
 } // namespace Omiscid
 

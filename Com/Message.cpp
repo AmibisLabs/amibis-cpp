@@ -26,27 +26,27 @@ Message::~Message()
 	}
 }
   
-char* Message::GetBuffer() 
+char* Message::GetBuffer() const
 {
 	return buffer; 
 }
 
-int Message::GetLength()
+int Message::GetLength() const
 {
 	return len;
 }
 
-MessageOrigine Message::GetOrigine()
+MessageOrigine Message::GetOrigine() const
 {
 	return origine;
 }
 
-unsigned int Message::GetPid() const
+unsigned int Message::GetPeerId() const
 {
 	return pid; 
 }
 
-unsigned int Message::GetMid() const
+unsigned int Message::GetMsgId() const
 {
 	return mid;
 }

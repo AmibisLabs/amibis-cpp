@@ -1,5 +1,5 @@
 /**
- * @file MultipleReferencedData.h
+ * @file System/MultipleReferencedData.h
  * @ingroup System
  * @brief Definition of MultipleReferencedData class
  */
@@ -13,7 +13,7 @@
 namespace Omiscid {
 
 /**
- * @class MultipleReferencedData MultipleReferencedData.h System/MultipleReferencedData.h
+ * @class MultipleReferencedData MultipleReferencedData.cpp System/MultipleReferencedData.h
  * @brief Container for data with multiple references
  *
  * This container manages a system of reference.

@@ -1,5 +1,5 @@
 /**
- * @file AtomicCounter.h
+ * @file System/AtomicCounter.h
  * @ingroup System
  * @brief Definition of AtomicCounter class
  */
@@ -13,7 +13,7 @@
 namespace Omiscid {
 
 /**
- * @class AtomicCounter AtomicCounter.h System/AtomicCounter.h
+ * @class AtomicCounter AtomicCounter.cpp System/AtomicCounter.h
  * @brief Counter with access protected by mutex.
  *
  * Can be incremented, decremented and, of course, accessed.

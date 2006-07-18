@@ -21,13 +21,13 @@ public:
 
 	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 	{
-		printf( "Receive '%s' :: '%s'\n%5.5s\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.buffer );
+		printf( "Receive '%s' :: '%s'\n%5.5s\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
 	}
 };
 
 int main(int argc, char * argv[])
 {
-	StartTrackingMemoryLeaks(); 
+	// StartTrackingMemoryLeaks(); 
 
 	TestListener TL;
 

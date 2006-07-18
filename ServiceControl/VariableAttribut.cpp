@@ -41,12 +41,12 @@ void VariableAttribut::GenerateLongDescription(SimpleString& str)
 	GenerateHeaderDescription(variable_str, GetName(), str, false);
 
 	str += "<value>";
-	PutAValueInCData(GetValue().GetStr(), str);
+	PutAValueInCData(GetValue(), str);
 	str += "</value>";
 	if(defaultValue != "")
 	{
 		str += "<default>";
-		PutAValueInCData(defaultValue.GetStr(), str);
+		PutAValueInCData(defaultValue, str);
 		str += "</default>";
 	}
 
@@ -62,7 +62,7 @@ void VariableAttribut::GenerateValueMessage(SimpleString& str)
 	GenerateHeaderDescription(variable_str, GetName(), str, false);
 
 	str += "<value>";
-	PutAValueInCData(GetValue().GetStr(), str);
+	PutAValueInCData(GetValue(), str);
 	str += "</value>";
 
 	str = str + "</variable>";
@@ -120,56 +120,55 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 	xmlNodePtr cur_node = node->children;  
 	for(; cur_node; cur_node = cur_node->next)
 	{
-		if (cur_node->type == XML_ELEMENT_NODE) {
-			const char* cur_name = (const char*)cur_node->name;
-			if(strcmp(cur_name, "description")==0)
+		if (cur_node->type == XML_ELEMENT_NODE)
+		{
+			SimpleString cur_name = (const char*)cur_node->name;
+			if( cur_name == "description" )
 			{
 				SetDescription(XMLMessage::ExtractTextContent(cur_node->children));
 			}      
-			else if(strcmp(cur_name, "formatDescription")==0)
+			else if( cur_name == "formatDescription" )
 			{
 				SetFormatDescription(XMLMessage::ExtractTextContent(cur_node->children));
 			}
-			else if (strcmp(cur_name, "value")==0)
+			else if ( cur_name == "value" )
 			{
-
-
 				tmp_value = XMLMessage::ExtractTextContent(cur_node->children);
 				//vattr->SetValue((const char*)cur_node->children->content);
 			}
-			else if (strcmp(cur_name,"default")==0)
+			else if ( cur_name == "default" )
 			{
 				SetDefaultValue(XMLMessage::ExtractTextContent(cur_node->children));
 			}
-			else if (strcmp(cur_name, "type") == 0)
+			else if ( cur_name == "type" )
 			{
 				SetType(XMLMessage::ExtractTextContent(cur_node->children).GetStr());
 			}
-			else if (strcmp(cur_name, "access") == 0)
+			else if ( cur_name, "access" )
 			{
 				SimpleString content = XMLMessage::ExtractTextContent(cur_node->children);
-				if(content == access_read_str)
+				if( content == access_read_str )
 				{
 					SetAccessRead();
 				}
-				else if(content == access_readwrite_str)
+				else if( content == access_readwrite_str )
 				{
 					SetAccessReadWrite();
 				}
-				else if(content == access_constant_str )
+				else if( content == access_constant_str )
 				{
 					SetAccessConstant();
 				}
 				else 
 				{
-					TraceError( "Unknow Access kind : %s\n", cur_node->children->content);
+					TraceError( "Unknow Access kind : %s\n", cur_node->children->content );
 				}
 			}
-			else TraceError( "Unwaited Tag : %s\n", cur_name);
+			else TraceError( "Unwaited Tag : %s\n", cur_name.GetStr() );
 		}
 	}
 
-	SetValue(tmp_value.GetStr());
+	SetValue(tmp_value);
 }
 
 void VariableAttribut::SetType(const SimpleString t)

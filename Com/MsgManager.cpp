@@ -85,7 +85,7 @@ int MsgManager::ProcessMessages()
 void MsgManager::ProcessAMessage(Message* msg)
 {
   TraceError( "processAMessage (pid= %u, mid=%u)\n", 
-	  msg->GetPid(), msg->GetMid());
+	  msg->GetPeerId(), msg->GetMsgId());
 }
 
 
@@ -94,9 +94,9 @@ void MsgManager::Receive(MsgSocketCallBackData& cd)
     Message* msg = new Message(cd.Msg.len + 1);
     msg->len = cd.Msg.len;
     memcpy(msg->buffer, cd.Msg.buffer, cd.Msg.len + 1);
-    msg->origine = cd.Msg.origine;
-    msg->pid = cd.Msg.pid;
-    msg->mid = cd.Msg.mid;
+    msg->origine = cd.Msg.GetOrigine();
+    msg->pid = cd.Msg.GetPeerId();
+    msg->mid = cd.Msg.GetMsgId();
     PushMessage(msg);
 }
 

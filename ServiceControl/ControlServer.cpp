@@ -359,36 +359,36 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			xmlNodePtr cur_node = node->children;	  
 			for(; cur_node; cur_node = cur_node->next)
 			{
-				const char* name = (const char*)(cur_node->name);
+				SimpleString name = (const char*)(cur_node->name);
 				//std::cerr << "tag name="<<(*it)->name <<"\n";
-				if(strcmp(name, InOutputAttribut::input_str.GetStr()) == 0 ||
-					strcmp(name, InOutputAttribut::output_str.GetStr()) == 0 || 
-					strcmp(name, InOutputAttribut::inoutput_str.GetStr()) == 0)
+				if( name == InOutputAttribut::input_str.GetStr() ||
+					name == InOutputAttribut::output_str.GetStr() || 
+					name == InOutputAttribut::inoutput_str.GetStr() )
 				{
 					// TraceError( " process io : %s \n", (*it)->name.GetStr());
 					ProcessInOutputQuery(cur_node, str);
 				}
-				else if(strcmp(name, VariableAttribut::variable_str.GetStr()) == 0)
+				else if( name == VariableAttribut::variable_str.GetStr() )
 				{
 					ProcessVariableQuery(cur_node, msg->pid,  str);		 
 				}
-				else if(strcmp(name, "connect") == 0)
+				else if( name == "connect" )
 				{
 					ProcessConnectQuery(cur_node, str);
 				}
-				else if(strcmp(name, "subscribe") == 0)
+				else if( name == "subscribe" )
 				{
 					ProcessSubscribeQuery(cur_node, msg->pid, true);
 				}
-				else if(strcmp(name, "unsubscribe") == 0)
+				else if( name == "unsubscribe" )
 				{
 					ProcessSubscribeQuery(cur_node, msg->pid, false);
 				}
-				else if(strcmp(name, "lock") == 0)
+				else if( name == "lock" )
 				{
 					ProcessLockQuery(cur_node, msg->pid, true, str);
 				}
-				else if(strcmp(name, "unlock") == 0)
+				else if( name == "unlock" )
 				{
 					ProcessLockQuery(cur_node, msg->pid, false, str);
 				}
@@ -406,7 +406,10 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 
 		TcpServer::listConnections.Lock();
 		MsgSocket* ms =  FindClientFromId(msg->pid);
-		if(ms) ms->Send((int)str.GetLength(), str.GetStr());
+		if(ms)
+		{
+			ms->Send((int)str.GetLength(), str.GetStr());
+		}
 		TcpServer::listConnections.Unlock();
 	}
 	else

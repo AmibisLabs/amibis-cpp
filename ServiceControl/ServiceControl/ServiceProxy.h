@@ -101,7 +101,7 @@ public:
      * @param VarName the name of the remote variable
      * @param value the value (SimpleString format)
      */
-    bool GetVariableValue(const SimpleString VarName, SimpleString& value);
+    SimpleString GetVariableValue(const SimpleString VarName);
 
 	/**
      * Gets the value of a remote variable

@@ -645,6 +645,8 @@ void MsgSocket::Receive()
 
 						offset += length_header + tag_end_size;
 						size =  occupiedSize - offset;
+
+						// Ok, we have someone connected
 					}
 					//					else if(length_msg == 0)
 					//					{		      

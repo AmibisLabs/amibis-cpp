@@ -171,28 +171,28 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
   {
 	  if (cur_node->type == XML_ELEMENT_NODE) 
 	  {
-		  const char* cur_name = (const char*)cur_node->name;
-		  if(strcmp(cur_name, "description")==0)
+		  SimpleString cur_name = (const char*)cur_node->name;
+		  if( cur_name == "description" )
 		  {
-			  SetDescription(XMLMessage::ExtractTextContent(cur_node->children).GetStr());
+			  SetDescription( XMLMessage::ExtractTextContent(cur_node->children) );
 		  }      
-		  else if(strcmp(cur_name, "formatDescription")==0)
+		  else if( cur_name == "formatDescription" )
 		  {
-			  SetDescription(XMLMessage::ExtractTextContent(cur_node->children).GetStr());
+			  SetDescription( XMLMessage::ExtractTextContent(cur_node->children) );
 		  }
-		  else if (strcmp(cur_name, "tcp") == 0)
+		  else if ( cur_name == "tcp" )
 		  {
-			  SetTcpPort(atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()));
+			  SetTcpPort( atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );
 		  }
-		  else if (strcmp(cur_name, "udp")==0)
+		  else if ( cur_name == "udp" )
 		  {
-			  SetUdpPort(atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()));
+			  SetUdpPort( atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );
 		  }
-		  else if (strcmp(cur_name, "peerid")==0)
+		  else if ( cur_name == "peerid" )
 		  {
 			  sscanf( XMLMessage::ExtractTextContent(cur_node->children).GetStr(), "%.x", &peerId );
 		  }
-		  else if (strcmp(cur_name,"peers")==0)
+		  else if ( cur_name == "peers" )
 		  {
 			  xmlNodePtr node_peer = cur_node->children;
 			  for(; node_peer; node_peer = node_peer->next)
