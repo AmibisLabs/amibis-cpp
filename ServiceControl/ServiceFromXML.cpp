@@ -43,7 +43,7 @@ void ServiceFromXML::InitServiceFromXml(xmlNodePtr root_node)
 	    }
 	  else
 	    {
-	      fprintf(stderr, "unknown node : %s\n", cur_name);
+	      fprintf(stderr, "unknown node : %s\n", cur_name.GetStr() );
 	    }
 	}
     }          

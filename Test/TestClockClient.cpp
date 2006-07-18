@@ -41,7 +41,7 @@ int main(int argc, char * argv[])
 	// MySearch.Add( NameIs("Clock Server") );
 	// MySearch.Add( NameIs("Clock Server") );
 
-	ServiceProxy * ClockServer = MyService->FindService( NameIs("Clock Server") );
+	ServiceProxy * ClockServer = MyService->FindService( And(NameIs("Clock Server"),OwnerIs("vaufreyd")) );
 
 	if ( ClockServer == NULL )
 	{

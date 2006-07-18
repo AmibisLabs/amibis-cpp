@@ -394,7 +394,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 				}
 				else
 				{
-					TraceError( "unknow tag : %s\n", name);
+					TraceError( "unknow tag : %s\n", name.GetStr() );
 				}
 			}	 
 			// TraceError( "Send : %s \n", str.GetStr());
