@@ -27,6 +27,10 @@ public:
 
 int main(int argc, char * argv[])
 {
+	system( "PAUSE" );
+	return 0;
+
+#if 0
 	// StartTrackingMemoryLeaks(); 
 
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
@@ -147,4 +151,6 @@ int main(int argc, char * argv[])
 	//}
 	//
 	//return 0;
+
+#endif
 }

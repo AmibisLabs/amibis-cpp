@@ -33,6 +33,10 @@ void ConnectorListener::Disconnected(Service& TheService, const SimpleString Loc
 	TraceError( "A new peer %.8x dicconnects from %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
 }
 
+void ConnectorListener::MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
+{
+}
+
 void ConnectorListener::Receive(MsgSocketCallBackData& CallbackData)
 {
 	// Call the User Friendly interface

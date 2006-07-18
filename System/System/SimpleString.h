@@ -58,10 +58,10 @@ private:
 		/* virtual */ ~StringData();
 
 		/** \return the pointer on the buffer of characters */
-		char* GetDataPtr() const;
+		char* GetDataPtr();
 
 		/** \return the length of the string */
-		unsigned int GetLength() const;
+		unsigned int GetLength();
 
 		/** \brief add one reference to the string 
 		 * \return the number of reference
@@ -80,18 +80,18 @@ private:
 		 * The string is changed if only a reference exist on this object.
 		 * \return true if the string has changed.
 		 */
-		bool ChangeData(const char* str);
+		// bool ChangeData(const char* str);
 
 		/** \name Comparaison */
 		//@{
 		/** \return if the string contained by this object match the string contained in 'sd'*/
-		bool Equals(const StringData& sd) const;
+		bool Equals(const StringData& sd);
 		/** \return if the string contained by this object match the string 'str'*/
-		bool Equals(const char* str) const;	
+		bool Equals(const char* str);	
 		/** \return if the string contained by this object do not match the string contained in 'sd'*/
-		bool NotEquals(const StringData& sd) const;
+		bool NotEquals(const StringData& sd);
 		/** \return if the string contained by this object do not match the string 'str''*/
-		bool NotEquals(const char* str) const;	
+		bool NotEquals(const char* str);	
 		//@}
 
 		/**

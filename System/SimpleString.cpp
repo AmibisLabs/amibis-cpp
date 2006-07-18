@@ -137,6 +137,7 @@ SimpleString::StringData::~StringData()
 		delete data;
 	}
 	data = NULL;
+
 	if ( nbReferences )
 	{
 		delete nbReferences;
@@ -150,18 +151,20 @@ void SimpleString::StringData::SetData(const char* str)
 {
 	Lock();
 
-	if (data)
+	if ( data )
 	{
 		delete data;
 	}
 	
-	if(str)
+	if ( str )
 	{
 		// data = strdup(str);
 		length = (unsigned int)strlen(str);
 		data = new char[length+1];
 		memcpy( data, str, length+1 ); // +1 for the '\0'
-	}else{
+	}
+	else
+	{
 		data = NULL;
 		length = 0;
 	}
@@ -169,45 +172,168 @@ void SimpleString::StringData::SetData(const char* str)
 	Unlock();
 }
 
-bool SimpleString::StringData::ChangeData(const char* str)
+void SimpleString::StringData::Lock()
 {
-	Lock();
+	Protect.EnterMutex();
+}
 
-	if(*nbReferences == 1)
+void SimpleString::StringData::Unlock()
+{
+	Protect.LeaveMutex();
+}
+
+int SimpleString::StringData::RemoveReference()
+{
+	int res;
+
+	Lock();
+	if ( nbReferences == NULL )
 	{
-		if(str == NULL)
-		{
-			if (data)
-			{
-				delete data;
-			}
-			data = NULL;
-			length = 0;
-		}
-		else
-		{
-			length = (unsigned int)strlen(str);
-			if ( data )
-			{
-				delete data;
-			}
-			data = new char[length+1];
-			if ( data == NULL )
-			{
-				length = 0;
-			}
-			else
-			{
-				strcpy(data, str);
-			}
-		}
-		Unlock();
+		return -1;
+	}
+	res = --(*nbReferences);
+	Unlock();
+
+	return res; 
+}
+
+int SimpleString::StringData::GetNbReference()
+{
+	int res;
+
+	Lock();
+	if ( nbReferences == NULL )
+	{
+		return -1;
+	}
+	res = *nbReferences;
+	Unlock();
+
+	return res;
+}
+
+char* SimpleString::StringData::GetDataPtr()
+{
+	char * res;
+	
+	Lock();
+	res = data;
+	Unlock();
+
+	return res; 
+}
+
+unsigned int SimpleString::StringData::GetLength()
+{
+	unsigned int res;
+
+	Lock();
+	res = length;
+	Unlock();
+
+	return res;
+}
+
+bool SimpleString::StringData::Equals(const char* str)
+{
+	bool res;
+
+	if ( str == NULL )
+	{
+		return false;
+	}
+	
+	Lock();
+	res = (strcmp(str, data) == 0);
+	Unlock();
+
+	return res;
+}
+
+bool SimpleString::StringData::Equals(const StringData& sd)
+{
+	bool res;
+
+	StringData& other = (StringData&)sd;
+
+	Lock();
+	res = (this == &sd) || Equals(other.GetDataPtr());
+	Unlock();
+
+	return res;
+}
+
+bool SimpleString::StringData::NotEquals(const char* str)
+{
+	bool res;
+
+	if ( str == NULL )
+	{
 		return true;
 	}
 
+	Lock();
+	res = (strcmp(str, data) != 0);
 	Unlock();
-	return false;
+
+	return res;
 }
+
+bool SimpleString::StringData::NotEquals(const StringData& sd)
+{
+	bool res;
+
+	StringData& other = (StringData&)sd;
+
+	Lock();
+	res = (this != &sd) && NotEquals(other.GetDataPtr());
+	Unlock();
+
+	return res;
+}
+
+
+//bool SimpleString::StringData::ChangeData(const char* str)
+//{
+//	Lock();
+//
+//	if ( nbReferences 
+//
+//	if(*nbReferences == 1)
+//	{
+//		if(str == NULL)
+//		{
+//			if (data)
+//			{
+//				delete data;
+//			}
+//			data = NULL;
+//			length = 0;
+//		}
+//		else
+//		{
+//			length = (unsigned int)strlen(str);
+//			if ( data )
+//			{
+//				delete data;
+//			}
+//			data = new char[length+1];
+//			if ( data == NULL )
+//			{
+//				length = 0;
+//			}
+//			else
+//			{
+//				strcpy(data, str);
+//			}
+//		}
+//		Unlock();
+//		return true;
+//	}
+//
+//	Unlock();
+//	return false;
+//}
 
 
 ///////////////////////////////////////////////////////
@@ -330,14 +456,13 @@ const SimpleString& SimpleString::operator= (const SimpleString& str)
 
 const SimpleString& SimpleString::operator= (const char* str)
 {
+	DestroyStringData();
 	if(str == NULL)
 	{
-		DestroyStringData();
 		CopyStringData( StringData::GetEmptyStringData() );
 	}
-	else if(!stringData->ChangeData(str))
+	else
 	{
-		DestroyStringData();
 		stringData = new StringData(str);
 	}
 	return *this;
@@ -487,63 +612,6 @@ const SimpleString Omiscid::operator+(const SimpleString& str1, const char* str2
 	return SimpleString(str1.GetStr(), str2);
 }
 
-void SimpleString::StringData::Lock()
-{
-	Protect.EnterMutex();
-}
-
-void SimpleString::StringData::Unlock()
-{
-	Protect.LeaveMutex();
-}
-
-int SimpleString::StringData::RemoveReference()
-{
-	return --(*nbReferences); 
-}
-
-int SimpleString::StringData::GetNbReference()
-{
-	return *nbReferences; 
-}
-
-char* SimpleString::StringData::GetDataPtr() const
-{
-	return data; 
-}
-
-unsigned int SimpleString::StringData::GetLength() const
-{
-	return length;
-}
-
-bool SimpleString::StringData::Equals(const char* str) const
-{
-	if ( str == NULL )
-	{
-		return false;
-	}
-	return strcmp(str, data) == 0; 
-}
-
-bool SimpleString::StringData::Equals(const StringData& sd) const
-{
-	return (this == &sd) || Equals(sd.GetDataPtr()); 
-}
-
-bool SimpleString::StringData::NotEquals(const char* str) const
-{
-	if ( str == NULL )
-	{
-		return true;
-	}
-	return strcmp(str, data) != 0; 
-}
-
-bool SimpleString::StringData::NotEquals(const StringData& sd) const
-{
-	return (this != &sd) && NotEquals(sd.GetDataPtr()); 
-}
 
 //----------------------------------------------//
 
