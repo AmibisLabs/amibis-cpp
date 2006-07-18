@@ -304,7 +304,9 @@ bool TcpUdpClientServer::AddCallbackObject(MsgSocketCallbackObject * CallbackObj
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
 	{
 		if((listClient.GetCurrent())->tcpClient->IsConnected())
+		{
 			(listClient.GetCurrent())->tcpClient->AddCallbackObject(CallbackObject);
+		}
 		else
 		{
 			delete listClient.GetCurrent();
@@ -343,7 +345,7 @@ bool TcpUdpClientServer::RemoveCallbackObject(MsgSocketCallbackObject * Callback
 	return true;
 }
 
-UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_connect, bool msg_empty)
+UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_connect, bool NewConnection )
 {
 	// TraceError( "in TcpUdpClientServer::acceptConnection(UdpConnection*)\n");
 
@@ -375,7 +377,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 			}
 			listClient.Unlock();
 		}
-		if((udp_found == NULL) && msg_empty) //recherche connection tcp associe aupres des connection au serveur 
+		if((udp_found == NULL) && NewConnection) //recherche connection tcp associe aupres des connection au serveur 
 		{
 			//std::cout << "recherche dans server connexion\n";
 			TcpServer::listConnections.Lock();
@@ -392,7 +394,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 			{
 				if(tcp_found->IsConnected())
 				{
-					TraceError("Creation connection udp associe TcpServer\n");
+					// TraceError("Creation connection udp associe TcpServer\n");
 					udp_found = new UdpConnection(udp_connect);
 					UdpExchange::listUdpConnections.Add(udp_found);
 				}

@@ -485,18 +485,6 @@ ServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString Value)
 }
 
 /**
-* Tests whether the service contain a connector (we do not care if it is an input or so...)
-*
-* @param String
-* @param ConnectorKind
-* @return
-*/
-ServiceFilter * Omiscid::HasConnector( SimpleString ConnectorName )
-{
-	return new ServiceHasConnector( ConnectorName, UnkownConnectorKind );
-}
-
-/**
 * Tests whether the service contain a connector (with a specific type)
 *
 * @param String

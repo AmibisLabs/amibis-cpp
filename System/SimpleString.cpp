@@ -466,21 +466,21 @@ SimpleString SimpleString::SubString(int begin, int end) const
 	return SimpleString(sd);
 }
 
-SimpleString Omiscid::operator+(const SimpleString& str1, const SimpleString& str2)
+const SimpleString Omiscid::operator+(const SimpleString& str1, const SimpleString& str2)
 {
 	if(str1.GetStr() == NULL) return SimpleString(str2);
 	if(str2.GetStr() == NULL) return SimpleString(str1);
 	return SimpleString(str1.GetStr(), str2.GetStr());
 }
 
-SimpleString Omiscid::operator+(const char* str1, const SimpleString& str2)
+const SimpleString Omiscid::operator+(const char* str1, const SimpleString& str2)
 {
 	if(str1 == NULL) return SimpleString(str2);
 	if(str2.GetStr() == NULL) return SimpleString(str1);
 	return SimpleString(str1, str2.GetStr());
 }
 
-SimpleString Omiscid::operator+(const SimpleString& str1, const char* str2)
+const SimpleString Omiscid::operator+(const SimpleString& str1, const char* str2)
 {
 	if(str1.GetStr() == NULL) return SimpleString(str2);
 	if(str2 == NULL) return SimpleString(str1);

@@ -106,22 +106,13 @@ ServiceFilter * HasVariable( const SimpleString VarName );
 ServiceFilter * HasVariable( const SimpleString VarName, const SimpleString Value );
 
 /**
-* Tests whether the service contain a connector (we do not care if it is an input or so...)
-*
-* @param String
-* @param ConnectorKind
-* @return
-*/
-ServiceFilter * HasConnector( const SimpleString ConnectorName );
-
-/**
 * Tests whether the service contain a connector (with a specific type)
 *
 * @param String
 * @param ConnectorKind
 * @return
 */
-ServiceFilter * HasConnector( const SimpleString ConnectorName, ConnectorKind KindOfConnector );
+ServiceFilter * HasConnector( const SimpleString ConnectorName, ConnectorKind KindOfConnector = UnkownConnectorKind);
 
 
 /**

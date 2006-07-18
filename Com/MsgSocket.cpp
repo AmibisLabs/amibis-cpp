@@ -522,7 +522,18 @@ bool MsgSocket::SendSyncLinkMsg()
 	catch(SocketException& e)
 	{
 		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
-		connected = false;
+		if ( connected )
+		{
+			// Send disconnected message
+			CallbackObjects.Lock();
+			// Send info to all listener
+			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+			{
+				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			}
+			CallbackObjects.Unlock();
+			connected = false;
+		}
 		protectSend.LeaveMutex();
 		return false;
 	}
@@ -563,7 +574,18 @@ void MsgSocket::Run()
 
 void MsgSocket::Stop()
 {
-	connected = false;
+	if ( connected )
+	{
+		// Send disconnected message
+		CallbackObjects.Lock();
+		// Send info to all listener
+		for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+		{
+			CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+		}
+		CallbackObjects.Unlock();
+		connected = false;
+	}
 	Thread::StopThread();
 }
 
@@ -577,7 +599,18 @@ void MsgSocket::Receive()
 			// TraceError( "%d %d \n ",nb_read, occupiedSize);
 			if(nb_read == 0) 	    
 			{
-				connected = false;
+				if ( connected )
+				{
+					// Send disconnected message
+					CallbackObjects.Lock();
+					// Send info to all listener
+					for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+					{
+						CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+					}
+					CallbackObjects.Unlock();
+					connected = false;
+				}
 				return ;
 			}
 			occupiedSize += nb_read;
@@ -643,6 +676,15 @@ void MsgSocket::Receive()
 							SetPeerSyncLinkData( (char*)(buffer+offset+length_header), length_msg );
 						}
 
+						// Let's say we have a new connected peer
+						CallbackObjects.Lock();
+						// Send info to all listener
+						for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+						{
+							CallbackObjects.GetCurrent()->Connected(pid);
+						}
+						CallbackObjects.Unlock();
+
 						offset += length_header + tag_end_size;
 						size =  occupiedSize - offset;
 
@@ -695,7 +737,7 @@ void MsgSocket::Receive()
 							if ( Debug & DBG_RECV )
 							{
 								if ( length_msg != 0 )
-									fprintf( stderr, "MsgSocket::Recv: %s\n", msgptr );
+									fprintf( stderr, "MsgSocket::Recv: %10.10s\n", msgptr );
 								else
 									fprintf( stderr, "MsgSocket::Recv: <empty>\n" );
 							}
@@ -756,7 +798,18 @@ void MsgSocket::Receive()
 	catch(SocketException& e)
 	{
 		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
-		connected = false;
+		if ( connected )
+		{
+			// Send disconnected message
+			CallbackObjects.Lock();
+			// Send info to all listener
+			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+			{
+				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			}
+			CallbackObjects.Unlock();
+			connected = false;
+		}
 	}
 }
 
@@ -821,9 +874,20 @@ int MsgSocket::Send(int len, const char* buf)
 	}
 	catch(SocketException& e)
 	{
-		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
-		connected = false;
 		protectSend.LeaveMutex();
+		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		if ( connected )
+		{
+			// Send disconnected message
+			CallbackObjects.Lock();
+			// Send info to all listener
+			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+			{
+				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			}
+			CallbackObjects.Unlock();
+			connected = false;
+		}
 		return -1;
 	}
 }
@@ -863,9 +927,20 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	}
 	catch(SocketException& e)
 	{
-		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
-		connected = false;      
 		protectSend.LeaveMutex();
+		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		if ( connected )
+		{
+			// Send disconnected message
+			CallbackObjects.Lock();
+			// Send info to all listener
+			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+			{
+				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			}
+			CallbackObjects.Unlock();
+			connected = false;      
+		}
 		return -1;
 	}
 }
@@ -912,9 +987,20 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 	}
 	catch(SocketException& e)
 	{
-		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
-		connected = false;
 		protectSend.LeaveMutex();
+		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		if ( connected )
+		{
+			// Send disconnected message
+			CallbackObjects.Lock();
+			// Send info to all listener
+			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+			{
+				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			}
+			CallbackObjects.Unlock();
+			connected = false;
+		}
 		return -1;
 	}
 }
@@ -960,9 +1046,20 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 	}
 	catch(SocketException& e)
 	{
-		TraceError( "SocketException: %s %d \n", e.msg.GetStr(), e.err);
-		connected = false;      
 		protectSend.LeaveMutex();
+		TraceError( "SocketException: %s %d \n", e.msg.GetStr(), e.err);
+		if ( connected )
+		{
+			// Send disconnected message
+			CallbackObjects.Lock();
+			// Send info to all listener
+			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+			{
+				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			}
+			CallbackObjects.Unlock();
+			connected = false;      
+		}
 		return -1;
 	}
 }
@@ -1135,7 +1232,18 @@ void MsgSocket::ReceiveUdpExchange()
 	catch(SocketException& e)
 	{
 		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
-		connected = false;
+		if ( connected )
+		{
+			// Send disconnected message
+			CallbackObjects.Lock();
+			// Send info to all listener
+			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+			{
+				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			}
+			CallbackObjects.Unlock();
+			connected = false;
+		}
 	}
 }
 

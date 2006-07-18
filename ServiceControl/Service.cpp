@@ -489,10 +489,9 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener
 		return false;
 	}
 
-	if ( pAtt->IsAnOutput() )	// can be Input, InOutput, but not Output
+	if ( pAtt->IsAnOutput() )	// can be Input, InOutput, but limited on Output
 	{
-		TraceError( "Could not receive data over a simple output connector.\n" );
-		return false;
+		TraceError( "Could only receive connection/deconnecion notification over a simple output connector.\n" );
 	}
 
 	// Get the connector

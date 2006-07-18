@@ -7,11 +7,12 @@
 
 #include <System/Portage.h>
 #include <ServiceControl/Factory.h>
+#include <ServiceControl/ConnectorListener.h>
 #include <ServiceControl/LocalVariableListener.h>
 
 using namespace Omiscid;
 
-class TestListener : public LocalVariableListener
+class TestVariableListener : public LocalVariableListener
 {
 public:
 	virtual bool IsValid(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue )
@@ -26,8 +27,23 @@ public:
 	}
 };
 
+class TestConnectorListener : public ConnectorListener
+{
+public:
+	~TestConnectorListener()
+	{
+	}
+
+	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
+	{
+		printf( "Receive '%s' :: '%s'\n%5.5s\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
+	}
+};
+
 int main(int argc, char * argv[])
 {
+	// MsgSocket::Debug = MsgSocket::DBG_ALL;
+
 	// Let create a service named "Clock Server"
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 
@@ -40,6 +56,10 @@ int main(int argc, char * argv[])
 		// something goes wrong
 		return -1;
 	}
+
+	TestConnectorListener TCL;
+
+	ClockServer->AddConnectorListener( "PushClock", &TCL );
 
 	// Add a read-only variable to count hours
 	// Name					= "Hours"

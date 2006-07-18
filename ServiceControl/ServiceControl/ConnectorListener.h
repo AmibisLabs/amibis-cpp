@@ -39,27 +39,29 @@ public:
      * processing.
      * @param service the service receiving the message
      * @param localConnectorName the name of the connector that has received the message
-     * @param message the message to process
+     * @param Msg the message to process
      */
-    virtual void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& message) = 0;
+    virtual void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
 
     // void messageReceived(Service service, String localConnectorName, Message message);
 
     /**
      * Called when the connexion between the local service and the remote
-     * service is broken.
-     * @param localConnectorName the name of the connector handling the broken link
-     * @param peerId the disconnected remote service
+     * service is open.
+     * @param TheService A reference to the service which have a new connected Peer
+     * @param LocalConnectorName The name of the connector handling the new link
+     * @param PeerId the connected remote service PeerId
      */
-    // virtual void Connected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId) = 0;
+    virtual void Connected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId);
 
     /**
      * Called when the connexion between the local service and the remote
      * service is broken.
-     * @param localConnectorName the name of the connector handling the broken link
-     * @param peerId the disconnected remote service
+     * @param TheService A reference to the service which losts a connection
+     * @param LocalConnectorName the name of the connector handling the broken link
+     * @param PeerId the disconnected remote service PeerId
      */
-    // virtual void Disconnected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId) = 0;
+    virtual void Disconnected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId);
 
 private:
 	// Atributs
@@ -67,6 +69,8 @@ private:
 	Service    * ServiceOfTheConnector;
 
 	void Receive(MsgSocketCallBackData& CallbackData);
+	void Connected(unsigned int PeerId);
+	void Disconnected(unsigned int PeerId);
 };
 
 } // namespace Omiscid

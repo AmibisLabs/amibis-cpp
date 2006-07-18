@@ -29,6 +29,8 @@ int main(int argc, char * argv[])
 {
 	// StartTrackingMemoryLeaks(); 
 
+	// MsgSocket::Debug = MsgSocket::DBG_ALL;
+
 	TestListener TL;
 
 	Omiscid::Service * MyService = ServiceFactory.Create( "Clock Client" );
@@ -39,7 +41,7 @@ int main(int argc, char * argv[])
 	// MySearch.Add( NameIs("Clock Server") );
 	// MySearch.Add( NameIs("Clock Server") );
 
-	ServiceProxy * ClockServer = MyService->FindService( NameIs("Clock Server"), 3000 );
+	ServiceProxy * ClockServer = MyService->FindService( NameIs("Clock Server") );
 
 	if ( ClockServer == NULL )
 	{
@@ -47,13 +49,17 @@ int main(int argc, char * argv[])
 		return 0;
 	}
 
-	ClockServer->SetVariableValue( "Hours", "12" );
+	// ClockServer->SetVariableValue( "Hours", "12" );
 
 	MyService->AddConnector( "In", "in", AnInput );
 	MyService->ConnectTo( "In", ClockServer, "PushClock" );
 
 	printf( "Add listener\n" );
 	MyService->AddConnectorListener( "In", &TL );
+
+	Mutex MyLock;
+	MyLock.EnterMutex();
+	MyLock.EnterMutex();
 
 	Thread::Sleep( 5000 );
 	printf( "Remove listener\n" );

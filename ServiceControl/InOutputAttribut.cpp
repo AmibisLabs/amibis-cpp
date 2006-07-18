@@ -207,7 +207,7 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 		  }
 		  else 
 		  {
-			  TraceError( "Unwaited Tag : %s\n", cur_name);
+			  TraceError( "Unwaited Tag : %s\n", cur_name.GetStr() );
 		  }
 	  }
   }
