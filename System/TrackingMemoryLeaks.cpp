@@ -102,7 +102,7 @@ void Omiscid::AddMemoryBlock(void* addr,  size_t aSize,  const char *fname, int 
 	info->Line = lnum;
 	info->Size = aSize;
 	allocList->insert(allocList->begin(), info);
-};
+}
 
 void Omiscid::RemoveMemoryBlock(void* addr)
 {
@@ -119,7 +119,7 @@ void Omiscid::RemoveMemoryBlock(void* addr)
 			break;
 		}
 	}
-};
+}
 
 static char * Omiscid::PrintSize( unsigned int SizeOfData )
 {
@@ -190,7 +190,7 @@ void Omiscid::DumpUnfreed()
 
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );
 	OutputDebugString(buf);
-};
+}
 
 namespace Omiscid {
 

@@ -587,8 +587,9 @@ SimpleString& SimpleString::operator+= (float f)
 
 SimpleString& SimpleString::operator+= (double d)
 {
-	TemporaryMemoryBuffer tmp(30);
-	snprintf((char*)tmp, 30, "%lf", d);
+	TemporaryMemoryBuffer tmp(50);
+	// warning: ISO C++ does not support the '%lf' printf format
+	snprintf((char*)tmp, 50, "%f", d);
 	Append((char*)tmp);
 	return *this;
 }
