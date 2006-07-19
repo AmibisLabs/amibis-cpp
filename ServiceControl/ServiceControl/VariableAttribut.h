@@ -170,7 +170,7 @@ protected:
   VariableAccessType access; /*!< kind of access.*/
   SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
 
-  static const SimpleString VariableAttribut::access_constant_str; /*<! SimpleString representation for 'constant' access (used in XML description)*/
+  static const SimpleString access_constant_str; /*<! SimpleString representation for 'constant' access (used in XML description)*/
   static const SimpleString access_read_str; /*<! SimpleString representation for 'read' access (used in XML description)*/
   static const SimpleString access_readwrite_str; /*<! SimpleString representation for 'read-write' access (used in XML description)*/
 

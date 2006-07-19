@@ -37,7 +37,7 @@ public:
 	virtual ~MemoryBufferException();
 
 	MemoryBufferException( SimpleString Msg, int i = UnkownSimpleExceptionCode );
-	MemoryBufferException::MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy );
+	MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy );
 
 	SimpleString GetExceptionType() const;
 };
