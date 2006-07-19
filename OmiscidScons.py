@@ -10,10 +10,10 @@ def OmiscidMessage(str):
 ### Command to initialize the environment ###
 #############################################
 def OmiscidInit(env,commandLineTargets,arguments,options=[]):
- global COMMAND_LINE_TARGETS
- COMMAND_LINE_TARGETS=commandLineTargets
- global ARGUMENTS
- ARGUMENTS=arguments
+ OmiscidMessage 'env : ' + env
+ OmiscidMessage 'commandLineTargets : ' + commandLineTargets
+ OmiscidMessage 'arguments : ' + arguments
+ OmiscidMessage 'options : ' + options
  if "omiscid" in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
@@ -26,13 +26,13 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  if "xml2" in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
- if "debug" in ARGUMENTS :
+ if "debug" in arguments :
   OmiscidMessage("compiling in debug mode (with trace mode)")
   env.AppendUnique(CXXFLAGS = ["-DDEBUG","-DOMISCID_TRACE_ENABLE"])
- else
+ else :
   OmiscidMessage("compiling in non-debug mode")
   env.AppendUnique(CXXFLAGS = ["-DNDEBUG"])
- if "trace" in ARGUMENTS :
+ if "trace" in arguments :
   OmiscidMessage("compiling in trace mode")
   env.AppendUnique(CXXFLAGS = ["-DOMISCID_TRACE_ENABLE"])
 
