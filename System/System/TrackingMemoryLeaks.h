@@ -55,6 +55,12 @@ void RemoveMemoryBlock(void* addr);
 		free(p);
 	};
 
+	inline void OperatorCallConvention operator delete[](void *p)
+	{
+		Omiscid::RemoveMemoryBlock(p);
+		free(p);
+	};
+
 	#define DEBUG_NEW new(__FILE__, __LINE__)
 
 #else

@@ -130,11 +130,19 @@ sub FirstIncludeofHeaderFileisConfig()
  	my $CurrentLine;
  	my $FirstIncludedFile;
  	my $Folder;
+ 
+  	my @ExcludedFiles = ( 'System/Config.h', 'Com/Config.h', 'ServiceControl/Config.h', 'System/TrackingMemoryLeaks.h' );
+ 	my $CurrentFile;
  	
- 	if ( $FileName =~ /\/Config.h$/ )
+ 	foreach $CurrentFile ( @ExcludedFiles )
  	{
- 		return;
- 	}
+ 		# '/' => '\/'
+ 		$CurrentFile =~ s/\//\\\//g;
+	 	if ( $FileName =~ /$CurrentFile$/ )
+	 	{
+	 		return;
+	 	}
+	}
  	
  	$FileName =~ /([^\/]+)\/[^\/]+$/;
  	$Folder = $1;
@@ -220,10 +228,18 @@ sub FirstDoesNotIncludeStdLibs()
  	my $CurrentLine;
  	my $lib;
  	
- 	if ( $FileName =~ /System\/Config.h$/ )
+ 	my @ExcludedFiles = ( 'System/Config.h', 'System/TrackingMemoryLeaks.h', 'System/TrackingMemoryLeaks.cpp' );
+ 	my $CurrentFile;
+ 	
+ 	foreach $CurrentFile ( @ExcludedFiles )
  	{
- 		return;
- 	}
+ 		# '/' => '\/'
+ 		$CurrentFile =~ s/\//\\\//g;
+	 	if ( $FileName =~ /$CurrentFile$/ )
+	 	{
+	 		return;
+	 	}
+	}
  	
 	open( $fd, "<$FileName" ) or return;
 	while( $CurrentLine = <$fd> )
@@ -232,7 +248,7 @@ sub FirstDoesNotIncludeStdLibs()
 		# print "##\n$CurrentLine\n##\n";
 		foreach $lib ( @StdLibs )
 		{
-			if ( $CurrentLine =~ /^\#include\s+\<$lib\>/ )
+			if ( $CurrentLine =~ /^\#include\s+\<$lib\>/i )
 			{
 				print "$FileName: *must* not include '$lib'\n";
 			}

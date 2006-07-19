@@ -15,7 +15,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	ControlPort	= eControlPort;
 	if ( ConnectToCtrlServer(HostName, ControlPort) == false )
 	{
-		throw "ServiceProxy failed";
+		// throw "ServiceProxy failed";
 	}
 }
 

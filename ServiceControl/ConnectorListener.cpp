@@ -30,9 +30,17 @@ void ConnectorListener::Connected(Service& TheService, const SimpleString LocalC
      */
 void ConnectorListener::Disconnected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId)
 {
-	TraceError( "A new peer %.8x dicconnects from %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
+	TraceError( "The peer %.8x dicconnects from %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
 }
 
+	/**
+     * Processes a received Omiscid message. As a given message could be processed
+     * by several others listeners, the message must not be modified by its
+     * processing.
+     * @param service the service receiving the message
+     * @param localConnectorName the name of the connector that has received the message
+     * @param Msg the message to process
+     */
 void ConnectorListener::MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 {
 }

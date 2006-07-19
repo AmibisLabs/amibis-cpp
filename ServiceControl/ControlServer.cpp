@@ -13,6 +13,9 @@
 
 using namespace Omiscid;
 
+
+const SimpleString ControlServer::DefaultServiceClassName = "Service";
+
 void ControlServer::InitInstance()
 {
 	localConnectorId = 0;
@@ -55,7 +58,7 @@ void ControlServer::InitInstance()
 	va->SetType("class");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of thisthis service");
-	ClassVariable = new StringVariableAttribut( va, "Service" );
+	ClassVariable = new StringVariableAttribut( va, DefaultServiceClassName );
 
 	va = AddVariable("id");
 	va->SetType("hexadecimal");

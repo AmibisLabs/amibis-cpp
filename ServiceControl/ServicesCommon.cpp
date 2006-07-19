@@ -14,8 +14,7 @@
 using namespace Omiscid;
 
 const SimpleString CommonServiceValues::DefaultDomain = "_bip._tcp";
-
-SimpleString CommonServiceValues::OmiscidServiceDnsSdType(""); // help for debug
+SimpleString CommonServiceValues::OmiscidServiceDnsSdType(""); // help for debug or defining subdomain
 
 namespace Omiscid {
 

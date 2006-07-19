@@ -60,24 +60,24 @@ class ServiceException : public SimpleException
 class CommonServiceValues
 {
 public:
-		/*! \enum TransportProtocol
-		*	\brief Defines the transport protocol used by the service.
-		*
-		*	This enum is used to define the control protocol used by the service. Supported protocols
-		*	are TCP and UDP.
-		*/
+	   /** @enum TransportProtocol
+		 * @brief Defines the transport protocol used by the service.
+		 *
+		 *	This enum is used to define the control protocol used by the service. Supported protocols
+		 *	are TCP and UDP.
+		 */
 		enum TransportProtocol{
 			UNKNOWN = 0,		/*!< set when the transport protocol is undefined or unsupported. */
 			TCP = Socket::UDP,  /*!< set when the service uses TCP. It is defined in Socket.h using the usual SOCK_STEAM value. */
 			UDP = Socket::TCP	/*!< set when the service uses UCP. It is defined in Socket.h using the usual SOCK_DGRAM value. */
 		};
 
-		/*! \enum SizeOfBuffers
-		*	\brief Defines length of service information.
-		*
-		*	According to the DNS-SD documentation, the maximal length of all fields for a service names are defined
-		*	as expressed in this enum.
-		*/
+		/** @enum SizeOfBuffers
+	 	 *	@brief Defines length of service information.
+		 *
+		 *	According to the DNS-SD documentation, the maximal length of all fields for a service names are defined
+		 *	as expressed in this enum.
+		 */
 		enum SizeOfBuffers {
 			ServiceField = 64,	/*!< the service name length */
 			ProtocolAndTransportField = ServiceField + sizeof("_tcp"), /*!< the protocol and transport size */
@@ -87,6 +87,8 @@ public:
 
 		static SimpleString OmiscidServiceDnsSdType;
 		static const SimpleString DefaultDomain;
+
+		static const SimpleString DefaultServiceClassName;
 };
 
 } // namespace Omiscid

@@ -64,7 +64,7 @@ Service::Service(const SimpleString ServiceName, const SimpleString ClassName)
 {
 	if ( ClassName.IsEmpty() )
 	{
-		SetClass( "Service" );
+		SetClass( DefaultServiceClassName );
 	}
 	else
 	{

@@ -27,7 +27,7 @@ public:
 
 int main(int argc, char * argv[])
 {
-	// StartTrackingMemoryLeaks(); 
+	StartTrackingMemoryLeaks(); 
 
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 

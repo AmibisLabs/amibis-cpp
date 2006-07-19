@@ -4,6 +4,7 @@
 
 #include <System/Portage.h>
 #include <Com/ComTools.h>
+#include <ServiceControl/ControlServer.h>
 
 using namespace Omiscid;
 
@@ -429,7 +430,7 @@ ServiceFilter * Omiscid::ClassIs( const SimpleString ClassName )
 	// If no class given, use the default class
 	if ( ClassName.IsEmpty() )
 	{
-		LocalClassName = "Service";
+		LocalClassName = ControlServer::DefaultServiceClassName;
 	}
 	else
 	{

@@ -33,7 +33,8 @@ sub WorkOnFile()
 		{
 			$NumLine++;
 			# if ( $CurrentLine =~ /char\s*\*/ || $CurrentLine =~ /char\s*\w+(\s)?\[/)
-			if ( $CurrentLine =~ /TraceError/ && $CurrentLine =~ /\%s/ )
+			# if ( $CurrentLine =~ /TraceError/ && $CurrentLine =~ /\%s/ )
+			if ( $CurrentLine =~ /throw *\"/ )
 			{
 				$CurrentLine =~  s/[\r\n]+$//;
 				print "$FileName [$NumLine]: $CurrentLine\n";
@@ -72,16 +73,6 @@ sub WorkOnFile()
 # );
 
 @ExcludedFiles = (
-'System/SimpleString.cpp',
-'Com/ComTools.cpp',
-'ServiceControl/ControlServer.cpp',
-'ServiceControl/Attribut.cpp',
-'ServiceControl/ControlClient.cpp',
-'ServiceControl/InOutputAttribut.cpp',
-'ServiceControl/ControlUtils.cpp',
-'ServiceControl/OmiscidServiceFilters.cpp',
-'ServiceControl/OmiscidServiceProxy.cpp',
-'ServiceControl/VariableAttribut.cpp'
 );
 
 foreach $fic ( @ExcludedFiles )

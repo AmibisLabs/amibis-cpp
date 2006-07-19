@@ -49,7 +49,7 @@ private:
 	 * @param ClassName The classe name of this service. Can be usefull in order
 	 * to search for services. By default, class is 'Service'.
 	 */
-	Service(const SimpleString ServiceName, const SimpleString ClassName = "Service" );
+	Service(const SimpleString ServiceName, const SimpleString ClassName = DefaultServiceClassName );
 
 	// Every one can destroy an Service
 public:
