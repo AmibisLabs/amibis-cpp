@@ -33,10 +33,10 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  if 'debug' in arguments :
   if arguments['debug'] in ['1','yes','true'] :
    DebugMode = True
-  elseif arguments['debug'] in ['0','no','false'] :
+  elif arguments['debug'] in ['0','no','false'] :
    DebugMode = False
   else :
-   OmiscidMessage 'Bad value for debug flag. Must be '1', 'yes', 'true' for debuging mode or '0', 'no', 'false' for non debugging mode'
+   OmiscidMessage "Bad value for debug flag. Must be '1', 'yes', 'true' for debuging mode or '0', 'no', 'false' for non debugging mode"
    exit
    
  if DebugMode == True :   
