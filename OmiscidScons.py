@@ -51,7 +51,7 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  if 'trace' in arguments :
   if arguments['trace'] in ['1','yes','true'] :
    TraceMode = True
-  elif arguments['trace'] in ['0','no','false'] :
+  elif arguments['trace'] not in ['0','no','false'] :
    OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
    exit
  
