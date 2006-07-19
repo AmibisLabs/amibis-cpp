@@ -15,6 +15,7 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  COMMAND_LINE_TARGETS=commandLineTargets
  global ARGUMENTS
  ARGUMENTS=arguments
+ print commandLineTargets, arguments
  if "omiscid" in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
