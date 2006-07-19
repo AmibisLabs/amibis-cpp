@@ -38,7 +38,7 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
    DebugMode = False
   else :
    OmiscidMessage("Bad value for debug flag. Must be '1', 'yes', 'true' for debuging mode or '0', 'no', 'false' for non debugging mode")
-   sys.exit
+   Exit()
 
  TraceMode = False
  if 'trace' in arguments :
@@ -46,7 +46,7 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
    TraceMode = True
   elif arguments['trace'] not in ['0','no','false'] :
    OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
-   sys.exit
+   Exit()
    
  # Do what we ask   
  if DebugMode == True :   
