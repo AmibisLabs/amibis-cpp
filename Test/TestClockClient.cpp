@@ -10,7 +10,10 @@
 #include <ServiceControl/ConnectorListener.h>
 #include <Com/TcpUdpClientServer.h>
 
+#include <iostream>
+
 using namespace Omiscid;
+using namespace std;
 
 class TestListener : public ConnectorListener
 {
@@ -28,6 +31,15 @@ public:
 int main(int argc, char * argv[])
 {
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
+
+	for(;;)
+	{
+		SimpleString TestS;
+		cin >> TestS;
+		cout << TestS << endl;
+	}
+
+	return 0;
 
 	TestListener TL;
 

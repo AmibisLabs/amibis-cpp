@@ -13,6 +13,8 @@
 
 #include <string.h>
 
+#include <iostream>
+
 namespace Omiscid {
 
 /**
@@ -266,7 +268,9 @@ const SimpleString operator+(const SimpleString& str1, const SimpleString& str2)
  * @param [in] str2, a SimpleString
  * @return Returns a SimpleString
  */
+
 const SimpleString operator+(const char* str1, const SimpleString& str2);
+
 /*
  * @brief An operator+ to collapse a char buffer and a string string
  * @param [in] str1, a SimpleString
@@ -274,6 +278,22 @@ const SimpleString operator+(const char* str1, const SimpleString& str2);
  * @return Returns a SimpleString
  */
 const SimpleString operator+(const SimpleString& str1, const char* str2);
+
+/*
+ * @brief A serialisation input operator
+ * @param [in] is, an input stream
+ * @param [in] str2, a char * buffer (ended by '0')
+ * @return Returns the input stream
+ */
+std::istream& operator>>( std::istream &is , SimpleString &str );
+
+/*
+ * @brief A serialisation input operator
+ * @param [in] is, an input stream
+ * @param [in] str2, a char * buffer (ended by '0')
+ * @return Returns the input stream
+ */
+std::ostream& operator<<( std::ostream &os, const SimpleString &str );
 
 } // namespace Omiscid
 

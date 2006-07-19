@@ -53,8 +53,10 @@ TemporaryMemoryBuffer::TemporaryMemoryBuffer( size_t SizeOfBuffer )
 	Buffer = new char[SizeOfBuffer];
 	if ( Buffer == NULL )
 	{
+		BufferSize = 0;
 		throw MemoryBufferException( "No more memory to allocate buffer" );
 	}
+	BufferSize = SizeOfBuffer;
 }
 
 TemporaryMemoryBuffer::~TemporaryMemoryBuffer()
