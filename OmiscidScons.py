@@ -27,13 +27,13 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  if "xml2" in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
- if "debug" in commandLineTargets :
+ if "debug" in arguments :
   OmiscidMessage("compiling in debug mode (with trace mode)")
   env.AppendUnique(CXXFLAGS = ["-DDEBUG","-DOMISCID_TRACE_ENABLE"])
  else :
   OmiscidMessage("compiling in non-debug mode")
   env.AppendUnique(CXXFLAGS = ["-DNDEBUG"])
- if "trace" in commandLineTargets :
+ if "trace" in arguments :
   OmiscidMessage("compiling in trace mode")
   env.AppendUnique(CXXFLAGS = ["-DOMISCID_TRACE_ENABLE"])
 
