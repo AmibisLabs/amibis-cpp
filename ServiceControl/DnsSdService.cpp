@@ -206,7 +206,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	{
 		// TCP DnsSdService
 		nTransport = TCP;
-		strcpy( Transport, "_tcp" );
+		strlcpy( Transport, "_tcp", sizeof(Transport) );
 	}
 	else
 	{
@@ -295,20 +295,20 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 
 	if ( eDomain.IsEmpty() )
 	{
-		strcpy( Domain, "local." );
+		strlcpy( Domain, "local.", sizeof(Domain) );
 	}
 	else
 	{
-		strcpy( Domain, eDomain.GetStr() );
+		strlcpy( Domain, eDomain.GetStr(), sizeof(Domain) );
 	}
 
 	if ( enTransport == TCP )
 	{
-		strcpy( Transport, "_tcp" );
+		strlcpy( Transport, "_tcp", sizeof(Transport) );
 	}
 	else
 	{
-		strcpy( Transport, "_udp" );
+		strlcpy( Transport, "_udp", sizeof(Transport) );
 	}
 	nTransport = enTransport;
 

@@ -114,7 +114,7 @@ int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 #ifndef __APPLE__
 
 // Port of this interesting apple function
-size_t strlcpy(char *dst, const char *src, size_t size)
+size_t Omiscid::strlcpy(char *dst, const char *src, size_t size)
 {
 	size_t i;
 	size_t max;

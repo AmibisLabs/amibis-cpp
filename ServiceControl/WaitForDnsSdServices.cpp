@@ -8,6 +8,7 @@
  */
 
 #include <ServiceControl/WaitForDnsSdServices.h>
+#include <System/Portage.h>
 
 #ifndef WIN32
 #include <netinet/in.h> // for ntohs
