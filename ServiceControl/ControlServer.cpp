@@ -413,8 +413,8 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			+ "</controlAnswer>";
 
 		TcpServer::listConnections.Lock();
-		MsgSocket* ms =  FindClientFromId(msg->pid);
-		if(ms)
+		MsgSocket* ms = FindClientFromId( msg->pid );
+		if( ms )
 		{
 			ms->Send((int)str.GetLength(), str.GetStr());
 		}

@@ -90,6 +90,18 @@ public:
 	 */
 	bool Add( const TYPE& Val );
 
+	/** \brief Function to add an item at head of the list 
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
+	bool AddHead( const TYPE& Val );
+
+	/** \brief Function to add an item at tail of the list 
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
+	bool AddTail( const TYPE& Val );
+
 	/** \brief Retrieve the current number of elements in the list
 	 * \return the current number of elements
 	 */
@@ -245,10 +257,10 @@ bool SimpleList<TYPE>::Add( const TYPE& Val )
 		Tail->NextElement = tmp;
 		Tail = tmp;
 
-		if ( Head->NextElement == NULL )
-		{
-			Head->NextElement = tmp;
-		}
+		//if ( Head->NextElement == NULL )
+		//{
+		//	Head->NextElement = tmp;
+		//}
 	}
 
 	// On incremente le nombre d'objet dans la liste
@@ -256,6 +268,57 @@ bool SimpleList<TYPE>::Add( const TYPE& Val )
 
 	// Tout est ok
 	return true;
+}
+
+	/** \brief Function to add an item at head of the list 
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
+template <typename TYPE>
+bool SimpleList<TYPE>::AddHead( const TYPE& Val )
+{
+#ifdef DEBUG
+	// Only for MutexedSimpleList debugging
+	// Do we get the lock ?
+	if ( IsLocked() != true )
+	{
+		TraceError( "Usage of Add on a non lock list.\n" );
+	}
+#endif
+
+	SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
+	if ( tmp == NULL ) // Plus assez de memoire
+		return false;
+
+	tmp->ElementContainer = Val;
+	if ( Head == NULL ) // La liste etait vide
+	{
+		Tail =	Head = tmp;
+	}
+	else
+	{
+		// Le nouveau devient le dernier
+		// Head->NextElement = tmp;
+		tmp->NextElement = Head;
+		Head = tmp;
+	}
+
+	// On incremente le nombre d'objet dans la liste
+	NumberOfElements++;
+
+	// Tout est ok
+	return true;
+}
+
+	/** \brief Function to add an item at tail of the list 
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
+template <typename TYPE>
+bool SimpleList<TYPE>::AddTail( const TYPE& Val )
+{
+	// just call the add function
+	return Add(Val);
 }
 
 template <typename TYPE>

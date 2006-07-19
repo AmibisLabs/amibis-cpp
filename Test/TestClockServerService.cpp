@@ -40,10 +40,39 @@ public:
 	}
 };
 
+#include <System/SimpleList.h>
+
 int main(int argc, char * argv[])
 {
-	// MsgSocket::Debug = MsgSocket::DBG_ALL;
+	MsgSocket::Debug = MsgSocket::DBG_ALL;
 
+	Omiscid::Service * MyService = ServiceFactory.Create( "MSM Client" );
+
+	// First, create a service filter. You *must* not free it after use
+	// SimpleList<ServiceFilter *> MySearch;
+
+	// MySearch.Add( NameIs("Clock Server") );
+	// MySearch.Add( NameIs("Clock Server") );
+
+	ServiceProxy * MS0 = MyService->FindService( NameIs("MSM0") );
+
+	printf("RRRRRRRRRRRRRRRRRr\n");
+	//ServiceProxy * MS1 = MyService->FindService( And(NameIs("MSM0"),OwnerIs("maleguem")), 10 ); 
+	
+	ServiceProxy * MS1 = MyService->FindService( NameIs("MSM1") );
+
+	printf("TTTTTTTTTTTTTTTTTt\n");
+//	if ( MS0 == NULL || MS1 == NULL )
+
+
+	printf("SSSSSSSSSSSSSSSSSSSS\n");
+
+	Mutex MyLock;
+	MyLock.EnterMutex();
+	MyLock.EnterMutex();
+
+	return 0;
+#if 0
 	// Let create a service named "Clock Server"
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 
@@ -129,4 +158,5 @@ int main(int argc, char * argv[])
 	delete ClockServer;
 	
 	return 0;
+#endif
 }

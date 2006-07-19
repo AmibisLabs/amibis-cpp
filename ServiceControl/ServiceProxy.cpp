@@ -13,7 +13,11 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 {
 	HostName	= eHostName;
 	ControlPort	= eControlPort;
-	if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+	if ( ConnectToCtrlServer(HostName, ControlPort) == true )
+	{
+		UpdateDescription();
+	}
+	else
 	{
 		// throw "ServiceProxy failed";
 	}

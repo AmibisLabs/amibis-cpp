@@ -764,9 +764,18 @@ void MsgSocket::Receive()
 							if ( Debug & DBG_RECV )
 							{
 								if ( length_msg != 0 )
-									fprintf( stderr, "MsgSocket::Recv: %10.10s\n", msgptr );
+								{
+									SimpleString SFormat = "MsgSocket::Recv: %";
+									SFormat += length_msg;
+									SFormat += ".";
+									SFormat += length_msg;
+									SFormat += "s\n";
+									fprintf( stderr, SFormat.GetStr(), msgptr );
+								}
 								else
+								{
 									fprintf( stderr, "MsgSocket::Recv: <empty>\n" );
+								}
 							}
 #endif
 							// Send info to all receiver

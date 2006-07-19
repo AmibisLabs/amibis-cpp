@@ -98,7 +98,8 @@ void Omiscid::AddMemoryBlock(void* addr,  size_t aSize,  const char *fname, int 
 
 	// Fill information
 	info->Where = addr;
-	strncpy( info->Filename, fname, FileNameSize );
+	strncpy( info->Filename, fname, FileNameSize-1 );
+	info->Filename[FileNameSize-1];
 	info->Line = lnum;
 	info->Size = aSize;
 	allocList->insert(allocList->begin(), info);

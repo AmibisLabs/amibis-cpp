@@ -173,11 +173,11 @@ DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const 
 	if ( eHostName.IsEmpty() )
 	{
 		SimpleString LocalHost = Socket::GetHostName();
-		strncpy( HostName, LocalHost.GetStr(), ServiceField );
+		strlcpy( HostName, LocalHost.GetStr(), ServiceField );
 	}
 	else
 	{
-		strncpy( HostName, eHostName.GetStr(), ServiceField  );
+		strlcpy( HostName, eHostName.GetStr(), ServiceField  );
 	}
 }
 
@@ -259,11 +259,11 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	if ( eHostName.IsEmpty() )
 	{
 		SimpleString LocalHost = Socket::GetHostName();
-		strncpy( HostName, LocalHost.GetStr(), ServiceField );
+		strlcpy( HostName, LocalHost.GetStr(), ServiceField );
 	}
 	else
 	{
-		strncpy( HostName, eHostName.GetStr(), ServiceField  );
+		strlcpy( HostName, eHostName.GetStr(), ServiceField  );
 	}
 }
 
@@ -317,11 +317,11 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 	if ( eHostName.IsEmpty() )
 	{
 		SimpleString LocalHost = Socket::GetHostName();
-		strncpy( HostName, LocalHost.GetStr(), ServiceField );
+		strlcpy( HostName, LocalHost.GetStr(), ServiceField );
 	}
 	else
 	{
-		strncpy( HostName, eHostName.GetStr(), ServiceField  );
+		strlcpy( HostName, eHostName.GetStr(), ServiceField  );
 	}
 }
 
@@ -395,7 +395,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 	{
 		Mythis->Registered = true;
 		Mythis->RegisteredName = name;
-		sprintf( Mythis->CompleteServiceName, "%s.%s%s", name, regtype, domain );
+		snprintf( Mythis->CompleteServiceName, sizeof(Mythis->CompleteServiceName), "%s.%s%s", name, regtype, domain );
 	}
 	else
 	{

@@ -457,7 +457,7 @@ hostent* Socket::GetHostByName( const SimpleString name )
 
 	TemporaryMemoryBuffer hostname(1024);	// To prevent memory overflow on stack
 	char * modify;
-	strncpy( (char*)hostname, name.GetStr(), 1023 );
+	strlcpy( (char*)hostname, name.GetStr(), 1024 );
 
 	modify = strstr( (char*)hostname, ".local." );
 	if ( modify && modify[7] == '\0' )	// we found ".local.\0"

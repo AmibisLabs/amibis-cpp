@@ -404,7 +404,8 @@ MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 			{
 				delete listConnections.GetCurrent();
 				listConnections.RemoveCurrent();
-				return NULL;
+				// look forward to look if there is not another pid
+				// return NULL;
 			}
 		}
 	}
