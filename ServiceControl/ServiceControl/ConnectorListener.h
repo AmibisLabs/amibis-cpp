@@ -65,12 +65,11 @@ public:
 
 private:
 	// Atributs
-	SimpleString ConnectorName;
 	Service    * ServiceOfTheConnector;
 
-	void Receive(MsgSocketCallBackData& CallbackData);
-	void Connected(unsigned int PeerId);
-	void Disconnected(unsigned int PeerId);
+	void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData);
+	void Connected(MsgSocket& ConnectionPoint, unsigned int PeerId);
+	void Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId);
 };
 
 } // namespace Omiscid

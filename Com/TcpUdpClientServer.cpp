@@ -53,6 +53,26 @@ void TcpUdpClientServer::Create(int port_tcp, int port_udp)
 	TcpServer::Create(port_tcp);
 }
 
+void TcpUdpClientServer::SetName(const SimpleString NewName)
+{
+	// Change to all my views...
+	TcpServer::SetName(NewName);
+	UdpExchange::SetName(NewName);
+
+	listClient.Lock();  
+	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
+	{
+		listClient.GetCurrent()->tcpClient->SetName(NewName);
+	}
+	listClient.Unlock();
+}
+
+const SimpleString TcpUdpClientServer::GetName()
+{
+	// Change to all my views...
+	return TcpServer::GetName();
+}
+
 void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, MsgSocket * MyMsgSocket )
 {
 	TcpUdpClientServer * pThis = (TcpUdpClientServer*)MsgData->userData1;
@@ -102,6 +122,7 @@ unsigned int TcpUdpClientServer::ConnectTo(const SimpleString addr, int port_tcp
 {
 	TcpClient* tcpclient = new TcpClient();
 	tcpclient->SetServiceId(GetServiceId());
+	tcpclient->SetName(TcpServer::GetName());
 
 	// REVIEW
 	// Do we plan to use UDP ?  yes, open first a UDP port for us
@@ -520,4 +541,4 @@ bool TcpUdpClientServer::UnlinkFromMsgManager(MsgManager* msgManager)
 int TcpUdpClientServer::GetMaxMessageSizeForTCP()
 {
 	return TcpServer::GetMaxMessageSizeForTCP();
-}
+} 

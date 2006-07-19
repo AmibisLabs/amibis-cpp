@@ -45,18 +45,18 @@ void ConnectorListener::MessageReceived(Service& TheService, const SimpleString 
 {
 }
 
-void ConnectorListener::Receive(MsgSocketCallBackData& CallbackData)
+void ConnectorListener::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData)
 {
 	// Call the User Friendly interface
-	MessageReceived( *ServiceOfTheConnector, ConnectorName, CallbackData.Msg );
+	MessageReceived( *ServiceOfTheConnector, ConnectionPoint.GetName(), CallbackData.Msg );
 }
 
-void ConnectorListener::Connected(unsigned int PeerId)
+void ConnectorListener::Connected(MsgSocket& ConnectionPoint, unsigned int PeerId)
 {
-	Connected( *ServiceOfTheConnector, ConnectorName, PeerId );
+	Connected( *ServiceOfTheConnector, ConnectionPoint.GetName(), PeerId );
 }
 
-void ConnectorListener::Disconnected(unsigned int PeerId)
+void ConnectorListener::Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId)
 {
-	Disconnected( *ServiceOfTheConnector, ConnectorName, PeerId );
+	Disconnected( *ServiceOfTheConnector, ConnectionPoint.GetName(), PeerId );
 }

@@ -100,10 +100,10 @@ public:
 	// Virtual destructor always
 	virtual ~MsgSocketCallbackObject();
 
-	virtual void Connected(unsigned int PeerId);
-	virtual void Disconnected(unsigned int PeerId);
+	virtual void Connected(MsgSocket& ConnectionPoint, unsigned int PeerId);
+	virtual void Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId);
 
-	virtual void Receive(MsgSocketCallBackData& CallbackData) = 0;
+	virtual void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData) = 0;
 };
 
 /** 
@@ -169,6 +169,7 @@ class MsgSocket : public Thread
    */
   MsgSocket(Socket::SocketKind type);
 
+
   /** \brief Destructor */
   virtual ~MsgSocket();
   
@@ -207,6 +208,11 @@ class MsgSocket : public Thread
    */
   void RemoveAllCallbackObjects();
 
+  /** @name Naming connecting points */
+  //@{
+  void SetName(const SimpleString NewName); /*!< Used to set names on MsgSocket */
+  const SimpleString GetName();				/*!< Used to set names on MsgSocket */
+  //@}	
 
   /** \brief define callback function called in receive 
    * \param cr the callback call on receive message
@@ -485,6 +491,12 @@ private:
 
   int maxMessageSizeForTCP;
   int maxBIPMessageSize;
+
+  /** @name Named MsgSocket */
+  //@{
+  SimpleString Name;						/*!< The name of this connecting point */
+  const SimpleString DefaultMsgSocketName;  /*!< Default name of this MsgSocket : anonymous */
+  //@}
 
 protected:
   UdpConnection udpConnection;

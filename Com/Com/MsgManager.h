@@ -94,7 +94,7 @@ public:
    * @param ptr pointer on a MsgSocketCallBackData object
    * @see MsgSocketCallBackData
    */
-  void Receive(MsgSocketCallBackData& ptr);
+  void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& ptr);
   
   /** @brief Set the callback method of a MsgSocket object
    *

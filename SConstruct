@@ -1,5 +1,6 @@
 import os
 from OmiscidScons import *
+
 env = Environment()
 OmiscidInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,['xml2'])
 

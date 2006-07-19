@@ -113,6 +113,7 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 	}
 
 	// Create TCP and UDP ports
+	pConnector->SetName(ConnectorName);
 	pConnector->Create();
 	pAtt = AddInOutput( ConnectorName, pConnector, ConnectorKind );
 	pAtt->SetDescription( ConnectorDescription );
@@ -498,7 +499,6 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
 	MsgListener->ServiceOfTheConnector = this;
-	MsgListener->ConnectorName = ConnectorName;
 
 	// Link to receive messages
 	return pConnector->AddCallbackObject( MsgListener );

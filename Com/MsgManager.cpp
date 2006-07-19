@@ -89,7 +89,7 @@ void MsgManager::ProcessAMessage(Message* msg)
 }
 
 
-void MsgManager::Receive(MsgSocketCallBackData& cd)
+void MsgManager::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 {
     Message* msg = new Message(cd.Msg.len + 1);
     msg->len = cd.Msg.len;

@@ -41,6 +41,8 @@ void UdpConnection::SetAddr(const struct sockaddr_in* nv_addr)
 	memcpy(&addr, nv_addr, sizeof(struct sockaddr_in));
 }
 
+const SimpleString DefaultMsgSocketName = "anonymous";
+
 // Nothing specific to do
 MsgSocketCallBackData::~MsgSocketCallBackData()
 {
@@ -50,11 +52,11 @@ MsgSocketCallbackObject::~MsgSocketCallbackObject()
 {
 }
 
-void MsgSocketCallbackObject::Connected(unsigned int PeerId)
+void MsgSocketCallbackObject::Connected(MsgSocket& ConnectionPoint, unsigned int PeerId)
 {
 }
 
-void MsgSocketCallbackObject::Disconnected(unsigned int PeerId)
+void MsgSocketCallbackObject::Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId)
 {
 }
 
@@ -158,6 +160,20 @@ MsgSocket::~MsgSocket()
 		delete [] SendBuffer;
 		SendBuffer = NULL;
 	}
+}
+
+void MsgSocket::SetName(const SimpleString NewName)
+{
+	Name = NewName;
+}
+
+const SimpleString MsgSocket::GetName()
+{
+	if ( Name.IsEmpty() )
+	{
+		return DefaultMsgSocketName;
+	}
+	return Name;
 }
 
 bool MsgSocket::SetSyncLinkData( SimpleString DataForSL )
@@ -540,7 +556,7 @@ bool MsgSocket::SendSyncLinkMsg()
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+				CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -592,7 +608,7 @@ void MsgSocket::Stop()
 		// Send info to all listener
 		for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 		{
-			CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+			CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
 		}
 		CallbackObjects.Unlock();
 		connected = false;
@@ -617,7 +633,7 @@ void MsgSocket::Receive()
 					// Send info to all listener
 					for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 					{
-						CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+						CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
 					}
 					CallbackObjects.Unlock();
 					connected = false;
@@ -692,7 +708,7 @@ void MsgSocket::Receive()
 						// Send info to all listener
 						for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 						{
-							CallbackObjects.GetCurrent()->Connected(pid);
+							CallbackObjects.GetCurrent()->Connected(*this,pid);
 						}
 						CallbackObjects.Unlock();
 
@@ -775,7 +791,7 @@ void MsgSocket::Receive()
 								// Send info to all listener
 								for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 								{
-									CallbackObjects.GetCurrent()->Receive(callbackData);
+									CallbackObjects.GetCurrent()->Receive(*this, callbackData);
 								}
 							}
 							CallbackObjects.Unlock();
@@ -816,7 +832,7 @@ void MsgSocket::Receive()
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -894,7 +910,7 @@ int MsgSocket::Send(int len, const char* buf)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -947,7 +963,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+				CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
 			}
 			CallbackObjects.Unlock();
 			connected = false;      
@@ -1007,7 +1023,7 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+				CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -1066,7 +1082,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
 			}
 			CallbackObjects.Unlock();
 			connected = false;      
@@ -1207,7 +1223,7 @@ void MsgSocket::ReceiveUdpExchange()
 									callbackData.Msg.mid = mid;
 									for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 									{
-                                        CallbackObjects.GetCurrent()->Receive(callbackData);
+                                        CallbackObjects.GetCurrent()->Receive(*this, callbackData);
 									}
 								}
 								CallbackObjects.Unlock();
@@ -1250,7 +1266,7 @@ void MsgSocket::ReceiveUdpExchange()
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(GetPeerPid());
+				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
 			}
 			CallbackObjects.Unlock();
 			connected = false;

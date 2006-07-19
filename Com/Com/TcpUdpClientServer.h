@@ -182,6 +182,10 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
   int GetMaxMessageSizeForTCP();
   void SetMaxMessageSizeForTCP(int max);
 
+  // Set/Get name of this object
+  void SetName(const SimpleString NewName);
+  const SimpleString GetName();
+
   virtual ComTools* Cast();
 
 

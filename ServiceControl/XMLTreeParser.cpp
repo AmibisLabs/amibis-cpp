@@ -158,7 +158,7 @@ xmlDocPtr XMLTreeParser::ParseMessage(int length, unsigned char* buffer)
 }
 
 
-void XMLTreeParser::Receive(MsgSocketCallBackData& cd)
+void XMLTreeParser::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 {
 	xmlDocPtr doc = ParseMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
 	if( doc )

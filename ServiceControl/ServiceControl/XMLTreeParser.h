@@ -185,7 +185,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    * The user parameters will be present in the MsgSocketCallBackData object.
    * @param cd a MsgSocketCallBackData object who contains the pointer define by user, and the new message buffer.
    */
-  void Receive(MsgSocketCallBackData& cd);
+  void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd);
 
   /** @brief Loop where message are processed when they arrive.
    *
