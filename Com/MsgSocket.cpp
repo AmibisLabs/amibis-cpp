@@ -84,12 +84,12 @@ MsgSocket::MsgSocket(Socket* s)
 bufferSize(TCP_BUFFER_SIZE), buffer(NULL), occupiedSize(0),
 connected(true),
 start_tag(NULL),
-SendBuffer(NULL),
 buffer_udp_send(NULL),
+SendBuffer(NULL),
 kind(TCP_CLIENT_KIND),
 service_id(0), message_id(0), peer_pid(0),
-receivedSyncLinkMsg(false),
 callbackSyncLinkFct(NULL),
+receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
 {
 	buffer = new unsigned char[bufferSize];
@@ -102,12 +102,12 @@ sendSyncLinkMsg(false)
 MsgSocket::MsgSocket(Socket::SocketKind type)
 : socket(NULL),    
 bufferSize(0), buffer(NULL), occupiedSize(0),
-connected(false), start_tag(NULL), buffer_udp_send(NULL),
+connected(false), start_tag(NULL),  buffer_udp_send(NULL),
 kind(NONE_KIND),
 SendBuffer(NULL),
 service_id(0), message_id(0), peer_pid(0),
-receivedSyncLinkMsg(false),
 callbackSyncLinkFct(NULL),
+receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
 {
 	socket = new Socket(type);

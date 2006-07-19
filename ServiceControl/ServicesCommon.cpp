@@ -76,4 +76,4 @@ ServiceException::~ServiceException( )
 SimpleString ServiceException::GetExceptionType() const
 {
 	return SimpleString("ServiceException");
-};
+}
