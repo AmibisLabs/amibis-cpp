@@ -6,6 +6,11 @@ sub PrintSources()
 	
 	while( $File = <$Folder/*.cpp> )
 	{
+		if ( $File =~ /TrackingMemoryLeaks.cpp$/ )
+		{
+			next;
+		}
+		
 		if ( $First )
 		{
 			$First = 0;
@@ -26,6 +31,11 @@ sub PrintHeaders()
 	
 	while( $File = <$Folder/$Folder/*.h> )
 	{
+		if ( $File =~ /TrackingMemoryLeaks.h$/ )
+		{
+			next;
+		}
+		
 		if ( $First )
 		{
 			$First = 0;

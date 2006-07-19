@@ -8,7 +8,7 @@ OmiscidCheckLibs(conf,['xml2','dns_sd','pthread']);
 env = conf.Finish()
 
 # common environment settings
-env.AppendUnique(CXXFLAGS = ['-Werror','-Wall','-pedantic'])
+env.AppendUnique(CXXFLAGS = ['-g','-Werror','-Wall','-pedantic'])
 
 binToInstall = []
 libToInstall = []
@@ -17,7 +17,7 @@ env_system = env.Copy()
 env_system.Append(CPPPATH='System')
 target_system = env_system.SharedLibrary(
     target='OmiscidSystem',
-    source=['System/AtomicCounter.cpp','System/AtomicReentrantCounter.cpp','System/Event.cpp','System/MultipleReferencedData.cpp','System/Mutex.cpp','System/Portage.cpp','System/RecycleSimpleList.cpp','System/ReentrantMutex.cpp','System/SimpleException.cpp','System/SimpleList.cpp','System/SimpleListException.cpp','System/SimpleString.cpp','System/Socket.cpp','System/SocketException.cpp','System/Thread.cpp','System/TrackingMemoryLeaks.cpp']
+    source=['System/AtomicCounter.cpp','System/AtomicReentrantCounter.cpp','System/Event.cpp','System/MultipleReferencedData.cpp','System/Mutex.cpp','System/Portage.cpp','System/RecycleSimpleList.cpp','System/ReentrantMutex.cpp','System/SimpleException.cpp','System/SimpleList.cpp','System/SimpleListException.cpp','System/SimpleString.cpp','System/Socket.cpp','System/SocketException.cpp','System/Thread.cpp']
 )
 libToInstall += target_system
 
@@ -48,7 +48,7 @@ env.Depends(target_control, target_com)
 
 
 hToInstall = []
-hToInstall += [['System/System/AtomicCounter.h','System'],['System/System/AtomicReentrantCounter.h','System'],['System/System/Config.h','System'],['System/System/Event.h','System'],['System/System/MultipleReferencedData.h','System'],['System/System/Mutex.h','System'],['System/System/Portage.h','System'],['System/System/RecycleSimpleList.h','System'],['System/System/ReentrantMutex.h','System'],['System/System/SimpleException.h','System'],['System/System/SimpleList.h','System'],['System/System/SimpleListException.h','System'],['System/System/SimpleString.h','System'],['System/System/Socket.h','System'],['System/System/SocketException.h','System'],['System/System/Thread.h','System'],['System/System/TrackingMemoryLeaks.h','System']]
+hToInstall += [['System/System/AtomicCounter.h','System'],['System/System/AtomicReentrantCounter.h','System'],['System/System/Config.h','System'],['System/System/Event.h','System'],['System/System/MultipleReferencedData.h','System'],['System/System/Mutex.h','System'],['System/System/Portage.h','System'],['System/System/RecycleSimpleList.h','System'],['System/System/ReentrantMutex.h','System'],['System/System/SimpleException.h','System'],['System/System/SimpleList.h','System'],['System/System/SimpleListException.h','System'],['System/System/SimpleString.h','System'],['System/System/Socket.h','System'],['System/System/SocketException.h','System'],['System/System/Thread.h','System']]
 
 hToInstall += [['Com/Com/ComTools.h','Com'],['Com/Com/Config.h','Com'],['Com/Com/Message.h','Com'],['Com/Com/MsgManager.h','Com'],['Com/Com/MsgSocket.h','Com'],['Com/Com/MsgSocketException.h','Com'],['Com/Com/TcpClient.h','Com'],['Com/Com/TcpServer.h','Com'],['Com/Com/TcpUdpClientServer.h','Com'],['Com/Com/UdpExchange.h','Com']]
 
