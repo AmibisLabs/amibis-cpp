@@ -27,8 +27,14 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
  if "debug" in ARGUMENTS :
-  OmiscidMessage("compiling in debug mode")
-  env.Append(CXXFLAGS = ["-g","-Wall"])
+  OmiscidMessage("compiling in debug mode (with trace mode)")
+  env.AppendUnique(CXXFLAGS = ["-DDEBUG","-DOMISCID_TRACE_ENABLE"])
+ else
+  OmiscidMessage("compiling in non-debug mode")
+  env.AppendUnique(CXXFLAGS = ["-DNDEBUG"])
+ if "trace" in ARGUMENTS :
+  OmiscidMessage("compiling in trace mode")
+  env.AppendUnique(CXXFLAGS = ["-DOMISCID_TRACE_ENABLE"])
 
 ##############################################
 ### Command to build a file from a file.in ###
