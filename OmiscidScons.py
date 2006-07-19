@@ -44,10 +44,19 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
   env.AppendUnique(CXXFLAGS = ['-DDEBUG','-DOMISCID_TRACE_ENABLE'])
  else :
   OmiscidMessage('compiling in non-debug mode')
-  env.AppendUnique(CXXFLAGS = ["-DNDEBUG"])
- if "trace" in arguments :
-  OmiscidMessage('compiling in trace mode')
-  env.AppendUnique(CXXFLAGS = ["-DOMISCID_TRACE_ENABLE"])
+  env.AppendUnique(CXXFLAGS = ['-DNDEBUG','-O3'])
+ 
+ # do not check for trace, we already add it
+ if DebugMode == True :
+  return
+  
+ if 'trace' in arguments :
+  if arguments['trace'] in ['1','yes','true'] :
+   OmiscidMessage('compiling in trace mode')
+   env.AppendUnique(CXXFLAGS = ['-DOMISCID_TRACE_ENABLE'])
+  elif arguments['trace'] in ['0','no','false'] :
+   OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
+   exit
 
 ##############################################
 ### Command to build a file from a file.in ###
