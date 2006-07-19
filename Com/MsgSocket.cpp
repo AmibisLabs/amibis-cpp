@@ -79,16 +79,20 @@ MsgSocket::DEBUGFLAGS MsgSocket::Debug = MsgSocket::DBG_NONE;
 
 #endif
 
-MsgSocket::MsgSocket(Socket* s)
-: socket(s),    
-bufferSize(TCP_BUFFER_SIZE), buffer(NULL), occupiedSize(0),
+MsgSocket::MsgSocket(Socket* s) : 
+callbackSyncLinkFct(NULL),
+socket(s),
+bufferSize(TCP_BUFFER_SIZE),
+buffer(NULL),
+occupiedSize(0),
 connected(true),
 start_tag(NULL),
 buffer_udp_send(NULL),
-SendBuffer(NULL),
 kind(TCP_CLIENT_KIND),
-service_id(0), message_id(0), peer_pid(0),
-callbackSyncLinkFct(NULL),
+SendBuffer(NULL),
+service_id(0),
+message_id(0),
+peer_pid(0),
 receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
 {
@@ -99,14 +103,20 @@ sendSyncLinkMsg(false)
 	SetMaxMessageSizeForTCP(TCP_BUFFER_SIZE-1);
 }
 
-MsgSocket::MsgSocket(Socket::SocketKind type)
-: socket(NULL),    
-bufferSize(0), buffer(NULL), occupiedSize(0),
-connected(false), start_tag(NULL),  buffer_udp_send(NULL),
+MsgSocket::MsgSocket(Socket::SocketKind type) :
+callbackSyncLinkFct(NULL),
+socket(NULL),    
+bufferSize(0),
+buffer(NULL),
+occupiedSize(0),
+connected(false),
+start_tag(NULL),
+buffer_udp_send(NULL),
 kind(NONE_KIND),
 SendBuffer(NULL),
-service_id(0), message_id(0), peer_pid(0),
-callbackSyncLinkFct(NULL),
+service_id(0),
+message_id(0),
+peer_pid(0),
 receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
 {

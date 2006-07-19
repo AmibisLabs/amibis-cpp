@@ -379,15 +379,15 @@ protected:
  
 
   MutexedSimpleList<MsgSocketCallbackObject*>   CallbackObjects;	/*!< callback call when messages arrive*/
-  MsgSocketCallBackData							callbackData;		/*!< structure given to the callback methods */
+  MsgSocketCallBackData				callbackData;		/*!< structure given to the callback methods */
 
-  Mutex mutex;									/*!< mutex to protect the callback access */
-  Callback_SyncLink callbackSyncLinkFct;		/*!< callback call when messages arrive*/
+  Mutex mutex;								/*!< mutex to protect the callback access */
+  Callback_SyncLink callbackSyncLinkFct;				/*!< callback call when SyncLink messages arrive*/
   MsgSocketCallBackData callbackSyncLinkData;
   SimpleString SyncLinkData;
   SimpleString PeerSyncLinkData;
 
- private:
+private:
   /** \brief Accept TCP Connection
    *
    * call AcceptConnection(MsgSocket*) on new accepted connection.
