@@ -33,33 +33,35 @@ void RemoveMemoryBlock(void* addr);
 		#define OperatorCallConvention
 	#endif
 
-	#pragma warning(disable : 4291)
+	#ifdef WIN32
+		#pragma warning(disable : 4291)
+	#endif
 
 	inline void * OperatorCallConvention operator new(size_t size, const char *file, int line )
 	{
 		void *ptr = (void *)malloc(size);
 		Omiscid::AddMemoryBlock(ptr, size, file, line);
 		return(ptr);
-	};
+	}
 
 	inline void * OperatorCallConvention operator new[](size_t size, const char *file, int line )
 	{
 		void *ptr = (void *)malloc(size);
 		Omiscid::AddMemoryBlock(ptr, size, file, line);
 		return(ptr);
-	};
+	}
 
 	inline void OperatorCallConvention operator delete(void *p)
 	{
 		Omiscid::RemoveMemoryBlock(p);
 		free(p);
-	};
+	}
 
 	inline void OperatorCallConvention operator delete[](void *p)
 	{
 		Omiscid::RemoveMemoryBlock(p);
 		free(p);
-	};
+	}
 
 	#define DEBUG_NEW new(__FILE__, __LINE__)
 
