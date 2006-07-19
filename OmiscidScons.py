@@ -28,7 +28,8 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  if 'xml2' in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
-  
+ 
+ # check debug et trace parameter
  DebugMode = False
  if 'debug' in arguments :
   if arguments['debug'] in ['1','yes','true'] :
@@ -37,8 +38,17 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
    DebugMode = False
   else :
    OmiscidMessage("Bad value for debug flag. Must be '1', 'yes', 'true' for debuging mode or '0', 'no', 'false' for non debugging mode")
-   exit
+   sys.exit
+
+ TraceMode = False
+ if 'trace' in arguments :
+  if arguments['trace'] in ['1','yes','true'] :
+   TraceMode = True
+  elif arguments['trace'] not in ['0','no','false'] :
+   OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
+   sys.exit
    
+ # Do what we ask   
  if DebugMode == True :   
   OmiscidMessage('compiling in debug mode (with trace mode)')
   env.AppendUnique(CXXFLAGS = ['-DDEBUG','-DOMISCID_TRACE_ENABLE'])
@@ -46,15 +56,6 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
   OmiscidMessage('compiling in non-debug mode')
   env.AppendUnique(CXXFLAGS = ['-DNDEBUG','-O3'])
 
- # check for trace value even if not used
- TraceMode = False
- if 'trace' in arguments :
-  if arguments['trace'] in ['1','yes','true'] :
-   TraceMode = True
-  elif arguments['trace'] not in ['0','no','false'] :
-   OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
-   exit
- 
  # do not add flag trace, we already add it
  if DebugMode == True :
   return
