@@ -10,10 +10,14 @@ def OmiscidMessage(str):
 ### Command to initialize the environment ###
 #############################################
 def OmiscidInit(env,commandLineTargets,arguments,options=[]):
- print 'env : ' + env
- print 'commandLineTargets : ' + commandLineTargets
- print 'arguments : ' + arguments
- print 'options : ' + options
+ print 'env : '
+ print env
+ print 'commandLineTargets : '
+ print commandLineTargets
+ print 'arguments : '
+ print arguments
+ print 'options : '
+ print options
  if "omiscid" in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
