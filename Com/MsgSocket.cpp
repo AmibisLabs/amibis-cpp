@@ -83,13 +83,14 @@ MsgSocket::MsgSocket(Socket* s)
 : socket(s),    
 bufferSize(TCP_BUFFER_SIZE), buffer(NULL), occupiedSize(0),
 connected(true),
+start_tag(NULL),
 SendBuffer(NULL),
-start_tag(NULL), buffer_udp_send(NULL),
+buffer_udp_send(NULL),
 kind(TCP_CLIENT_KIND),
 service_id(0), message_id(0), peer_pid(0),
 receivedSyncLinkMsg(false),
-sendSyncLinkMsg(false),
-callbackSyncLinkFct(NULL)
+callbackSyncLinkFct(NULL),
+sendSyncLinkMsg(false)
 {
 	buffer = new unsigned char[bufferSize];
 	SendBuffer = new unsigned char[TCP_BUFFER_SIZE];
@@ -106,8 +107,8 @@ kind(NONE_KIND),
 SendBuffer(NULL),
 service_id(0), message_id(0), peer_pid(0),
 receivedSyncLinkMsg(false),
-sendSyncLinkMsg(false),
-callbackSyncLinkFct(NULL)
+callbackSyncLinkFct(NULL),
+sendSyncLinkMsg(false)
 {
 	socket = new Socket(type);
 	SetMaxMessageSizeForTCP(TCP_BUFFER_SIZE-1);

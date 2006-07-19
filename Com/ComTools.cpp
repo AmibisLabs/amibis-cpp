@@ -115,5 +115,6 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
          goto eat_line;
      }
 
-	 return SimpleString::EmptyString;
+	 // We never come here
+	 // return SimpleString::EmptyString;
 }

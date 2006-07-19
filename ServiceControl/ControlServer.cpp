@@ -215,6 +215,11 @@ bool ControlServer::StartServer()
 					case AnInOutput:
 						tmp = "d/";
 						break;
+
+						// to make gcc happy
+						// If by error, we do not have the type, we do not publish it...
+					case UnkownConnectorKind:
+						continue;
 				}
 
 				tmp += listInOutput.GetCurrent()->GetTcpPort();

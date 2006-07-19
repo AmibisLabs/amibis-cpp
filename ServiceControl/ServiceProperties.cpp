@@ -425,7 +425,7 @@ const char * ServiceProperties::ExportTXTRecord()
 		{
 			// Set the property length in the buffer
 			SetPropertyLength  = (unsigned char*)&TXTRecord[CopyHere];
-			*SetPropertyLength = Properties[i].Length-1;
+			*SetPropertyLength = (unsigned char)Properties[i].Length-1;
             
 			// Let's generate and copy the propertie
 			TmpProperty  = Properties[i].Name;
@@ -468,11 +468,11 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
 	
 	Empty();
 	
-	NbKeys = TXTRecordGetCount( RecordLength, Record );
+	NbKeys = TXTRecordGetCount( (uint16_t)RecordLength, Record );
 
 	for( i = 0; i < NbKeys; i++ )
 	{
-		if ( TXTRecordGetItemAtIndex(RecordLength,Record, i, sizeof(KeyName),
+		if ( TXTRecordGetItemAtIndex((uint16_t)RecordLength,Record, (uint16_t)i, (uint16_t)sizeof(KeyName),
 			    KeyName, &valueLen, (const void**)&value ) == kDNSServiceErr_NoError )
 		{
 			// Is it a simple flag ?

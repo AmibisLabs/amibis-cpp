@@ -144,7 +144,7 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 			{
 				SetType(XMLMessage::ExtractTextContent(cur_node->children).GetStr());
 			}
-			else if ( cur_name, "access" )
+			else if ( cur_name == "access" )
 			{
 				SimpleString content = XMLMessage::ExtractTextContent(cur_node->children);
 				if( content == access_read_str )

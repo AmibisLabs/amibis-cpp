@@ -29,6 +29,7 @@
 	// To prevent warning about printf in Visual Studio 2005, etc...
 	#define _CRT_SECURE_NO_DEPRECATE
 	#pragma warning(disable : 4996)
+	#pragma warning(disable : 4100) // paramètre formel non référencé
 
 	// If U are using MFC and co...
 	#ifdef USE_AFX

@@ -5,9 +5,10 @@
 
 using namespace Omiscid;
 
-const SimpleString InOutputAttribut::input_str = "input";
-const SimpleString InOutputAttribut::output_str = "output";
-const SimpleString InOutputAttribut::inoutput_str = "inoutput";
+const SimpleString InOutputAttribut::input_str		= "input";
+const SimpleString InOutputAttribut::output_str		= "output";
+const SimpleString InOutputAttribut::inoutput_str	= "inoutput";
+const SimpleString InOutputAttribut::unknown_str	= "unknown type";
 
 InOutputAttribut::InOutputAttribut()
 {
@@ -141,19 +142,22 @@ const SimpleList<unsigned int>& InOutputAttribut::GetListPeerId()
 
 const SimpleString& InOutputAttribut::KindToStr() const
 {
-  switch(kindOfInput)
-    {
-    case AnInput:
-      return input_str;
-      break;
-    case AnOutput:
-      return output_str;
-      break;
-    case AnInOutput:      
-      return inoutput_str;
-      break;
-    }
-  return inoutput_str;
+	switch(kindOfInput)
+	{
+		case AnInput:
+			return input_str;
+
+		case AnOutput:
+			return output_str;
+
+		case AnInOutput:      
+			return inoutput_str;
+
+		case UnkownConnectorKind:      
+			return unknown_str;
+	}
+
+	return SimpleString::EmptyString;
 }
 
 void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
@@ -182,15 +186,15 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 		  }
 		  else if ( cur_name == "tcp" )
 		  {
-			  SetTcpPort( atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );
+			  SetTcpPort( (unsigned short)atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );
 		  }
 		  else if ( cur_name == "udp" )
 		  {
-			  SetUdpPort( atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );
+			  SetUdpPort( (unsigned short)atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );
 		  }
 		  else if ( cur_name == "peerid" )
 		  {
-			  sscanf( XMLMessage::ExtractTextContent(cur_node->children).GetStr(), "%.x", &peerId );
+			  sscanf( XMLMessage::ExtractTextContent(cur_node->children).GetStr(), "%x", &peerId );
 		  }
 		  else if ( cur_name == "peers" )
 		  {
@@ -200,7 +204,7 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 				  if((node_peer->type == XML_ELEMENT_NODE) && strcmp((const char*)node_peer->name, "peer") == 0)
 				  {
 					  unsigned int ConnectedPeerId;
-					  sscanf( XMLMessage::ExtractTextContent(node_peer->children).GetStr(), "%.x", &ConnectedPeerId );
+					  sscanf( XMLMessage::ExtractTextContent(node_peer->children).GetStr(), "%x", &ConnectedPeerId );
 					  AddPeer(ConnectedPeerId);
 				  }
 			  }

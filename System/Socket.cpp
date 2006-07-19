@@ -68,11 +68,11 @@ static OmiscidSocketInitClass OmiscidSocketInitClassInitialisationObject;
 Socket::DynamicNameSolvingType Socket::DynamicNameSolving = Socket::OMISCIDNS_UNSET;
 
 Socket::Socket()
-: socketType(SOCKET_KIND_UNDEFINED), descriptor(SOCKET_ERROR)
+: socketType(SOCKET_KIND_UNDEFINED), descriptor((SOCKET)SOCKET_ERROR)
 {}
 
 Socket::Socket(SocketKind type)
-  : socketType(type), descriptor(SOCKET_ERROR)
+  : socketType(type), descriptor((SOCKET)SOCKET_ERROR)
 {
   if((descriptor = socket(AF_INET, type, 0)) == SOCKET_ERROR)
     {
@@ -259,7 +259,11 @@ bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int 
 		return false;
 
     pAdd->sin_family = AF_INET;
-    pAdd->sin_port = htons(port);
+#ifdef WIN32
+    pAdd->sin_port = htons((u_short)port);
+#else
+    pAdd->sin_port = htons((uint16_t)port);
+#endif
 	if ( name.GetLength() == 0 )	// name == ""
 	{
 		// Brodcast
@@ -307,7 +311,7 @@ void Socket::Close()
   shutdown(descriptor, SHUT_RDWR);
   close(descriptor);
 #endif
-  descriptor = SOCKET_ERROR;
+  descriptor = (SOCKET)SOCKET_ERROR;
 }
 
 int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
@@ -495,6 +499,6 @@ bool Socket::SetTcpNoDelay(bool Set)
 		TraceError("setsockopt: could not set TCP nodelay\n");
 		return false;
 	}
-#endif
 	return true;
+#endif
 }

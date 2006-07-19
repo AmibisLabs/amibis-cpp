@@ -24,7 +24,7 @@ public:
   static void IntToStr(int value, SimpleString& str);
 
   /** Return the integer representing by a string */
-  static int StrToInt(const unsigned char* buffer, int len);
+  static int StrToInt(const unsigned char* buffer);
 
 };
 

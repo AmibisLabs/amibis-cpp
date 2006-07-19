@@ -31,6 +31,7 @@ class InOutputAttribut : public Attribut
   static const SimpleString input_str; /*!< String associated to the kind AnInput*/
   static const SimpleString output_str; /*!< String associated to the kind AnOutput*/
   static const SimpleString inoutput_str; /*!< String associated to the kind AnInOutput*/
+  static const SimpleString unknown_str; /*!< String associated to the kind UnknownConnectorKind */
 
  public:
   /** \name Constructors */
