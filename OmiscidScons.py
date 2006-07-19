@@ -15,8 +15,7 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
  COMMAND_LINE_TARGETS=commandLineTargets
  global ARGUMENTS
  ARGUMENTS=arguments
- print commandLineTargets, arguments
- if "omiscid" in options:
+ if 'omiscid' in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
   env.ParseConfig('Omiscidcontrol-config --cflags')
@@ -25,17 +24,29 @@ def OmiscidInit(env,commandLineTargets,arguments,options=[]):
   env.ParseConfig('Omiscidcom-config --libs')
   env.ParseConfig('Omiscidsystem-config --cflags')
   env.ParseConfig('Omiscidsystem-config --libs')
- if "xml2" in options:
+  
+ if 'xml2' in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
- if "debug" in arguments :
-  OmiscidMessage("compiling in debug mode (with trace mode)")
-  env.AppendUnique(CXXFLAGS = ["-DDEBUG","-DOMISCID_TRACE_ENABLE"])
+  
+ DebugMode = False
+ if 'debug' in arguments :
+  if arguments['debug'] in ['1','yes','true'] :
+   DebugMode = True
+  elseif arguments['debug'] in ['0','no','false'] :
+   DebugMode = False
+  else :
+   OmiscidMessage 'Bad value for debug flag. Must be '1', 'yes', 'true' for debuging mode or '0', 'no', 'false' for non debugging mode'
+   exit
+   
+ if DebugMode == True :   
+  OmiscidMessage('compiling in debug mode (with trace mode)')
+  env.AppendUnique(CXXFLAGS = ['-DDEBUG','-DOMISCID_TRACE_ENABLE'])
  else :
-  OmiscidMessage("compiling in non-debug mode")
+  OmiscidMessage('compiling in non-debug mode')
   env.AppendUnique(CXXFLAGS = ["-DNDEBUG"])
  if "trace" in arguments :
-  OmiscidMessage("compiling in trace mode")
+  OmiscidMessage('compiling in trace mode')
   env.AppendUnique(CXXFLAGS = ["-DOMISCID_TRACE_ENABLE"])
 
 ##############################################
