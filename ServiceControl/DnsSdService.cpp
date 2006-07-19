@@ -12,7 +12,6 @@
 #include <System/Portage.h>
 #include <System/Socket.h>
 
-#include <string.h> //strlen, strcpy, ...
 #ifndef WIN32
 #include <unistd.h> //gethostname
 #include <netinet/in.h> //htons
@@ -117,14 +116,14 @@ DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const 
 		return;
 	}
 
-	strcpy( CompleteServiceName, eFullName.GetStr() );
+	strlcpy( CompleteServiceName, eFullName.GetStr(), sizeof(CompleteServiceName) );
 
 	Search = strstr( CompleteServiceName, "._tcp." );
 	if ( Search )
 	{
 		// TCP DnsSdService
 		nTransport = TCP;
-		strcpy( Transport, "_tcp" );
+		strlcpy( Transport, "_tcp", sizeof(Transport) );
 	}
 	else
 	{
@@ -133,7 +132,7 @@ DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const 
 		{
 			// UDP DnsSdService
 			nTransport = UDP;
-			strcpy( Transport, "_udp" );
+			strlcpy( Transport, "_udp", sizeof(Transport) );
 		}
 	}
 
@@ -145,7 +144,7 @@ DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const 
 	}
 
 	// Let's try to analyse the name
-	strcpy( Domain, &Search[6] );	 // 6 is the len of "._udp." or "._tcp_.";
+	strlcpy( Domain, &Search[6], sizeof(Domain) );	 // 6 is the len of "._udp." or "._tcp_.";
 
 	// Search for the last occurence of "._" couple
 	Search[0] = '\0';
@@ -162,11 +161,11 @@ DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const 
 		return;
 	}
 
-	strcpy( Protocol, LastFind );
+	strlcpy( Protocol, LastFind, sizeof(Protocol) );
 	Search[0] = '.';
 
 	LastFind[-1] = '\0';
-	strcpy( Name, CompleteServiceName );
+	strlcpy( Name, CompleteServiceName, sizeof(Name) );
 	LastFind[-1] = '.';
 
 	Port = ePort;
@@ -199,7 +198,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 		throw ServiceException( "Bad service Name" );
 	}
 
-	strcpy( Name, ServiceName.GetStr() );
+	strlcpy( Name, ServiceName.GetStr(), sizeof(Name) );
 
 	RegType = eRegType;
 	Search = strstr( (char*)RegType.GetStr(), "._tcp" );
@@ -216,7 +215,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 		{
 			// UDP DnsSdService
 			nTransport = UDP;
-			strcpy( Transport, "_udp" );
+			strlcpy( Transport, "_udp", sizeof(Transport) );
 		}
 	}
 
@@ -244,15 +243,15 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 		throw ServiceException( "Bad protocol format : must be '_tcp' or 'udp'" );
 	}
 
-	strcpy( Protocol, RegType.GetStr() );
+	strlcpy( Protocol, RegType.GetStr(), sizeof(Protocol) );
 
 	if ( eDomain.IsEmpty() )
 	{
-		strcpy( Domain, "local." );
+		strlcpy( Domain, "local.", sizeof(Domain) );
 	}
 	else
 	{
-		strcpy( Domain, eDomain.GetStr() );
+		strlcpy( Domain, eDomain.GetStr(), sizeof(Domain) );
 	}
 
 	Port = ePort;
@@ -283,7 +282,7 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 		Init();
 		return;
 	}
-	strcpy( Protocol, eProtocol.GetStr() );
+	strlcpy( Protocol, eProtocol.GetStr(), sizeof(Protocol) );
 
 	// Check parameters values
 	if ( CheckName( Name ) == false )
@@ -292,7 +291,7 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 		return;
 	}
 
-	strcpy( Name, eName.GetStr() );
+	strlcpy( Name, eName.GetStr(), sizeof(Name) );
 
 	if ( eDomain.IsEmpty() )
 	{

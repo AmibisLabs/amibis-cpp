@@ -28,7 +28,7 @@
 
 	// To prevent warning about printf in Visual Studio 2005, etc...
 	#define _CRT_SECURE_NO_DEPRECATE
-	// #pragma warning(disable : 4996)
+	#pragma warning(disable : 4996) // deprecated API
 	#pragma warning(disable : 4100) // formal parameter not used, mostly in virtual fonction
 	#pragma warning(disable : 4512) // Could not generate automatically operator= for a class
 

@@ -111,6 +111,35 @@ int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 
 #endif // WIN32
 
+#ifndef __APPLE__
+
+// Port of this interesting apple function
+size_t strlcpy(char *dst, const char *src, size_t size)
+{
+	size_t i;
+	size_t max;
+
+	if ( dst == NULL || src == NULL || size == 0 )
+	{
+		return (size_t)0;
+	}
+
+	// max pos to copy (we want to keep a place for '\0'
+	max = size-1;
+
+	// copy data
+	for( i = 0; i < max && src[i] != '\0'; i++ )
+	{
+		dst[i] = src[i];
+	}
+
+	// Just to be sure, let's put a '\0' at end
+	dst[i] = '\0';
+
+	return i;
+}
+#endif
+
 
 void Omiscid::RandomInit()
 {

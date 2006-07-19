@@ -109,8 +109,8 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 	}
 
 	// Fill the service informations
-	strcpy( MyThis->Name, fullname );
-	strcpy( MyThis->HostName, hosttarget );
+	strlcpy( MyThis->Name, fullname, sizeof(MyThis->Name) );
+	strlcpy( MyThis->HostName, hosttarget, sizeof(MyThis->HostName) );
 	MyThis->Port = ntohs( port );
 	MyThis->Properties.ImportTXTRecord( txtLen, txtRecord );
 	MyThis->IsResolved = true;

@@ -23,6 +23,11 @@ int random();
 
 #endif	// ifdef WIN32
 
+#ifndef __APPLE__
+// Port of the apple function
+size_t strlcpy(char *dst, const char *src, size_t size);
+#endif
+
 // RandomInit()
 void RandomInit();
 

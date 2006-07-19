@@ -115,9 +115,7 @@ protected:
 
 	virtual void Copy( const ServiceProperty& rvalue );
 
-	// Buffer ready
-	// Size consists in 1 byte for length + 255 for content and 1 byte for '\0'
-	// because we will use strcpy and co...
+	// Name and value
 	SimpleString Name;
 	SimpleString Value;
 };
