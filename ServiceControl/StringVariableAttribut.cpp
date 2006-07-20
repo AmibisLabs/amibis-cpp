@@ -18,7 +18,7 @@ StringVariableAttribut::StringVariableAttribut(VariableAttribut* va, SimpleStrin
 void StringVariableAttribut::SetValue( SimpleString value )
 {
 	StringValue = value;
-    VariableAtt->SetValue( StringValue ); 
+    VariableAtt->SetValueFromControl( StringValue ); 
 }
 
 SimpleString StringVariableAttribut::GetValue() const

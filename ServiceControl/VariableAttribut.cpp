@@ -106,6 +106,21 @@ void VariableAttribut::SetValue(const SimpleString value_str)
 	Listeners.Unlock();
 }
 
+void VariableAttribut::SetValueFromControl(const SimpleString value_str)
+{
+	// Ok, change my value
+	valueStr = value_str; 
+
+	// Ok the value has change, send information back to people
+	Listeners.Lock();
+	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
+	{
+		Listeners.GetCurrent()->VariableChanged( this );
+	}
+
+	Listeners.Unlock();
+}
+
 void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 {  
 

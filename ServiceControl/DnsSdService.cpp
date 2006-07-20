@@ -61,7 +61,7 @@ bool DnsSdService::CheckProtocol( const SimpleString Protocol )
 	{
 		ProtocolLenght++;
 
-		if( Protocol[ProtocolLenght] == '\0' )
+		if( ProtocolLenght >= Protocol.GetLength() )
 			break;
 
 		if( Protocol[ProtocolLenght] == '_' )
@@ -183,7 +183,6 @@ DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const 
 
 DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
-	SimpleString RegType;
 	char * Search;
 
 	Empty();
@@ -200,8 +199,9 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 
 	strlcpy( Name, ServiceName.GetStr(), sizeof(Name) );
 
-	RegType = eRegType;
-	Search = strstr( (char*)RegType.GetStr(), "._tcp" );
+	TemporaryMemoryBuffer RegType(eRegType.GetLength()+1);
+	strlcpy( (char*)RegType, eRegType.GetStr(), eRegType.GetLength()+1 );
+	Search = strstr( (char*)RegType, "._tcp" );
 	if ( Search )
 	{
 		// TCP DnsSdService
@@ -210,7 +210,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	}
 	else
 	{
-		Search = strstr( (char*)RegType.GetStr(), "._udp" );
+		Search = strstr( (char*)RegType, "._udp" );
 		if ( Search )
 		{
 			// UDP DnsSdService
@@ -237,13 +237,13 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	Search[0] = '\0';
 
 	// Now RegType contains virtualy only the Protocol
-	if ( CheckProtocol( RegType ) == false )
+	if ( CheckProtocol( (char*)RegType ) == false )
 	{
 		Init();
 		throw ServiceException( "Bad protocol format : must be '_tcp' or 'udp'" );
 	}
 
-	strlcpy( Protocol, RegType.GetStr(), sizeof(Protocol) );
+	strlcpy( Protocol, RegType, sizeof(Protocol) );
 
 	if ( eDomain.IsEmpty() )
 	{

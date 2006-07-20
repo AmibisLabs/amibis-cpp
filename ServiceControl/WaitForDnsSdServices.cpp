@@ -110,7 +110,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 	}
 
 	// Fill the service informations
-	strlcpy( MyThis->Name, fullname, sizeof(MyThis->Name) );
+	strlcpy( MyThis->CompleteServiceName, fullname, sizeof(MyThis->CompleteServiceName) );
 	strlcpy( MyThis->HostName, hosttarget, sizeof(MyThis->HostName) );
 	MyThis->Port = ntohs( port );
 	MyThis->Properties.ImportTXTRecord( txtLen, txtRecord );
@@ -299,8 +299,7 @@ void WaitForDnsSdServices::Run()
 
 bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 {
-	return AllFound.Wait( DelayMax );
-#if 0
+	// return AllFound.Wait( DelayMax );
 	if ( DelayMax == 0 )
 	{
 		// INFINITE wait
@@ -323,7 +322,6 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 		}
 	}
 	return true;
-#endif
 }
 
 int WaitForDnsSdServices::GetNbOfSearchedServices()

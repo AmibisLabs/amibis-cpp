@@ -7,9 +7,9 @@
 #include <ServiceControl/VariableAttribut.h>
 
 #ifdef DEBUG
-#define TIME_TO_WAIT_ANSWER 500000
+#define TIME_TO_WAIT_ANSWER 500
 #else
-#define TIME_TO_WAIT_ANSWER 5000
+#define TIME_TO_WAIT_ANSWER 250
 #endif
 
 using namespace Omiscid;

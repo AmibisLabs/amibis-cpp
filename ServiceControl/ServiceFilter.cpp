@@ -217,9 +217,10 @@ ServiceFilter * CascadeServiceFilters::Duplicate()
 
 ServiceNameIs::ServiceNameIs(SimpleString& Name, bool CaseInsensitive, bool OnlyPrefix)
 {
+	// To optimize
 	this->Name			  = Name;
 	this->CaseInsensitive = CaseInsensitive;
-	this->OnlyPrefix	  = OnlyPrefix;
+	this->OnlyPrefix	  = true; // OnlyPrefix;
 }
 
 ServiceNameIs::~ServiceNameIs()

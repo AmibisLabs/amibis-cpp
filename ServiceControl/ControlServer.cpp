@@ -153,7 +153,7 @@ bool ControlServer::StartServer()
 		// GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
 
 		// Create an object to register the service
-		registerDnsSd = new RegisterOmiscidService( serviceName.GetStr(), "local.", (unsigned short)port, false);
+		registerDnsSd = new RegisterOmiscidService( serviceName, "local.", (unsigned short)port, false);
 
 		// Add Constant variable
 		// The desctiption if full by default

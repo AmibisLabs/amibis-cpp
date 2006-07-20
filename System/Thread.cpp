@@ -74,11 +74,11 @@ bool Thread::StopThread(int wait_ms)
 	if (IsRunning())
 	{
 		StopWasAsked = true;
-		if ( event.Wait(wait_ms) == false )
+		while ( event.Wait(wait_ms) == false )
 		{
 			// Timeout !!!
 			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d). Kill it.\n", ThreadID, wait_ms );
-			TerminateThread( ThreadHandle, 0 );
+			// TerminateThread( ThreadHandle, 0 );
 		}
 
 		// Close the Thread handle

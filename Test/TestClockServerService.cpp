@@ -42,37 +42,52 @@ public:
 
 #include <System/SimpleList.h>
 
+#include <iostream>
+using namespace std;
+
 int main(int argc, char * argv[])
 {
-	MsgSocket::Debug = MsgSocket::DBG_ALL;
+	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
-	Omiscid::Service * MyService = ServiceFactory.Create( "MSM Client" );
+	Omiscid::Service * MyService = ServiceFactory.Create( "TestDoms" );
+	MyService->Start();
 
-	// First, create a service filter. You *must* not free it after use
-	// SimpleList<ServiceFilter *> MySearch;
+	cout << CommonServiceValues::OmiscidServiceDnsSdType << endl;
 
-	// MySearch.Add( NameIs("Clock Server") );
-	// MySearch.Add( NameIs("Clock Server") );
-
-	ServiceProxy * MS0 = MyService->FindService( NameIs("MSM0") );
-
-	printf("RRRRRRRRRRRRRRRRRr\n");
-	//ServiceProxy * MS1 = MyService->FindService( And(NameIs("MSM0"),OwnerIs("maleguem")), 10 ); 
-	
-	ServiceProxy * MS1 = MyService->FindService( NameIs("MSM1") );
-
-	printf("TTTTTTTTTTTTTTTTTt\n");
-//	if ( MS0 == NULL || MS1 == NULL )
-
-
-	printf("SSSSSSSSSSSSSSSSSSSS\n");
+	MyService = ServiceFactory.Create( "TestDoms" );
+	MyService->Start();
 
 	Mutex MyLock;
 	MyLock.EnterMutex();
 	MyLock.EnterMutex();
 
 	return 0;
+
+
 #if 0
+
+	// First, create a service filter. You *must* not free it after use
+	SimpleList<ServiceFilter *> MySearch;
+
+	MySearch.Add( NameIs("positionEstimator") );
+	MySearch.Add( NameIs("positionEstimator") );
+
+	SimpleList<ServiceProxy *>* MS0 = MyService->FindServices( MySearch, 3000 );
+
+	if ( MS0 != NULL )
+	{
+		for( MS0->First(); MS0->NotAtEnd(); MS0->Next() )
+		{
+			cout << MS0->GetCurrent()->GetName() << endl;
+		}
+	}
+
+	Mutex MyLock;
+	MyLock.EnterMutex();
+	MyLock.EnterMutex();
+
+	return 0;
+
 	// Let create a service named "Clock Server"
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 

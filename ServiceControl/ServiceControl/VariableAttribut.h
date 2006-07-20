@@ -76,6 +76,10 @@ public:
    * @param value_str [in] the new string representaion of the value */
   void SetValue(const SimpleString value_str);
 
+  /** @brief Set the value and signal that the value has changed 
+   * @param value_str [in] the new string representaion of the value */
+  void SetValueFromControl(const SimpleString value_str);
+
 public:
   /** @brief define if a variable can be modified according to its kid of access.
    * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.

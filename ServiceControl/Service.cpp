@@ -29,6 +29,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 
 	SimpleString Host(hosttarget);
 
+	// To correct
 	ServiceProxy * Proxy = new ServiceProxy( MyData->PeerId, Host, port );
 	if ( Proxy == NULL )
 	{
@@ -631,7 +632,7 @@ SimpleList<ServiceProxy *>* Service::FindServices(SimpleList<ServiceFilter *>& F
 		// Add the resulting proxy to the list
 		for( i = 0; i < WFOS->GetNbOfSearchedServices(); i++ )
 		{
-			ResultServicesProxy->Add( (static_cast<OmiscidServiceSearchData*>(WFOS->operator [](i).UserData))->Proxy );
+			ResultServicesProxy->AddTail( (static_cast<OmiscidServiceSearchData*>(WFOS->operator [](i).UserData))->Proxy );
 		}
 	}
 

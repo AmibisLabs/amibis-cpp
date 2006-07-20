@@ -189,29 +189,11 @@ public:
 
 	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
 	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
-
-	// gcc do not work nicely with inheritance od template. Do it ugly for it :-(
-#ifdef DEBUG
-public:
-	// Change lock value
-	void SetLock(bool vSet);
-
-	// Retrive the locking stat
-	bool IsLocked() const;
-
-private:
-	bool AmILocked; /*!< for debugging purpose of MutexedSimpleList */
-#endif
-
 };
 
 template <typename TYPE>
 SimpleList<TYPE>::SimpleList()
 {
-#ifdef DEBUG
-	SimpleList<TYPE>::SetLock(true); // SimpleList can not be locked, the boolean must be always true
-#endif
-
 	// There is nothing in the list
 	NumberOfElements = 0;
 	Head = NULL;
@@ -233,15 +215,6 @@ SimpleList<TYPE>::~SimpleList()
 template <typename TYPE>
 bool SimpleList<TYPE>::Add( const TYPE& Val )
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of Add on a non lock list.\n" );
-	}
-#endif
-
 	SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
 	if ( tmp == NULL ) // Plus assez de memoire
 		return false;
@@ -277,15 +250,6 @@ bool SimpleList<TYPE>::Add( const TYPE& Val )
 template <typename TYPE>
 bool SimpleList<TYPE>::AddHead( const TYPE& Val )
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of Add on a non lock list.\n" );
-	}
-#endif
-
 	SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
 	if ( tmp == NULL ) // Plus assez de memoire
 		return false;
@@ -331,15 +295,6 @@ unsigned int SimpleList<TYPE>::GetNumberOfElements() const
 template <typename TYPE>
 void SimpleList<TYPE>::First()
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of First on a non lock list.\n" );
-	}
-#endif
-
 	PreviousElement = NULL;
 	CurrentElement = Head;
 	RemoveCurrentHasOccured = false;
@@ -349,15 +304,6 @@ void SimpleList<TYPE>::First()
 template <typename TYPE>
 bool SimpleList<TYPE>::Next()
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of Next on a non lock list.\n" );
-	}
-#endif
-
 	// Ok, we do not have any other element
 	if ( CurrentElement == NULL ){
 		RemoveCurrentHasOccured = false;
@@ -388,15 +334,6 @@ bool SimpleList<TYPE>::Next()
 template <typename TYPE>
 bool SimpleList<TYPE>::AtEnd() const
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of AtEnd on a non lock list.\n" );
-	}
-#endif
-
 	// Ok, we do not have any other element
 	if ( CurrentElement == NULL )
 		return true;
@@ -408,15 +345,6 @@ bool SimpleList<TYPE>::AtEnd() const
 template <typename TYPE>
 bool SimpleList<TYPE>::NotAtEnd() const
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of NotAtEnd on a non lock list.\n" );
-	}
-#endif
-
 	// Ok, we do not have any other element
 	if ( CurrentElement != NULL )
 		return true;
@@ -428,15 +356,6 @@ bool SimpleList<TYPE>::NotAtEnd() const
 template <typename TYPE>
 TYPE& SimpleList<TYPE>::GetCurrent() const
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of GetCurrent on a non lock list.\n" );
-	}
-#endif
-
 	if(RemoveCurrentHasOccured)
 		throw SimpleListException("SimpleList<TYPE>::GetCurrent : Forbidden after a call to RemoveCurrent");
 	return CurrentElement->ElementContainer;
@@ -446,15 +365,6 @@ TYPE& SimpleList<TYPE>::GetCurrent() const
 template <typename TYPE>
 bool SimpleList<TYPE>::RemoveCurrent()
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of RemoveCurrent on a non lock list.\n" );
-	}
-#endif
-
 	if(RemoveCurrentHasOccured)
 		throw SimpleListException("SimpleList<TYPE>::RemoveCurrent : Forbidden after a previous call to RemoveCurrent");
 	RemoveCurrentHasOccured = true;
@@ -508,15 +418,6 @@ bool SimpleList<TYPE>::RemoveCurrent()
 template <typename TYPE>
 bool SimpleList<TYPE>::Remove(const TYPE& Element)
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of Remove on a non lock list.\n" );
-	}
-#endif
-
 	for( First(); NotAtEnd(); Next() )
 	{
 		if ( GetCurrent() == Element )
@@ -531,15 +432,6 @@ bool SimpleList<TYPE>::Remove(const TYPE& Element)
 template <typename TYPE>
 void SimpleList<TYPE>::Empty()
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of Empty on a non lock list.\n" );
-	}
-#endif
-
 	SimpleListElement<TYPE> * tmp;
 	// On libere tous les elements de la liste
 	while( Head != NULL )
@@ -562,15 +454,6 @@ bool SimpleList<TYPE>::IsNotEmpty() const
 template <typename TYPE>
 TYPE SimpleList<TYPE>::ExtractFirst()
 {
-#ifdef DEBUG
-	// Only for MutexedSimpleList debugging
-	// Do we get the lock ?
-	if ( IsLocked() != true )
-	{
-		TraceError( "Usage of ExtractFirst on a non lock list.\n" );
-	}
-#endif
-
   if(IsEmpty())
     throw SimpleListException("SimpleList<TYPE>::ExtractFirst : Forbidden when the list is empty");
 
@@ -596,20 +479,6 @@ template <typename TYPE>
 void SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
 { delete elt; }
 
-#ifdef DEBUG
-template <typename TYPE>
-void SimpleList<TYPE>::SetLock(bool vSet)
-{
-	AmILocked = vSet;
-}
-
-template <typename TYPE>
-bool SimpleList<TYPE>::IsLocked() const
-{
-	return AmILocked;
-}
-#endif
-
 
 /**
  * @class MutexedSimpleList SimpleList.h System/SimpleList.h
@@ -626,20 +495,160 @@ public:
 #ifdef DEBUG
 	MutexedSimpleList()
 	{
-		SimpleList<TYPE>::SetLock(false); // MutexedSimpleList is not lock
+		IsLocked = false; // MutexedSimpleList is not lock
 	}
 
 	virtual ~MutexedSimpleList()
 	{
-		SimpleList<TYPE>::SetLock(true); // MutexedSimpleList is not lock anymore,
+		IsLocked = true; // MutexedSimpleList is not lock anymore,
 		// All operation will be permitted to destroy the list
 	}
+
+	bool Add( const TYPE& Val )
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using Add on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::Add(Val);
+	}
+
+	bool AddHead( const TYPE& Val )
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using AddHeah on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::AddHead(Val);
+	}
+
+	bool AddTail( const TYPE& Val )
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using AddTail on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::AddTail(Val);
+	}
+
+	unsigned int GetNumberOfElements() const
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using GetNumberOfElements on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::GetNumberOfElements();
+	}
+
+	void First()
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using First on a non lock list.\n" );
+		}
+		SimpleList<TYPE>::First();
+	}
+
+	bool Next()
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using Next on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::Next();
+	}
+
+	bool AtEnd() const
+	{
+		if ( IsLocked == false )-
+		{
+			fprintf( stderr, "Using AtEnd on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::AtEnd();
+	}
+
+	bool NotAtEnd() const
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using NotAtEnd on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::NotAtEnd();
+	}
+
+	TYPE& GetCurrent() const
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using GetCurrent on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::GetCurrent();
+	}
+
+	bool RemoveCurrent()
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using RemoveCurrent on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::RemoveCurrent();
+	}
+
+	bool IsEmpty() const
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using IsEmpty on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::IsEmpty();
+	}	
+
+	bool IsNotEmpty() const
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using IsNotEmpty on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::IsNotEmpty();
+	}	
+
+	TYPE ExtractFirst()
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using ExtractFirst on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::ExtractFirst();
+	}
+
+	bool Remove(const TYPE& Element)
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using Remove on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::Remove(Element);
+	}
+
+	void Empty()
+	{
+		if ( IsLocked == false )
+		{
+			fprintf( stderr, "Using Empty on a non lock list.\n" );
+		}
+		SimpleList<TYPE>::Empty();
+	}
+
+private:
+	bool IsLocked;
 #else
+public:
 	virtual ~MutexedSimpleList()
 	{
 	}
 #endif
 
+public:
     /** \brief Lock the access to the list
 	 *
 	 * Wait until the mutex can be locked.
@@ -663,11 +672,16 @@ bool MutexedSimpleList<TYPE>::Lock()
 {
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
-	// we ask the lock ?
-	SimpleList<TYPE>::SetLock(true);
-#endif
-
+	bool ret = mutex.EnterMutex();
+	
+	if ( ret == true )
+	{
+		IsLocked = true;
+	}
+	return ret;
+#else
 	return mutex.EnterMutex();
+#endif
 }
 
 template <typename TYPE>
@@ -675,11 +689,16 @@ bool MutexedSimpleList<TYPE>::Unlock()
 {
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
-	// we ask the lock ?
-	SimpleList<TYPE>::SetLock(false);
-#endif
-
+	bool ret = mutex.LeaveMutex();
+	
+	if ( ret == true )
+	{
+		IsLocked = false;
+	}
+	return ret;
+#else
 	return mutex.LeaveMutex();
+#endif
 }
 
 } // namespace Omiscid

@@ -336,7 +336,12 @@ protected:
   int port; /*!< number of the control port */
   // char* hostname[HOST_NAME_MAX_SIZE]; /*<! name of the host */
   unsigned int serviceId; /*<! service identifier */
-  unsigned int localConnectorId;	 
+
+  // Data in order to manage connector Ids. We've got possibilities bits
+  unsigned int localConnectorId;
+
+  // unsigned int GetNewConnectorId();
+  // void ReleaseConnectorId();
 
   SimpleString serviceName; /*<! service name */
   ControlServerStatus Status; /*!< default variable structure for the variable status combined with the status value */
