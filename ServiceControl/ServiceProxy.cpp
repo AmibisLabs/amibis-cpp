@@ -301,11 +301,11 @@ InOutputAttribut * ServiceProxy::FindConnector( SimpleString ConnectortName )
 
 	
 	if (   (pAtt = FindInput(ConnectortName)) != NULL					// Is is an Input ?
-		|| (pAtt = QueryInputDescription(ConnectortName)) != NULL		// again
 		|| (pAtt = FindOutput(ConnectortName)) != NULL					// Is it an Output
-		|| (pAtt = QueryOutputDescription(ConnectortName)) != NULL		// again
 		|| (pAtt = FindInOutput(ConnectortName)) != NULL				// Is is an InOutput ?
-		|| (pAtt = QueryInOutputDescription(ConnectortName)) != NULL	// again
+		|| (pAtt = QueryInputDescription(ConnectortName)) != NULL		// again remotely
+		|| (pAtt = QueryOutputDescription(ConnectortName)) != NULL		// again remotely
+		|| (pAtt = QueryInOutputDescription(ConnectortName)) != NULL	// again remotely
 		)
 	{
 		// We found it

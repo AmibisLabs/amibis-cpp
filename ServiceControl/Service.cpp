@@ -30,7 +30,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 	SimpleString Host(hosttarget);
 
 	// To correct
-	ServiceProxy * Proxy = new ServiceProxy( MyData->PeerId, Host, port );
+	ServiceProxy * Proxy = new ServiceProxy( ComTools::GeneratePeerId(), Host, port ); // MyData->PeerId
 	if ( Proxy == NULL )
 	{
 		return false;

@@ -49,13 +49,13 @@ int main(int argc, char * argv[])
 {
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
-	Omiscid::Service * MyService = ServiceFactory.Create( "TestDoms" );
-	MyService->Start();
+	Omiscid::Service * MyService = ServiceFactory.Create( "Client" );
 
-	cout << CommonServiceValues::OmiscidServiceDnsSdType << endl;
+	ServiceProxy * MS0 = MyService->FindService( NameIs("MSM") );
 
-	MyService = ServiceFactory.Create( "TestDoms" );
-	MyService->Start();
+	printf("gggggggggggggggggg peeridMS0=%.8x\n", MS0->GetPeerId());
+
+	ServiceProxy * MS1 = MyService->FindService( And(NameIs("MSM"),Not(PeerIdIs(MS0->GetPeerId()))) );
 
 	Mutex MyLock;
 	MyLock.EnterMutex();
