@@ -48,8 +48,9 @@ using namespace std;
 int main(int argc, char * argv[])
 {
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
-
 	Omiscid::Service * MyService = ServiceFactory.Create( "Client" );
+
+#if 0
 
 	ServiceProxy * MS0 = MyService->FindService( NameIs("MSM") );
 
@@ -62,17 +63,17 @@ int main(int argc, char * argv[])
 	MyLock.EnterMutex();
 
 	return 0;
+#endif
 
 
-#if 0
 
 	// First, create a service filter. You *must* not free it after use
-	SimpleList<ServiceFilter *> MySearch;
+	ServiceFilterList MySearch;
 
 	MySearch.Add( NameIs("positionEstimator") );
 	MySearch.Add( NameIs("positionEstimator") );
 
-	SimpleList<ServiceProxy *>* MS0 = MyService->FindServices( MySearch, 3000 );
+	ServiceProxyList* MS0 = MyService->FindServices( MySearch, 3000 );
 
 	if ( MS0 != NULL )
 	{
@@ -87,7 +88,7 @@ int main(int argc, char * argv[])
 	MyLock.EnterMutex();
 
 	return 0;
-
+#if 0
 	// Let create a service named "Clock Server"
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 

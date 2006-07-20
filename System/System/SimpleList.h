@@ -166,7 +166,7 @@ public:
 
 
 	/** \brief  Empty (so empty) the whole list */
-	void Empty();
+	virtual void Empty();
 
 
  protected:
@@ -630,7 +630,7 @@ public:
 		return SimpleList<TYPE>::Remove(Element);
 	}
 
-	void Empty()
+	virtual void Empty()
 	{
 		if ( IsLocked == false )
 		{
