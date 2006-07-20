@@ -496,6 +496,7 @@ ComTools* TcpUdpClientServer::Cast()
 
 ClientConnection* TcpUdpClientServer::FindClientConnectionFromId(unsigned int pid)
 {
+	// Check first for a specific connection
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
 	{
 		if(!(listClient.GetCurrent())->tcpClient->IsConnected())
@@ -505,6 +506,20 @@ ClientConnection* TcpUdpClientServer::FindClientConnectionFromId(unsigned int pi
 			return listClient.GetCurrent();
 		}
 	}
+
+	unsigned int lpid = pid & ComTools::SERVICE_PEERID;
+
+	// Fallback, search for a port
+	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
+	{
+		if(!(listClient.GetCurrent())->tcpClient->IsConnected())
+			listClient.RemoveCurrent();
+		else if((listClient.GetCurrent()->GetPeerPid()& ComTools::SERVICE_PEERID) == lpid)
+		{
+			return listClient.GetCurrent();
+		}
+	}
+
 	return NULL;
 }
 
