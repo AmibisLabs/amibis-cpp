@@ -560,7 +560,7 @@ public:
 
 	bool AtEnd() const
 	{
-		if ( IsLocked == false )-
+		if ( IsLocked == false )
 		{
 			fprintf( stderr, "Using AtEnd on a non lock list.\n" );
 		}

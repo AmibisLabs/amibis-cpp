@@ -61,7 +61,7 @@ bool DnsSdService::CheckProtocol( const SimpleString Protocol )
 	{
 		ProtocolLenght++;
 
-		if( ProtocolLenght >= Protocol.GetLength() )
+		if( ProtocolLenght >= (int)Protocol.GetLength() )
 			break;
 
 		if( Protocol[ProtocolLenght] == '_' )
