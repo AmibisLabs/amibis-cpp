@@ -573,7 +573,7 @@ ServiceProxy * Service::FindService(ServiceFilter& Filter, unsigned int WaitTime
 	return FindService(Filter.Duplicate());
 }
 
-SimpleList<ServiceProxy *>* Service::FindServices(SimpleList<ServiceFilter *>& Filters, unsigned int WaitTime )
+ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned int WaitTime )
 {
 	int i;
 
@@ -600,14 +600,6 @@ SimpleList<ServiceProxy *>* Service::FindServices(SimpleList<ServiceFilter *>& F
 			// delete WaitForOmiscidServices object
 			delete WFOS;
 
-			// delete all filters
-			for( Filters.First(); Filters.NotAtEnd(); Filters.Next() )
-			{
-				// delete the current filter
-				delete Filters.GetCurrent();
-				// Remove it from the list
-				Filters.RemoveCurrent();
-			}
 			// Problem, return nothing
 			return NULL;
 		}
@@ -621,12 +613,12 @@ SimpleList<ServiceProxy *>* Service::FindServices(SimpleList<ServiceFilter *>& F
 	}
 
 	// The final result
-	SimpleList<ServiceProxy *>* ResultServicesProxy = NULL;
+	ServiceProxyList * ResultServicesProxy = NULL;
 
 	// Let's serach for the services
 	bool ret = WFOS->WaitAll(WaitTime);
 
-	if ( ret == true && (ResultServicesProxy = new SimpleList<ServiceProxy *>) != NULL )
+	if ( ret == true && (ResultServicesProxy = new ServiceProxyList) != NULL )
 	{
 		// We found what we need and we manadge to construct a list
 		// Add the resulting proxy to the list
@@ -644,15 +636,6 @@ SimpleList<ServiceProxy *>* Service::FindServices(SimpleList<ServiceFilter *>& F
 	{
 		// delete the current i-th OmiscidServiceSearchData
 		delete static_cast<OmiscidServiceSearchData*>(WFOS->operator [](i).UserData);
-	}
-
-	// Delete all filters
-	for( Filters.First(); Filters.NotAtEnd(); Filters.Next() )
-	{
-		// delete the current filter
-		delete Filters.GetCurrent();
-		// Remove it from the list
-		Filters.RemoveCurrent();
 	}
 
 	return ResultServicesProxy;

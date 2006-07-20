@@ -149,6 +149,23 @@ private:
 
 } // namespace Omiscid
 
+ServiceFilterList::~ServiceFilterList()
+{
+}
+
+void ServiceFilterList::Empty()
+{
+	for( First(); NotAtEnd(); Next() )
+	{
+		if ( GetCurrent() != NULL )
+		{
+			// Delete the current filter
+			delete GetCurrent();
+		}
+		RemoveCurrent();
+	}
+}
+
 CascadeServiceFilters::CascadeServiceFilters(CascadeServiceFiltersType CreationType)
 {
 	Type = CreationType;

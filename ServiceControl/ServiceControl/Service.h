@@ -13,7 +13,8 @@
 #include <ServiceControl/ControlServer.h>
 #include <ServiceControl/LocalVariableListener.h>
 #include <ServiceControl/ServiceFilter.h> 
-#include <ServiceControl/ConnectorListener.h> 
+#include <ServiceControl/ConnectorListener.h>
+#include <ServiceControl/ServiceProxyList.h> 
 
 namespace Omiscid {
 
@@ -219,7 +220,6 @@ public:
 	 */
 	bool RemoveConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener);
 
-
 	/**
 	 * Adds a listener that will be triggered at every variable change
 	 * @param VarName the VarName
@@ -254,7 +254,7 @@ public:
      * @return a list of service Proxy. User is responsible for deleting each ServiceProxy
 	 * and the list itself.
      */
-	SimpleList<ServiceProxy *>* FindServices( SimpleList<ServiceFilter *>& Filters, unsigned int WaitTime );
+	ServiceProxyList * FindServices( ServiceFilterList& Filters, unsigned int WaitTime );
 };
 
 } // namespace Omiscid

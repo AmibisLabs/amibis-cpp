@@ -34,6 +34,19 @@ public:
 };
 
 /**
+ * @author Dominique Vaufreydaz
+ *
+ */
+class ServiceFilterList : public SimpleList<ServiceFilter*>
+{
+public:
+	virtual ~ServiceFilterList();
+
+public:
+	virtual void Empty();
+};
+
+/**
  * Utility functions. Provides some {@link ServiceFilter} creators for
  * classical requirements.
  */
