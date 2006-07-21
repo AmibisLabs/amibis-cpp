@@ -17,6 +17,10 @@
 #include <sys/select.h>
 #endif
 
+#ifdef WIN32
+#pragma warning(disable : 4127) // Disable warning when using FD_SET
+#endif
+
 using namespace Omiscid;
 
 BrowseForDNSSDService::BrowseForDNSSDService()

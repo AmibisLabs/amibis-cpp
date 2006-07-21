@@ -1,20 +1,23 @@
 import os
 import sys
 import string
+import random
+import re
+
 from SCons.Util import WhereIs
 
 def OmiscidMessage(str):
  print '--==-- '+str
 
-#############################################
-### Command to initialize the environment ###
-#############################################
-def OmiscidInit(env,commandLineTargets,arguments,options=[]):
+########################################################################################
+### Command to initialize the environment for Linux/MacOS and in future gcc on Win32 ###
+########################################################################################
+def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  # defines Glabal value (will be change...)
- global COMMAND_LINE_TARGETS
- COMMAND_LINE_TARGETS=commandLineTargets
- global ARGUMENTS
- ARGUMENTS=arguments
+ # global COMMAND_LINE_TARGETS
+ # COMMAND_LINE_TARGETS=commandLineTargets
+ # global ARGUMENTS
+ # ARGUMENTS=arguments
  if 'omiscid' in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
@@ -107,8 +110,8 @@ def OmiscidMapping():
 ### Command to generate the install target ###
 ##############################################
 def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hToInstall=[]):
- global COMMAND_LINE_TARGETS
- global ARGUMENTS
+ # global COMMAND_LINE_TARGETS
+ # global ARGUMENTS
  if "install" in COMMAND_LINE_TARGETS :
   if "prefix" in ARGUMENTS :
    prefix_bin = os.path.join(ARGUMENTS.get("prefix"), "bin")
@@ -186,3 +189,62 @@ def OmiscidCheckLibs(conf,libs=[]):
     OmiscidMessage("missing "+miss)
     OmiscidMessage("       You can specify svideo path using 'scons svideo=/prefix/for/svideo'")
   sys.exit(1)
+  
+  
+########################################################################################
+### Command to initialize the environment for Linux/MacOS and in future gcc on Win32 ###
+########################################################################################
+def OmiscidWindowsInit(env,commandLineTargets,arguments,options=[]):
+ # defines Global value (will be change...)
+ # global COMMAND_LINE_TARGETS
+ # COMMAND_LINE_TARGETS=commandLineTargets
+ # global ARGUMENTS
+ # ARGUMENTS=arguments
+ return
+
+# TraceMode = False
+# if 'trace' in arguments :
+#  if arguments['trace'] in ['1','yes','true'] :
+#   TraceMode = True
+#  elif arguments['trace'] not in ['0','no','false'] :
+#   OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
+#   Exit()
+  
+##################################
+### Command to check some libs ###
+##################################
+def OmiscidCreateVisualStudioProject() :
+	
+	#seed the ramdom generator with system time
+	random.seed()
+
+	ProjectName   = 'Test';
+	ProjectFolder = '../' + ProjectName
+	
+	if ( os.path.isfile( ProjectFolder ) ) :
+		OmiscidMessage( ProjectName + ' is a file. Could not create project folder.' )
+		sys.exit(1)
+		
+	ProjectFolder = ProjectFolder + '/'
+	if ( os.path.isdir( ProjectFolder ) ) :
+		OmiscidMessage( 'Warning : ' + ProjectName + ' folder already exists. Work in it.' )
+	else :	
+		os.mkdir( ProjectFolder )
+
+	FileIn  = open ( 'VisualStudio.in/OMiSCID.sln', 'r' )
+	FileOut = open ( ProjectFolder + ProjectName + '.sln', 'w' )
+	for Line in FileIn.readlines():
+		Line = re.sub( '##PROJECTNAME##', ProjectName, Line )
+		FileOut.write( Line )
+	FileOut.close()
+	FileIn.close()
+
+	FileIn  = open ( 'VisualStudio.in/OMiSCID.vcproj', 'r' )
+	FileOut = open ( ProjectFolder + ProjectName + '.vcproj', 'w' )
+	for Line in FileIn.readlines():
+		Line = re.sub( '##PROJECTNAME##', ProjectName, Line )
+		FileOut.write( Line )
+	FileOut.close()
+	FileIn.close()
+
+	sys.exit(0)

@@ -7,8 +7,8 @@
 #define MSG_NOSIGNAL 0
 #define socklen_t int
 
-// To prevent deprecated about 
-#pragma warning(disable : 4800)
+#pragma warning(disable : 4800) // To prevent warning about performance warning
+#pragma warning(disable : 4127) // Disable warning when using FD_SET
 
 #else
 #include <netinet/in.h>
@@ -19,8 +19,6 @@
 #include <netdb.h>
 
 #include <errno.h>
-
-// #include <iostream>
 
 #endif
 
