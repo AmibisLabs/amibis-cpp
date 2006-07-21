@@ -13,11 +13,12 @@ def OmiscidMessage(str):
 ### Command to initialize the environment for Linux/MacOS and in future gcc on Win32 ###
 ########################################################################################
 def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
- # defines Glabal value (will be change...)
- # global COMMAND_LINE_TARGETS
- # COMMAND_LINE_TARGETS=commandLineTargets
- # global ARGUMENTS
- # ARGUMENTS=arguments
+ # defines Global value (will be change...)
+ global COMMAND_LINE_TARGETS
+ COMMAND_LINE_TARGETS=commandLineTargets
+ global ARGUMENTS
+ ARGUMENTS=arguments
+ 
  if 'omiscid' in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
@@ -196,7 +197,12 @@ def OmiscidCheckLibs(conf,libs=[]):
 ### Command to initialize the environment for Linux/MacOS and in future gcc on Win32 ###
 ########################################################################################
 def OmiscidWindowsInit(env,commandLineTargets,arguments,options=[]):
-	global ProjectType
+	# defines Global value (will be change...)
+	global COMMAND_LINE_TARGETS
+	COMMAND_LINE_TARGETS=commandLineTargets
+	global ARGUMENTS
+	ARGUMENTS=arguments
+ 	global ProjectType
 	global ProjectName
 	
 	# Default type
@@ -220,7 +226,7 @@ def OmiscidWindowsInit(env,commandLineTargets,arguments,options=[]):
 	if 'name' not in arguments or arguments['name'] == '' :
 		OmiscidMessage('You must specify at least a non-empty project name invoquing "scons name=MyProjectName"')
 		sys.exit(1)
-	else
+	else :
 		ProjectName = arguments['name']
 
 	
