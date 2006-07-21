@@ -1,6 +1,17 @@
 import os
+import re
 from OmiscidScons import *
 env = Environment()
+
+# are we on a Windows plateform
+if 'OS' in os.environ and re.match( '^Windows', os.environ['OS'], re.IGNORECASE ) and 'gcc' not in COMMAND_LINE_TARGETS :
+	# Window Work
+	print 'Windows'
+	OmiscidWindowsInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[])
+	OmiscidCreateVisualStudioProject()
+	sys.exit(0)
+
+# We expected to be on Linux or MacOS
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,['xml2'])
 
 conf = Configure(env)

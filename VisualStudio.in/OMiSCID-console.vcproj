@@ -20,7 +20,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				ImproveFloatingPointConsistency="TRUE"
-				AdditionalIncludeDirectories="..\OMiSCID\Com;..\OMiSCID\ServiceControl;..\OMiSCID\System;..\Rendezvous\include;&quot;..\libxml2-2.6.23.win32\include&quot;;&quot;..\iconv-1.9.1.win32\include&quot;"
+				##ADDITIONALINCLUDEDIRECTORIES##
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;OMISCID_TRACE_ENABLE;"
 				GeneratePreprocessedFile="0"
 				MinimalRebuild="TRUE"
@@ -37,7 +37,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib ..\Rendezvous\lib\dnssd.lib ..\libxml2-2.6.23.win32\lib\libxml2.lib ..\iconv-1.9.1.win32\lib\iconv.lib"
+				##ADDITIONALDEPENDENCIES##
 				OutputFile="$(OutDir)/##PROJECTNAME##.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="vrfcore.lib"
@@ -84,7 +84,7 @@
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
-				AdditionalIncludeDirectories="..\OMiSCID\Com;..\OMiSCID\ServiceControl;..\OMiSCID\System;..\Rendezvous\include;&quot;..\libxml2-2.6.23.win32\include&quot;;&quot;..\iconv-1.9.1.win32\include&quot;"
+				##ADDITIONALINCLUDEDIRECTORIES##
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				StringPooling="TRUE"
 				BasicRuntimeChecks="0"
@@ -99,7 +99,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Ws2_32.lib ..\Rendezvous\lib\dnssd.lib ..\libxml2-2.6.23.win32\lib\libxml2.lib ..\iconv-1.9.1.win32\lib\iconv.lib"
+				##ADDITIONALDEPENDENCIES##
 				OutputFile="$(OutDir)/##PROJECTNAME##.exe"
 				LinkIncremental="1"
 				IgnoreDefaultLibraryNames="vfrcore.lib"

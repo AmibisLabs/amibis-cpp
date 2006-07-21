@@ -202,8 +202,12 @@ def OmiscidWindowsInit(env,commandLineTargets,arguments,options=[]):
 	COMMAND_LINE_TARGETS=commandLineTargets
 	global ARGUMENTS
 	ARGUMENTS=arguments
+	
  	global ProjectType
 	global ProjectName
+	global LibXML
+	global LibIconv
+	global LibBonjour
 	
 	# Default type
 	ProjectType = 'console'
@@ -212,44 +216,77 @@ def OmiscidWindowsInit(env,commandLineTargets,arguments,options=[]):
 		OmiscidMessage('HELP')
 		sys.exit(0)
 	
+	if 'name' not in arguments or arguments['name'] == '' :
+		OmiscidMessage("You must specify at least a non-empty project name invoquing 'scons name=MyProjectName'.")
+		sys.exit(1)
+	else :
+		ProjectName = arguments['name']
+		
+		
 	if 'type' in arguments :
 		if arguments['type'] == 'console' :
 			ProjectType = 'console'
 		elif arguments['type'] == 'mfc' :
 			ProjectType = 'mfc'
-			OmiscidMessage('Visual studio project type \'mfc\' unsupported for the moment' + arguments['type'])
+			OmiscidMessage("Visual studio project type 'mfc' unsupported for the moment." )
 			sys.exit(1)
 		else :
 			OmiscidMessage('Unsupported Visual studio project type' + arguments['type'])
 			sys.exit(1)
 	
-	if 'name' not in arguments or arguments['name'] == '' :
-		OmiscidMessage('You must specify at least a non-empty project name invoquing "scons name=MyProjectName"')
-		sys.exit(1)
+	LibXML = '../libxml2/'
+	if 'libxml2' not in arguments :
+		OmiscidMessage( "Assuming, 'libxml2' is installed in '" + LibXML + "'." )
 	else :
-		ProjectName = arguments['name']
+		LibXML = os.path.normpath( arguments['libxml2'] )
+		LibXML = re.sub( '\$', '', LibXML ) + '\\'
+		OmiscidMessage( "'libxml' install folder : '" + LibXML + "'." )
 
-	
+	LibIconv = '../iconv/'
+	if 'iconv' not in arguments :
+		OmiscidMessage( "Assuming, 'iconv' is installed in '" + LibIconv + "'." )
+	else :
+		LibIconv = os.path.normpath( arguments['iconv'] )
+		LibIconv = re.sub( '\$', '', LibIconv ) + '\\'
+		OmiscidMessage( "'iconv' install folder : '" + LibIconv + "'." )
+
+	LibBonjour = '../BonjourSDK/'
+	if 'bonjour' not in arguments :
+		OmiscidMessage( "Assuming, 'bonjour' is installed in '" + LibBonjour + "'." )
+	else :
+		LibBonjour = os.path.normpath( arguments['bonjour'] )
+		LibBonjour = re.sub( '\$', '', LibBonjour ) + '\\'
+		OmiscidMessage( "'bonjour' install folder : '" + LibBonjour + "'." )
+		
 	return
 
-	# TraceMode = False
-	# if 'trace' in arguments :
-	#  if arguments['trace'] in ['1','yes','true'] :
-	#   TraceMode = True
-	#  elif arguments['trace'] not in ['0','no','false'] :
-	#   OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
-	#   Exit()
-  
 ##################################
 ### Command to check some libs ###
 ##################################
 def OmiscidCreateVisualStudioProject() :
-	
+ 	global ProjectType
+	global ProjectName
+	global LibXML
+	global LibIconv
+	global LibBonjour
+		
 	#seed the ramdom generator with system time
 	random.seed()
 
-	ProjectName   = 'Test';
-	ProjectFolder = '../' + ProjectName
+	# Generate variables
+	ProjectFolder  = '../' + ProjectName
+	
+	# AdditionalIncludeDirectories="xxx"
+	ProjectInclude = 'AdditionalIncludeDirectories="..\OMiSCID\System\;..\OMiSCID\Com\;..\OMiSCID\ServiceControl\;'
+	ProjectInclude = ProjectInclude + '&quot;' + LibBonjour + 'include\&quot;;'
+	ProjectInclude = ProjectInclude + '&quot;' + LibXML + 'include\&quot;;'
+	ProjectInclude = ProjectInclude + '&quot;' + LibIconv + 'include\&quot;"'
+	
+	# AdditionalDependencies="Ws2_32.lib ..\Rendezvous\lib\dnssd.lib ..\libxml2-2.6.23.win32\lib\libxml2.lib ..\iconv-1.9.1.win32\lib\iconv.lib"
+	ProjectLib = 'AdditionalDependencies="Ws2_32.lib '
+	ProjectLib = ProjectLib + '&quot;' + LibBonjour + 'lib\&quot; '
+	ProjectLib = ProjectLib + '&quot;' + LibXML + 'lib\&quot; '
+	ProjectLib = ProjectLib + '&quot;' + LibIconv + 'lib\&quot;"'
 	
 	if ( os.path.isfile( ProjectFolder ) ) :
 		OmiscidMessage( ProjectName + ' is a file. Could not create project folder.' )
@@ -273,6 +310,8 @@ def OmiscidCreateVisualStudioProject() :
 	FileOut = open ( ProjectFolder + ProjectName + '.vcproj', 'w' )
 	for Line in FileIn.readlines():
 		Line = re.sub( '##PROJECTNAME##', ProjectName, Line )
+		Line = re.sub( '##ADDITIONALINCLUDEDIRECTORIES##', ProjectInclude, Line )
+		Line = re.sub( '##ADDITIONALDEPENDENCIES##', ProjectLib, Line )
 		FileOut.write( Line )
 	FileOut.close()
 	FileIn.close()
