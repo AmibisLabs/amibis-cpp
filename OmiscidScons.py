@@ -140,6 +140,7 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
   else :
    OmiscidMessage('prefix must be given for installation')
    OmiscidMessage('you can use "scons prefix=Prefix/Where/To/Install install" to specify the prefix')
+   sys.exit(1)
 
 ##################################
 ### Command to check some libs ###
@@ -188,27 +189,50 @@ def OmiscidCheckLibs(conf,libs=[]):
    if miss == "svideo":
     OmiscidMessage("missing "+miss)
     OmiscidMessage("       You can specify svideo path using 'scons svideo=/prefix/for/svideo'")
-  sys.exit(1)
+    sys.exit(1)
   
   
 ########################################################################################
 ### Command to initialize the environment for Linux/MacOS and in future gcc on Win32 ###
 ########################################################################################
 def OmiscidWindowsInit(env,commandLineTargets,arguments,options=[]):
- # defines Global value (will be change...)
- # global COMMAND_LINE_TARGETS
- # COMMAND_LINE_TARGETS=commandLineTargets
- # global ARGUMENTS
- # ARGUMENTS=arguments
- return
+	global ProjectType
+	global ProjectName
+	
+	# Default type
+	ProjectType = 'console'
+	
+	if 'help' in commandLineTargets :
+		OmiscidMessage('HELP')
+		sys.exit(0)
+	
+	if 'type' in arguments :
+		if arguments['type'] == 'console' :
+			ProjectType = 'console'
+		elif arguments['type'] == 'mfc' :
+			ProjectType = 'mfc'
+			OmiscidMessage('Visual studio project type \'mfc\' unsupported for the moment' + arguments['type'])
+			sys.exit(1)
+		else :
+			OmiscidMessage('Unsupported Visual studio project type' + arguments['type'])
+			sys.exit(1)
+	
+	if 'name' not in arguments or arguments['name'] == '' :
+		OmiscidMessage('You must specify at least a non-empty project name invoquing "scons name=MyProjectName"')
+		sys.exit(1)
+	else
+		ProjectName = arguments['name']
 
-# TraceMode = False
-# if 'trace' in arguments :
-#  if arguments['trace'] in ['1','yes','true'] :
-#   TraceMode = True
-#  elif arguments['trace'] not in ['0','no','false'] :
-#   OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
-#   Exit()
+	
+	return
+
+	# TraceMode = False
+	# if 'trace' in arguments :
+	#  if arguments['trace'] in ['1','yes','true'] :
+	#   TraceMode = True
+	#  elif arguments['trace'] not in ['0','no','false'] :
+	#   OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
+	#   Exit()
   
 ##################################
 ### Command to check some libs ###
@@ -231,7 +255,7 @@ def OmiscidCreateVisualStudioProject() :
 	else :	
 		os.mkdir( ProjectFolder )
 
-	FileIn  = open ( 'VisualStudio.in/OMiSCID.sln', 'r' )
+	FileIn  = open ( 'VisualStudio.in/OMiSCID-' + ProjectType + '.sln', 'r' )
 	FileOut = open ( ProjectFolder + ProjectName + '.sln', 'w' )
 	for Line in FileIn.readlines():
 		Line = re.sub( '##PROJECTNAME##', ProjectName, Line )
@@ -239,10 +263,24 @@ def OmiscidCreateVisualStudioProject() :
 	FileOut.close()
 	FileIn.close()
 
-	FileIn  = open ( 'VisualStudio.in/OMiSCID.vcproj', 'r' )
+	FileIn  = open ( 'VisualStudio.in/OMiSCID-' + ProjectType + '.vcproj', 'r' )
 	FileOut = open ( ProjectFolder + ProjectName + '.vcproj', 'w' )
 	for Line in FileIn.readlines():
 		Line = re.sub( '##PROJECTNAME##', ProjectName, Line )
+		FileOut.write( Line )
+	FileOut.close()
+	FileIn.close()
+	
+	FileIn  = open ( 'README', 'r' )
+	FileOut = open ( ProjectFolder + 'README', 'w' )
+	for Line in FileIn.readlines():
+		FileOut.write( Line )
+	FileOut.close()
+	FileIn.close()
+
+	FileIn  = open ( 'LICENCE', 'r' )
+	FileOut = open ( ProjectFolder + 'LICENCE', 'w' )
+	for Line in FileIn.readlines():
 		FileOut.write( Line )
 	FileOut.close()
 	FileIn.close()
