@@ -41,7 +41,6 @@ sub WorkOnFile()
 			}
 		}
 		close( $fd );
-		
 	}
 }
 

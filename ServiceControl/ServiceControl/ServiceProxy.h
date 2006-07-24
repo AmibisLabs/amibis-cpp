@@ -88,6 +88,12 @@ public:
      * @return name
      */
     SimpleString GetName() ;
+
+	/**
+     * Check availability of a variable
+     * @param VarName the name of the remote variable
+     */
+    bool HasVariable(const SimpleString VarName);
 	
 	/**
      * Sets the new value of a remote variable

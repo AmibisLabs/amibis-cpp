@@ -347,12 +347,14 @@ ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName, SimpleString&
 
 bool ServiceHasVariable::IsAGoodService(ServiceProxy& SP)
 {
-	SimpleString RemoteValue;
-	RemoteValue = SP.GetVariableValue( VariableName );
+	if ( SP.HasVariable(VariableName) == false )
+		return false;
 
 	// We have the variable, shall we compare with value ?
 	if ( CheckValue )
 	{
+		SimpleString RemoteValue = SP.GetVariableValue( VariableName );
+
 		if ( VariableValue == RemoteValue )
 		{
 			return true;

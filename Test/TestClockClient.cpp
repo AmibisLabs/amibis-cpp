@@ -48,7 +48,7 @@ int main(int argc, char * argv[])
 	
 	for(;;)
 	{
-		ClockServer = MyService->FindService( And(NameIs("Clock Server"),OwnerIs("vaufreyd")) );
+		ClockServer = MyService->FindService( And(NameIs("Clock Server"),HasVariable("Hours")) );
 
 		if ( ClockServer != NULL )
 		{

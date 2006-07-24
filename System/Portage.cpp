@@ -21,9 +21,11 @@ public:
 
 };
 
-} // namespace Omiscid
 
 static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
+
+} // namespace Omiscid
+
 
 MemoryBufferException::MemoryBufferException( SimpleString Msg, int i )
 	: SimpleException( Msg, i )

@@ -206,6 +206,14 @@ bool ServiceProxy::RemoveRemoteVariableChangeListener(const SimpleString VarName
 	return true;
 }
 
+	/**
+     * Check availability of a variable
+     * @param VarName the name of the remote variable
+     */
+bool ServiceProxy::HasVariable(const SimpleString VarName)
+{
+	return (FindVariable(VarName) != NULL);
+}
 
 
 	/**
