@@ -189,7 +189,14 @@ int XMLTreeParser::ProcessMessages()
 	for(listXMLMsg.First(); listXMLMsg.NotAtEnd(); listXMLMsg.Next())
 	{
 		msg = listXMLMsg.GetCurrent();
-		ProcessAMessage(msg);
+		try
+		{
+			ProcessAMessage(msg);
+		}
+		catch( SimpleException &e )
+		{
+			TraceError( "'%s' occurs when processing XML message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
+		}
 		delete msg;
 		listXMLMsg.RemoveCurrent();
 		nb++;

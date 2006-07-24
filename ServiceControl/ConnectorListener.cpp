@@ -30,7 +30,7 @@ void ConnectorListener::Connected(Service& TheService, const SimpleString LocalC
      */
 void ConnectorListener::Disconnected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId)
 {
-	TraceError( "The peer %.8x dicconnects from %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
+	TraceError( "The peer %.8x disconnects from %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
 }
 
 	/**

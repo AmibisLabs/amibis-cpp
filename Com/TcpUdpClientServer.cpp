@@ -1,5 +1,7 @@
 #include <Com/TcpUdpClientServer.h>
 
+#include <System/SocketException.h>
+
 using namespace Omiscid;
 
 ClientConnection::ClientConnection(TcpClient* tcp_client, UdpConnection* udp_connect)
@@ -246,14 +248,21 @@ void TcpUdpClientServer::SendToAll(int len, const char* buf, bool fastsend)
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
 	{
 		if((listClient.GetCurrent())->tcpClient->IsConnected())
-		{	  
-			if(fastsend && (listClient.GetCurrent())->udpConnection)
+		{
+			try
 			{
-				UdpExchange::SendTo(len, buf, (listClient.GetCurrent())->udpConnection);
+				if(fastsend && (listClient.GetCurrent())->udpConnection)
+				{
+					UdpExchange::SendTo(len, buf, (listClient.GetCurrent())->udpConnection);
+				}
+				else
+				{
+					(listClient.GetCurrent())->tcpClient->SendToServer(len, buf);	  
+				}
 			}
-			else
+			catch( SocketException &e )
 			{
-				(listClient.GetCurrent())->tcpClient->SendToServer(len, buf);	  
+				TraceError( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
 			}
 		}
 		else
@@ -282,11 +291,21 @@ int TcpUdpClientServer::SendToPeer(int len, const char* buf, unsigned int pid, b
 		if(cc)
 		{
 			int ret = 0;
-			if(fastsend && cc->udpConnection) 
-				ret = UdpExchange::SendTo(len, buf, cc->udpConnection);	       
-			else
-				ret = cc->tcpClient->SendToServer(len, buf);
-
+			try
+			{
+				if(fastsend && cc->udpConnection) 
+				{
+					ret = UdpExchange::SendTo(len, buf, cc->udpConnection);	       
+				}
+				else
+				{
+					ret = cc->tcpClient->SendToServer(len, buf);
+				}
+			}
+			catch( SocketException &e )
+			{
+				TraceError( "Error while sending to peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			}
 			listClient.Unlock();
 			return ret;
 		}    

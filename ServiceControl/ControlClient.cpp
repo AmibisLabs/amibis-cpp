@@ -37,6 +37,8 @@ ControlClient::~ControlClient()
 	TcpClient::RemoveAllCallbackObjects();
 	TcpClient::Stop();
 
+	XMLTreeParser::StopThread();
+
 	for(listVariableAttr.First(); listVariableAttr.NotAtEnd();
 		listVariableAttr.Next())
 	{

@@ -15,6 +15,7 @@ TcpClient::TcpClient(const SimpleString addr, int port)
 
 TcpClient::~TcpClient()
 {
+	Thread::StopThread();
 }
 
 void TcpClient::ConnectToServer(const SimpleString addr, int port)

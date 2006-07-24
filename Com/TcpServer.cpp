@@ -1,5 +1,7 @@
 #include <Com/TcpServer.h>
 
+#include <System/SocketException.h>
+
 using namespace Omiscid;
 
 TcpServer::TcpServer()
@@ -62,8 +64,14 @@ int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 	if(ms)
 	{
 		//ms->IsConnected()  : tested by FindClientFromId
-
-		nb_send = ms->Send(len, buf);
+		try
+		{
+			nb_send = ms->Send(len, buf);
+		}
+		catch( SocketException &e )
+		{
+			TraceError( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+		}
 	}
 	listConnections.Unlock();
 	return nb_send;
@@ -79,8 +87,14 @@ int TcpServer::SendToClient(int* tab_len, const char** tab_buf, int nb_buf, unsi
 	if(ms)
 	{
 		//ms->IsConnected() tested by FindClientFromId
-
-		nb_send = ms->SendCuttedMsg(tab_len, tab_buf, nb_buf);
+		try
+		{
+			nb_send = ms->SendCuttedMsg(tab_len, tab_buf, nb_buf);
+		}
+		catch( SocketException &e )
+		{
+			TraceError( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+		}
 	}
 	listConnections.Unlock();
 	return nb_send;
@@ -115,8 +129,15 @@ int TcpServer::SendToAllClients(int len, const char* buf)
 		ms = listConnections.GetCurrent();
 		if( ms->IsConnected() )
 		{
-			ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
-			nb_clients++;
+			try
+			{
+				ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
+				nb_clients++;
+			}
+			catch( SocketException &e )
+			{
+				TraceError( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+			}
 		}
 		else
 		{
@@ -159,8 +180,15 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 		ms = listConnections.GetCurrent();
 		if( ms->IsConnected() )
 		{
-			ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
-			nb_clients++;
+			try
+			{
+				ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
+				nb_clients++;
+			}
+			catch( SocketException &e )
+			{
+				TraceError( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+			}
 		}
 		else
 		{
@@ -225,6 +253,7 @@ bool TcpServer::AcceptConnection(MsgSocket* sock)
 	CallbackObjects.Unlock();
 
 	sock->SetTcpNoDelay(TcpNoDelayMode);
+	sock->SetName(GetName());
 	sock->SetServiceId(GetServiceId());
 	sock->SetMaxMessageSizeForTCP(MsgSocket::GetMaxMessageSizeForTCP());
 	sock->StartThread();

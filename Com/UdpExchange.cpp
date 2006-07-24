@@ -1,5 +1,7 @@
 #include <Com/UdpExchange.h>
 
+#include <System/SocketException.h>
+
 using namespace Omiscid;
 
 UdpExchange::UdpExchange()
@@ -62,14 +64,24 @@ int UdpExchange::SendTo(int len, const char* buf, const char* addr, int port)
 
 int UdpExchange::SendTo(int len, const char* buf, unsigned int pid)
 {
-  int nb_send = 0;
-  listUdpConnections.Lock();
+	int nb_send = 0;
+	listUdpConnections.Lock();
 
-  UdpConnection* ptr = FindConnectionFromId(pid);
-  if(ptr) nb_send = MsgSocket::SendTo(len, buf, ptr);
+	UdpConnection* ptr = FindConnectionFromId(pid);
+	if(ptr)
+	{
+		try
+		{
+			nb_send = MsgSocket::SendTo(len, buf, ptr);
+		}
+		catch( SocketException &e )
+		{
+			TraceError( "Error while sending to all peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+		}
+	}
 
-  listUdpConnections.Unlock();
-  return nb_send;
+	listUdpConnections.Unlock();
+	return nb_send;
 }
   
 void UdpExchange::SendToAll(int len, const char* buf)
@@ -77,8 +89,15 @@ void UdpExchange::SendToAll(int len, const char* buf)
   listUdpConnections.Lock();
   for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
       listUdpConnections.Next())
-    {   
-      SendTo(len, buf, (listUdpConnections.GetCurrent())); 
+    {
+		try
+		{
+			SendTo(len, buf, (listUdpConnections.GetCurrent())); 
+		}
+		catch( SocketException &e )
+		{
+			TraceError( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+		}
     }  
   listUdpConnections.Unlock();
 }

@@ -416,7 +416,14 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 		MsgSocket* ms = FindClientFromId( msg->pid );
 		if( ms )
 		{
-			ms->Send((int)str.GetLength(), str.GetStr());
+			try
+			{
+				ms->Send((int)str.GetLength(), str.GetStr());
+			}
+			catch( SocketException& e )
+			{
+				TraceError( "Error when responding to a clien request : %s (%d)\n", e.msg.GetStr(), e.err );
+			}
 		}
 		TcpServer::listConnections.Unlock();
 	}
@@ -744,7 +751,14 @@ void ControlServer::NotifyValueChanged(VariableAttribut* var)
 			MsgSocket* sock = FindClientFromId(vl->listListener.GetCurrent());
 			if( sock )
 			{
-				sock->Send(str.GetLength(), str.GetStr());
+				try
+				{
+					sock->Send(str.GetLength(), str.GetStr());
+				}
+				catch( SocketException& e )
+				{
+					TraceError( "Error notificattion of value changes : %s (d)\n", e.msg.GetStr(), e.err );
+				}
 			}
 			else
 			{

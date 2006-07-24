@@ -50,45 +50,6 @@ int main(int argc, char * argv[])
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 	Omiscid::Service * MyService = ServiceFactory.Create( "Client" );
 
-#if 0
-
-	ServiceProxy * MS0 = MyService->FindService( NameIs("MSM") );
-
-	printf("gggggggggggggggggg peeridMS0=%.8x\n", MS0->GetPeerId());
-
-	ServiceProxy * MS1 = MyService->FindService( And(NameIs("MSM"),Not(PeerIdIs(MS0->GetPeerId()))) );
-
-	Mutex MyLock;
-	MyLock.EnterMutex();
-	MyLock.EnterMutex();
-
-	return 0;
-#endif
-
-
-
-	// First, create a service filter. You *must* not free it after use
-	ServiceFilterList MySearch;
-
-	MySearch.Add( NameIs("positionEstimator") );
-	MySearch.Add( NameIs("positionEstimator") );
-
-	ServiceProxyList* MS0 = MyService->FindServices( MySearch, 3000 );
-
-	if ( MS0 != NULL )
-	{
-		for( MS0->First(); MS0->NotAtEnd(); MS0->Next() )
-		{
-			cout << MS0->GetCurrent()->GetName() << endl;
-		}
-	}
-
-	Mutex MyLock;
-	MyLock.EnterMutex();
-	MyLock.EnterMutex();
-
-	return 0;
-#if 0
 	// Let create a service named "Clock Server"
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 
@@ -141,7 +102,7 @@ int main(int argc, char * argv[])
 	struct timeval now;					// A struct to get the current time of day
 
 	// Loop forever
-	for(int zz=0;zz<60;zz++)
+	for(int zz=0;zz<6000;zz++)
 	{
 		// retrieve the current time
 		gettimeofday(&now, NULL);
@@ -174,5 +135,4 @@ int main(int argc, char * argv[])
 	delete ClockServer;
 	
 	return 0;
-#endif
 }

@@ -32,15 +32,6 @@ int main(int argc, char * argv[])
 {
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
-	for(;;)
-	{
-		SimpleString TestS;
-		cin >> TestS;
-		cout << TestS << endl;
-	}
-
-	return 0;
-
 	TestListener TL;
 
 	Omiscid::Service * MyService = ServiceFactory.Create( "Clock Client" );
@@ -51,21 +42,30 @@ int main(int argc, char * argv[])
 	// MySearch.Add( NameIs("Clock Server") );
 	// MySearch.Add( NameIs("Clock Server") );
 
-	ServiceProxy * ClockServer = MyService->FindService( And(NameIs("Clock Server"),OwnerIs("vaufreyd")) );
+	ServiceProxy * ClockServer;
 
-	if ( ClockServer == NULL )
+	MyService->AddConnector( "In", "in", AnInput );
+	
+	for(;;)
 	{
-		delete MyService;
-		return 0;
+		ClockServer = MyService->FindService( And(NameIs("Clock Server"),OwnerIs("vaufreyd")) );
+
+		if ( ClockServer != NULL )
+		{
+			MyService->ConnectTo( "In", ClockServer, "PushClock" );
+
+			printf( "Add listener\n" );
+			MyService->AddConnectorListener( "In", &TL );
+
+			delete ClockServer;
+
+			return 0;
+		}
 	}
 
 	// ClockServer->SetVariableValue( "Hours", "12" );
 
-	MyService->AddConnector( "In", "in", AnInput );
-	MyService->ConnectTo( "In", ClockServer, "PushClock" );
-
-	printf( "Add listener\n" );
-	MyService->AddConnectorListener( "In", &TL );
+	return 0;
 
 	Mutex MyLock;
 	MyLock.EnterMutex();

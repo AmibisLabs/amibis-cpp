@@ -556,7 +556,11 @@ bool MsgSocket::SendSyncLinkMsg()
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+				try
+				{
+					CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+				}
+				catch(SocketException&) {} // Discard it 
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -608,7 +612,11 @@ void MsgSocket::Stop()
 		// Send info to all listener
 		for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 		{
-			CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+			try
+			{
+				CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+			}
+			catch(SocketException&) {} // Discard it
 		}
 		CallbackObjects.Unlock();
 		connected = false;
@@ -633,7 +641,11 @@ void MsgSocket::Receive()
 					// Send info to all listener
 					for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 					{
-						CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+						try
+						{
+							CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+						}
+						catch(SocketException&) {} // Discard it
 					}
 					CallbackObjects.Unlock();
 					connected = false;
@@ -708,7 +720,18 @@ void MsgSocket::Receive()
 						// Send info to all listener
 						for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 						{
-							CallbackObjects.GetCurrent()->Connected(*this,pid);
+							try
+							{
+								CallbackObjects.GetCurrent()->Connected(*this,pid);
+							}
+							catch(SocketException& e)
+							{
+								// Unlock the list
+								CallbackObjects.Unlock();
+
+								// Thow the exception
+								throw e;
+							}
 						}
 						CallbackObjects.Unlock();
 
@@ -800,7 +823,18 @@ void MsgSocket::Receive()
 								// Send info to all listener
 								for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 								{
-									CallbackObjects.GetCurrent()->Receive(*this, callbackData);
+									try
+									{
+										CallbackObjects.GetCurrent()->Receive(*this, callbackData);
+									}
+									catch(SocketException& e)
+									{
+										// Unlock the list
+										CallbackObjects.Unlock();
+
+										// Throw the exception
+										throw e;
+									}
 								}
 							}
 							CallbackObjects.Unlock();
@@ -841,7 +875,11 @@ void MsgSocket::Receive()
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				try
+				{
+					CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				}
+				catch(SocketException&) {} // Discard
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -919,7 +957,11 @@ int MsgSocket::Send(int len, const char* buf)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				try
+				{
+					CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				}
+				catch(SocketException&) {}	// Discard it...
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -972,7 +1014,11 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+				try
+				{
+					CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+				}
+				catch(SocketException&) {} // Discard it
 			}
 			CallbackObjects.Unlock();
 			connected = false;      
@@ -1032,7 +1078,11 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+				try
+				{
+					CallbackObjects.GetCurrent()->Disconnected(*this, GetPeerPid());
+				}
+				catch(SocketException&) {} // Discard it
 			}
 			CallbackObjects.Unlock();
 			connected = false;
@@ -1091,7 +1141,11 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				try
+				{
+					CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				}
+				catch(SocketException&) {} // Discard it
 			}
 			CallbackObjects.Unlock();
 			connected = false;      
@@ -1232,7 +1286,18 @@ void MsgSocket::ReceiveUdpExchange()
 									callbackData.Msg.mid = mid;
 									for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 									{
-                                        CallbackObjects.GetCurrent()->Receive(*this, callbackData);
+										try
+										{
+											CallbackObjects.GetCurrent()->Receive(*this, callbackData);
+										}
+										catch(SocketException& e)
+										{
+											// Unlock the list
+											CallbackObjects.Unlock();
+
+											// Throw the exception
+											throw e;
+										}
 									}
 								}
 								CallbackObjects.Unlock();
@@ -1275,7 +1340,11 @@ void MsgSocket::ReceiveUdpExchange()
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
-				CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				try
+				{
+					CallbackObjects.GetCurrent()->Disconnected(*this,GetPeerPid());
+				}
+				catch(SocketException&) {} // Discard it
 			}
 			CallbackObjects.Unlock();
 			connected = false;
