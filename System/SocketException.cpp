@@ -43,13 +43,11 @@ void SocketException::SocketErrorCheck()
 			break;
 
 		default:
-			tmpc  = "UNK ERROR (";
-			tmpc += err;
-			tmpc += ")\n";
+			tmpc  = "UNK ERROR";
 			return;
 	}
 
-	fprintf( stderr, "%s\n", tmpc.GetStr() );
+	msg += " (" + tmpc + ")";
 #endif
 }
 
@@ -66,7 +64,6 @@ SocketException::~SocketException()
 SocketException::SocketException(const SocketException& ExceptionToCopy)
  : SimpleException(ExceptionToCopy)
 {
-	SocketErrorCheck();
 }
 
 SimpleString SocketException::GetExceptionType() const

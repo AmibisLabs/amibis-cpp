@@ -118,7 +118,7 @@ void BrowseForDNSSDService::Run()
 #ifndef WIN32
 		MaxDesc = DNSSocket + 1;
 #else
-			// On WIN32 plateform, the value is unused and remain 0
+		// On WIN32 plateform, the value is unused and remain 0
 #endif
 
 		nReady = select(MaxDesc, &fds, NULL, NULL, &timeout);

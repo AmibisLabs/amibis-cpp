@@ -36,29 +36,29 @@ using namespace Omiscid;
 
 namespace Omiscid {
 
-// We need to initialise Windows socket subsystem
-class OmiscidSocketInitClass
-{
-public:
-	OmiscidSocketInitClass()
+	// We need to initialise Windows socket subsystem
+	class OmiscidSocketInitClass
 	{
+	public:
+		OmiscidSocketInitClass()
+		{
 #ifdef WIN32
-		WORD wVersionRequested;
-		WSADATA wsaData;
- 
-		wVersionRequested = MAKEWORD( 2, 2 );
- 		err = WSAStartup( wVersionRequested, &wsaData );
+			WORD wVersionRequested;
+			WSADATA wsaData;
+
+			wVersionRequested = MAKEWORD( 2, 2 );
+			err = WSAStartup( wVersionRequested, &wsaData );
 #endif
-		Socket::GetDnsNameSolvingOption();
+			Socket::GetDnsNameSolvingOption();
+		};
+
+	private:
+#ifdef WIN32
+		int err;
+#endif
 	};
 
-private:
-#ifdef WIN32
-	int err;
-#endif
-};
-
-static OmiscidSocketInitClass OmiscidSocketInitClassInitialisationObject;
+	static OmiscidSocketInitClass OmiscidSocketInitClassInitialisationObject;
 
 } // namespace Omiscid
 
@@ -70,18 +70,18 @@ Socket::Socket()
 {}
 
 Socket::Socket(SocketKind type)
-  : socketType(type), descriptor((SOCKET)SOCKET_ERROR)
+: socketType(type), descriptor((SOCKET)SOCKET_ERROR)
 {
-  if((descriptor = socket(AF_INET, type, 0)) == SOCKET_ERROR)
-    {
-      throw SocketException("socket", Errno());
-    }
+	if((descriptor = socket(AF_INET, type, 0)) == SOCKET_ERROR)
+	{
+		throw SocketException("socket", Errno());
+	}
 }
 
 Socket::~Socket()
 {
-  if(descriptor != SOCKET_ERROR) Close();
- 
+	if(descriptor != SOCKET_ERROR) Close();
+
 }
 
 int Socket::Errno()
@@ -95,76 +95,76 @@ int Socket::Errno()
 
 void Socket::SetDescriptor(SOCKET descr)
 {
-  descriptor = descr;
-  int t;
-  int size = sizeof(int);
+	descriptor = descr;
+	int t;
+	int size = sizeof(int);
 
-  if(getsockopt(descriptor, SOL_SOCKET,SO_TYPE , (char*)&t, (socklen_t*)&size) == SOCKET_ERROR)
-    {
-      throw SocketException("getsockopt", Errno());
-    }
+	if(getsockopt(descriptor, SOL_SOCKET,SO_TYPE , (char*)&t, (socklen_t*)&size) == SOCKET_ERROR)
+	{
+		throw SocketException("getsockopt", Errno());
+	}
 
-  socketType = (SocketKind)t;
-//   if(socketType == TCP)
-//     {
-//       std::cerr << "TCP\n";
-//     }
-//   else if(socketType == UDP)
-//     {
-//       std::cerr << "UDP\n";
-//     }
-//   else
-//     {
-//       std::cerr << "Unknown\n";
-//     }
+	socketType = (SocketKind)t;
+	//   if(socketType == TCP)
+	//     {
+	//       std::cerr << "TCP\n";
+	//     }
+	//   else if(socketType == UDP)
+	//     {
+	//       std::cerr << "UDP\n";
+	//     }
+	//   else
+	//     {
+	//       std::cerr << "Unknown\n";
+	//     }
 }
 
 void Socket::Bind(const SimpleString addr, int port)
 {
- 
-//   if(socketType == UDP)
-//     {
-//       unsigned long on = 1;
-//       setsockopt(descriptor, SOL_SOCKET, SO_BROADCAST, (char const*)&on, sizeof(on));
 
-//       dest.sin_family = AF_INET;
-//       dest.sin_port = htons(port);
-//       dest.sin_addr.s_addr = INADDR_BROADCAST;
-//       memset(&(dest.sin_zero), 0, 8);
-//     }
+	//   if(socketType == UDP)
+	//     {
+	//       unsigned long on = 1;
+	//       setsockopt(descriptor, SOL_SOCKET, SO_BROADCAST, (char const*)&on, sizeof(on));
 
-  struct sockaddr_in my_addr;
-  
-  // REVIEW
-  /* my_addr.sin_family = AF_INET;
-  my_addr.sin_port = htons(port);
+	//       dest.sin_family = AF_INET;
+	//       dest.sin_port = htons(port);
+	//       dest.sin_addr.s_addr = INADDR_BROADCAST;
+	//       memset(&(dest.sin_zero), 0, 8);
+	//     }
 
-  if(!strcmp(addr, ""))
-    { 
-      my_addr.sin_addr.s_addr = INADDR_ANY;
-    }
-  else
-    {
-      my_addr.sin_addr.s_addr = inet_addr(addr);
-    }
-  memset(&(my_addr.sin_zero), 0, 8); */
-  if ( FillAddrIn( &my_addr, addr, port ) == false )
-  {
-	  throw SocketException("bind");
-  }
-  
-  if( bind(descriptor, (struct sockaddr*)&my_addr, sizeof(struct sockaddr) ) == SOCKET_ERROR)
-  {
-	  throw SocketException("bind");
-  }
+	struct sockaddr_in my_addr;
+
+	// REVIEW
+	/* my_addr.sin_family = AF_INET;
+	my_addr.sin_port = htons(port);
+
+	if(!strcmp(addr, ""))
+	{ 
+	my_addr.sin_addr.s_addr = INADDR_ANY;
+	}
+	else
+	{
+	my_addr.sin_addr.s_addr = inet_addr(addr);
+	}
+	memset(&(my_addr.sin_zero), 0, 8); */
+	if ( FillAddrIn( &my_addr, addr, port ) == false )
+	{
+		throw SocketException("bind");
+	}
+
+	if( bind(descriptor, (struct sockaddr*)&my_addr, sizeof(struct sockaddr) ) == SOCKET_ERROR)
+	{
+		throw SocketException("bind");
+	}
 
 }
 
 void Socket::Listen()
 {
-  int res;
-  if((res = listen(descriptor, BACKLOG)) == SOCKET_ERROR)
-    throw SocketException("listen", Errno());
+	int res;
+	if((res = listen(descriptor, BACKLOG)) == SOCKET_ERROR)
+		throw SocketException("listen", Errno());
 }
 
 Socket* Socket::Accept()
@@ -190,7 +190,7 @@ Socket* Socket::Accept()
 #ifndef WIN32
 	MaxDesc = descriptor + 1;
 #else
-		// On WIN32 plateform, the value is unused and remain 0
+	// On WIN32 plateform, the value is unused and remain 0
 #endif
 
 	// Ok, wait for the connection...
@@ -203,7 +203,7 @@ Socket* Socket::Accept()
 		Socket* s = new Socket();
 		if ( s )
 		{
-            s->SetDescriptor(new_fd);
+			s->SetDescriptor(new_fd);
 			return s;
 		}
 		// else we will return NULL at the end of the function
@@ -231,7 +231,7 @@ const SimpleString Socket::GetConnectedHost()
 		}
 
 		// Ok, let's get the name of the connected host
-		
+
 		he = gethostbyaddr((char *) &addr.sin_addr, 4, AF_INET);
 		if ( he == NULL )
 		{
@@ -256,11 +256,11 @@ bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int 
 	if ( pAdd == NULL || port < 0 )
 		return false;
 
-    pAdd->sin_family = AF_INET;
+	pAdd->sin_family = AF_INET;
 #ifdef WIN32
-    pAdd->sin_port = htons((u_short)port);
+	pAdd->sin_port = htons((u_short)port);
 #else
-    pAdd->sin_port = htons((uint16_t)port);
+	pAdd->sin_port = htons((uint16_t)port);
 #endif
 	if ( name.GetLength() == 0 )	// name == ""
 	{
@@ -272,139 +272,154 @@ bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int 
 		he = GetHostByName(name);
 		pAdd->sin_addr = *((struct in_addr*)he->h_addr);
 	}
-    memset(&(pAdd->sin_zero), 0, 8);
+	memset(&(pAdd->sin_zero), 0, 8);
 
 	return true;
 }
 
 void Socket::Connect(const SimpleString addr, int port)
 {
-  if(socketType == TCP)
-    {
-      struct sockaddr_in the_addr;
-	  FillAddrIn(&the_addr, addr, port);
+	if(socketType == TCP)
+	{
+		struct sockaddr_in the_addr;
+		FillAddrIn(&the_addr, addr, port);
 
-      if(connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == SOCKET_ERROR)
+		if(connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == SOCKET_ERROR)
 		{
-		throw SocketException("connect", Errno());
+			throw SocketException("connect", Errno());
 		}
-    }
-  else /* UDP */
-   {
-      /*dest.sin_family = AF_INET;
-      dest.sin_port = htons(port);
-      dest.sin_addr = *((struct in_addr*)he->h_addr);
-      //.s_addr = inet_addr(addr);
-      memset(&(dest.sin_zero), 0, 8); */
-   	  FillAddrIn(&dest, addr, port);
-    }
+	}
+	else /* UDP */
+	{
+		/*dest.sin_family = AF_INET;
+		dest.sin_port = htons(port);
+		dest.sin_addr = *((struct in_addr*)he->h_addr);
+		//.s_addr = inet_addr(addr);
+		memset(&(dest.sin_zero), 0, 8); */
+		FillAddrIn(&dest, addr, port);
+	}
 }
 
 void Socket::Close()
 {
 #ifdef WIN32
-  ::shutdown(descriptor, SD_BOTH);
-  closesocket(descriptor);
+	::shutdown(descriptor, SD_BOTH);
+	closesocket(descriptor);
 #else
-  shutdown(descriptor, SHUT_RDWR);
-  close(descriptor);
+	shutdown(descriptor, SHUT_RDWR);
+	close(descriptor);
 #endif
-  descriptor = (SOCKET)SOCKET_ERROR;
+	descriptor = (SOCKET)SOCKET_ERROR;
 }
 
 int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
 {
-  int res = 0;
-  if(socketType == TCP)
-    {
+	int res = 0;
+	if(socketType == TCP)
+	{
 		if((res = recv(descriptor, (char*)buf, len, 0)) == SOCKET_ERROR)
 		{
 			res = Errno();
 			throw SocketException("recv_sock_stream", res );
 		}
-    }
-  else
-    {
-      
-      struct sockaddr_in from;
-      struct sockaddr_in* fromptr = (pfrom)? pfrom : &from;
-      int from_len = sizeof(struct sockaddr);
-      if((res = recvfrom(descriptor, (char*)buf, len, 0,
-		  (struct sockaddr*)fromptr, (socklen_t*)&from_len)) == SOCKET_ERROR)
-	{
-	  throw SocketException("recv_sock_dgram", Errno());
 	}
-    }
-  return res;
+	else
+	{
+
+		struct sockaddr_in from;
+		struct sockaddr_in* fromptr = (pfrom)? pfrom : &from;
+		int from_len = sizeof(struct sockaddr);
+		if((res = recvfrom(descriptor, (char*)buf, len, 0,
+			(struct sockaddr*)fromptr, (socklen_t*)&from_len)) == SOCKET_ERROR)
+		{
+			throw SocketException("recv_sock_dgram", Errno());
+		}
+	}
+	return res;
 }
 
 int Socket::Send(int len, const char* buf)
 {
-  const int socket_send_flag = MSG_NOSIGNAL;
-  int res;
-  if(socketType == TCP)
-    {
-      
-      if((res = send(descriptor, buf, len, socket_send_flag)) == SOCKET_ERROR)
+	const int socket_send_flag = MSG_NOSIGNAL;
+	int res;
+	if(socketType == TCP)
 	{
-	   throw SocketException("send_sock_stream", Errno());
+
+		if((res = send(descriptor, buf, len, socket_send_flag)) == SOCKET_ERROR)
+		{
+			throw SocketException("send_sock_stream", Errno());
+		}
 	}
-    }
-  else
-    {
-      if((res = sendto(descriptor, buf, len, socket_send_flag,
-			 (struct sockaddr*)&dest, sizeof(struct sockaddr))) == SOCKET_ERROR)
+	else
 	{
-	  throw SocketException("send_sock_dgram", Errno());
+		if((res = sendto(descriptor, buf, len, socket_send_flag,
+			(struct sockaddr*)&dest, sizeof(struct sockaddr))) == SOCKET_ERROR)
+		{
+			throw SocketException("send_sock_dgram", Errno());
+		}
 	}
-    }
-  return res;
+	return res;
 }
 
 int Socket::SendTo(int len, const char* buf, struct sockaddr_in* adest)
 {
-  const int socket_send_flag = MSG_NOSIGNAL;
-  int res;
-  
-  if((res = sendto(descriptor, buf, len, socket_send_flag,
-		   (struct sockaddr*)adest, sizeof(struct sockaddr))) == SOCKET_ERROR)
-    {
-      throw SocketException("send_sock_dgram", Errno());
-    }
-  return res;
+	const int socket_send_flag = MSG_NOSIGNAL;
+	int res;
+
+	if((res = sendto(descriptor, buf, len, socket_send_flag,
+		(struct sockaddr*)adest, sizeof(struct sockaddr))) == SOCKET_ERROR)
+	{
+		throw SocketException("send_sock_dgram", Errno());
+	}
+	return res;
 }
 
 
 bool Socket::Select()
 {
 	// Done, change it to non full blocking mode....
-	fd_set readfds;
+	fd_set socketfds;
 
 	timeval timeout;
+
+	FD_ZERO(&socketfds);
+	FD_SET(descriptor, &socketfds);
+
+	// First check for event (like disconnection...)
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 10;	// 10 micro seconds
+
+	// Ask if some event are waiting on this socket
+	if ( select((int)descriptor+1, NULL, NULL, &socketfds, &timeout) > 0 )
+	{
+		// Ok, something happens
+		throw SocketException("select", Errno());
+	}
 
 	timeout.tv_sec = 0;
 	timeout.tv_usec = 100000;	// 100 ms
 
-	FD_ZERO(&readfds);
-	FD_SET(descriptor, &readfds);
+	FD_ZERO(&socketfds);
+	FD_SET(descriptor, &socketfds);
 
-	if(::select((int)descriptor+1, &readfds, NULL, NULL, &timeout) == SOCKET_ERROR)
+	if( select((int)descriptor+1, &socketfds, NULL, NULL, &timeout) == SOCKET_ERROR )
 	{
+		// A problem occurs
 		throw SocketException("select", Errno());
 	}
 
-	return FD_ISSET(descriptor, &readfds);
+	return FD_ISSET(descriptor, &socketfds);
 }
 
 unsigned short Socket::GetPortNb()
 {
-  struct sockaddr_in name;
-  socklen_t size = sizeof(struct sockaddr_in);
-  memset(&name, 0, size);
-  if(getsockname(descriptor, (struct sockaddr*)&name, &size))
-    throw SocketException("getsockname", Errno());
-        
-  return ntohs(name.sin_port);
+	struct sockaddr_in name;
+	socklen_t size = sizeof(struct sockaddr_in);
+	memset(&name, 0, size);
+	if(getsockname(descriptor, (struct sockaddr*)&name, &size))
+		throw SocketException("getsockname", Errno());
+
+	return ntohs(name.sin_port);
 }
 
 
@@ -425,9 +440,9 @@ void Socket::GetDnsNameSolvingOption()
 	if ( Option == NULL )
 	{
 		DynamicNameSolving = OMISCIDNS_USE_DNS_ONLY;
-		#ifdef DEBUG
-			fprintf( stderr, "OMISCIDNS_USE_DNS_ONLY found. Use DNS for name solving.\n" );
-		#endif
+#ifdef DEBUG
+		fprintf( stderr, "OMISCIDNS_USE_DNS_ONLY found. Use DNS for name solving.\n" );
+#endif
 		return;
 	}
 
@@ -464,9 +479,9 @@ hostent* Socket::GetHostByName( const SimpleString name )
 	}
 
 	if((he = ::gethostbyname((char*)hostname)) == NULL)
-    {
+	{
 		throw SocketException("GetHostByName", Errno());
-    }
+	}
 
 	return he;
 }
@@ -477,7 +492,7 @@ bool Socket::SetTcpNoDelay(bool Set)
 	{
 		return false;
 	}
-    int OptVal;
+	int OptVal;
 	if ( Set == true )
 	{
 		OptVal = 1;
@@ -488,7 +503,12 @@ bool Socket::SetTcpNoDelay(bool Set)
 	}
 
 #ifdef WIN32
-    return (setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (char*)&OptVal, sizeof(OptVal)) == 0);
+	if ( setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (char*)&OptVal, sizeof(OptVal)) < 0 )
+	{
+		TraceError("setsockopt: could not set TCP nodelay\n");
+		return false;
+	}
+	return true;
 #else
 	struct protoent *p;
 	p = getprotobyname("tcp");

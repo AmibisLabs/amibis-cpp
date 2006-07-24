@@ -48,8 +48,6 @@ using namespace std;
 int main(int argc, char * argv[])
 {
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
-	Omiscid::Service * MyService = ServiceFactory.Create( "Client" );
-
 	// Let create a service named "Clock Server"
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 

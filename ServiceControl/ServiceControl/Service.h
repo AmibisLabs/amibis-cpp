@@ -255,6 +255,7 @@ public:
 	 * and the list itself.
      */
 	ServiceProxyList * FindServices( ServiceFilterList& Filters, unsigned int WaitTime );
+
 };
 
 } // namespace Omiscid
