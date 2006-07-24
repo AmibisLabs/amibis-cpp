@@ -6,7 +6,7 @@ using namespace Omiscid;
 
 void SocketException::SocketErrorCheck()
 {
-// #if defined DEBUG && defined WIN32
+#if defined DEBUG && defined WIN32
 	SimpleString tmpc;
 	switch( err )
 	{
@@ -50,16 +50,12 @@ void SocketException::SocketErrorCheck()
 	}
 
 	fprintf( stderr, "%s\n", tmpc.GetStr() );
-// #endif
+#endif
 }
 
 SocketException::SocketException(const SimpleString m, int i)
  : SimpleException(m, i)
 {
-	if ( i == 10053 )
-	{
-		int zz = 0;
-	}
 	SocketErrorCheck();
 }
 
