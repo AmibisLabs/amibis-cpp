@@ -47,6 +47,25 @@ using namespace std;
 
 int main(int argc, char * argv[])
 {
+	Omiscid::Service * MyService = ServiceFactory.Create( "MSM Client M" );
+
+	int nbMicro = 2;
+
+
+	ServiceFilterList  Filtre ; 
+	for(int j=0; j<nbMicro; j++)
+	{
+		Filtre.Add( NameIs("MSM"));
+	}
+/*
+	Filtre.Add( NameIs("MSM")); 
+	Filtre.Add( NameIs("MSM")); 
+	Filtre.Add( NameIs("MSM")); 
+*/
+	ServiceProxyList * Servers = MyService->FindServices(Filtre, 100000 ); 
+
+	return 0;
+
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 	// Let create a service named "Clock Server"
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );

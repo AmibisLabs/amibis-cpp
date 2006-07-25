@@ -674,7 +674,7 @@ bool MutexedSimpleList<TYPE>::Lock()
 	// Only for MutexedSimpleList debugging
 	if ( IsLocked == true )
 	{
-		TraceError( "List already lock." );
+		TraceError( "List already lock. wait for unlock." );
 	}
 
 	bool ret = mutex.EnterMutex();
@@ -695,7 +695,7 @@ bool MutexedSimpleList<TYPE>::Unlock()
 #ifdef DEBUG
 	if ( IsLocked == false )
 	{
-		TraceError( "List already unlock." );
+		TraceError( "List already unlock. something goes wrong ?" );
 	}
 
 	// Only for MutexedSimpleList debugging

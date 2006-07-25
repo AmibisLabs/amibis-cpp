@@ -67,6 +67,7 @@ bool WaitForDnsSdServices::IsServiceLocked( const char * ServiceName )
 		return true;
 	}
 
+	mutexServicesUsed.LeaveMutex();
 	return false;
 }
 
