@@ -57,7 +57,7 @@ void ControlServer::InitInstance()
 	va = AddVariable("class");
 	va->SetType("class");
 	va->SetAccess(ConstantAccess);
-	va->SetDescription("Class of thisthis service");
+	va->SetDescription("Class of this service");
 	ClassVariable = new StringVariableAttribut( va, DefaultServiceClassName );
 
 	va = AddVariable("id");

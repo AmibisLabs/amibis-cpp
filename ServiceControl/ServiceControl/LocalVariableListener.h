@@ -19,9 +19,9 @@ namespace Omiscid {
 class Service;
 
 /**
- * Defines the listener interface for all Omiscid variable of a service
- * messages. This interface must be implemented in order to receive
- * notifications on Omiscid messages receptions.
+ * Defines the listener interface for all Omiscid variables of a service.
+ * This interface must be implemented in order to receive
+ * notifications.
  *
  * @author Dominique Vaufreydaz
  */
@@ -35,17 +35,18 @@ public:
      * This method is called when the value of a variable
      * changes
      *
-     * @param service the service owning the variable
-     * @param variable the information about the variable which value has changed
+     * @param ServiceRef the service owning the variable
+     * @param VarName the name of the variable which value has changed
+     * @param NewValue the new value of the variable
      */
     virtual void VariableChanged(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue) = 0;
     
     /**
-     * This method is called when a new value is request on a variable. This method must
-     * check that this new value is a valid value.
-     * @param service the service owning the variable
-     * @param currentVariable the current value of the variable
-     * @param newValue the new requested value
+     * This method is called when a value modification is requested on a variable. This method must
+     * check that this new value is a valid value for us.
+     * @param ServiceRef the service owning the variable
+     * @param VarName the current value of the variable
+     * @param NewValue the new requested value
      * @return true if the new value is accepted, false if rejected.
      */
     virtual bool IsValid(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue) = 0;

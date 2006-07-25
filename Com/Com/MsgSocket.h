@@ -11,6 +11,7 @@
 #include <Com/Config.h>
 
 #include <System/Thread.h>
+#include <System/Mutex.h>
 #include <System/Socket.h>
 #include <System/SimpleString.h>
 #include <System/SimpleList.h>

@@ -56,6 +56,8 @@ public:
 	operator char*() const;
 	operator unsigned char*() const;
 
+	size_t GetLength() const;
+
 private:
 	char * Buffer;
 	size_t BufferSize;

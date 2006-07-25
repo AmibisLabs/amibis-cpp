@@ -89,14 +89,14 @@ class SimpleRecycleList : public SimpleList<TYPE>
 	/** @brief Begining of the list of available cells */
 	static SimpleListElement<TYPE>* availableCells;
 	/** @brief Protect the access to the list of available cells */
-	static Mutex mutexAvailable;
+	static ReentrantMutex mutexAvailable;
 };
 
 template <typename TYPE>
 SimpleListElement<TYPE>* SimpleRecycleList<TYPE>::availableCells = NULL;
 
 template <typename TYPE>
-Mutex SimpleRecycleList<TYPE>::mutexAvailable;
+ReentrantMutex SimpleRecycleList<TYPE>::mutexAvailable;
 
 template <typename TYPE>
 SimpleRecycleList<TYPE>::SimpleRecycleList(){}
@@ -151,7 +151,7 @@ public:
 	bool Unlock();
 
 private:
-	Mutex mutex; /*!< the mutex to protect access to the list*/
+	ReentrantMutex mutex; /*!< the mutex to protect access to the list*/
 };
 
 template <typename TYPE>

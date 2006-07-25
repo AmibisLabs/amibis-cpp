@@ -19,9 +19,9 @@ namespace Omiscid {
 class ServiceProxy;
 
 /**
- * Defines the listener interface for all Omiscid variable of a service
- * messages. This interface must be implemented in order to receive
- * notifications on Omiscid messages receptions.
+ * Defines the listener interface for all Omiscid variable of a ServiceProxy
+ * This interface must be implemented in order to receive
+ * notifications.
  *
  * @author Dominique Vaufreydaz
  */
@@ -35,12 +35,11 @@ public:
 
 protected:
     /**
-     * Processes a received Omiscid message. As a given message could be processed
-     * by several others listeners, the message must not be modified by its
-     * processing.
+     * Notification of a value change on a variable.
      *
-     * @param message
-     *            the Omiscid message to process
+     * @param SP the ServiceProxy containing the variable
+     * @param VarName the name of the variable
+     * @param NewValue the new value of the variable
      */
     virtual void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue ) = 0;
 

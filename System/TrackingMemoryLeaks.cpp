@@ -1,10 +1,11 @@
 
-#include <System/TrackingMemoryLeaks.h>
+// #include <System/TrackingMemoryLeaks.h>
 
-#include <list>
-using namespace std;
+#ifdef NDEBUG
 
 #if defined WIN32 || defined _WIN32
+	#define _CRT_SECURE_NO_DEPRECATE
+
 	#include <windows.h>
 	#include <winbase.h>
 
@@ -22,8 +23,18 @@ namespace Omiscid {
 } // namespace Omiscid
 #endif
 
+#include <stdio.h>
+#include <stdlib.h>
+
+
 // Local Omiscid declaration
 namespace Omiscid {
+
+void StartTrackingMemoryLeaks();
+void StopTrackingMemoryLeaks();
+
+void AddMemoryBlock(void* addr,  size_t asize,  const char *fname, int lnum);
+void RemoveMemoryBlock(void* addr);
 
 typedef enum TrackMemoryValues{
 	FileNameSize = 255,
@@ -31,7 +42,6 @@ typedef enum TrackMemoryValues{
 };
 
 void DumpUnfreed();
-
 
 static bool Tracking = false;
 
@@ -42,10 +52,21 @@ public:
 	void*	Where;
 	size_t	Size;
 	int		Line;
+	bool	Freed;
+	MemoryBlockInfos * Next;
+
+	MemoryBlockInfos()
+	{
+		Filename[0] = '\0';
+		Where = NULL;
+		Size = 0;
+		Line = -1;
+		Freed = false;
+		Next = NULL;
+	}
 };
 
-typedef list<MemoryBlockInfos*> AllocList;
-static AllocList *allocList;
+MemoryBlockInfos * AllocList;
 
 static char WriteSizeBuffer[TemporaryBufferSize+1];
 
@@ -54,6 +75,32 @@ static char * PrintSize( unsigned int SizeOfData );
 } // namespace Omiscid
 
 using namespace Omiscid;
+
+void * operator new( size_t size, int line, const char *file )
+{
+	void *ptr = (void *)malloc(size);
+	Omiscid::AddMemoryBlock(ptr, size, file, line);
+	return(ptr);
+}
+
+void * operator new[]( size_t size, int line, const char *file )
+{
+	void *ptr = (void *)malloc(size);
+	Omiscid::AddMemoryBlock(ptr, size, file, line);
+	return(ptr);
+}
+
+void operator delete(void *p)
+{
+	Omiscid::RemoveMemoryBlock(p);
+	free(p);
+}
+
+void operator delete[](void *p)
+{
+	Omiscid::RemoveMemoryBlock(p);
+	free(p);
+}
 
 void Omiscid::StartTrackingMemoryLeaks()
 {
@@ -74,18 +121,6 @@ void Omiscid::AddMemoryBlock(void* addr,  size_t aSize,  const char *fname, int 
 		return;
 	}
 
-	if( allocList == NULL )
-	{
-		allocList = new(AllocList);
-	}
-
-	if( allocList == NULL )
-	{
-		// Could not allocate list, disable tracking
-		Tracking = false;
-		return;
-	}
-
 	info = new MemoryBlockInfos;
 
 	if ( info == NULL )
@@ -102,21 +137,24 @@ void Omiscid::AddMemoryBlock(void* addr,  size_t aSize,  const char *fname, int 
 	info->Filename[FileNameSize-1];
 	info->Line = lnum;
 	info->Size = aSize;
-	allocList->insert(allocList->begin(), info);
+	
+	// Add head
+	if ( AllocList != NULL )
+	{
+		AllocList->Next = info;
+	}
+	AllocList = info;
 }
 
 void Omiscid::RemoveMemoryBlock(void* addr)
 {
-	AllocList::iterator i;
+	MemoryBlockInfos * pTmp;
 
-	if(!allocList)
-		return;
-
-	for(i = allocList->begin(); i != allocList->end(); i++)
+	for( pTmp = AllocList; pTmp != NULL; pTmp = pTmp->Next )
 	{
-		if((*i)->Where == addr)
+		if( pTmp->Where == addr )
 		{
-			allocList->remove((*i));
+			pTmp->Freed = true;
 			break;
 		}
 	}
@@ -146,32 +184,28 @@ static char * Omiscid::PrintSize( unsigned int SizeOfData )
 
 void Omiscid::DumpUnfreed()
 {
-	AllocList::iterator i;
 	unsigned int TotalSize = 0;
 	char buf[TemporaryBufferSize+1];	     
-
-	if( allocList == NULL )
-		return;
-
-	if ( allocList->size() == 0 )
-	{
-		snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\nNo memory leak detected\n-+-+-+-+-+-+-+-+\n" );
-		OutputDebugString(buf);
-		return;
-	}
 
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );
 	OutputDebugString(buf);
 
-	for(i = allocList->begin(); i != allocList->end(); i++) 
+	MemoryBlockInfos * pTmp;
+
+	for( pTmp = AllocList; pTmp != NULL; pTmp = pTmp->Next )
 	{
+		if ( pTmp->Freed == true )
+		{
+			continue;
+		}
+
 		// Visual studio compliant output (you can click on it to see the rigth line
-		snprintf(buf, TemporaryBufferSize+1, "%s(%d) : %s unfreed memory at address %p\n", (*i)->Filename, (*i)->Line, PrintSize((unsigned int)(*i)->Size), (*i)->Where );
+		snprintf(buf, TemporaryBufferSize+1, "%s(%d) : %s unfreed memory at address %p\n", pTmp->Filename, pTmp->Line, PrintSize((unsigned int)pTmp->Size), pTmp->Where );
 		OutputDebugString(buf);
 
-		void * tmpv = (*i)->Where;
+		void * tmpv = pTmp->Where;
 		char * tmpc = (char*)tmpv;
-		int lSize = (int)(*i)->Size;
+		int lSize = (int)pTmp->Size;
 		for( int j = 0; j < lSize && j < 20; j++)
 		{
 			snprintf(buf, TemporaryBufferSize+1, "%c", tmpc[j] );
@@ -207,4 +241,6 @@ public:
 static UnfreedPrint PrintUnfreed;
 
 } // namespace Omiscid
+
+#endif
 

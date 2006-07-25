@@ -10,7 +10,7 @@
 #define __SIMPLE_LIST_H__
 
 #include <System/Config.h>
-#include <System/Mutex.h>
+#include <System/ReentrantMutex.h>
 #include <System/SimpleListException.h>
 
 namespace Omiscid {
@@ -664,7 +664,7 @@ public:
 	bool Unlock();
 
 private:
-	Mutex mutex; /*!< the mutex to protect access to the list*/
+	ReentrantMutex mutex; /*!< the mutex to protect access to the list*/
 };
 
 template <typename TYPE>
@@ -672,6 +672,11 @@ bool MutexedSimpleList<TYPE>::Lock()
 {
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
+	if ( IsLocked == true )
+	{
+		TraceError( "List already lock." );
+	}
+
 	bool ret = mutex.EnterMutex();
 	
 	if ( ret == true )
@@ -688,6 +693,11 @@ template <typename TYPE>
 bool MutexedSimpleList<TYPE>::Unlock() 
 {
 #ifdef DEBUG
+	if ( IsLocked == false )
+	{
+		TraceError( "List already unlock." );
+	}
+
 	// Only for MutexedSimpleList debugging
 	bool ret = mutex.LeaveMutex();
 	

@@ -14,7 +14,7 @@
 namespace Omiscid {
 
 /**
- * @class Factory Factory.cpp ServiceControl/Factory.h
+ * @class Factory ServiceControl/Factory.h
  * @ingroup UserFriendly
  * @ingroup ServiceControl
  * @brief High level user friendly class to create Omiscid services.

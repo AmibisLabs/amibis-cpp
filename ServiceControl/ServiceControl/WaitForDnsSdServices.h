@@ -84,7 +84,7 @@ protected:
 
 	bool LockService( const char * ServiceName );
 	void UnlockService( const char * ServiceName );
-
+	bool IsServiceLocked( const char * ServiceName );
 
 	AtomicCounter NbServicesReady;
 	Event AllFound;

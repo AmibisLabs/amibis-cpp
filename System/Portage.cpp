@@ -79,6 +79,11 @@ TemporaryMemoryBuffer::operator unsigned char*() const
 	return (unsigned char*)Buffer;
 }
 
+size_t TemporaryMemoryBuffer::GetLength() const
+{
+	return BufferSize;
+}
+
 #ifdef WIN32
 
 int Omiscid::random()

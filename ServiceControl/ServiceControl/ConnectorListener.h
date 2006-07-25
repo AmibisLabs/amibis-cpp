@@ -37,13 +37,11 @@ public:
      * Processes a received Omiscid message. As a given message could be processed
      * by several others listeners, the message must not be modified by its
      * processing.
-     * @param service the service receiving the message
-     * @param localConnectorName the name of the connector that has received the message
+     * @param TheService the service which received the message
+     * @param LocalConnectorName the name of the connector that has received the message
      * @param Msg the message to process
      */
     virtual void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
-
-    // void messageReceived(Service service, String localConnectorName, Message message);
 
     /**
      * Called when the connexion between the local service and the remote

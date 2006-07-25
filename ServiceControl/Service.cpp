@@ -94,8 +94,6 @@ void Service::Start()
 	* @param connectorName the name of the connector
 	* @param connectorDescription the description of the connector
 	* @param connectorKind connector type. This can be input, output or input-output
-	* @throws ConnectorAlreadyExisting thrown if we try to recreate an already existing connector
-	* @throws IOException thrown if there is an error in the tcp socket creation
 	*/
 bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind ConnectorKind)
 {
@@ -126,8 +124,6 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 	 * Sends a message to all the clients connected to the service I
 	 * @param connectorName the name of the connector sending the message
 	 * @param msg the message to send
-	 * @throws UnknownBipService thrown if serviceId is not a declared service
-	 * @throws UnknownBipConnector thrown if the service has not declared this connector
 	 */
 bool Service::SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool FastSend )
 {
@@ -254,7 +250,6 @@ bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString 
 	* Change a description to an existing variable
 	* @param VarName the var name
 	* @param varDescription the description
-	* @throws UnknownBipVariable thrown if the variable has not been created
 	*/
 bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescription)
 {
@@ -273,7 +268,6 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 	 * Returns the description associated to a variable
 	 * @param VarName the variable name
 	 * @return the description
-	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
 SimpleString Service::GetVariableDescription(SimpleString VarName)
@@ -294,7 +288,6 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 	 * Sets the value of a service variable
 	 * @param VarName the variable name
 	 * @param varValue the variable value
-	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
 bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
@@ -314,7 +307,6 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 	 * Returns the variable value
 	 * @param VarName the variable name
 	 * @return the variable value
-	 * @throws UnknownBipVariable thrown if the variable has not been created
 	 * @see BipService#addVariable
 	 */
 SimpleString Service::GetVariableValue(SimpleString VarName)
@@ -335,7 +327,6 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	 * Returns the variable access type
 	 * @param VarName the variable name
 	 * @return the access type (SimpleString version)
-	 * @throws UnknownBipVariable thrown if the variable has not been decladed
 	 * @see BipService#addVariable
 	 */
 SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
@@ -370,7 +361,6 @@ SimpleString Service::GetVariableType(SimpleString VarName)
 	 * Adds a listener that will be triggered at every variable change
 	 * @param VarName the VarName
 	 * @param listener the listener
-	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
 bool Service::AddLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
@@ -391,7 +381,6 @@ bool Service::AddLocalVariableListener(SimpleString VarName, LocalVariableListen
 	 * remove a listener that was triggering at every variable change
 	 * @param VarName the VarName
 	 * @param listener the listener
-	 * @throws UnknownBipVariable thrown if the variable has not been declared
 	 */
 bool Service::RemoveLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
@@ -411,9 +400,6 @@ bool Service::RemoveLocalVariableListener(SimpleString VarName, LocalVariableLis
      * @param localConnector
      * @param proxy the proxy of the remote service
      * @param remoteConnector the name of the remote connector on the remote service
-     * @throws UnknownBipConnector thrown if one of the connector does not exist
-     * @throws IncorrectConnectorType thrown if the coonnectors cannot connect : for instance : trying to connect an input
-     * connector on another input connector.
      */
 bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, SimpleString RemoteConnector)
 {

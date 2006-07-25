@@ -10,6 +10,7 @@
 #include <Com/Config.h>
 
 #include <System/SimpleList.h>
+#include <System/ReentrantMutex.h>
 #include <Com/MsgSocket.h>
 #include <Com/ComTools.h>
 

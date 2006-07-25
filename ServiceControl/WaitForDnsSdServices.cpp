@@ -53,6 +53,23 @@ WaitForDnsSdServices::~WaitForDnsSdServices()
   StopThread(); 
 }
 
+bool WaitForDnsSdServices::IsServiceLocked( const char * ServiceName )
+{
+	if ( ServiceName == NULL )
+	{
+		return false;
+	}
+		
+	mutexServicesUsed.EnterMutex();
+	if ( ServicesUsed.IsDefined( ServiceName ) )
+	{
+		mutexServicesUsed.LeaveMutex();
+		return true;
+	}
+
+	return false;
+}
+
 bool WaitForDnsSdServices::LockService( const char * ServiceName )
 {
 	if ( ServiceName == NULL )
@@ -95,6 +112,13 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 
 	if ( errorCode != kDNSServiceErr_NoError )
 		return;
+
+	// Do we already consider this service ?
+	if ( MyThis->Parent->IsServiceLocked( (char*)fullname ) )
+	{
+		// yes, so exit
+		return;
+	}
 
 	// Call the callback
 	if ( MyThis->CallBack )
