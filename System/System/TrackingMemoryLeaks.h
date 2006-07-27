@@ -8,7 +8,9 @@
 #define __TRACKING_MEMORY_LEAKS_H__
 
 #if defined WIN32 || defined _WIN32
-#define _CRT_SECURE_NO_DEPRECATE
+	#ifndef _CRT_SECURE_NO_DEPRECATE
+		#define _CRT_SECURE_NO_DEPRECATE
+	#endif
 #endif
 
 #include <memory>
