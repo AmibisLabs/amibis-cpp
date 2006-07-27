@@ -154,9 +154,9 @@ void Omiscid::RandomInit()
 		gettimeofday(&t, NULL);
 
 #ifdef WIN32
-		srand(t.tv_sec ^ t.tv_usec);
+		srand(t.tv_sec ^ t.tv_usec ^ GetCurrentThreadId());
 #else	// WIN32
-		srandom(t.tv_sec ^ t.tv_usec);
+		srandom(t.tv_sec ^ t.tv_usec ^ pthread_self() );
 #endif	// WIN32
 }
 

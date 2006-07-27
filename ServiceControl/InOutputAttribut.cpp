@@ -192,7 +192,7 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 		  {
 			  SetUdpPort( (unsigned short)atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );
 		  }
-		  else if ( cur_name == "peerid" )
+		  else if ( cur_name == "peerId" )
 		  {
 			  sscanf( XMLMessage::ExtractTextContent(cur_node->children).GetStr(), "%x", &peerId );
 		  }

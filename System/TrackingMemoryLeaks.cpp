@@ -141,7 +141,7 @@ void Omiscid::AddMemoryBlock(void* addr,  size_t aSize,  const char *fname, int 
 	// Add head
 	if ( AllocList != NULL )
 	{
-		AllocList->Next = info;
+		info->Next = AllocList;
 	}
 	AllocList = info;
 }
@@ -185,7 +185,13 @@ static char * Omiscid::PrintSize( unsigned int SizeOfData )
 void Omiscid::DumpUnfreed()
 {
 	unsigned int TotalSize = 0;
-	char buf[TemporaryBufferSize+1];	     
+	unsigned int NbBlocks = 0;
+	char buf[TemporaryBufferSize+1];	   
+
+	if ( AllocList == NULL )
+	{
+		return;
+	}
 
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );
 	OutputDebugString(buf);
@@ -194,6 +200,8 @@ void Omiscid::DumpUnfreed()
 
 	for( pTmp = AllocList; pTmp != NULL; pTmp = pTmp->Next )
 	{
+		NbBlocks++;
+
 		if ( pTmp->Freed == true )
 		{
 			continue;
@@ -220,11 +228,18 @@ void Omiscid::DumpUnfreed()
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );
 	OutputDebugString(buf);
 	
-	snprintf(buf, TemporaryBufferSize+1, "Total memory unfreed %s.\n", PrintSize(TotalSize) );
+	snprintf(buf, TemporaryBufferSize+1, "Total memory unfreed %s (%u allocated blocks).\n", PrintSize(TotalSize), NbBlocks );
 	OutputDebugString(buf);
 
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );
 	OutputDebugString(buf);
+
+	// Free the memory
+	for( pTmp = AllocList; pTmp != NULL; pTmp = AllocList )
+	{
+		AllocList = pTmp->Next;
+		delete pTmp;
+	}
 }
 
 namespace Omiscid {

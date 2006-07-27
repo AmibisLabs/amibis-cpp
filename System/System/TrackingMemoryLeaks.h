@@ -40,7 +40,6 @@ void RemoveMemoryBlock(void* addr);
 	#endif
 	
 	#define OMISCID_NEW new( __LINE__, __FILE__ )
-
 #else
 
 	#define OMISCID_NEW new
