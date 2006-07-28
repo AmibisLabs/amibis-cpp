@@ -8,17 +8,17 @@
 #include <ServiceControl/Factory.h>
 #include <ServiceControl/ServiceFilter.h>
 #include <ServiceControl/ConnectorListener.h>
-#include <Com/TcpUdpClientServer.h>
+#include <ServiceControl/RemoteVariableChangeListener.h>
 
 #include <iostream>
 
 using namespace Omiscid;
 using namespace std;
 
-class TestListener : public ConnectorListener
+class TestConnectorListener : public ConnectorListener
 {
 public:
-	~TestListener()
+	~TestConnectorListener()
 	{
 	}
 
@@ -28,11 +28,24 @@ public:
 	}
 };
 
+class TestRemoteVariableChangeListener : public RemoteVariableChangeListener
+{
+public:
+	~TestRemoteVariableChangeListener()
+	{
+	}
+
+    virtual void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
+	{
+		cout << VarName << " becomes " << NewValue << endl;
+	}
+};
+
 int main(int argc, char * argv[])
 {
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
-	TestListener TL;
+	TestRemoteVariableChangeListener TL;
 
 	Omiscid::Service * MyService = ServiceFactory.Create( "Clock Client" );
 
@@ -44,26 +57,22 @@ int main(int argc, char * argv[])
 
 	ServiceProxy * ClockServer;
 
-	MyService->AddConnector( "In", "in", AnInput );
-	
-	for(;;)
+	ClockServer = MyService->FindService( And(NameIs("Clock Server"),HasVariable("Minutes")) );
+
+	if ( ClockServer != NULL )
 	{
-		ClockServer = MyService->FindService( And(NameIs("Clock Server"),HasVariable("Hours")) );
+		cout << "Service found" << endl;
+		ClockServer->AddRemoteVariableChangeListener( "Minutes", &TL );
 
-		if ( ClockServer != NULL )
-		{
-			MyService->ConnectTo( "In", ClockServer, "PushClock" );
-
-			printf( "Add listener\n" );
-			MyService->AddConnectorListener( "In", &TL );
-
-			delete ClockServer;
-		}
 	}
 
 	// ClockServer->SetVariableValue( "Hours", "12" );
 
+	Event Ev;
+	Ev.Wait();
+
 	return 0;
+	/*
 
 	Mutex MyLock;
 	MyLock.EnterMutex();
@@ -154,5 +163,5 @@ int main(int argc, char * argv[])
 	//	Thread::Sleep(1000);
 	//}
 	//
-	//return 0;
+	//return 0; */
 }

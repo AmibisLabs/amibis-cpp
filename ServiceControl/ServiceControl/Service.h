@@ -55,7 +55,7 @@ private:
 
 public:
 	/** 
-	 * Standard destructor. Will unregistered the service (if a call to Service#Create
+	 * Standard destructor. Will unregistered the service (if a call to Service#Start
 	 * was made). This method is public; everyone can destroy a service.
 	 */
 	virtual ~Service();

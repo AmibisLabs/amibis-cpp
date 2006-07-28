@@ -11,6 +11,7 @@
 
 #include <System/Config.h>
 #include <System/ReentrantMutex.h>
+#include <System/AtomicReentrantCounter.h>
 #include <System/SimpleListException.h>
 
 namespace Omiscid {
@@ -495,18 +496,18 @@ public:
 #ifdef DEBUG
 	MutexedSimpleList()
 	{
-		IsLocked = false; // MutexedSimpleList is not lock
+		NbLocks = 0; // MutexedSimpleList is not lock
 	}
 
 	virtual ~MutexedSimpleList()
 	{
-		IsLocked = true; // MutexedSimpleList is not lock anymore,
+		NbLocks = 100; // MutexedSimpleList is not lock anymore,
 		// All operation will be permitted to destroy the list
 	}
 
 	bool Add( const TYPE& Val )
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using Add on a non lock list.\n" );
 		}
@@ -515,7 +516,7 @@ public:
 
 	bool AddHead( const TYPE& Val )
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using AddHeah on a non lock list.\n" );
 		}
@@ -524,7 +525,7 @@ public:
 
 	bool AddTail( const TYPE& Val )
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using AddTail on a non lock list.\n" );
 		}
@@ -533,7 +534,7 @@ public:
 
 	unsigned int GetNumberOfElements() const
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using GetNumberOfElements on a non lock list.\n" );
 		}
@@ -542,7 +543,7 @@ public:
 
 	void First()
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using First on a non lock list.\n" );
 		}
@@ -551,7 +552,7 @@ public:
 
 	bool Next()
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using Next on a non lock list.\n" );
 		}
@@ -560,7 +561,7 @@ public:
 
 	bool AtEnd() const
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using AtEnd on a non lock list.\n" );
 		}
@@ -569,7 +570,7 @@ public:
 
 	bool NotAtEnd() const
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using NotAtEnd on a non lock list.\n" );
 		}
@@ -578,7 +579,7 @@ public:
 
 	TYPE& GetCurrent() const
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using GetCurrent on a non lock list.\n" );
 		}
@@ -587,7 +588,7 @@ public:
 
 	bool RemoveCurrent()
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using RemoveCurrent on a non lock list.\n" );
 		}
@@ -596,7 +597,7 @@ public:
 
 	bool IsEmpty() const
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using IsEmpty on a non lock list.\n" );
 		}
@@ -605,7 +606,7 @@ public:
 
 	bool IsNotEmpty() const
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using IsNotEmpty on a non lock list.\n" );
 		}
@@ -614,7 +615,7 @@ public:
 
 	TYPE ExtractFirst()
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using ExtractFirst on a non lock list.\n" );
 		}
@@ -623,7 +624,7 @@ public:
 
 	bool Remove(const TYPE& Element)
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using Remove on a non lock list.\n" );
 		}
@@ -632,7 +633,7 @@ public:
 
 	virtual void Empty()
 	{
-		if ( IsLocked == false )
+		if ( NbLocks == 0 )
 		{
 			fprintf( stderr, "Using Empty on a non lock list.\n" );
 		}
@@ -640,7 +641,7 @@ public:
 	}
 
 private:
-	bool IsLocked;
+	AtomicReentrantCounter NbLocks;
 #else
 public:
 	virtual ~MutexedSimpleList()
@@ -672,16 +673,11 @@ bool MutexedSimpleList<TYPE>::Lock()
 {
 #ifdef DEBUG
 	// Only for MutexedSimpleList debugging
-	if ( IsLocked == true )
-	{
-		TraceError( "List already lock. wait for unlock." );
-	}
-
 	bool ret = mutex.EnterMutex();
 	
 	if ( ret == true )
 	{
-		IsLocked = true;
+		NbLocks++;
 	}
 	return ret;
 #else
@@ -693,7 +689,7 @@ template <typename TYPE>
 bool MutexedSimpleList<TYPE>::Unlock() 
 {
 #ifdef DEBUG
-	if ( IsLocked == false )
+	if ( NbLocks == 0 )
 	{
 		TraceError( "List already unlock. something goes wrong ?" );
 	}
@@ -701,9 +697,9 @@ bool MutexedSimpleList<TYPE>::Unlock()
 	// Only for MutexedSimpleList debugging
 	bool ret = mutex.LeaveMutex();
 	
-	if ( ret == true )
+	if ( ret == true && NbLocks > 0)
 	{
-		IsLocked = false;
+		NbLocks++;
 	}
 	return ret;
 #else

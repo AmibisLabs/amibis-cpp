@@ -75,12 +75,19 @@ Service::Service(const SimpleString ServiceName, const SimpleString ClassName)
 
 Service::~Service()
 {
-	// Remove all connector
+	// Destroy our created ComTools
+	ComTools * pComTools;
+
 	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next() )
 	{
-		delete listInOutput.GetCurrent()->GetComTool();
-		delete listInOutput.GetCurrent();
-		listInOutput.RemoveCurrent();
+		pComTools = listInOutput.GetCurrent()->GetComTool();
+		if ( pComTools )
+		{
+			// Destroy it
+			delete pComTools;
+			// Set the com tools to null
+			listInOutput.GetCurrent()->SetComTool(NULL);
+		}
 	}
 }
 

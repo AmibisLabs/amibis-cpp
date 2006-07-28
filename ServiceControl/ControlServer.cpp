@@ -614,7 +614,7 @@ bool ControlServer::LockOk(unsigned int peer){
 }
 
 void ControlServer::RefreshLock(){
-	unsigned int peer = (unsigned)lockIntVariable->GetValue();
+	unsigned int peer = (unsigned int)lockIntVariable->GetValue();
 	if(peer != 0){
 		if(!IsStillConnected(peer)){
 			lockIntVariable->SetValue(0);

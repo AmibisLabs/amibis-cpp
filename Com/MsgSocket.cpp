@@ -504,6 +504,7 @@ bool MsgSocket::SendSyncLinkMsg()
 	if ( message_id != 0 )
 	{
 		fprintf( stderr, "SendSyncLinkMsg: error SyncLinkMsg should be numbered as 0 not %u.\n", message_id );
+		protectSend.LeaveMutex();
 		throw SocketException( "MsgSocket::SendSyncLinkMsg: error SyncLinkMsg should be numbered as 0." );
 	}
 
@@ -698,8 +699,15 @@ void MsgSocket::Receive()
 							callbackSyncLinkData.Msg.origine = FromTCP;
 							callbackSyncLinkData.Msg.pid = pid;
 							callbackSyncLinkData.Msg.mid = mid;
-
-							(*callbackSyncLinkFct)( &callbackSyncLinkData, this );
+							try
+							{
+								(*callbackSyncLinkFct)( &callbackSyncLinkData, this );
+							}
+							catch( SocketException& e )
+							{
+								mutex.LeaveMutex();
+								throw e;
+							}
 						}
 						mutex.LeaveMutex();
 
@@ -948,7 +956,6 @@ int MsgSocket::Send(int len, const char* buf)
 	}
 	catch(SocketException& e)
 	{
-		protectSend.LeaveMutex();
 		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
@@ -966,6 +973,7 @@ int MsgSocket::Send(int len, const char* buf)
 			CallbackObjects.Unlock();
 			connected = false;
 		}
+		protectSend.LeaveMutex();
 		return -1;
 	}
 }
@@ -1005,7 +1013,6 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	}
 	catch(SocketException& e)
 	{
-		protectSend.LeaveMutex();
 		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
@@ -1023,6 +1030,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 			CallbackObjects.Unlock();
 			connected = false;      
 		}
+		protectSend.LeaveMutex();
 		return -1;
 	}
 }
@@ -1069,7 +1077,6 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 	}
 	catch(SocketException& e)
 	{
-		protectSend.LeaveMutex();
 		TraceError( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
@@ -1087,6 +1094,7 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 			CallbackObjects.Unlock();
 			connected = false;
 		}
+		protectSend.LeaveMutex();
 		return -1;
 	}
 }
@@ -1122,8 +1130,9 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 		sprintf((buffer_udp_send+total-tag_end_size), tag_end);
 		memcpy(buffer_udp_send+tag_size, buf, len);
 
+		int TotalLen = socket->SendTo(total, buffer_udp_send, destptr);
 		protectSend.LeaveMutex();
-		return socket->SendTo(total, buffer_udp_send, destptr);  
+		return TotalLen;
 
 		//      socket->SendTo(strlen(start_tag), start_tag, destptr);      
 		//      socket->SendTo(len, buf, destptr);      
@@ -1132,7 +1141,6 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 	}
 	catch(SocketException& e)
 	{
-		protectSend.LeaveMutex();
 		TraceError( "SocketException: %s %d \n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
@@ -1150,6 +1158,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 			CallbackObjects.Unlock();
 			connected = false;      
 		}
+		protectSend.LeaveMutex();
 		return -1;
 	}
 }

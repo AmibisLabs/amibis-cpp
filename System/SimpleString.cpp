@@ -534,7 +534,7 @@ char& SimpleString::operator[](int i)
 {
 	if(stringData->GetNbReference() != 1)
 	{
-		StringData* tmp = new StringData(*stringData);
+		StringData* tmp = new StringData(stringData->GetDataPtr());
 		DestroyStringData();
 		stringData = tmp;
 	}

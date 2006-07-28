@@ -92,7 +92,9 @@ INPUT                  = ./System/System/Config.h \
                          ./ServiceControl/ServiceControl/RemoteVariableChangeListener.h \
                          ./ServiceControl/ServiceControl/Service.h \
                          ./ServiceControl/ServiceControl/ServiceProxy.h \
-                         ./ServiceControl/ServiceControl/ServiceFilter.h                         
+                         ./ServiceControl/ServiceControl/ServiceFilter.h \
+                         ./Examples/ForDoxygenExamples.h \
+                         ./Examples/TestClockServerService.cpp
 FILE_PATTERNS          = 
 RECURSIVE              = NO
 EXCLUDE                = 

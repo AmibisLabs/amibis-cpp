@@ -20,14 +20,10 @@ namespace Omiscid {
 void StartTrackingMemoryLeaks();
 void StopTrackingMemoryLeaks();
 
-void AddMemoryBlock(void* addr,  size_t asize,  const char *fname, int lnum);
-void RemoveMemoryBlock(void* addr);
-
-
 } // namespace Omiscid
 
-// Only in debug mode
-#ifndef DEBUG
+// Only when asked
+#ifdef TRACKING_MEMORY_LEAKS
 	#ifdef WIN32
 		#pragma warning(disable : 4291)
 	#endif
@@ -43,6 +39,18 @@ void RemoveMemoryBlock(void* addr);
 	
 	#define OMISCID_NEW new( __LINE__, __FILE__ )
 #else
+
+namespace Omiscid {
+
+	inline void StartTrackingMemoryLeaks()
+	{
+	}
+
+	inline void StopTrackingMemoryLeaks()
+	{
+	}
+
+} // namespace Omiscid
 
 	#define OMISCID_NEW new
 	
