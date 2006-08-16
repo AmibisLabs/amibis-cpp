@@ -5,6 +5,34 @@
 // include the parser in the file
 #include <libxml/parser.h>
 
+#if 0
+
+	Usage of XSD validation for future use...
+
+1242 int is_valid(xmlDocPtr doc)
+1243 {
+1244     int err = 0;
+1245     xmlSchemaPtr schema_ctxt = NULL;
+1246     xmlSchemaParserCtxtPtr schemaparser_ctxt = NULL;
+1247     xmlSchemaValidCtxtPtr schemavalid_ctxt = NULL;
+1248 
+1249     schemaparser_ctxt = xmlSchemaNewParserCtxt(schema_filename);
+1250     schema_ctxt = xmlSchemaParse(schemaparser_ctxt);
+1251     schemavalid_ctxt = xmlSchemaNewValidCtxt(schema_ctxt);
+1252 
+1263     if ((err = xmlSchemaValidateDoc(schemavalid_ctxt, doc))) {
+1264         err = -EIO;
+1265         goto out;
+1266     }
+1267   out:
+1268     xmlSchemaFreeValidCtxt(schemavalid_ctxt);
+1269     xmlSchemaFreeParserCtxt(schemaparser_ctxt);
+1270     xmlSchemaFree(schema_ctxt);
+1271     return (err != 0) ? 0 : 1;
+1272 }
+
+#endif
+
 using namespace Omiscid;
 
 namespace Omiscid {
