@@ -1,6 +1,6 @@
 #include <ServiceControl/XMLTreeParser.h>
 #include <Com/Message.h>
-#include <Com/MsgSocket.h> 
+#include <Com/MsgSocket.h>
 
 #if 0
 
@@ -57,6 +57,9 @@ namespace Omiscid {
 	static OmiscidInitXmlParser OmiscidInstanceToInitXmlParser;
 
 } // namespace Omiscid
+
+// Include Xsd Definition
+#include <ServiceControl/Xsd.inc>
 
 ////////////////////////////////////////////////////////////////
 XMLMessage::XMLMessage()

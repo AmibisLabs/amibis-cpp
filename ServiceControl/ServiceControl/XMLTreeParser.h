@@ -14,8 +14,8 @@
 #include <System/Mutex.h>
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
-
 #include <Com/MsgSocket.h>
+#include <ServiceControl/Xsd.h>
 
 #include <libxml/tree.h>
 
