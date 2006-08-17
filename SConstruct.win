@@ -1,0 +1,11 @@
+import os
+import re
+from OmiscidScons import *
+
+env = Environment()
+
+if 'OS' in os.environ and re.match( '^Windows', os.environ['OS'], re.IGNORECASE ) and 'gcc' not in COMMAND_LINE_TARGETS :
+	# Window Work
+	print 'Windows'
+	OmiscidWindowsInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[])
+	OmiscidCreateVisualStudioProject()
