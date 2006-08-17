@@ -49,5 +49,5 @@ while( $file = <Xsd/*.xsd> )
 print $fdinc "\n";
 close( $fdinc );
 
-print $fdh "\n} // namespace Omiscid\n\n#endif __XSD_H__\n"; 
+print $fdh "\n} // namespace Omiscid\n\n#endif // __XSD_H__\n"; 
 close( $fdh );

@@ -17,4 +17,4 @@ extern SimpleString XsdControlQuery;	// extern definition for control-query.xsd 
 
 } // namespace Omiscid
 
-#endif __XSD_H__
+#endif // __XSD_H__
