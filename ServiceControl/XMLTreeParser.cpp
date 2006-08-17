@@ -2,9 +2,6 @@
 #include <Com/Message.h>
 #include <Com/MsgSocket.h> 
 
-// include the parser in the file
-#include <libxml/parser.h>
-
 #if 0
 
 	Usage of XSD validation for future use...
@@ -17,6 +14,9 @@
 1247     xmlSchemaValidCtxtPtr schemavalid_ctxt = NULL;
 1248 
 1249     schemaparser_ctxt = xmlSchemaNewParserCtxt(schema_filename);
+
+0077	 xmlSchemaParserCtxtPtr xmlSchemaNewMemParserCtxt(const char *buffer, int size);
+
 1250     schema_ctxt = xmlSchemaParse(schemaparser_ctxt);
 1251     schemavalid_ctxt = xmlSchemaNewValidCtxt(schema_ctxt);
 1252 
