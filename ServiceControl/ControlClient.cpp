@@ -370,6 +370,13 @@ unsigned int ControlClient::BeginEndTag(SimpleString& str)
 	str = "<controlQuery id=\"" + tmp_str + "\">"
 		+ str
 		+ "</controlQuery>";
+
+#ifdef DEBUG
+	// In debug mode, we validate xml before sending it, but nevertheless we send it...
+	// just for warning and conformity
+	ControlQueryValidator;
+#endif
+
 	return id - 1;
 }
 

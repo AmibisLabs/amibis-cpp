@@ -180,7 +180,9 @@ bool ControlServer::StartServer()
 		{
 			if ( listVariable.GetCurrent()->GetAccess() == ConstantAccess )
 			{
-				registerDnsSd->Properties[listVariable.GetCurrent()->GetName()] = listVariable.GetCurrent()->GetValue();
+				tmp = "c/";
+				tmp += listVariable.GetCurrent()->GetValue();
+				registerDnsSd->Properties[listVariable.GetCurrent()->GetName()] = tmp;
 				TxtRecordIsFull = registerDnsSd->Properties.TxtRecordIsFull();
 				if ( TxtRecordIsFull )
 				{

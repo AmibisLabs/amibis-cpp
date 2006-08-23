@@ -95,7 +95,8 @@ int main(int argc, char * argv[])
 {
 	for( int i = 0; i<6; i++ )
 	{
-		Service * pServ = ServiceFactory.Create( "Un service" );
+		Service * pServ = ServiceFactory.Create( "Yop" );
+		pServ->AddVariable( "My Num", "interger", i, ReadWriteAccess );
 		pServ->Start();
 	}
 

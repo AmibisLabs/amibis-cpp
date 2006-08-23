@@ -1,6 +1,7 @@
 #include <ServiceControl/XMLTreeParser.h>
 #include <Com/Message.h>
 #include <Com/MsgSocket.h>
+#include <ServiceControl/XsdSchema.h>
 
 using namespace Omiscid;
 
@@ -141,27 +142,15 @@ SimpleString XMLMessage::ExtractTextContent(xmlNodePtr node)
 
 XMLTreeParser::XMLTreeParser()
 {
-	// Construct xsd validation tools
-	ControlAnswerParserCtxt	= xmlSchemaNewMemParserCtxt( ControlAnswerXsd.GetStr(), ControlAnswerXsd.GetLength() );
-	ControlAnswerSchema		= xmlSchemaParse( ControlAnswerParserCtxt );
-	ControlAnswerValidCtxt   = xmlSchemaNewValidCtxt( ControlAnswerSchema );
-
-#ifdef DEBUG
-	// Trace errors during validation
-	xmlSchemaSetValidErrors( ControlAnswerValidCtxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
-
-#endif
+	// Initialise XsdValidators
+	ControlQueryValidator.CreateSchemaFromString( ControlQueryXsdSchema );
+	ControlAnswerValidator.CreateSchemaFromString( ControlAnswerXsdSchema );
 }
 
 XMLTreeParser::~XMLTreeParser()
 {
 	StopThread();
 	ClearMessages();
-
-	// Cleaning xsd validation tools
-	xmlSchemaFreeValidCtxt( ControlAnswerValidCtxt );
-	xmlSchemaFree( ControlAnswerSchema );
-	xmlSchemaFreeParserCtxt( ControlAnswerParserCtxt );
 }
 
 
@@ -170,29 +159,14 @@ xmlDocPtr XMLTreeParser::ParseFile(const SimpleString filename)
 	return xmlParseFile(filename.GetStr());
 }
 
-xmlDocPtr XMLTreeParser::ParseReceivedMessage(int length, unsigned char* buffer)
+xmlDocPtr XMLTreeParser::ParseMessage(int length, unsigned char* buffer)
 {
-	xmlDocPtr TmpDoc = xmlParseMemory((const char*)buffer, length);
-	if ( TmpDoc != NULL )
-	{
-		// Validate it against given ControlQueryXsd
-		if ( xmlSchemaValidateDoc( ControlAnswerValidCtxt, TmpDoc ) != 0 )
-		{
-			// Error when validating xml message
-			// Free the xml doc
-			// xmlFreeDoc(TmpDoc);
-			// return NULL;
-			return TmpDoc;
-		}
-		// Ok we will return the TmpDoc
-	}
-	return TmpDoc;
+	return xmlParseMemory((const char*)buffer, length);
 }
-
 
 void XMLTreeParser::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 {
-	xmlDocPtr doc = ParseReceivedMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
+	xmlDocPtr doc = ParseMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
 	if( doc )
 	{
 		XMLMessage* msg = new XMLMessage();

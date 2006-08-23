@@ -391,6 +391,11 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 {
 	RegisterService * Mythis = (RegisterService*)context;
 
+	if ( flags & kDNSServiceFlagsMoreComing )
+	{
+		int zz = 0;
+	}
+
 	if ( errorCode == kDNSServiceErr_NoError )
 	{
 		Mythis->Registered = true;
