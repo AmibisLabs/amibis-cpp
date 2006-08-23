@@ -57,7 +57,7 @@ if ( open( $SConstruct, '>SConstruct' ) == 0 )
 print $SConstruct 'import os
 from OmiscidScons import *
 env = Environment()
-OmiscidInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[\'xml2\'])
+OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[\'xml2\'])
 
 conf = Configure(env)
 OmiscidCheckLibs(conf,[\'xml2\',\'dns_sd\',\'pthread\']);
