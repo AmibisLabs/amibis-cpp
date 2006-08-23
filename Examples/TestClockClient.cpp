@@ -41,8 +41,38 @@ public:
 	}
 };
 
+ServiceFilter * filter;
+
 int main(int argc, char * argv[])
 {
+	long timeout = 2500;
+
+	Service * finder = ServiceFactory.Create("Browser");
+	filter = Yes();
+
+    for(int iter = 1;; iter++)
+	{
+        long t = GetTickCount();
+        ServiceProxy * proxy = finder->FindService(*filter, timeout);
+        if (proxy == NULL)
+		{
+            break;
+        }
+		else
+		{
+		   printf( "%d => %u\n", iter, GetTickCount()-t );
+           filter = And(Not(proxy),filter);
+			// break;
+        }
+    }
+
+	delete filter;
+	delete finder;
+
+    return 0;
+}
+#if 0 
+
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
 	TestRemoteVariableChangeListener TL;
@@ -165,3 +195,5 @@ int main(int argc, char * argv[])
 	//
 	//return 0; */
 }
+
+#endif

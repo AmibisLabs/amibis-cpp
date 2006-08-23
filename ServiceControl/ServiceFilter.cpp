@@ -61,7 +61,7 @@ public:
 	// Virtual destructor always
 	virtual ~ServiceOwnerIs();
 
-	bool IsAGoodService(ServiceProxy& SP);
+	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
 private:
@@ -78,7 +78,7 @@ public:
 	// Virtual destructor always
 	virtual ~ServiceHostIs();
 
-	bool IsAGoodService(ServiceProxy& SP);
+	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
 private:
@@ -95,7 +95,7 @@ public:
 	// Virtual destructor always
 	virtual ~ServiceHasVariable();
 
-	bool IsAGoodService(ServiceProxy& SP);
+	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
 private:
@@ -113,7 +113,7 @@ public:
 	// Virtual destructor always
 	virtual ~ServiceHasConnector();
 
-	bool IsAGoodService(ServiceProxy& SP);
+	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
 private:
@@ -128,7 +128,7 @@ public:
 	// Virtual destructor always
 	virtual ~ServiceAlwaysAnswerYes();
 
-	bool IsAGoodService(ServiceProxy& SP);
+	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 };
 
@@ -139,7 +139,7 @@ public:
 	ServiceBooleanNot(ServiceFilter *SF);
 	virtual ~ServiceBooleanNot();
 
-	bool IsAGoodService(ServiceProxy& SP);
+	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
 private:
@@ -640,5 +640,25 @@ ServiceFilter * ServiceBooleanNot::Duplicate()
 ServiceFilter * Omiscid::Not(ServiceFilter * SF)
 {
 	return new ServiceBooleanNot( SF );
+}
+
+/**
+* Create a boolean not operator
+*
+* @return a pointer ServiceFilter
+*/
+ServiceFilter * Omiscid::Not(ServiceProxy * SP)
+{
+	return new ServiceBooleanNot( PeerIdIs(SP->GetPeerId()) );
+}
+
+/**
+* Create a boolean not operator
+*
+* @return a pointer ServiceFilter
+*/
+ServiceFilter * Omiscid::Not(ServiceProxy& SP)
+{
+	return new ServiceBooleanNot( PeerIdIs(SP.GetPeerId()) );
 }
 

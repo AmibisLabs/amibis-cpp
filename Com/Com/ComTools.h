@@ -14,7 +14,6 @@
 
 namespace Omiscid {
 
-
 /**
  * @class ComTools ComTools.h Com/ComTools.h
  * \brief Interface the communication tools

@@ -1,6 +1,6 @@
 /* @file Xsd.h
  * @ingroup ServiceControl
- * @brief Header of the Xsd definition
+ * @brief Header of the Xsd definition. Automatically generated using GenerateXsdSupportFiles script.
  * @date 2004-2006
  */
 
@@ -12,8 +12,9 @@
 
 namespace Omiscid {
 
-extern SimpleString XsdControlAnswer;	// extern definition for control-answer.xsd verification
-extern SimpleString XsdControlQuery;	// extern definition for control-query.xsd verification
+extern SimpleString ControlAnswerXsd;	// extern definition for control-answer.xsd verification
+extern SimpleString ControlQueryXsd;	// extern definition for control-query.xsd verification
+extern SimpleString ServiceXsd;	// extern definition for service.xsd verification
 
 } // namespace Omiscid
 

@@ -93,6 +93,18 @@ private:
  */
 int main(int argc, char * argv[])
 {
+	for( int i = 0; i<6; i++ )
+	{
+		Service * pServ = ServiceFactory.Create( "Un service" );
+		pServ->Start();
+	}
+
+	Mutex MyLock;
+	MyLock.EnterMutex();
+	MyLock.EnterMutex();
+
+	return 0;
+
 	// Let's create a service named "Clock Server" 
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
 

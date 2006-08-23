@@ -563,7 +563,7 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter, unsigned int WaitTim
 
 ServiceProxy * Service::FindService(ServiceFilter& Filter, unsigned int WaitTime)
 {
-	return FindService(Filter.Duplicate());
+	return FindService(Filter.Duplicate(), WaitTime);
 }
 
 ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned int WaitTime )

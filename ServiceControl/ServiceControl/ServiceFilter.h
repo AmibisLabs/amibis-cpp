@@ -162,6 +162,8 @@ ServiceFilter * Yes();
 * @return a pointer ServiceFilter
 */
 ServiceFilter * Not(ServiceFilter * SF);
+ServiceFilter * Not(ServiceProxy * SP);
+ServiceFilter * Not(ServiceProxy& SP);
 
 } // namespace Omiscid
 

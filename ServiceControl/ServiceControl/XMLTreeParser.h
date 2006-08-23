@@ -18,6 +18,7 @@
 #include <ServiceControl/Xsd.h>
 
 #include <libxml/tree.h>
+#include <libxml/xmlschemas.h>
 
 
 namespace Omiscid {
@@ -126,7 +127,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    * @param buffer [in] array containing the byte of the message
    * @return NULL if parsing failed, else return a pointer on a structure containing the built tree.
    */
-  xmlDocPtr ParseMessage(int length, unsigned char* buffer);
+  xmlDocPtr ParseReceivedMessage(int length, unsigned char* buffer);
   
   /** @brief Add a new parsed message to the list
    *
@@ -204,6 +205,18 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
 
   MutexedSimpleList<XMLMessage*> listXMLMsg; /*!< list of the waiting message*/
   Event event; /*!< Condition used by the method WaitMessage */
+
+  // Member in order to parse message
+  xmlSchemaParserCtxtPtr ControlQueryParserCtxt;
+  xmlSchemaPtr ControlQuerySchema;
+  xmlSchemaValidCtxtPtr ControlQueryValidCtxt;
+
+#ifdef DEBUG
+  // In DEBUG mode, we also parse send message
+  xmlSchemaPtr ControlAnswerSchema;
+  xmlSchemaParserCtxtPtr ControlAnswerParserCtxt;
+  xmlSchemaValidCtxtPtr ControlAnswerValidCtxt;
+#endif
 };
 
 

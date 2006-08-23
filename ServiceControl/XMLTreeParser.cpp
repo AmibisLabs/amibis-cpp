@@ -2,37 +2,6 @@
 #include <Com/Message.h>
 #include <Com/MsgSocket.h>
 
-#if 0
-
-	Usage of XSD validation for future use...
-
-1242 int is_valid(xmlDocPtr doc)
-1243 {
-1244     int err = 0;
-1245     xmlSchemaPtr schema_ctxt = NULL;
-1246     xmlSchemaParserCtxtPtr schemaparser_ctxt = NULL;
-1247     xmlSchemaValidCtxtPtr schemavalid_ctxt = NULL;
-1248 
-1249     schemaparser_ctxt = xmlSchemaNewParserCtxt(schema_filename);
-
-0077	 xmlSchemaParserCtxtPtr xmlSchemaNewMemParserCtxt(const char *buffer, int size);
-
-1250     schema_ctxt = xmlSchemaParse(schemaparser_ctxt);
-1251     schemavalid_ctxt = xmlSchemaNewValidCtxt(schema_ctxt);
-1252 
-1263     if ((err = xmlSchemaValidateDoc(schemavalid_ctxt, doc))) {
-1264         err = -EIO;
-1265         goto out;
-1266     }
-1267   out:
-1268     xmlSchemaFreeValidCtxt(schemavalid_ctxt);
-1269     xmlSchemaFreeParserCtxt(schemaparser_ctxt);
-1270     xmlSchemaFree(schema_ctxt);
-1271     return (err != 0) ? 0 : 1;
-1272 }
-
-#endif
-
 using namespace Omiscid;
 
 namespace Omiscid {
@@ -58,17 +27,19 @@ namespace Omiscid {
 
 } // namespace Omiscid
 
-// Include Xsd Definition
-#include <ServiceControl/Xsd.inc>
-
 ////////////////////////////////////////////////////////////////
 XMLMessage::XMLMessage()
-{ doc = NULL; }
+{
+	doc = NULL;
+}
 
 XMLMessage::~XMLMessage()
 {
-	if(doc) xmlFreeDoc(doc);
-	doc = NULL;
+	if ( doc != NULL )
+	{	
+		xmlFreeDoc(doc);
+		doc = NULL;
+	}
 }
 
 XMLMessage::XMLMessage(const XMLMessage& msg)
@@ -169,12 +140,28 @@ SimpleString XMLMessage::ExtractTextContent(xmlNodePtr node)
 ///////////////////////////////////////////////////////////////////
 
 XMLTreeParser::XMLTreeParser()
-{}
+{
+	// Construct xsd validation tools
+	ControlQueryParserCtxt	= xmlSchemaNewMemParserCtxt( ControlQueryXsd.GetStr(), ControlQueryXsd.GetLength() );
+	ControlQuerySchema		= xmlSchemaParse( ControlQueryParserCtxt );
+	ControlQueryValidCtxt   = xmlSchemaNewValidCtxt( ControlQuerySchema );
+
+#ifdef DEBUG
+	// Trace errors during validation
+	xmlSchemaSetValidErrors( ControlQueryValidCtxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
+
+#endif
+}
 
 XMLTreeParser::~XMLTreeParser()
 {
 	StopThread();
 	ClearMessages();
+
+	// Cleaning xsd validation tools
+	xmlSchemaFreeValidCtxt( ControlQueryValidCtxt );
+	xmlSchemaFree( ControlQuerySchema );
+	xmlSchemaFreeParserCtxt( ControlQueryParserCtxt );
 }
 
 
@@ -183,15 +170,29 @@ xmlDocPtr XMLTreeParser::ParseFile(const SimpleString filename)
 	return xmlParseFile(filename.GetStr());
 }
 
-xmlDocPtr XMLTreeParser::ParseMessage(int length, unsigned char* buffer)
+xmlDocPtr XMLTreeParser::ParseReceivedMessage(int length, unsigned char* buffer)
 {
-	return xmlParseMemory((const char*)buffer, length);
+	xmlDocPtr TmpDoc = xmlParseMemory((const char*)buffer, length);
+	if ( TmpDoc != NULL )
+	{
+		// Validate it against given ControlQueryXsd
+		if ( xmlSchemaValidateDoc( ControlQueryValidCtxt, TmpDoc ) != 0 )
+		{
+			// Error when validating xml message
+			// Free the xml doc
+			// xmlFreeDoc(TmpDoc);
+			// return NULL;
+			return TmpDoc;
+		}
+		// Ok we will return the TmpDoc
+	}
+	return TmpDoc;
 }
 
 
 void XMLTreeParser::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 {
-	xmlDocPtr doc = ParseMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
+	xmlDocPtr doc = ParseReceivedMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
 	if( doc )
 	{
 		XMLMessage* msg = new XMLMessage();
