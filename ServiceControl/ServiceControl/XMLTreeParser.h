@@ -206,17 +206,15 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
   MutexedSimpleList<XMLMessage*> listXMLMsg; /*!< list of the waiting message*/
   Event event; /*!< Condition used by the method WaitMessage */
 
-  // Member in order to parse message
-  xmlSchemaParserCtxtPtr ControlQueryParserCtxt;
-  xmlSchemaPtr ControlQuerySchema;
-  xmlSchemaValidCtxtPtr ControlQueryValidCtxt;
-
-#ifdef DEBUG
   // In DEBUG mode, we also parse send message
   xmlSchemaPtr ControlAnswerSchema;
   xmlSchemaParserCtxtPtr ControlAnswerParserCtxt;
   xmlSchemaValidCtxtPtr ControlAnswerValidCtxt;
-#endif
+
+  // Member in order to parse message
+  xmlSchemaParserCtxtPtr ControlQueryParserCtxt;
+  xmlSchemaPtr ControlQuerySchema;
+  xmlSchemaValidCtxtPtr ControlQueryValidCtxt;
 };
 
 

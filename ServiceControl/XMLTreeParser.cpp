@@ -142,13 +142,13 @@ SimpleString XMLMessage::ExtractTextContent(xmlNodePtr node)
 XMLTreeParser::XMLTreeParser()
 {
 	// Construct xsd validation tools
-	ControlQueryParserCtxt	= xmlSchemaNewMemParserCtxt( ControlQueryXsd.GetStr(), ControlQueryXsd.GetLength() );
-	ControlQuerySchema		= xmlSchemaParse( ControlQueryParserCtxt );
-	ControlQueryValidCtxt   = xmlSchemaNewValidCtxt( ControlQuerySchema );
+	ControlAnswerParserCtxt	= xmlSchemaNewMemParserCtxt( ControlAnswerXsd.GetStr(), ControlAnswerXsd.GetLength() );
+	ControlAnswerSchema		= xmlSchemaParse( ControlAnswerParserCtxt );
+	ControlAnswerValidCtxt   = xmlSchemaNewValidCtxt( ControlAnswerSchema );
 
 #ifdef DEBUG
 	// Trace errors during validation
-	xmlSchemaSetValidErrors( ControlQueryValidCtxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
+	xmlSchemaSetValidErrors( ControlAnswerValidCtxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
 
 #endif
 }
@@ -159,9 +159,9 @@ XMLTreeParser::~XMLTreeParser()
 	ClearMessages();
 
 	// Cleaning xsd validation tools
-	xmlSchemaFreeValidCtxt( ControlQueryValidCtxt );
-	xmlSchemaFree( ControlQuerySchema );
-	xmlSchemaFreeParserCtxt( ControlQueryParserCtxt );
+	xmlSchemaFreeValidCtxt( ControlAnswerValidCtxt );
+	xmlSchemaFree( ControlAnswerSchema );
+	xmlSchemaFreeParserCtxt( ControlAnswerParserCtxt );
 }
 
 
@@ -176,7 +176,7 @@ xmlDocPtr XMLTreeParser::ParseReceivedMessage(int length, unsigned char* buffer)
 	if ( TmpDoc != NULL )
 	{
 		// Validate it against given ControlQueryXsd
-		if ( xmlSchemaValidateDoc( ControlQueryValidCtxt, TmpDoc ) != 0 )
+		if ( xmlSchemaValidateDoc( ControlAnswerValidCtxt, TmpDoc ) != 0 )
 		{
 			// Error when validating xml message
 			// Free the xml doc

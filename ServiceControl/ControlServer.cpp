@@ -347,7 +347,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 
 	xmlNodePtr node = msg->GetRootNode();
 
-	if(strcmp((const char*)node->name, "controlQuery") == 0)
+	if( strcmp((const char*)node->name, "controlQuery") == 0 )
 	{
 		SimpleString id;
 		xmlAttrPtr attr = XMLMessage::FindAttribute("id", node);
