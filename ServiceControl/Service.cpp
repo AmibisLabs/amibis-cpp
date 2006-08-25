@@ -32,7 +32,36 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 
 	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord );
 
-	// To correct
+	// Need to add name of the service
+#ifdef DEBUG
+	if ( PropertiesForProxy.IsDefined("name") )
+	{
+		TraceError( "Property name defined in TxtRecord as '%s'.", PropertiesForProxy["name"].GetValue().GetStr() );
+	}
+#endif
+
+	// Create search pattern
+	SimpleString TmpString(".");
+	TmpString += CommonServiceValues::OmiscidServiceDnsSdType; // for example, "." + "_bip._tcp";
+
+	// Search it
+	char * Protocol = (char*)strstr( fullname, (const char*)TmpString.GetStr() );
+	if ( Protocol )
+	{
+		// We've got it
+		SimpleString TmpString = fullname;
+
+		// Create a constant value with the name
+		SimpleString trace("c/");
+		trace += TmpString.SubString( 0, ((int)(Protocol-fullname)) );
+		PropertiesForProxy["name"] = trace;
+	}
+	else
+	{
+		PropertiesForProxy["name"] = "c/Service";
+	}
+
+	// To say if the service is the one we are looking for...
 	ServiceProxy * Proxy = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
 	if ( Proxy == NULL )
 	{
