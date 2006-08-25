@@ -48,7 +48,7 @@ int main(int argc, char * argv[])
 	long timeout = 2500;
 
 	Service * finder = ServiceFactory.Create("Browser");
-	filter = Yes();
+	filter = NameIs("Yop");
 
     for(int iter = 1;; iter++)
 	{

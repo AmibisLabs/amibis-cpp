@@ -28,9 +28,12 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 	OmiscidServiceSearchData * MyData = (OmiscidServiceSearchData *)UserData;
 
 	SimpleString Host(hosttarget);
+	ServiceProperties PropertiesForProxy;
+
+	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord );
 
 	// To correct
-	ServiceProxy * Proxy = new ServiceProxy( ComTools::GeneratePeerId(), Host, port ); // MyData->PeerId
+	ServiceProxy * Proxy = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
 	if ( Proxy == NULL )
 	{
 		return false;

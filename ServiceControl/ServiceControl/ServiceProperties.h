@@ -108,6 +108,7 @@ public:
 	virtual const ServiceProperty& operator= ( const ServiceProperty& rvalue );
 
 	const SimpleString GetValue();
+	const SimpleString GetName();
 
 protected:
 	// Total length of this Property (size included)
@@ -151,7 +152,7 @@ public:
 	ServiceProperties( int InitialNumberOfProperties = 8 );
 	virtual ~ServiceProperties();
 
-	// ServiceProperty & operator[]( int Elem );
+	ServiceProperty & GetProperty( int Elem );
 	ServiceProperty & operator[]( const SimpleString Name );
 
 	// To check if a properties exists

@@ -35,6 +35,7 @@ class VariableAttribut : public Attribut
 {
 	friend class ControlServer;
 	friend class ControlClient;
+	friend class ServiceProxy;
 
 private:
   /** @name Constructor */
@@ -71,6 +72,8 @@ public:
   void SetAccessRead();
   void SetAccessReadWrite();
   void SetAccessReadWriteBeforeInit();
+
+  bool IsInitialised();
   
   /** @brief Set the value and signal that the value has changed 
    * @param value_str [in] the new string representaion of the value */
@@ -180,6 +183,7 @@ protected:
 
 private:
   MutexedSimpleList<VariableAttributListener*> Listeners;
+  bool Initialised;
 };
 
 } // namespace Omiscid

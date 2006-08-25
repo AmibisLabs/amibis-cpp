@@ -7,19 +7,246 @@
 #include <ServiceControl/VariableAttribut.h>
 
 #ifdef DEBUG
-#define TIME_TO_WAIT_ANSWER 500
+#define TIME_TO_WAIT_ANSWER 5000
 #else
-#define TIME_TO_WAIT_ANSWER 250
+#define TIME_TO_WAIT_ANSWER 500
 #endif
 
 using namespace Omiscid;
+
+AnswerWaiter::AnswerWaiter()
+{
+	ObjectMutex.EnterMutex();
+
+	// Initialise object
+	Waiter.Reset();
+	IsFree = true;
+	MessageId = 0;
+	AnswerMessage = NULL;
+
+	ObjectMutex.LeaveMutex();
+}
+
+AnswerWaiter::~AnswerWaiter()
+{
+	// ObjectMutex.EnterMutex(); will be done in free
+
+	Free();
+	
+	// ObjectMutex.LeaveMutex();
+}
+
+bool AnswerWaiter::Use( unsigned int eMessageId )
+{
+	ObjectMutex.EnterMutex();
+
+	if ( IsFree != true )
+	{
+		ObjectMutex.LeaveMutex();
+		return false;
+	}
+
+	// Delete message if any
+	if ( AnswerMessage != NULL )
+	{
+		delete AnswerMessage;
+		AnswerMessage = NULL;
+	}
+
+	// Say I am not free
+	IsFree = false;
+
+	// Put my value for the message waited
+	MessageId = eMessageId;
+
+	// Reset event
+	Waiter.Reset();
+
+	ObjectMutex.LeaveMutex();
+
+	return true;
+}
+
+void AnswerWaiter::Free()
+{
+	ObjectMutex.EnterMutex();
+
+	// Delete message if any
+	if ( AnswerMessage != NULL )
+	{
+		delete AnswerMessage;
+		AnswerMessage = NULL;
+	}
+
+	// Say I am free...
+	IsFree = true;
+
+	ObjectMutex.LeaveMutex();
+}
+
+XMLMessage * AnswerWaiter::GetAnswer(unsigned int TimeToWait)
+{
+	XMLMessage * tmpMessage;
+	int NbLoop;
+
+	//
+	for( NbLoop = 0; ; NbLoop++ )
+	{
+		// Is the message already here ?
+		ObjectMutex.EnterMutex();
+		if ( AnswerMessage != NULL )
+		{
+			// Get the message pointer
+			tmpMessage = AnswerMessage;
+			AnswerMessage = NULL;
+			
+			// This place is free, we got the message
+			Free();
+
+			ObjectMutex.LeaveMutex();
+			return tmpMessage;
+		}
+
+		// Let's me AnswerManager complete me...
+		ObjectMutex.LeaveMutex();
+
+		if ( NbLoop > 0 )
+		{
+			break;
+		}
+
+		// Wait for the result...
+		Waiter.Wait(TimeToWait);
+	}
+
+	// This place is free, even if we do not get the message
+	Free();
+
+	return NULL;
+}
+
+AnswersManager::AnswersManager()
+{
+}
+
+AnswersManager::~AnswersManager()
+{
+	WaitersList.Lock();
+
+	// Destroy all waiters information
+	while( WaitersList.GetNumberOfElements() > 0 )
+	{
+		delete WaitersList.ExtractFirst();
+	}
+
+	WaitersList.Unlock();
+}
+
+AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
+{
+	AnswerWaiter * pWaiterInfo = NULL;
+
+	WaitersList.Lock();
+
+	// Is there any free waiterinfo in my list ?
+	for( WaitersList.First(); WaitersList.NotAtEnd(); WaitersList.Next() )
+	{
+		if ( WaitersList.GetCurrent()->Use(MessageId) )
+		{
+			// We've got a waiter info for this waiter...
+			pWaiterInfo = WaitersList.GetCurrent();
+			break;
+		}
+	}
+
+	if ( pWaiterInfo == NULL )
+	{
+		// Create a new waiter element for this waiter
+		pWaiterInfo = new AnswerWaiter;
+		if ( pWaiterInfo == NULL )
+		{
+			TraceError( "AnswersManager::WaitAndGetAnswer: no more memory.\n" );
+			WaitersList.Unlock();
+			return NULL;
+		}
+		pWaiterInfo->Use(MessageId);
+
+		// Add it to the list
+		WaitersList.AddTail(pWaiterInfo);
+	}
+
+	// Unlock the list
+	WaitersList.Unlock();
+
+	return pWaiterInfo;
+}
+
+bool AnswersManager::CheckMessage(XMLMessage* msg, unsigned int msg_id)
+{
+	xmlAttrPtr attr = XMLMessage::FindAttribute("id", msg->GetRootNode());
+	if(attr)
+	{
+		unsigned int the_id = 0;
+		sscanf((const char*)attr->children->content, "%08x", &the_id);
+		return the_id == msg_id;
+	}
+	return false;
+}
+
+bool AnswersManager::PushAnswer(XMLMessage * Msg)
+{
+	AnswerWaiter * pWaiter;
+
+	if ( Msg == NULL )
+	{
+		return false;
+	}
+
+	WaitersList.Lock();
+
+	// Is there AnswerWaiter for this message ?
+	for( WaitersList.First(); WaitersList.NotAtEnd(); WaitersList.Next() )
+	{
+		pWaiter = WaitersList.GetCurrent();
+
+		// Lock this waiter
+		pWaiter->ObjectMutex.EnterMutex();
+
+		if ( pWaiter->IsFree == false && CheckMessage(Msg, pWaiter->MessageId) )
+		{
+			// We've got a waiter info for this waiter...
+			// Copy the message for the waiter
+			pWaiter->AnswerMessage = new XMLMessage(*Msg);
+			pWaiter->ObjectMutex.LeaveMutex();
+
+			pWaiter->Waiter.Signal();
+
+			WaitersList.Unlock();
+
+			// TraceError( "AnswersManager::PushAnswer: PushMessage ok.\n" );
+
+			return true;
+		}
+
+		// Unlock the waiter
+		pWaiter->ObjectMutex.LeaveMutex();
+	}
+
+	// Do nothing with this message... probably timeout...
+	TraceError( "AnswersManager::PushAnswer: no waiters (probably timeout).\n" );
+
+	// Unlock the list
+	WaitersList.Unlock();
+
+	return false;
+}
+
 
 ControlClient::ControlClient(unsigned int serviceId)
 : TcpClient(), id(1)
 {
 	TcpClient::SetTcpNoDelay(true);
 
-	xmlAnswer = NULL;
 	TcpClient::SetServiceId(serviceId);
 
 	// Ask to receive messge on my XMLTreeParser side
@@ -332,33 +559,35 @@ bool ControlClient::QueryDetailedDescription()
 XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer)
 {
 	unsigned int msg_id = BeginEndTag(requete);
-	SendToServer((int)requete.GetLength(), requete.GetStr());
-	if(!wait_answer) return NULL;  
-	if (answerEvent.Wait(TIME_TO_WAIT_ANSWER))
-	{
-		XMLMessage* msg = xmlAnswer;
-		xmlAnswer = NULL;
-		if(msg)
-		{
-			//if(msg->tag) msg->tag->Display();
 
-			if (CheckMessage(msg, msg_id)) return msg;
-			else { delete msg; return NULL; }
-		}
-	}
-	return NULL;
-}
+#ifdef DEBUG
+	// In debug mode, we validate xml before sending it, but nevertheless we send it...
+	// just for warning and conformity
+	ControlQueryValidator;
+#endif
 
-bool ControlClient::CheckMessage(XMLMessage* msg, unsigned int msg_id)
-{
-	xmlAttrPtr attr = XMLMessage::FindAttribute("id", msg->GetRootNode());
-	if(attr)
+	// Create an answer waiter
+	AnswerWaiter * pWaiter = CreateAnswerWaiter( msg_id );
+	if ( pWaiter == NULL )
 	{
-		unsigned int the_id = 0;
-		sscanf((const char*)attr->children->content, "%08x", &the_id);
-		return the_id == msg_id;
+		return NULL;
 	}
-	return false;
+
+	if ( SendToServer((int)requete.GetLength(), requete.GetStr()) == SOCKET_ERROR )
+	{
+		// If we can not send data, free the waiter...
+		pWaiter->Free();
+		return NULL;
+	}
+
+	if ( wait_answer == false ) // For request without answer like (un)subscribe...
+	{
+		// Ok, we will not wait for anything...
+		pWaiter->Free();
+		return NULL;
+	}
+
+	return pWaiter->GetAnswer(TIME_TO_WAIT_ANSWER);
 }
 
 unsigned int ControlClient::BeginEndTag(SimpleString& str)
@@ -370,12 +599,6 @@ unsigned int ControlClient::BeginEndTag(SimpleString& str)
 	str = "<controlQuery id=\"" + tmp_str + "\">"
 		+ str
 		+ "</controlQuery>";
-
-#ifdef DEBUG
-	// In debug mode, we validate xml before sending it, but nevertheless we send it...
-	// just for warning and conformity
-	ControlQueryValidator;
-#endif
 
 	return id - 1;
 }
@@ -431,8 +654,14 @@ VariableAttribut* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 #endif
 
 	VariableAttribut* vattr = NULL;
-	if(var_attr) vattr = var_attr;
-	else vattr = new VariableAttribut();
+	if(var_attr)
+	{
+		vattr = var_attr;
+	}
+	else
+	{
+		vattr = new VariableAttribut();
+	}
 
 	vattr->ExtractDataFromXml(node);
 
@@ -546,7 +775,7 @@ InOutputAttribut* ControlClient::FindInOutput(const SimpleString name)
 void ControlClient::Subscribe(const SimpleString var_name)
 {
 	VariableAttribut* va = FindVariable(var_name);
-	if(va)
+	if ( va )
 	{
 		SimpleString request("<subscribe name=\"");
 		request = request + va->GetName()  +"\"/>";
@@ -573,14 +802,18 @@ void ControlClient::Unsubscribe(const SimpleString var_name)
 }
 
 void ControlClient::ProcessAMessage(XMLMessage* msg)
-{		
+{
+	// Validate against XSD schema
+	if ( msg == NULL ) // || ControlAnswerValidator.ValidateDoc( msg->doc ) == false )
+	{
+		// no message or bad message...
+		return;
+	}
+
 	if(strcmp((const char*)msg->GetRootNode()->name, "controlAnswer")==0)
 	{
-		if(xmlAnswer) delete xmlAnswer;
-		xmlAnswer = new XMLMessage(*msg);
-		msg->doc = NULL; //msg would be destroyed at the end of the function, we preserve the xmlDocPtr
-		answerEvent.Signal();
-		answerEvent.Reset();
+		// Set the message and way to the rigth Waiter that is ok
+		PushAnswer(msg);
 	}
 	else if(strcmp((const char*)msg->GetRootNode()->name, "controlEvent")==0)
 	{

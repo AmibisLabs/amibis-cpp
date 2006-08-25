@@ -13,9 +13,204 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 {
 	HostName	= eHostName;
 	ControlPort	= eControlPort;
+	FullDescription = false;
+
 	if ( ConnectToCtrlServer(HostName, ControlPort) == true )
 	{
 		UpdateDescription();
+	}
+	else
+	{
+		// throw "ServiceProxy failed";
+	}
+}
+
+ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eControlPort, ServiceProperties& ServiceProps )
+	: ControlClient(PeerId)
+{
+	SimpleString TmpString;
+	VariableAttribut * VarAtt;
+	InOutputAttribut * IOAtt;
+	int Pos;
+	int Port;
+
+	HostName	= eHostName;
+	ControlPort	= eControlPort;
+	FullDescription = false;
+
+	// TmpString = ServiceProperties["desc"];
+
+	// Is the description
+	TmpString = ServiceProps["desc"].GetValue();
+	if ( ServiceProps["desc"].GetValue() == "full" )
+	{
+		FullDescription = true;
+
+		for( Pos = 0; FullDescription == true && Pos <  ServiceProps.GetNumberOfProperties(); Pos++ )
+		{
+			ServiceProperty& LocalProp = ServiceProps.GetProperty(Pos);
+
+			if ( LocalProp.GetName() == "desc" )
+			{
+				continue;
+			}
+
+			// Parse property
+			TmpString = LocalProp.GetValue();
+			char * TmpChar = (char*)TmpString.GetStr();
+			switch( TmpString[0] )
+			{
+				// Work on Variables
+				case 'c':
+					if ( TmpString[1] != '/' || TmpString.GetLength() <= 2 )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					// Ok, something like c/...
+					VarAtt = new VariableAttribut( LocalProp.GetName() );
+					if ( VarAtt == NULL )
+					{
+						FullDescription = false;
+						continue;
+					}
+					VarAtt->SetValue( TmpChar+2 );
+					VarAtt->SetAccessConstant();
+					listVariableName.Add( LocalProp.GetName() );
+					listVariableAttr.Add( VarAtt );
+					break;
+
+				case 'r':
+					if ( TmpString.GetLength() != 1 )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					// Ok, something like r/...
+					VarAtt = new VariableAttribut( LocalProp.GetName() );
+					if ( VarAtt == NULL )
+					{
+						FullDescription = false;
+						continue;
+					}
+					VarAtt->SetAccessRead();
+					listVariableName.Add( LocalProp.GetName() );
+					listVariableAttr.Add( VarAtt );
+					break;
+
+				case 'w':
+					if ( TmpString.GetLength() != 1 )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					// Ok, something like w/...
+					VarAtt = new VariableAttribut( LocalProp.GetName() );
+					if ( VarAtt == NULL )
+					{
+						FullDescription = false;
+						continue;
+					}
+					VarAtt->SetAccessReadWrite();
+					listVariableName.Add( LocalProp.GetName() );
+					listVariableAttr.Add( VarAtt );
+					break;
+
+				// Work on Connectors
+				case 'i':
+					if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					// Check if we've got a correct port
+					Port = -1;
+					Port = atoi(TmpChar+2);
+					if ( Port <= 0 || Port >= 0x0000ffff )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					IOAtt = new InOutputAttribut( LocalProp.GetName(), NULL, AnInput );
+					if ( IOAtt == NULL )
+					{
+						FullDescription = false;
+						continue;
+					}
+					listInputName.Add( LocalProp.GetName() );
+					listInputAttr.Add( IOAtt );
+					break;
+
+				case 'o':
+					if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					// Check if we've got a correct port
+					Port = -1;
+					Port = atoi(TmpChar+2);
+					if ( Port <= 0 || Port >= 0x0000ffff )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					IOAtt = new InOutputAttribut( LocalProp.GetName(), NULL, AnOutput );
+					if ( IOAtt == NULL )
+					{
+						FullDescription = false;
+						continue;
+					}
+					listOutputName.Add( LocalProp.GetName() );
+					listOutputAttr.Add( IOAtt );
+					break;
+
+				case 'd':
+					if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					// Check if we've got a correct port
+					Port = -1;
+					Port = atoi(TmpChar+2);
+					if ( Port <= 0 || Port >= 0x0000ffff )
+					{
+						FullDescription = false;
+						continue;
+					}
+
+					IOAtt = new InOutputAttribut( LocalProp.GetName(), NULL, AnInOutput );
+					if ( IOAtt == NULL )
+					{
+						FullDescription = false;
+						continue;
+					}
+					listInOutputName.Add( LocalProp.GetName() );
+					listInOutputAttr.Add( IOAtt );
+					break;
+
+				default:
+					FullDescription = false;
+					continue;
+			}
+		}
+	}
+
+	if ( ConnectToCtrlServer(HostName, ControlPort) == true )
+	{
+		if ( FullDescription == false )
+		{
+			UpdateDescription();
+		}
 	}
 	else
 	{
@@ -72,7 +267,14 @@ SimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
      */
 void ServiceProxy::UpdateDescription()
 {
-	QueryDetailedDescription();
+	if ( QueryDetailedDescription() )
+	{
+		FullDescription = true;
+	}
+	else
+	{
+		FullDescription = false;
+	}
 }
 
     /**
@@ -124,9 +326,15 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 	VariableAttribut * pVar = FindVariable(VarName);
 	if ( pVar == NULL )
 	{
-		return SimpleString::EmptyString;
+		throw "Unknown variable. Call HasVariableFirst.";
 	}
 
+	if ( pVar->GetAccess() == ConstantAccess && FullDescription == true )
+	{
+		return pVar->GetValue();
+	}
+
+	pVar = QueryVariableDescription( VarName );
 	return pVar->GetValue();
 }
 
@@ -290,10 +498,10 @@ bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionI
 VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 {
 	VariableAttribut * pVar = ControlClient::FindVariable(VarName);
-	if ( pVar == NULL )
-	{
-		pVar = ControlClient::QueryVariableDescription( VarName );
-	}
+	// if ( pVar == NULL )
+	// {
+	// 	pVar = ControlClient::QueryVariableDescription( VarName );
+	// }
 	if ( pVar == NULL )
 	{
 		// Not found
@@ -311,9 +519,9 @@ InOutputAttribut * ServiceProxy::FindConnector( SimpleString ConnectortName )
 	if (   (pAtt = FindInput(ConnectortName)) != NULL					// Is is an Input ?
 		|| (pAtt = FindOutput(ConnectortName)) != NULL					// Is it an Output
 		|| (pAtt = FindInOutput(ConnectortName)) != NULL				// Is is an InOutput ?
-		|| (pAtt = QueryInputDescription(ConnectortName)) != NULL		// again remotely
-		|| (pAtt = QueryOutputDescription(ConnectortName)) != NULL		// again remotely
-		|| (pAtt = QueryInOutputDescription(ConnectortName)) != NULL	// again remotely
+//		|| (pAtt = QueryInputDescription(ConnectortName)) != NULL		// again remotely
+//		|| (pAtt = QueryOutputDescription(ConnectortName)) != NULL		// again remotely
+//		|| (pAtt = QueryInOutputDescription(ConnectortName)) != NULL	// again remotely
 		)
 	{
 		// We found it

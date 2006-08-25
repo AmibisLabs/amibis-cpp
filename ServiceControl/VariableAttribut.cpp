@@ -14,13 +14,15 @@ const SimpleString VariableAttribut::variable_str = "variable";
 
 VariableAttribut::VariableAttribut()
 {
-	access = ReadAccess;  
+	access = ReadAccess;
+	Initialised = false;
 }
 
 VariableAttribut::VariableAttribut(const SimpleString a_name)
 : Attribut(a_name)
 {
 	access = ReadAccess; 
+	Initialised = false;
 }
 
 const SimpleString& VariableAttribut::AccessToStr(VariableAccessType a)
@@ -28,6 +30,11 @@ const SimpleString& VariableAttribut::AccessToStr(VariableAccessType a)
 	if(a == ConstantAccess) return access_constant_str;
 	if(a == ReadAccess) return access_read_str;
 	return access_readwrite_str;
+}
+
+bool VariableAttribut::IsInitialised()
+{
+	return Initialised;
 }
 
 
@@ -97,6 +104,9 @@ void VariableAttribut::SetValue(const SimpleString value_str)
 	// Ok, change my value
 	valueStr = value_str; 
 
+	// Initialised !!
+	Initialised = true;
+
 	// Ok the value has change, send information back to people
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
@@ -110,6 +120,9 @@ void VariableAttribut::SetValueFromControl(const SimpleString value_str)
 {
 	// Ok, change my value
 	valueStr = value_str; 
+
+	// Initialised !!
+	Initialised = true;
 
 	// Ok the value has change, send information back to people
 	Listeners.Lock();
@@ -218,6 +231,10 @@ void VariableAttribut::SetDefaultValue(const SimpleString str)
 
 SimpleString& VariableAttribut::GetValue()
 {
+	if ( Initialised == false )
+	{
+		throw "Not initialised";
+	}
 	return valueStr; 
 }
 

@@ -45,7 +45,14 @@ XMLMessage::~XMLMessage()
 
 XMLMessage::XMLMessage(const XMLMessage& msg)
 {
-	doc = msg.doc;
+	if ( msg.doc )
+	{
+		doc = xmlCopyDoc(msg.doc, 1 ); // 1 stands for recursive copy
+	}
+	else
+	{
+		doc = NULL;
+	}
 	origine = msg.origine;
 	pid = msg.pid;
 	mid = msg.mid;
@@ -152,7 +159,6 @@ XMLTreeParser::~XMLTreeParser()
 	StopThread();
 	ClearMessages();
 }
-
 
 xmlDocPtr XMLTreeParser::ParseFile(const SimpleString filename)
 {

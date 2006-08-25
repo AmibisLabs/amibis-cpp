@@ -129,6 +129,14 @@ const SimpleString ServiceProperty::GetValue()
 	return Value;
 }
 
+const SimpleString ServiceProperty::GetName()
+{
+	if ( Name.GetLength() == 0 )
+		return SimpleString::EmptyString;
+
+	return Name;
+}
+
 ServicePropertyNotify::ServicePropertyNotify() : ServiceProperty(), Container(NULL)
 {
 }
@@ -256,6 +264,17 @@ ServiceProperties::~ServiceProperties()
 int ServiceProperties::GetTXTRecordLength()
 {
 	return TXTRecordLength;
+}
+
+ServiceProperty & ServiceProperties::GetProperty( int Elem )
+{
+	if ( Elem < 0 || Elem >= this->NbProperties )
+	{
+		// We are out of band !
+		throw ServicePropertiesException( "Out of band" );
+	}
+
+	return Properties[Elem];
 }
 
 ServiceProperty& ServiceProperties::operator[]( const SimpleString Name )
@@ -465,6 +484,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
 	char KeyValue[256];
     uint8_t valueLen;
     char *value;
+	char **pvalue = &value; // in order to prevent dumb warning from gcc 4.1.2...
 	
 	Empty();
 	
@@ -483,6 +503,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
 			}
 
 			// General case
+			strncpy( KeyValue, value, valueLen );
 			KeyValue[valueLen] = '\0';
 			(*this)[KeyName] = KeyValue;
 		}

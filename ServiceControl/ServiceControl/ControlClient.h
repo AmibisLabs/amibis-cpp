@@ -10,6 +10,7 @@
 #include <ServiceControl/Config.h>
 
 #include <System/SimpleList.h>
+#include <System/AtomicCounter.h>
 #include <Com/TcpClient.h>
 #include <ServiceControl/XMLTreeParser.h>
 
@@ -17,6 +18,56 @@ namespace Omiscid {
 
 class VariableAttribut;
 class InOutputAttribut;
+class AnswersManager;
+
+class AnswerWaiter
+{
+	friend class AnswersManager;
+
+protected:
+	AnswerWaiter();
+	virtual ~AnswerWaiter();
+
+public:
+	XMLMessage * GetAnswer(unsigned int TimeToWait);
+	void Free();
+
+protected:
+	bool Use( unsigned int eMessageId );
+
+private:
+	ReentrantMutex ObjectMutex;	// A mutex to protect the structure
+	Event Waiter;				// in order to wait for answer
+	unsigned int MessageId;		// Num of my query, so num of the answer
+	XMLMessage * AnswerMessage; // Received Message
+	bool IsFree;				// Is this object free of use ? (memory and event creation
+};
+
+/**
+ * \class AnswersManager ControlClient.h ServiceControl/ControlClient.h
+ * \brief This class is used to manadge answer from ControlServer.
+ */
+class AnswersManager
+{
+public:
+	AnswersManager();
+	virtual ~AnswersManager();
+
+	AnswerWaiter * CreateAnswerWaiter(unsigned int MessageId);
+
+	/** \brief check the id of 'msg'
+	 * \param msg [in] the received messages
+	 * \param msg_id [in] the waited id
+	 * \return true if the id of 'msg' has the value 'msg_id'
+	 */
+	bool CheckMessage(XMLMessage* msg, unsigned int msg_id);
+	
+	bool PushAnswer(XMLMessage * Msg);
+
+private:
+	// List of event for each thread
+	MutexedSimpleList<AnswerWaiter*> WaitersList;
+};
 
 /**
  * \class ControlClient ControlClient.h ServiceControl/ControlClient.h
@@ -38,7 +89,7 @@ class InOutputAttribut;
  * You can subscribe to variable modification by using Subscribe method, 
  * the modification event are processed by a callback method define by SetCtrlEventListener.
  */
-class ControlClient : public TcpClient, public XMLTreeParser
+class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersManager
 {
  public:
   /** \brief Event listener type */
@@ -229,13 +280,6 @@ private:
    */
   XMLMessage* QueryToServer(SimpleString& str, bool wait_answer = true);
 
-  /** \brief check the id of 'msg'
-   * \param msg [in] the received messages
-   * \param msg_id [in] the waited id
-   * \return true if the id of 'msg' has the value 'msg_id'
-   */
-  bool CheckMessage(XMLMessage* msg, unsigned int msg_id);
-
   /** \name Message processing */
   //@{
   /** \brief Extract global description from message 
@@ -311,9 +355,6 @@ protected:
   //@}
 
 private:
-  XMLMessage* xmlAnswer; /*! pointer on a answer to a query */
-  Event answerEvent; /*!< event use to signal a new */
-  
   CtrlEventListener callback; /*!< callback for event processing */
   void* userDataPtr; /*!< pointer on data for the callback */
 };

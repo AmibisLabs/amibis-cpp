@@ -91,12 +91,77 @@ private:
  * - connector sends
  * 
  */
+void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context )
+{
+	if ( flags == 1 )
+	{
+		// Never here...
+		printf( "wait for more...\n" );
+	}
+
+	if ( errorCode == kDNSServiceErr_NoError )
+	{
+		printf( "service '%s' registrerd\n", name );
+	}
+}
+
 int main(int argc, char * argv[])
 {
+#if 0
+	int err;
+
+	DNSServiceRef DnsSdConnection[10];
+	
+	for( int zz = 0; zz < 6; zz++ )
+	{
+		err = DNSServiceRegister( &DnsSdConnection[zz], 0, 0, "yop", "_bip._tcp", "local.", NULL, (uint16_t)rand(),
+			(uint16_t)0, "", DnsRegisterReply2, (void*)NULL );
+
+		if ( err == kDNSServiceErr_NoError )
+		{
+			// We did connection to the DNS-SD Daemon
+
+			// Wait for an answer
+				// Get the socket FD
+			SOCKET DnsSocketFd = DNSServiceRefSockFD(DnsSdConnection[zz]); 
+
+			// Loop forever
+			for(;;)
+			{
+				fd_set socketfds;
+				timeval timeout;
+
+				FD_ZERO(&socketfds);
+				FD_SET(DnsSocketFd, &socketfds);
+
+				// First check for event (like disconnection...)
+				timeout.tv_sec  = 10;	// 10 seconds
+				timeout.tv_usec = 0;
+
+				// Ask if some event are waiting on this socket
+				if ( select((int)DnsSocketFd+1, &socketfds, NULL, NULL, &timeout) > 0 )
+				{
+					break;
+				}
+			}
+
+			// Wait for its answer
+			if ( DNSServiceProcessResult( DnsSdConnection[zz] ) == kDNSServiceErr_NoError )
+			{
+				printf( "done %d\n", zz+1 ); // To write 1, 2... and not 0, 1...
+			}
+		}
+
+		Sleep( 2000 );
+	}
+
+	return 0;
+#endif
+
 	for( int i = 0; i<6; i++ )
 	{
 		Service * pServ = ServiceFactory.Create( "Yop" );
-		pServ->AddVariable( "My Num", "interger", i, ReadWriteAccess );
+		pServ->AddConnector( "Input", "", AnInput );
 		pServ->Start();
 	}
 

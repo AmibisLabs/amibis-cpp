@@ -17,6 +17,7 @@
 
 #include <ServiceControl/ControlClient.h>
 #include <ServiceControl/RemoteVariableChangeListener.h>
+#include <ServiceControl/ServiceProperties.h>
 
 namespace Omiscid {
 
@@ -34,6 +35,7 @@ class ServiceProxy  : protected ControlClient
 
 public:
 	ServiceProxy( unsigned int PeerId, SimpleString eHostname, int eControlPort );
+	ServiceProxy( unsigned int PeerId, SimpleString eHostname, int eControlPort, ServiceProperties& ServiceProps );
 
 	virtual ~ServiceProxy();
 
@@ -75,7 +77,6 @@ public:
      * @return the host name
      */
     SimpleString GetHostName();
-
 
     /**
      * The Peer Id of the remote Omiscid service
@@ -156,6 +157,9 @@ private:
 	// Internal Utility function
 	VariableAttribut * FindVariable( SimpleString VarName );
 	InOutputAttribut * FindConnector( SimpleString InOutputName );
+
+	// Do we have a full description ?
+	bool FullDescription;
 };
 
 } // namespace Omiscid

@@ -247,6 +247,8 @@ ServiceNameIs::~ServiceNameIs()
 bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceName;
+	try
+	{
 	ServiceName = SP.GetVariableValue("name");
 	if ( ServiceName.IsEmpty() )
 	{
@@ -268,6 +270,10 @@ bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 			return (strcasecmp(Name.GetStr(), ServiceName.GetStr()) == 0);
 		}
 		return (Name == ServiceName);
+	}
+	} catch (...)
+	{
+		return false;
 	}
 }
 
