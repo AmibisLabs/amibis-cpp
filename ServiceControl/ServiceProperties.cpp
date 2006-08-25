@@ -493,7 +493,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
 	for( i = 0; i < NbKeys; i++ )
 	{
 		if ( TXTRecordGetItemAtIndex((uint16_t)RecordLength,Record, (uint16_t)i, (uint16_t)sizeof(KeyName),
-			    KeyName, &valueLen, (const void**)&value ) == kDNSServiceErr_NoError )
+			    KeyName, &valueLen, (const void**)pvalue ) == kDNSServiceErr_NoError )
 		{
 			// Is it a simple flag ?
 			if ( value == NULL || valueLen == 0 )
