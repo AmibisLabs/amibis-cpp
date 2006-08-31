@@ -28,6 +28,8 @@ class DnsSdService : public CommonServiceValues
 {
 public:
 	DnsSdService();
+	DnsSdService( const DnsSdService& ToCopy );
+	DnsSdService( const DnsSdService* ToCopy );
 	DnsSdService( const SimpleString FullName, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
 	DnsSdService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
 	DnsSdService( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, const SimpleString HostName = SimpleString::EmptyString );
@@ -45,6 +47,8 @@ public:
 protected:
 	void Empty();
 	void Init();
+	void Init( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName = SimpleString::EmptyString );
+
 
 public:
 	char Name[ServiceField];						// Name of the service (63 bytes + '\0')

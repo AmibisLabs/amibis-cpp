@@ -51,12 +51,17 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
 	uint16_t txtLen, const char *txtRecord, void *context )
 {
+	SimpleString FullName;
+
 	if ( errorCode != kDNSServiceErr_NoError )
 		return;
 
 	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)context;
 
-	DnsSdService ServiceInfo( fullname, ntohs(port), hosttarget );
+	FullName = fullname;
+	FullName.ReplaceAll( "\\032", " " );
+
+	DnsSdService ServiceInfo( FullName, ntohs(port), hosttarget );
 	ServiceInfo.Properties.ImportTXTRecord( txtLen, txtRecord );
 	MyThis->CallbackClient( ServiceInfo, flags | kDNSServiceFlagsAdd );
 }

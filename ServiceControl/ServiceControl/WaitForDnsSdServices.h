@@ -20,6 +20,7 @@
 #include <System/AtomicCounter.h>
 #include <System/SimpleString.h>
 #include <ServiceControl/DnsSdService.h>
+#include <ServiceControl/DnsSdProxy.h>
 
 #ifndef WIN32
 #include <sys/time.h>
@@ -31,10 +32,11 @@ typedef bool (FUNCTION_CALL_TYPE *IsServiceValidForMe)(const char * fullname, co
 
 class WaitForDnsSdServices;
 
-class SearchService : public DnsSdService
+class SearchService : public DnsSdService, public DnsSdProxyClient
 {
 	friend class WaitForDnsSdServices;
 	friend class Service;
+	friend class DnsSdProxy;
 
 public:
 	SearchService();
@@ -58,8 +60,12 @@ private:
 	IsServiceValidForMe CallBack;
 	void * UserData;
 
+	// Search call back when using DnsSd directly
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context );
+
+	// Search call back when using DnsSdProxy
+	void DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const DnsSdService& CurrentService );
 };
 
 class WaitForDnsSdServices : public Thread
@@ -82,9 +88,9 @@ protected:
 
 	void Run();
 
-	bool LockService( const char * ServiceName );
-	void UnlockService( const char * ServiceName );
-	bool IsServiceLocked( const char * ServiceName );
+	bool LockService( const SimpleString ServiceName );
+	void UnlockService( const SimpleString ServiceName );
+	bool IsServiceLocked( const SimpleString ServiceName );
 
 	AtomicCounter NbServicesReady;
 	Event AllFound;

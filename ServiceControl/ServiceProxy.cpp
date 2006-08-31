@@ -55,6 +55,8 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 				continue;
 			}
 
+			// SimpleString TmpName = LocalProp.GetName();
+
 			// Parse property
 			TmpString = LocalProp.GetValue();
 			char * TmpChar = (char*)TmpString.GetStr();
@@ -205,16 +207,15 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 		}
 	}
 
-	if ( ConnectToCtrlServer(HostName, ControlPort) == true )
+	if ( FullDescription == false )
 	{
-		if ( FullDescription == false )
+		if ( ConnectToCtrlServer(HostName, ControlPort) == true )
 		{
-			UpdateDescription();
+			if ( FullDescription == false )
+			{
+				UpdateDescription();
+			}
 		}
-	}
-	else
-	{
-		// throw "ServiceProxy failed";
 	}
 }
 
@@ -297,7 +298,15 @@ SimpleString ServiceProxy::GetName()
 */
 unsigned int ServiceProxy::GetPeerId()
 {
-	return ControlClient::GetPeerId();
+	unsigned int tmpPeerId = 0;
+	SimpleString lPeerId = GetVariableValue( "id" );
+
+	if ( sscanf( lPeerId.GetStr(), "%x", &tmpPeerId ) == 1 )
+	{
+		return tmpPeerId;
+	}
+
+	return 0;
 }
 
     /**
@@ -329,11 +338,17 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 		throw "Unknown variable. Call HasVariableFirst.";
 	}
 
-	if ( pVar->GetAccess() == ConstantAccess && FullDescription == true )
+	// If the variable is initialised
+	if ( pVar->IsInitialised() )
 	{
-		return pVar->GetValue();
+		// If we can get the current value
+		if ( pVar->GetAccess() == ConstantAccess && FullDescription == true )
+		{
+			return pVar->GetValue();
+		}
 	}
 
+	// Il all other cases
 	pVar = QueryVariableDescription( VarName );
 	return pVar->GetValue();
 }

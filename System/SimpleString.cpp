@@ -621,6 +621,86 @@ const SimpleString Omiscid::operator+(const SimpleString& str1, const char* str2
 	return SimpleString(str1.GetStr(), str2);
 }
 
+bool SimpleString::ReplaceFirst(const SimpleString SearchPattern, const SimpleString ReplacedPattern)
+{
+	char * TmpChar;
+	char * Buffer;
+	SimpleString TmpString;
+
+	Buffer = (char*)GetStr();
+
+	TmpChar = strstr( Buffer, SearchPattern.GetStr() );
+	if ( TmpChar == NULL )
+	{
+		// Not Found
+		return false;
+	}
+
+
+	if ( TmpChar == Buffer )	// Search String is at the beginning of the string
+	{
+		TmpString = SubString( SearchPattern.GetLength(), GetLength() );
+	}
+	else
+	{
+		// Build the string with the remplacement string
+		TmpString = SubString(0, (int)(TmpChar-Buffer)) + ReplacedPattern + SimpleString(TmpChar + SearchPattern.GetLength() );
+	}
+
+	// Ok, now, I will contain the result
+	*this = TmpString;
+
+	return true;
+}
+
+bool SimpleString::ReplaceAll(const SimpleString SearchPattern, const SimpleString ReplacedPattern)
+{
+	bool ret = false;
+
+	while( ReplaceFirst( SearchPattern, ReplacedPattern ) )
+	{
+		ret = true;
+	}
+
+	return false;
+}
+
+/* Test of 2 previous functions...
+	SimpleString Tutu;
+	
+	Tutu = "\\032Yop";
+	TraceError( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	TraceError( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032";
+	TraceError( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	TraceError( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032blib";
+	TraceError( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	TraceError( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\0 liajezijclz jl ijzzlij blib";
+	TraceError( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	TraceError( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032liajezijclz jl ijzzlij blib";
+	TraceError( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceAll( "\\032", " " );
+	TraceError( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032liajezijclz jl\\032 ijzzlij blib";
+	TraceError( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceAll( "\\032", "+++" );
+	TraceError( "%s\n", Tutu.GetStr() );
+
+	*/
+
+
 using namespace std;
 
 /*

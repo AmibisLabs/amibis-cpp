@@ -243,6 +243,9 @@ public:
 	 */
 	SimpleString SubString(int begin, int end) const;
 
+	bool ReplaceFirst(const SimpleString SearchPattern, const SimpleString ReplacedPattern);
+	bool ReplaceAll(const SimpleString SearchPattern, const SimpleString ReplacedPattern);
+
 private:
 	/** \brief Remove the reference on the StringData object.
 	 *

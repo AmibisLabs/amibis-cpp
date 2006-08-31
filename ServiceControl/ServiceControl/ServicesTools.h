@@ -48,7 +48,7 @@ public:
 	}
 
 	// If we do not plan to filter with the name, ask for all services
-	int NeedService( IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
+	int NeedService( IsServiceValidForMe eCallBack, void * eUserData = NULL )
 	{
 		return WaitForDnsSdServices::NeedService( SimpleString::EmptyString, OmiscidServiceDnsSdType, eCallBack, eUserData );
 	}

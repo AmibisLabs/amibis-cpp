@@ -41,7 +41,7 @@
 		#include "StdAfx.h"
 		// To prevent problems using iostream later...
 		#ifndef _IOSTREAM_
-			#error "You must include '<iostream>' in your 'StdAfx.h' file.
+			#error "You must include '<iostream>' in your 'StdAfx.h' file."
 		#endif
 	#else
 		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */

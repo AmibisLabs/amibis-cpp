@@ -261,7 +261,7 @@ ServiceProperties::~ServiceProperties()
 	}
 }
 
-int ServiceProperties::GetTXTRecordLength()
+int ServiceProperties::GetTXTRecordLength() const
 {
 	return TXTRecordLength;
 }
@@ -413,7 +413,7 @@ void ServiceProperties::NotifyChanges()
 	}
 }
 
-bool ServiceProperties::TxtRecordIsFull()
+bool ServiceProperties::TxtRecordIsFull() const
 {
 	if ( TXTRecordLength > MaxTxtRecordSize )
 		return true;
@@ -421,7 +421,7 @@ bool ServiceProperties::TxtRecordIsFull()
 	return false;
 }
 
-const char * ServiceProperties::ExportTXTRecord()
+const char * ServiceProperties::ExportTXTRecord() const
 {
 	int i;
 	int CopyHere;
@@ -454,7 +454,7 @@ const char * ServiceProperties::ExportTXTRecord()
 				TmpProperty += Properties[i].Value;
 			}
 			// Copy after the length the value of the property
-			memcpy( &TXTRecord[CopyHere+1], TmpProperty.GetStr(), Properties[i].Length-1 );
+			memcpy( (char*)&TXTRecord[CopyHere+1], TmpProperty.GetStr(), Properties[i].Length-1 );
 			CopyHere += Properties[i].Length;
 		}
 	}
@@ -530,4 +530,10 @@ ServiceProperties::operator unsigned char*()
 ServiceProperties::operator const unsigned char*()
 {
 	return (const unsigned char *)ExportTXTRecord();
+}
+
+const ServiceProperties& ServiceProperties::operator=(const ServiceProperties& ToCopy )
+{
+	ImportTXTRecord( ToCopy.GetTXTRecordLength(), ToCopy.ExportTXTRecord() );
+	return *this;
 }

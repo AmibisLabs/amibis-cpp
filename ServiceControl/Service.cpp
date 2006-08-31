@@ -27,6 +27,8 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 {
 	OmiscidServiceSearchData * MyData = (OmiscidServiceSearchData *)UserData;
 
+	// printf( "%u;", GetTickCount() );
+
 	SimpleString Host(hosttarget);
 	ServiceProperties PropertiesForProxy;
 
@@ -61,21 +63,25 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 		PropertiesForProxy["name"] = "c/Service";
 	}
 
+	// printf( "%u;", GetTickCount() );
+
 	// To say if the service is the one we are looking for...
-	ServiceProxy * Proxy = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
-	if ( Proxy == NULL )
+	ServiceProxy * SP = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
+	if ( SP == NULL )
 	{
 		return false;
 	}
 
-	if ( MyData->Filter->IsAGoodService( *Proxy ) == false )
+	if ( MyData->Filter->IsAGoodService( *SP ) == false )
 	{
-		delete Proxy;
+		// printf( "%u;\n", GetTickCount() );
+		delete SP;
 		return false;
 	}
 
+	// printf("%u;\n", GetTickCount() );
 	// Return the found service
-	MyData->Proxy = Proxy;
+	MyData->Proxy = SP;
 	return true;
 }
 

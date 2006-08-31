@@ -43,25 +43,98 @@ public:
 
 ServiceFilter * filter;
 
+#include <ServiceControl/DnsSdProxy.h>
+
+ReentrantMutex MyReentrantMutex; // Une classe que j'ai ecrite pour gerer un mutext reentrant
+
+// Fonction publique...
+void CompteARebours1(unsigned int Reste)
+{
+    MyReentrantMutex.EnterMutex();
+	// qqchose de debile a faire... Pour ne pas avoir a appeler
+	// la fonction et faire un stack overflow...
+	for( int i = 0; i < 100000; i++)
+	{
+	}
+    if ( Reste == 0 )
+    {
+        // C'est finit
+            MyReentrantMutex.LeaveMutex();
+        return;
+    }
+        // On appelle recursivement et ca marche parceque le mutex est reentrant
+    CompteARebours1(Reste-1);
+    MyReentrantMutex.LeaveMutex();
+}
+
+Mutex MyMutex;
+
+// Fonction publique...
+void InternalCompteARebours2(unsigned int Reste)
+{
+	for( int i = 0; i < 100000; i++)
+	{
+	}
+    if ( Reste == 0 )
+    {
+        // C'est finit
+        return;
+    }
+        // On appelle recursivement et ca marche parceque le mutex est reentrant
+    CompteARebours1(Reste-1);
+}
+
+// Fonction publique...
+void CompteARebours2(unsigned int Reste)
+{
+    MyMutex.EnterMutex();
+    InternalCompteARebours2(Reste);
+    MyMutex.LeaveMutex();
+}
+
+
 int main(int argc, char * argv[])
 {
-	long timeout = 2500;
+
+
+#if 0 
+	DnsSdProxy MyProxy;
+	SimpleList<DnsSdService*>* pList;
+
+	for(;;)
+	{
+		Thread::Sleep(2000);
+		pList = DnsSdProxy::GetCurrentServicesList();
+
+		printf( "\nCurrent List\n" );
+		for( pList->First(); pList->NotAtEnd(); pList->Next() )
+		{
+			printf( "%s\n", pList->GetCurrent()->CompleteServiceName );
+		}
+	}
+#endif
+
+	DnsSdProxy MyProxy;
+	long timeout = 5000;
 
 	Service * finder = ServiceFactory.Create("Browser");
 	filter = NameIs("Yop");
 
-    for(int iter = 1;; iter++)
+    for(int iter = 1; ; iter++)
 	{
         long t = GetTickCount();
-        ServiceProxy * proxy = finder->FindService(*filter, timeout);
+        ServiceProxy * proxy = finder->FindService(*filter, 0);
         if (proxy == NULL)
 		{
             break;
         }
 		else
 		{
+		   printf( "%s\n", proxy->GetVariableValue("id").GetStr() );
 		   printf( "%d => %u\n", iter, GetTickCount()-t );
            filter = And(Not(proxy),filter);
+
+		   delete proxy;
 			// break;
         }
     }
@@ -70,9 +143,8 @@ int main(int argc, char * argv[])
 	delete finder;
 
     return 0;
-}
-#if 0 
 
+#if 0
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
 	TestRemoteVariableChangeListener TL;
@@ -194,6 +266,8 @@ int main(int argc, char * argv[])
 	//}
 	//
 	//return 0; */
-}
 
 #endif
+}
+
+

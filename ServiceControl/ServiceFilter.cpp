@@ -249,32 +249,33 @@ bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 	SimpleString ServiceName;
 	try
 	{
-	ServiceName = SP.GetVariableValue("name");
-	if ( ServiceName.IsEmpty() )
-	{
-		return false;
-	}
+		ServiceName = SP.GetName();
+		if ( ServiceName.IsEmpty() )
+		{
+			return false;
+		}
 
-	if ( OnlyPrefix )
-	{
-		if ( CaseInsensitive )
+		if ( OnlyPrefix )
 		{
-			return (strncasecmp(Name.GetStr(), ServiceName.GetStr(), Name.GetLength()) == 0);
+			if ( CaseInsensitive )
+			{
+				return (strncasecmp(Name.GetStr(), ServiceName.GetStr(), Name.GetLength()) == 0);
+			}
+			return (strncmp(Name.GetStr(), ServiceName.GetStr(), Name.GetLength()) == 0); 
 		}
-		return (strncmp(Name.GetStr(), ServiceName.GetStr(), Name.GetLength()) == 0); 
-	}
-	else
-	{
-		if ( CaseInsensitive )
+		else
 		{
-			return (strcasecmp(Name.GetStr(), ServiceName.GetStr()) == 0);
+			if ( CaseInsensitive )
+			{
+				return (strcasecmp(Name.GetStr(), ServiceName.GetStr()) == 0);
+			}
+			return (Name == ServiceName);
 		}
-		return (Name == ServiceName);
 	}
-	} catch (...)
+	catch (...)
 	{
-		return false;
 	}
+	return false;
 }
 
 ServiceFilter * ServiceNameIs::Duplicate()

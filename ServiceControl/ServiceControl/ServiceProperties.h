@@ -161,20 +161,22 @@ public:
 
 	int GetNumberOfProperties() { return NbProperties; }
 
-	int GetTXTRecordLength();
-	const char * ExportTXTRecord();
+	int GetTXTRecordLength() const;
+	const char * ExportTXTRecord() const;
 	
 	operator char*();
 	operator const char*();
 	operator unsigned char*();
 	operator const unsigned char*();
 
-	bool TxtRecordIsFull();
+	bool TxtRecordIsFull() const;
 	bool ImportTXTRecord( int RecordLength, const char * Record );
 
 	void NotifyChanges();
 
 	void Empty();
+
+	const ServiceProperties& operator=(const ServiceProperties& ToCopy );
 
 protected:
 	// according to the DNS-SD specifications, can be up to 8000 bytes

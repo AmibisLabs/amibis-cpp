@@ -8,6 +8,8 @@
  */
 
 #include <ServiceControl/WaitForDnsSdServices.h>
+#include <ServiceControl/DnsSdProxy.h>
+
 #include <System/Portage.h>
 
 #ifndef WIN32
@@ -30,10 +32,15 @@ SearchService::SearchService()
 	DNSSocket = (SOCKET)SOCKET_ERROR;
 	CallBack = NULL;
 	UserData = NULL;
+	Ref = NULL;
 }
 
 SearchService::~SearchService()
 {
+	if ( Ref != NULL )
+	{
+		DNSServiceRefDeallocate( Ref );
+	}
 }
 
 WaitForDnsSdServices::WaitForDnsSdServices()
@@ -53,9 +60,9 @@ WaitForDnsSdServices::~WaitForDnsSdServices()
   StopThread(); 
 }
 
-bool WaitForDnsSdServices::IsServiceLocked( const char * ServiceName )
+bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
 {
-	if ( ServiceName == NULL )
+	if ( ServiceName.IsEmpty() )
 	{
 		return false;
 	}
@@ -71,9 +78,9 @@ bool WaitForDnsSdServices::IsServiceLocked( const char * ServiceName )
 	return false;
 }
 
-bool WaitForDnsSdServices::LockService( const char * ServiceName )
+bool WaitForDnsSdServices::LockService( const SimpleString ServiceName )
 {
-	if ( ServiceName == NULL )
+	if ( ServiceName.IsEmpty() )
 	{
 		return false;
 	}
@@ -92,9 +99,9 @@ bool WaitForDnsSdServices::LockService( const char * ServiceName )
 	return true;
 }
 
-void WaitForDnsSdServices::UnlockService( const char * ServiceName )
+void WaitForDnsSdServices::UnlockService( const SimpleString ServiceName )
 {
-	if ( ServiceName == NULL )
+	if ( ServiceName.IsEmpty() )
 	{
 		return;
 	}
@@ -111,11 +118,15 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 {
 	SearchService * MyThis = (SearchService *)context;
 
+	// Some error occurs or a service is removed...
 	if ( errorCode != kDNSServiceErr_NoError )
 		return;
 
+	SimpleString FullName = fullname;
+	FullName.ReplaceAll( "\\032", " " );
+
 	// Do we already consider this service ?
-	if ( MyThis->Parent->IsServiceLocked( (char*)fullname ) )
+	if ( MyThis->Parent->IsServiceLocked(FullName) )
 	{
 		// yes, so exit
 		return;
@@ -124,7 +135,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 	// Call the callback
 	if ( MyThis->CallBack )
 	{
-		if ( MyThis->CallBack( fullname,hosttarget, ntohs(port), txtLen, txtRecord, MyThis->UserData) == false )
+		if ( MyThis->CallBack( FullName.GetStr(), hosttarget, ntohs(port), txtLen, txtRecord, MyThis->UserData) == false )
 		{
 			return;
 		}
@@ -132,14 +143,14 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 		
 	// We lock the full service Name to prevent multiple use of the same instance
 	// of a service...
-	if ( MyThis->Parent->LockService( (char*)fullname ) == false )
+	if ( MyThis->Parent->LockService( FullName ) == false )
 	{
 		// already used...
 		return;
 	}
 
 	// Fill the service informations
-	strlcpy( MyThis->CompleteServiceName, fullname, sizeof(MyThis->CompleteServiceName) );
+	strlcpy( MyThis->CompleteServiceName, FullName.GetStr(), sizeof(MyThis->CompleteServiceName) );
 	strlcpy( MyThis->HostName, hosttarget, sizeof(MyThis->HostName) );
 	MyThis->Port = ntohs( port );
 	MyThis->Properties.ImportTXTRecord( txtLen, txtRecord );
@@ -158,6 +169,9 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 	
 	SearchService * MyThis = (SearchService *)context;
 
+	SimpleString FullName = serviceName;
+	FullName.ReplaceAll( "\\032", " " );
+
 	if ( flags & kDNSServiceFlagsAdd )
 	{
 		if ( MyThis->IsResolved )
@@ -168,7 +182,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 
 		// If the search name == 0, we do check for every service, in all other case, we compare
 		// The search name with the current service
-		if ( MyThis->SearchNameLength == 0 || strncasecmp( MyThis->SearchName, serviceName, MyThis->SearchNameLength ) == 0 )
+		if ( MyThis->SearchNameLength == 0 || strncasecmp( MyThis->SearchName, (char*)FullName.GetStr(), MyThis->SearchNameLength ) == 0 )
 		{
 			// A new service in the list, resolve it to see if it is the searched one...
 			DNSServiceRef Ref;
@@ -194,8 +208,69 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 				MyThis->IsResolved = false;
 				// For my parent, there is one service
 				--MyThis->Parent->NbServicesReady;
+				// Unlock the service to be completed...
+				MyThis->Parent->UnlockService( FullName );
 			}
 		}
+	}
+}
+
+void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const DnsSdService& CurrentService )
+{
+	if ( flags & kDNSServiceFlagsAdd )
+	{
+		if ( IsResolved )
+		{
+			// Not me, I am already resolved...
+			return;
+		}
+
+		// We do not need to make \032 modification...
+		SimpleString FullName = CurrentService.CompleteServiceName;
+
+		// If the search name == 0, we do check for every service, in all other case, we compare
+		// The search name with the current service
+		if ( SearchNameLength == 0 || strncasecmp( SearchName, (char*)FullName.GetStr(), SearchNameLength ) == 0 )
+		{
+			// Do we already consider this service ?
+			if ( Parent->IsServiceLocked(FullName) )
+			{
+				// yes, so exit
+				return;
+			}
+
+			// Call the callback
+			if ( CallBack )
+			{
+				if ( CallBack( FullName.GetStr(), CurrentService.HostName, CurrentService.Port,
+					CurrentService.Properties.GetTXTRecordLength(), CurrentService.Properties.ExportTXTRecord(),
+					UserData) == false )
+				{
+					return;
+				}
+			}
+				
+			// We lock the full service Name to prevent multiple use of the same instance
+			// of a service...
+			if ( Parent->LockService( FullName ) == false )
+			{
+				// already used...
+				return;
+			}
+
+			// Fill the service informations
+			strlcpy( CompleteServiceName, FullName.GetStr(), sizeof(CompleteServiceName) );
+			strlcpy( HostName, CurrentService.HostName, sizeof(HostName) );
+			Port = CurrentService.Port;
+			Properties = CurrentService.Properties;
+			IsResolved = true;
+
+			++Parent->NbServicesReady;
+		}
+	}
+	else
+	{
+		// remove
 	}
 }
 
@@ -229,14 +304,19 @@ bool SearchService::StartSearch( const SimpleString eName, const SimpleString eR
 	CallBack = eCallBack;
 	UserData = eUserData;
 
-	if ( DNSServiceBrowse(&Ref,0,0,eRegType.GetStr(),"",SearchCallBackDNSServiceBrowseReply,this) == kDNSServiceErr_NoError )
+	// If no proxy is running, launch DnsSdConnection
+	if ( DnsSdProxy::IsEnabled() == false )
 	{
-		DNSSocket = DNSServiceRefSockFD( Ref );
-		DNSSDConnection = true;
-		return true;
+		if ( DNSServiceBrowse(&Ref,0,0,eRegType.GetStr(),"",SearchCallBackDNSServiceBrowseReply,this) == kDNSServiceErr_NoError )
+		{
+			DNSSocket = DNSServiceRefSockFD( Ref );
+			DNSSDConnection = true;
+			return true;
+		}
+		// here we do not get an answer
+		return false;
 	}
-
-	return false;
+	return true;
 }
 
 int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleString eRegType, IsServiceValidForMe eCallBack, void * eUserData )
@@ -264,64 +344,104 @@ void WaitForDnsSdServices::Run()
 	int i;
 	int MaxDesc = 0;	// Maximal descriptor for the select function
 
-	while(  !StopPending()  )
+	if ( DnsSdProxy::IsEnabled() )
 	{
-		FD_ZERO(&fds);
-		MaxDesc = 0;
+		DnsSdServicesList * pList;	// List Of Services comming from the DnsSdProxy
 
-		ThreadSafeSection.EnterMutex();
-		MaxDesc = 0;
-		// Initiate DNS SD Connection
-		timeout.tv_sec = 0;
-		timeout.tv_usec = 10000;	// 10ms
-
-		if ( NbSearchServices == 0 )
+		// We work until the end using a Dns proxy
+		while(  !StopPending()  )
 		{
-			ThreadSafeSection.LeaveMutex();
-			Sleep(10);
-			continue;
-		}
-
-		for( i = 0; i < NbSearchServices; i++ )
-		{
-			FD_SET( SearchServices[i].DNSSocket, &fds );
-#ifndef WIN32
-			// On unix we must give the max fd value + one
-			if ( SearchServices[i].DNSSocket > MaxDesc )
+			pList = DnsSdProxy::GetCurrentServicesList();
+			if ( pList != NULL )
 			{
-				MaxDesc = SearchServices[i].DNSSocket;
+				ThreadSafeSection.EnterMutex();
+				// Find the readable sockets, first version, must be improve
+				for( i = 0; i < NbSearchServices; i++ )
+				{
+					for( pList->First(); pList->NotAtEnd(); pList->Next() )
+					{
+						SearchServices[i].DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
+					}
+				}
+
+				// delete the list
+				delete pList;
+
+				if ( NbServicesReady == NbSearchServices )
+				{
+					AllFound.Signal();
+				}
+
+				ThreadSafeSection.LeaveMutex();
+
+				// Wait for DnsSd Changes
+				DnsSdProxy::WaitForChanges(30);
 			}
-#endif
 		}
-
-#ifndef WIN32
-		MaxDesc = MaxDesc+1;
-#else
-		// On WIN32 plateform, the value is unused and remain 0
-#endif
-
-    	nReady = select(MaxDesc, &fds, NULL, NULL, &timeout);
-
-		// if at least 1 socket is readable...
-		if ( nReady > 0 )
+	}
+	else
+	{
+		// Work using connxions to DnsSd
+		while(  !StopPending()  )
 		{
-			// Find the readable sockets
+			ThreadSafeSection.EnterMutex();
+
+			if ( NbSearchServices == 0 )
+			{
+				ThreadSafeSection.LeaveMutex();
+				Sleep(30);	// 30 ms
+				continue;
+			}
+
+			FD_ZERO(&fds);
+
+			MaxDesc = 0;
+
+			// Initiate DNS SD Connection
+			timeout.tv_sec = 0;
+			timeout.tv_usec = 30000;	// 10ms
+
 			for( i = 0; i < NbSearchServices; i++ )
 			{
-				if ( FD_ISSET( SearchServices[i].DNSSocket, &fds ) )
+				FD_SET( SearchServices[i].DNSSocket, &fds );
+#ifndef WIN32
+				// On unix we must give the max fd value + one
+				if ( SearchServices[i].DNSSocket > MaxDesc )
 				{
-					// Process the result
-					DNSServiceProcessResult(SearchServices[i].Ref);
+					MaxDesc = SearchServices[i].DNSSocket;
+				}
+#endif
+			}
+
+#ifndef WIN32
+			MaxDesc = MaxDesc+1;
+#else
+			// On WIN32 plateform, the value is unused and remain 0
+#endif
+
+    		nReady = select(MaxDesc, &fds, NULL, NULL, &timeout);
+
+			// if at least 1 socket is readable...
+			if ( nReady > 0 )
+			{
+				// Find the readable sockets
+				for( i = 0; i < NbSearchServices; i++ )
+				{
+					if ( FD_ISSET( SearchServices[i].DNSSocket, &fds ) )
+					{
+						// Process the result
+						DNSServiceProcessResult(SearchServices[i].Ref);
+					}
 				}
 			}
-		}
 
-		if ( NbServicesReady == NbSearchServices )
-		{
-			AllFound.Signal();
-		}
+			if ( NbServicesReady == NbSearchServices )
+			{
+				AllFound.Signal();
+			}
 
-		ThreadSafeSection.LeaveMutex();
+			ThreadSafeSection.LeaveMutex();
+		}
 	}
 }
 
