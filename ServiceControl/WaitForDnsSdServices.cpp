@@ -45,6 +45,9 @@ SearchService::~SearchService()
 
 WaitForDnsSdServices::WaitForDnsSdServices()
 	: ServicesUsed(MaxSearchServices)
+#ifdef DEBUG
+	, Thread( "WaitForDnsSdServices" )
+#endif
 {
 	NbSearchServices = 0;
 	NbServicesReady = 0;
@@ -243,7 +246,7 @@ void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const D
 			if ( CallBack )
 			{
 				if ( CallBack( FullName.GetStr(), CurrentService.HostName, CurrentService.Port,
-					CurrentService.Properties.GetTXTRecordLength(), CurrentService.Properties.ExportTXTRecord(),
+					(uint16_t)CurrentService.Properties.GetTXTRecordLength(), CurrentService.Properties.ExportTXTRecord(),
 					UserData) == false )
 				{
 					return;

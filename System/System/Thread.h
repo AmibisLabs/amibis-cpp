@@ -10,6 +10,10 @@
 #include <System/Config.h>
 #include <System/Event.h>
 
+#ifdef DEBUG
+#include <System/SimpleString.h>
+#endif
+
 namespace Omiscid {
 
 /**
@@ -25,13 +29,25 @@ namespace Omiscid {
  */
 class Thread
 {
+
+#ifdef DEBUG
+public:
+	// For debugging mode
+	SimpleString ThreadName;
+	
+public:
+	Thread(const SimpleString Name, bool autostart=false);
+
+#else
+
 public:
 	/** @brief Constructor
 	 * 
 	 * @param autostart [in] if true the constructor call automatically the method 'Start'. (default false)
 	 */
 	Thread(bool autostart=false);
-	
+#endif
+
 	/** @brief Destructor 
 	 * 
 	 * Ask the end of the thread, 

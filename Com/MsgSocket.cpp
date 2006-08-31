@@ -97,6 +97,9 @@ message_id(0),
 peer_pid(0),
 receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
+#ifdef DEBUG
+	,Thread( "MsgSocket" )
+#endif
 {
 	buffer = new unsigned char[bufferSize];
 	SendBuffer = new unsigned char[TCP_BUFFER_SIZE];
@@ -121,6 +124,9 @@ message_id(0),
 peer_pid(0),
 receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
+#ifdef DEBUG
+	,Thread( "MsgSocket" )
+#endif
 {
 	socket = new Socket(type);
 	SetMaxMessageSizeForTCP(TCP_BUFFER_SIZE-1);

@@ -148,6 +148,9 @@ SimpleString XMLMessage::ExtractTextContent(xmlNodePtr node)
 ///////////////////////////////////////////////////////////////////
 
 XMLTreeParser::XMLTreeParser()
+#ifdef DEBUG
+	: Thread( "XMLTreeParser" )
+#endif
 {
 	// Initialise XsdValidators
 	ControlQueryValidator.CreateSchemaFromString( ControlQueryXsdSchema );

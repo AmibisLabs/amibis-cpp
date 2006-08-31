@@ -13,9 +13,17 @@ using namespace Omiscid;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-
+#ifdef DEBUG
+Thread::Thread(const SimpleString Name, bool autostart)
+#else
 Thread::Thread(bool autostart)
+#endif
 {
+#ifdef DEBUG
+	ThreadName = Name;
+#endif
+
+
 #ifdef WIN32
 	ThreadID = 0;
 	ThreadHandle  = NULL;
@@ -134,6 +142,10 @@ unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 
 	// Reset stat event
 	t->event.Reset();
+
+#ifdef DEBUG
+	TraceError( "%s\n", t->ThreadName.GetStr() );
+#endif
 
 	// Do my job
 	t->Run();

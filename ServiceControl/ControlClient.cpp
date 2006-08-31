@@ -563,7 +563,7 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer
 #ifdef DEBUG
 	// In debug mode, we validate xml before sending it, but nevertheless we send it...
 	// just for warning and conformity
-	ControlQueryValidator;
+	// ControlQueryValidator;
 #endif
 
 	// Create an answer waiter

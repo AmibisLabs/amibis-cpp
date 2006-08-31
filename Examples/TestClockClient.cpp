@@ -115,7 +115,7 @@ int main(int argc, char * argv[])
 	}
 #endif
 
-	DnsSdProxy MyProxy;
+	// DnsSdProxy MyProxy;
 	long timeout = 5000;
 
 	struct timeval temps;
@@ -128,7 +128,9 @@ int main(int argc, char * argv[])
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
+		TraceError( "ici" );
         ServiceProxy * proxy = finder->FindService(*filter, 0);
+		TraceError( "ici2" );
         gettimeofday(&temps,NULL);
 		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
 		if (proxy == NULL)
