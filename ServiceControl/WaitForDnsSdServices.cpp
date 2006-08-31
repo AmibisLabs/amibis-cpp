@@ -44,10 +44,11 @@ SearchService::~SearchService()
 }
 
 WaitForDnsSdServices::WaitForDnsSdServices()
-	: ServicesUsed(MaxSearchServices)
+	: 
 #ifdef DEBUG
-	, Thread( "WaitForDnsSdServices" )
+	Thread( "WaitForDnsSdServices" ),
 #endif
+	ServicesUsed(MaxSearchServices)
 {
 	NbSearchServices = 0;
 	NbServicesReady = 0;
