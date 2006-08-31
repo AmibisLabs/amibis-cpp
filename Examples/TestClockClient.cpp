@@ -5,6 +5,7 @@
  * @author Dominique Vaufreydaz
  */
 
+#include <System/Portage.h>
 #include <ServiceControl/Factory.h>
 #include <ServiceControl/ServiceFilter.h>
 #include <ServiceControl/ConnectorListener.h>
@@ -117,21 +118,27 @@ int main(int argc, char * argv[])
 	DnsSdProxy MyProxy;
 	long timeout = 5000;
 
+	struct timeval temps;
+	unsigned int t1, t2;
+
 	Service * finder = ServiceFactory.Create("Browser");
 	filter = NameIs("Yop");
 
     for(int iter = 1; ; iter++)
 	{
-        long t = GetTickCount();
+        gettimeofday(&temps,NULL);
+		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
         ServiceProxy * proxy = finder->FindService(*filter, 0);
-        if (proxy == NULL)
+        gettimeofday(&temps,NULL);
+		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
+		if (proxy == NULL)
 		{
             break;
         }
 		else
 		{
 		   printf( "%s\n", proxy->GetVariableValue("id").GetStr() );
-		   printf( "%d => %u\n", iter, GetTickCount()-t );
+		   printf( "%d => %u\n", iter, t2-t1 );
            filter = And(Not(proxy),filter);
 
 		   delete proxy;

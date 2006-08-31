@@ -19,6 +19,7 @@ mode:
     --prefix              print the prefix where lib script and headers are
     --doc                 print the path to the html documentation
     --doc-tag             print theline for doxyfile to link with the documentation
+    --all                 equivalent to `--cflags --libs`
 
 
 EOF
@@ -77,6 +78,10 @@ case "$1" in
 	    echo "@DOCDIR_CONTROL@/doc_control.tag=@DOCDIR_CONTROL@"
 	    exit 0
 	    ;;
+    --all)
+	    echo "-I@includedir@ `OmiscidCom-config --cflags` `xml2-config --cflags` -L@libdir@ -lOmiscidControl `xml2-config --libs`"
+	    exit 0
+	    ;;	    
     *)
 	echo "Unknown mode \"$1\""
 	echo
