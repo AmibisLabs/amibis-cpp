@@ -150,12 +150,12 @@ void Socket::Bind(const SimpleString addr, int port)
 	memset(&(my_addr.sin_zero), 0, 8); */
 	if ( FillAddrIn( &my_addr, addr, port ) == false )
 	{
-		throw SocketException("bind");
+		throw SocketException("Socket::Bind FillAddrIn");
 	}
 
 	if( bind(descriptor, (struct sockaddr*)&my_addr, sizeof(struct sockaddr) ) == SOCKET_ERROR)
 	{
-		throw SocketException("bind");
+		throw SocketException("Socket::Bind bind");
 	}
 
 }
