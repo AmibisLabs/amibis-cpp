@@ -115,7 +115,7 @@ int main(int argc, char * argv[])
 	}
 #endif
 
-	// DnsSdProxy MyProxy;
+	DnsSdProxy MyProxy;
 	long timeout = 5000;
 
 	struct timeval temps;
@@ -124,13 +124,11 @@ int main(int argc, char * argv[])
 	Service * finder = ServiceFactory.Create("Browser");
 	filter = NameIs("Yop");
 
-    for(int iter = 1; ; iter++)
+    for(int iter = 1; iter <= 6; iter++)
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
-		TraceError( "ici" );
-        ServiceProxy * proxy = finder->FindService(*filter, 0);
-		TraceError( "ici2" );
+        ServiceProxy * proxy = finder->FindService(*filter, timeout);
         gettimeofday(&temps,NULL);
 		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
 		if (proxy == NULL)
@@ -139,7 +137,7 @@ int main(int argc, char * argv[])
         }
 		else
 		{
-		   printf( "%s\n", proxy->GetVariableValue("id").GetStr() );
+		   printf( "%s %8.8x\n", proxy->GetName().GetStr(), proxy->GetPeerId() );
 		   printf( "%d => %u\n", iter, t2-t1 );
            filter = And(Not(proxy),filter);
 

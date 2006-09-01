@@ -85,12 +85,12 @@ bool Thread::StopThread(int wait_ms)
 		if ( event.Wait(wait_ms) == false )
 		{
 			// Timeout !!!
-			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d). Kill it.\n", ThreadID, wait_ms );
-			TerminateThread( ThreadHandle, 0 );
+			// TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d). Kill it.\n", ThreadID, wait_ms );
+			// TerminateThread( ThreadHandle, 0 );
 		}
 
 		// Close the Thread handle
-		CloseHandle( ThreadHandle );
+		// CloseHandle( ThreadHandle );
 
 		ThreadID = 0;
 		ThreadHandle = NULL;
@@ -107,7 +107,7 @@ bool Thread::StopThread(int wait_ms)
 		if(wait_ms != 0)
 		{
 			struct timeval now;
-			struct timespec timeout;
+			struct timespec timeout; 
 			int retcode;
 			int second = wait_ms/1000;
 			int nanos = (wait_ms-second*1000)*1000000;
@@ -144,11 +144,13 @@ unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 	t->event.Reset();
 
 #ifdef DEBUG
-	TraceError( "%s\n", t->ThreadName.GetStr() );
+	// TraceError( "%s\n", t->ThreadName.GetStr() );
 #endif
 
 	// Do my job
+	t->ThreadIsRunning = true;
 	t->Run();
+	t->ThreadIsRunning = false;
 
 	// revert my data
 	t->ThreadID = 0;
@@ -169,6 +171,11 @@ void* Thread::CallRun(void* ptr)
 	RandomInit();
 
 	t->ThreadIsRunning = true;
+
+#ifdef DEBUG
+	// TraceError( "%s\n", t->ThreadName.GetStr() );
+#endif
+
 	t->Run();
 	pthread_mutex_lock(&(t->mutex));
 	t->ThreadIsRunning = false;

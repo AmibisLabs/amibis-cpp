@@ -277,7 +277,7 @@ void XMLTreeParser::Run()
 	{
 		try
 		{
-			if(WaitForMessage(100))
+			if(WaitForMessage(10))
 			{
 				ProcessMessages();
 			}

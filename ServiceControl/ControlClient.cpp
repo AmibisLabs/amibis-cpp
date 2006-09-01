@@ -252,7 +252,7 @@ ControlClient::ControlClient(unsigned int serviceId)
 	// Ask to receive messge on my XMLTreeParser side
 	TcpClient::AddCallbackObject( this );
 
-	XMLTreeParser::StartThread();
+	// XMLTreeParser::StartThread();
 
 	// By default, I will process the ConrolFlow by myself
 	callback    = NULL;
@@ -264,7 +264,7 @@ ControlClient::~ControlClient()
 	TcpClient::RemoveAllCallbackObjects();
 	TcpClient::Stop();
 
-	XMLTreeParser::StopThread();
+	XMLTreeParser::StopThread(0);
 
 	for(listVariableAttr.First(); listVariableAttr.NotAtEnd();
 		listVariableAttr.Next())
@@ -291,6 +291,8 @@ bool ControlClient::ConnectToCtrlServer(const SimpleString host, int port)
 {
 	try
 	{
+		// We do not need now a XmlTreeParser
+		XMLTreeParser::StartThread();
 		ConnectToServer(host, port);
 		return true;
 	}

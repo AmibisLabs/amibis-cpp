@@ -23,7 +23,7 @@ public:
 	ServiceProxy * Proxy;
 };
 
-bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData)
+bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullname, const SimpleString hosttarget, uint16_t port, uint16_t txtLen, const SimpleString txtRecord, void * UserData)
 {
 	OmiscidServiceSearchData * MyData = (OmiscidServiceSearchData *)UserData;
 
@@ -32,7 +32,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 	SimpleString Host(hosttarget);
 	ServiceProperties PropertiesForProxy;
 
-	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord );
+	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord.GetStr() );
 
 	// Need to add name of the service
 #ifdef DEBUG
@@ -47,15 +47,15 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 	TmpString += CommonServiceValues::OmiscidServiceDnsSdType; // for example, "." + "_bip._tcp";
 
 	// Search it
-	char * Protocol = (char*)strstr( fullname, (const char*)TmpString.GetStr() );
-	if ( Protocol )
+	int Protocol = fullname.Find( TmpString.GetStr() );
+	if ( Protocol >= 0 )
 	{
 		// We've got it
 		SimpleString TmpString = fullname;
 
 		// Create a constant value with the name
 		SimpleString trace("c/");
-		trace += TmpString.SubString( 0, ((int)(Protocol-fullname)) );
+		trace += TmpString.SubString( 0, Protocol );
 		PropertiesForProxy["name"] = trace;
 	}
 	else
@@ -63,7 +63,6 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 		PropertiesForProxy["name"] = "c/Service";
 	}
 
-	// printf( "%u;", GetTickCount() );
 
 	// To say if the service is the one we are looking for...
 	ServiceProxy * SP = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
@@ -72,6 +71,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const char * fullname, con
 		return false;
 	}
 
+	// printf( "%u;", GetTickCount() );
 	if ( MyData->Filter->IsAGoodService( *SP ) == false )
 	{
 		// printf( "%u;\n", GetTickCount() );

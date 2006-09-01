@@ -145,6 +145,31 @@ size_t Omiscid::strlcpy(char *dst, const char *src, size_t size)
 
 	return i;
 }
+
+void * Omiscid::memrchr( const void * Buf, int c, size_t size )
+{
+	char *	TmpChar;
+	size_t		Pos;
+	char	TmpC;
+
+	if ( Buf == NULL || size <= 0 )
+	{
+		return NULL;
+	}
+
+	TmpChar = (char*)Buf;
+	TmpC = (char)c;
+
+	for( Pos = size-1; Pos >= 0; Pos-- )
+	{
+		if ( TmpChar[Pos] == TmpC )
+		{
+			return (void*)&TmpChar[Pos];
+		}
+	}
+	return NULL;
+}
+
 #endif
 
 

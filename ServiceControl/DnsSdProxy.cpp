@@ -153,10 +153,10 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, DNS
 		for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )
 		{
 			// Trace...
-			TraceError( "'%s' <=> '%s'\n", ServicesList.GetCurrent()->CompleteServiceName, NewService.CompleteServiceName );
+			TraceError( "'%s' <=> '%s'\n", ServicesList.GetCurrent()->CompleteServiceName.GetStr(), NewService.CompleteServiceName.GetStr() );
 
 			// Copy each members of this list into the new list
-			if ( strcasecmp( ServicesList.GetCurrent()->CompleteServiceName, NewService.CompleteServiceName ) == 0 )
+			if ( ServicesList.GetCurrent()->CompleteServiceName.EqualsCaseInsensitive( NewService.CompleteServiceName )  )
 			{
 				// Ok, we've got it
 				ServicesList.RemoveCurrent();

@@ -1,6 +1,7 @@
 #include <System/SimpleString.h>
 #include <System/Portage.h>
 
+#include <string.h>
 
 
 using namespace Omiscid;
@@ -263,6 +264,35 @@ bool SimpleString::StringData::Equals(const StringData& sd)
 	return res;
 }
 
+bool SimpleString::StringData::EqualsCaseInsensitive(const char* str)
+{
+	bool res;
+
+	if ( str == NULL )
+	{
+		return false;
+	}
+	
+	Lock();
+	res = (strcasecmp(str, data) == 0);
+	Unlock();
+
+	return res;
+}
+
+bool SimpleString::StringData::EqualsCaseInsensitive(const StringData& sd)
+{
+	bool res;
+
+	StringData& other = (StringData&)sd;
+
+	Lock();
+	res = (this == &sd) || Equals(other.GetDataPtr());
+	Unlock();
+
+	return res;
+}
+
 bool SimpleString::StringData::NotEquals(const char* str)
 {
 	bool res;
@@ -280,6 +310,35 @@ bool SimpleString::StringData::NotEquals(const char* str)
 }
 
 bool SimpleString::StringData::NotEquals(const StringData& sd)
+{
+	bool res;
+
+	StringData& other = (StringData&)sd;
+
+	Lock();
+	res = (this != &sd) && NotEquals(other.GetDataPtr());
+	Unlock();
+
+	return res;
+}
+
+bool SimpleString::StringData::NotEqualsCaseInsensitive(const char* str)
+{
+	bool res;
+
+	if ( str == NULL )
+	{
+		return true;
+	}
+
+	Lock();
+	res = (strcasecmp(str, data) != 0);
+	Unlock();
+
+	return res;
+}
+
+bool SimpleString::StringData::NotEqualsCaseInsensitive(const StringData& sd)
 {
 	bool res;
 
@@ -596,7 +655,26 @@ SimpleString& SimpleString::operator+= (double d)
 
 SimpleString SimpleString::SubString(int begin, int end) const
 {
-	StringData* sd = new StringData(GetStr(), begin, end);
+	int lend = end;
+
+	if ( lend < 0 )
+	{
+		if ( lend == -1 )
+		{
+			lend = GetLength();
+		}
+		else
+		{
+			return SimpleString::EmptyString;
+		}
+	}
+
+	if ( begin > lend )	// The Could not do the job, return an empty string
+	{
+		return SimpleString::EmptyString;
+	}
+
+	StringData* sd = new StringData(GetStr(), begin, lend);
 	return SimpleString(sd);
 }
 
@@ -619,6 +697,57 @@ const SimpleString Omiscid::operator+(const SimpleString& str1, const char* str2
 	if(str1.GetStr() == NULL) return SimpleString(str2);
 	if(str2 == NULL) return SimpleString(str1);
 	return SimpleString(str1.GetStr(), str2);
+}
+
+int SimpleString::Find(const SimpleString SearchPattern, bool Backward /* = false */ ) const
+{
+	char * TmpChar;
+	char * Buffer;
+	int    CurrentLen;
+
+	if ( SearchPattern.GetLength() > GetLength() )
+	{
+		return -1;
+	}
+
+	// Get the current buffer
+	Buffer = (char*)GetStr();
+
+	if ( Backward == false )
+	{
+		// Forward search
+		TmpChar = strstr( Buffer, SearchPattern.GetStr() );
+		if ( TmpChar == NULL )
+		{
+			// Not Found
+			return -1;
+		}
+		return (int)(TmpChar-Buffer);
+	}
+	else
+	{
+		// backward search from the end of the current string minus the len of the search string
+		CurrentLen = GetLength() - SearchPattern.GetLength();
+		for( ; ; )
+		{
+			TmpChar = (char*)memrchr( (void*)Buffer, (int)SearchPattern[0], (size_t)CurrentLen );
+			if ( TmpChar != NULL )
+			{
+				if ( strncmp( TmpChar, SearchPattern.GetStr(), SearchPattern.GetLength() ) == 0 )
+				{
+					// ok, found
+					return (int)(TmpChar-Buffer);
+				}
+
+				// Compute new search len for the next search
+				CurrentLen = CurrentLen - (int)(TmpChar-Buffer);
+			}
+			else
+			{
+				return -1;
+			}
+		}
+	}
 }
 
 bool SimpleString::ReplaceFirst(const SimpleString SearchPattern, const SimpleString ReplacedPattern)
@@ -795,6 +924,18 @@ bool SimpleString::operator!=(const SimpleString& str) const
 bool SimpleString::operator!=(const char* str) const
 {
 	return stringData->NotEquals(str); 
+}
+
+/*! Compare (case insensitive) 2 strings to check if they are equals */
+bool SimpleString::EqualsCaseInsensitive(const SimpleString& str) const
+{
+	return stringData->EqualsCaseInsensitive(*(str.stringData)); 
+}
+
+/*! Compare (case insensitive) 2 strings to check if they are equals */
+bool SimpleString::EqualsCaseInsensitive(const char * str) const
+{
+	return stringData->EqualsCaseInsensitive(str); 
 }
 
 bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer )

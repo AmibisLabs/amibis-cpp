@@ -90,10 +90,18 @@ private:
 		bool Equals(const StringData& sd);
 		/** \return if the string contained by this object match the string 'str'*/
 		bool Equals(const char* str);	
+		/** \return if the string contained by this object match the string contained in 'sd'*/
+		bool EqualsCaseInsensitive(const StringData& sd);
+		/** \return if the string contained by this object match the string 'str'*/
+		bool EqualsCaseInsensitive(const char* str);	
 		/** \return if the string contained by this object do not match the string contained in 'sd'*/
 		bool NotEquals(const StringData& sd);
 		/** \return if the string contained by this object do not match the string 'str''*/
 		bool NotEquals(const char* str);	
+		/** \return if the string contained by this object do not match the string contained in 'sd'*/
+		bool NotEqualsCaseInsensitive(const StringData& sd);
+		/** \return if the string contained by this object do not match the string 'str''*/
+		bool NotEqualsCaseInsensitive(const char* str);	
 		//@}
 
 		/**
@@ -226,6 +234,10 @@ public:
 	bool operator!=(const SimpleString& str) const;
 	/*! Compare (case sensitive) 2 strings to check if they are *not* equals */
 	bool operator!=(const char* str) const;
+	/*! Compare (case insensitive) 2 strings to check if they are equals */
+	bool EqualsCaseInsensitive(const SimpleString& str) const;
+	/*! Compare (case insensitive) 2 strings to check if they are equals */
+	bool EqualsCaseInsensitive(const char * str) const;
 	// to do
 	// bool CompareNoCase(const char* str) const;
 	// bool CompareNoCase(const SimpleString& str) const;
@@ -242,6 +254,8 @@ public:
 	 * return A new string conaining the sub-string
 	 */
 	SimpleString SubString(int begin, int end) const;
+
+	int Find(const SimpleString SearchPattern, bool Backward = false) const;
 
 	bool ReplaceFirst(const SimpleString SearchPattern, const SimpleString ReplacedPattern);
 	bool ReplaceAll(const SimpleString SearchPattern, const SimpleString ReplacedPattern);

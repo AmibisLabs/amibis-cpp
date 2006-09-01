@@ -17,6 +17,7 @@ namespace Omiscid {
 
 // Time function port under Windows
 int gettimeofday(struct timeval*tv,struct timezone*tz ); // tz is ignored on windows plateforms
+void * memrchr( const void * Buf, int c, size_t size );
 
 // random port
 int random();

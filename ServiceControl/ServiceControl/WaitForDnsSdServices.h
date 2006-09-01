@@ -28,7 +28,7 @@
 
 namespace Omiscid {
 
-typedef bool (FUNCTION_CALL_TYPE *IsServiceValidForMe)(const char * fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void * UserData);
+typedef bool (FUNCTION_CALL_TYPE *IsServiceValidForMe)(const SimpleString fullname, const SimpleString hosttarget, uint16_t port, uint16_t txtLen, const SimpleString txtRecord, void * UserData);
 
 class WaitForDnsSdServices;
 
@@ -49,7 +49,7 @@ public:
 	bool IsAvailable();
 
 private:
-	char SearchName[ServiceField];
+	SimpleString SearchName;
 	int SearchNameLength;
 	char Regtype[RegtypeLength];
 	DNSServiceRef Ref;

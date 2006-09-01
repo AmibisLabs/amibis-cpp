@@ -25,8 +25,6 @@ using namespace Omiscid;
 SearchService::SearchService()
 {
 	IsResolved = false;
-	SearchName[0] = '\0';
-	SearchNameLength = 0;
 	Regtype[0] = '\0';
 	DNSSDConnection = false;
 	DNSSocket = (SOCKET)SOCKET_ERROR;
@@ -154,8 +152,8 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 	}
 
 	// Fill the service informations
-	strlcpy( MyThis->CompleteServiceName, FullName.GetStr(), sizeof(MyThis->CompleteServiceName) );
-	strlcpy( MyThis->HostName, hosttarget, sizeof(MyThis->HostName) );
+	MyThis->CompleteServiceName = FullName;
+	MyThis->HostName = hosttarget;
 	MyThis->Port = ntohs( port );
 	MyThis->Properties.ImportTXTRecord( txtLen, txtRecord );
 	MyThis->IsResolved = true;
@@ -186,7 +184,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 
 		// If the search name == 0, we do check for every service, in all other case, we compare
 		// The search name with the current service
-		if ( MyThis->SearchNameLength == 0 || strncasecmp( MyThis->SearchName, (char*)FullName.GetStr(), MyThis->SearchNameLength ) == 0 )
+		if ( MyThis->SearchName.IsEmpty() || strncasecmp( (char*)MyThis->SearchName.GetStr(), (char*)FullName.GetStr(), MyThis->SearchName.GetLength() ) == 0 )
 		{
 			// A new service in the list, resolve it to see if it is the searched one...
 			DNSServiceRef Ref;
@@ -202,7 +200,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 	{
 		// We need to say that the service is no longer present
 		// Am I this service ? a service name is unique !!!
-		if ( strcmp( MyThis->Name, serviceName ) == 0 )
+		if ( MyThis->Name == serviceName ) 
 		{
 			// Doms: I am not sure, we can not have a "remove" before an "add" operation, just to prevent
 			// problems
@@ -221,6 +219,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 
 void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const DnsSdService& CurrentService )
 {
+	printf( "%u;", GetTickCount() );
 	if ( flags & kDNSServiceFlagsAdd )
 	{
 		if ( IsResolved )
@@ -234,7 +233,7 @@ void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const D
 
 		// If the search name == 0, we do check for every service, in all other case, we compare
 		// The search name with the current service
-		if ( SearchNameLength == 0 || strncasecmp( SearchName, (char*)FullName.GetStr(), SearchNameLength ) == 0 )
+		if ( SearchName.IsEmpty() || strncasecmp( (char*)SearchName.GetStr(), (char*)FullName.GetStr(), SearchName.GetLength() ) == 0 )
 		{
 			// Do we already consider this service ?
 			if ( Parent->IsServiceLocked(FullName) )
@@ -246,7 +245,7 @@ void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const D
 			// Call the callback
 			if ( CallBack )
 			{
-				if ( CallBack( FullName.GetStr(), CurrentService.HostName, CurrentService.Port,
+				if ( CallBack( FullName.GetStr(), CurrentService.HostName.GetStr(), CurrentService.Port,
 					(uint16_t)CurrentService.Properties.GetTXTRecordLength(), CurrentService.Properties.ExportTXTRecord(),
 					UserData) == false )
 				{
@@ -263,8 +262,8 @@ void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const D
 			}
 
 			// Fill the service informations
-			strlcpy( CompleteServiceName, FullName.GetStr(), sizeof(CompleteServiceName) );
-			strlcpy( HostName, CurrentService.HostName, sizeof(HostName) );
+			CompleteServiceName = FullName;
+			HostName = CurrentService.HostName;
 			Port = CurrentService.Port;
 			Properties = CurrentService.Properties;
 			IsResolved = true;
@@ -360,13 +359,19 @@ void WaitForDnsSdServices::Run()
 			{
 				ThreadSafeSection.EnterMutex();
 				// Find the readable sockets, first version, must be improve
+				// printf( "%u;", GetTickCount() );
 				for( i = 0; i < NbSearchServices; i++ )
 				{
+					if ( SearchServices[i].IsResolved )
+					{
+						continue;
+					}
 					for( pList->First(); pList->NotAtEnd(); pList->Next() )
 					{
 						SearchServices[i].DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
 					}
 				}
+				printf( "\n" );
 
 				// delete the list
 				delete pList;
@@ -374,13 +379,14 @@ void WaitForDnsSdServices::Run()
 				if ( NbServicesReady == NbSearchServices )
 				{
 					AllFound.Signal();
+					ThreadSafeSection.LeaveMutex();
+					break;
 				}
 
 				ThreadSafeSection.LeaveMutex();
-
-				// Wait for DnsSd Changes
-				DnsSdProxy::WaitForChanges(30);
 			}
+			// Wait for DnsSd Changes
+			DnsSdProxy::WaitForChanges(30);
 		}
 	}
 	else
@@ -442,6 +448,8 @@ void WaitForDnsSdServices::Run()
 			if ( NbServicesReady == NbSearchServices )
 			{
 				AllFound.Signal();
+				ThreadSafeSection.LeaveMutex();
+				break;
 			}
 
 			ThreadSafeSection.LeaveMutex();

@@ -25,21 +25,20 @@ DnsSdService::~DnsSdService()
 
 void DnsSdService::Init()
 {
-	Name[0] = '\0';
-	Protocol[0] = '\0';
-	Transport[0] = '\0';
+	Name.Empty();
+	Protocol.Empty();
+	Transport.Empty();
 	nTransport = UNKNOWN;
-	Domain[0] = '\0';
+	Domain.Empty();
 	Port = 0;
-	HostName[0] = '\0';
+	HostName.Empty();
 	RegisteredName.Empty();
 }
 
 void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
-	char * Search;
-	char * LastFind;
-	char * CurrentFind;
+	int LastFind;
+	int CurrentFind;
 
 	Empty();
 
@@ -48,23 +47,21 @@ void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const Sim
 		return;
 	}
 
-	strlcpy( CompleteServiceName, eFullName.GetStr(), sizeof(CompleteServiceName) );
+	CompleteServiceName = eFullName;
 
-	Search = strstr( CompleteServiceName, "._tcp." );
-	if ( Search )
+	if ( (LastFind=CompleteServiceName.Find("._tcp.")) >= 0 )
 	{
 		// TCP DnsSdService
 		nTransport = TCP;
-		strlcpy( Transport, "_tcp", sizeof(Transport) );
+		Transport  = "_tcp";
 	}
 	else
 	{
-		Search = strstr( CompleteServiceName, "._udp." );
-		if ( Search )
+		if ( (LastFind=CompleteServiceName.Find("._udp.")) >= 0 )
 		{
 			// UDP DnsSdService
 			nTransport = UDP;
-			strlcpy( Transport, "_udp", sizeof(Transport) );
+			Transport  = "_udp";
 		}
 	}
 
@@ -75,47 +72,42 @@ void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const Sim
 		throw ServiceException( "Transport protocol must be '_tcp' or '_udp'" );
 	}
 
+	// Last find is the beginning of the Protocol, its len is 6,
+	// So we can compute other information.
+
 	// Let's try to analyse the name
-	strlcpy( Domain, &Search[6], sizeof(Domain) );	 // 6 is the len of "._udp." or "._tcp_.";
+	Domain = CompleteServiceName.SubString(LastFind+6, -1);	 // 6 is the len of "._udp." or "._tcp_.";
+
+	SimpleString TmpString = CompleteServiceName.SubString( 0, LastFind);
 
 	// Search for the last occurence of "._" couple
-	Search[0] = '\0';
-	LastFind = NULL;
-	CurrentFind = CompleteServiceName-1;
-	while( (CurrentFind = strstr(CurrentFind+1, "._")) != NULL )
-	{
-		LastFind = CurrentFind+1;
-	}
+	CurrentFind = TmpString.Find("._", true);
 
-	if ( LastFind == NULL )
+	if ( CurrentFind == -1 )
 	{
 		Init();
 		return;
 	}
 
-	strlcpy( Protocol, LastFind, sizeof(Protocol) );
-	Search[0] = '.';
-
-	LastFind[-1] = '\0';
-	strlcpy( Name, CompleteServiceName, sizeof(Name) );
-	LastFind[-1] = '.';
+	// Extract Name an protocol
+	Name = CompleteServiceName.SubString( 0, CurrentFind );
+	Protocol = CompleteServiceName.SubString( CurrentFind+1, LastFind );
 
 	Port = ePort;
 
 	if ( eHostName.IsEmpty() )
 	{
-		SimpleString LocalHost = Socket::GetHostName();
-		strlcpy( HostName, LocalHost.GetStr(), ServiceField );
+		HostName = Socket::GetHostName();
 	}
 	else
 	{
-		strlcpy( HostName, eHostName.GetStr(), ServiceField  );
+		HostName = eHostName;
 	}
 }
 
 void DnsSdService::Empty()
 {
-	CompleteServiceName[0] = '\0';
+	CompleteServiceName.Empty();
 	Init();
 }
 
@@ -196,80 +188,7 @@ DnsSdService::DnsSdService( const DnsSdService* ToCopy )
 
 DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
-	char * Search;
-	char * LastFind;
-	char * CurrentFind;
-
-	Empty();
-
-	if ( eFullName.IsEmpty() || ePort == 0 )
-	{
-		return;
-	}
-
-	strlcpy( CompleteServiceName, eFullName.GetStr(), sizeof(CompleteServiceName) );
-
-	Search = strstr( CompleteServiceName, "._tcp." );
-	if ( Search )
-	{
-		// TCP DnsSdService
-		nTransport = TCP;
-		strlcpy( Transport, "_tcp", sizeof(Transport) );
-	}
-	else
-	{
-		Search = strstr( CompleteServiceName, "._udp." );
-		if ( Search )
-		{
-			// UDP DnsSdService
-			nTransport = UDP;
-			strlcpy( Transport, "_udp", sizeof(Transport) );
-		}
-	}
-
-	// Not a supported protocol...
-	if ( nTransport == UNKNOWN )
-	{
-		Init();
-		throw ServiceException( "Transport protocol must be '_tcp' or '_udp'" );
-	}
-
-	// Let's try to analyse the name
-	strlcpy( Domain, &Search[6], sizeof(Domain) );	 // 6 is the len of "._udp." or "._tcp_.";
-
-	// Search for the last occurence of "._" couple
-	Search[0] = '\0';
-	LastFind = NULL;
-	CurrentFind = CompleteServiceName-1;
-	while( (CurrentFind = strstr(CurrentFind+1, "._")) != NULL )
-	{
-		LastFind = CurrentFind+1;
-	}
-
-	if ( LastFind == NULL )
-	{
-		Init();
-		return;
-	}
-
-	strlcpy( Protocol, LastFind, sizeof(Protocol) );
-	Search[0] = '.';
-
-	LastFind[-1] = '\0';
-	strlcpy( Name, CompleteServiceName, sizeof(Name) );
-	LastFind[-1] = '.';
-
-	Port = ePort;
-
-	if ( eHostName.IsEmpty() )
-	{
-		SimpleString LocalHost = Socket::GetHostName();
-		strlcpy( HostName, LocalHost.GetStr(), ServiceField );
-	}
-	else
-	{
-		strlcpy( HostName, eHostName.GetStr(), ServiceField  );
-	}
+	Init( eFullName, ePort, eHostName );
 }
 
 DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
@@ -305,7 +224,7 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 		Init();
 		return;
 	}
-	strlcpy( Protocol, eProtocol.GetStr(), sizeof(Protocol) );
+	Protocol = eProtocol;
 
 	// Check parameters values
 	if ( CheckName( Name ) == false )
@@ -314,24 +233,24 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 		return;
 	}
 
-	strlcpy( Name, eName.GetStr(), sizeof(Name) );
+	Name = eName;
 
 	if ( eDomain.IsEmpty() )
 	{
-		strlcpy( Domain, "local.", sizeof(Domain) );
+		Domain = "local.";
 	}
 	else
 	{
-		strlcpy( Domain, eDomain.GetStr(), sizeof(Domain) );
+		Domain = eDomain;
 	}
 
 	if ( enTransport == TCP )
 	{
-		strlcpy( Transport, "_tcp", sizeof(Transport) );
+		Transport = "_tcp";
 	}
 	else
 	{
-		strlcpy( Transport, "_udp", sizeof(Transport) );
+		Transport = "_udp";
 	}
 	nTransport = enTransport;
 
@@ -339,12 +258,11 @@ DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtoc
 
 	if ( eHostName.IsEmpty() )
 	{
-		SimpleString LocalHost = Socket::GetHostName();
-		strlcpy( HostName, LocalHost.GetStr(), ServiceField );
+		HostName = Socket::GetHostName();
 	}
 	else
 	{
-		strlcpy( HostName, eHostName.GetStr(), ServiceField  );
+		HostName = eHostName;
 	}
 }
 
@@ -418,7 +336,10 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 	{
 		Mythis->Registered = true;
 		Mythis->RegisteredName = name;
-		snprintf( Mythis->CompleteServiceName, sizeof(Mythis->CompleteServiceName), "%s.%s%s", name, regtype, domain );
+		Mythis->CompleteServiceName = name;
+		Mythis->CompleteServiceName += ".";
+		Mythis->CompleteServiceName += regtype;
+		Mythis->CompleteServiceName += domain;
 	}
 	else
 	{
@@ -433,16 +354,19 @@ bool RegisterService::IsRegistered()
 
 bool RegisterService::Register()
 {
-	TemporaryMemoryBuffer ProtocolAndTransport(ProtocolAndTransportField+1);		// <Name> . "_tcp" or <Name> . "_udp"
 	int err;
+	SimpleString ProtocolAndTransport;		// <Name> . "_tcp" or <Name> . "_udp"
 
-	snprintf( ProtocolAndTransport, ProtocolAndTransportField+1, "%s.%s", Protocol, Transport );
+	ProtocolAndTransport  = Protocol;
+	ProtocolAndTransport += ".";
+	ProtocolAndTransport += Transport;
 
-	err = DNSServiceRegister( &DnsSdConnection, 0, 0, Name, ProtocolAndTransport, Domain, NULL, (uint16_t)htons(Port),
-		(uint16_t)Properties.GetTXTRecordLength(), Properties.ExportTXTRecord(), DnsRegisterReply, (void*)this );
+	err = DNSServiceRegister( &DnsSdConnection, 0, 0, (char*)Name.GetStr(), (char*)ProtocolAndTransport.GetStr(),
+		(char*)Domain.GetStr(), NULL, (uint16_t)htons(Port), (uint16_t)Properties.GetTXTRecordLength(),
+		(char*)Properties.ExportTXTRecord(), DnsRegisterReply, (void*)this );
 
-//	err = DNSServiceRegister( &DnsSdConnection, 0, 0, Name, ProtocolAndTransport, Domain, NULL, (uint16_t)htons(Port),
-//		0, "", DnsRegisterReply, (void*)this );
+	// err = DNSServiceRegister( &DnsSdConnection, 0, 0, "Yop", "_bip._tcp", "local.", NULL, (uint16_t)htons(Port),
+	//	0, "", DnsRegisterReply, (void*)this );
 
 	if ( err == kDNSServiceErr_NoError )
 	{

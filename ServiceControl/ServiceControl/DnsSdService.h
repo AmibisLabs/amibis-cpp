@@ -37,7 +37,7 @@ public:
 	// Virtual destructor always
 	virtual ~DnsSdService();
 
-	char CompleteServiceName[ServiceNameLength];	// Complete service Name
+	SimpleString CompleteServiceName; //[ServiceNameLength];	// Complete service Name
 	SimpleString RegisteredName;
 	ServiceProperties Properties;
 
@@ -51,14 +51,14 @@ protected:
 
 
 public:
-	char Name[ServiceField];						// Name of the service (63 bytes + '\0')
-	char Protocol[ServiceField];					// type of service (63 bytes + '\0')
-	char Transport[sizeof("_tcp")];					// transport protocol ("tcp" or "_udp")
+	SimpleString Name;						// Name of the service (63 bytes + '\0')
+	SimpleString Protocol;					// type of service (63 bytes + '\0')
+	SimpleString Transport;					// transport protocol ("tcp" or "_udp")
 	TransportProtocol nTransport;					// numerical value for transport protocol
-	char Domain[kDNSServiceMaxDomainName];			// DNS domain name
+	SimpleString Domain;					//[kDNSServiceMaxDomainName];			// DNS domain name
 
 	uint16_t Port;									// On which port the service is running
-	char HostName[ServiceField];					// On which host the service is running
+	SimpleString HostName;					// On which host the service is running
 
 	SimpleString ToString();						// print a human readable description of service
 };
