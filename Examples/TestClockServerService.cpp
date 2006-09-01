@@ -107,9 +107,13 @@ void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags 
 
 int main(int argc, char * argv[])
 {
-	for( int i = 0; i<15; i++ )
+	TemporaryMemoryBuffer MemBuf(50);
+
+	for( int i = 0; i<50; i++ )
 	{
-		Omiscid::Service * pServ = ServiceFactory.Create( "Yop" );
+		snprintf( MemBuf, 49, "%8.8x", ComTools::GeneratePeerId() );
+
+		Omiscid::Service * pServ = ServiceFactory.Create( (char*)MemBuf );
 		pServ->AddVariable( "RealNumber", "interger", "Just a number", ConstantAccess );
 		pServ->SetVariableValue( "RealNumber", i+1 );
 		pServ->Start();

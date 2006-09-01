@@ -201,36 +201,32 @@ namespace Omiscid {
 
 // Almost ugly for the moment
 #ifdef OMISCID_TRACE_ENABLE
-	/** @fct TraceError
-	 *  @brief used to warn messages
-	 */
-	inline void TraceError(const char * format, ... )
-	{
-	   va_list args;
-	   va_start( args, format );
-	   vfprintf( stderr, format, args );
-	   va_end( args );
-	}
-
-	inline void Trace(const char * format, ... )
-	{
-	   va_list args;
-	   va_start( args, format );
-	   vprintf( format, args );
-	   va_end( args );
-	}
-
+	#define OMISCID_TRACE_ENABLE_IS_ENABLED true
 #else
-	// in other mode, we do not print nothing
-	inline void TraceError(const char * format, ... )
-	{
-	}
-
-	inline void Trace(const char * format, ... )
-	{
-	}
+	#define OMISCID_TRACE_ENABLE_IS_ENABLED false
 #endif
 
+/** @fct TraceError
+	*  @brief used to warn messages
+	*/
+inline void TraceErrorRealCall(const char * format, ... )
+{
+	va_list args;
+	va_start( args, format );
+	vfprintf( stderr, format, args );
+	va_end( args );
+}
+
+inline void TraceRealCall(const char * format, ... )
+{
+	va_list args;
+	va_start( args, format );
+	vprintf( format, args );
+	va_end( args );
+}
+
+#define TraceError if (OMISCID_TRACE_ENABLE_IS_ENABLED) TraceErrorRealCall
+#define Trace	   if (OMISCID_TRACE_ENABLE_IS_ENABLED)	TraceRealCall
 
 #ifdef WIN32
 
