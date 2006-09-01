@@ -114,7 +114,29 @@ int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 	return 0;
 }
 
-#define MAX_LOGIN_LEN 512
+void * Omiscid::memrchr( const void * Buf, int c, size_t size )
+{
+	char *	TmpChar;
+	size_t		Pos;
+	char	TmpC;
+
+	if ( Buf == NULL || size <= 0 )
+	{
+		return NULL;
+	}
+
+	TmpChar = (char*)Buf;
+	TmpC = (char)c;
+
+	for( Pos = size-1; Pos >= 0; Pos-- )
+	{
+		if ( TmpChar[Pos] == TmpC )
+		{
+			return (void*)&TmpChar[Pos];
+		}
+	}
+	return NULL;
+}
 
 #endif // WIN32
 
@@ -146,30 +168,6 @@ size_t Omiscid::strlcpy(char *dst, const char *src, size_t size)
 	return i;
 }
 
-void * Omiscid::memrchr( const void * Buf, int c, size_t size )
-{
-	char *	TmpChar;
-	size_t		Pos;
-	char	TmpC;
-
-	if ( Buf == NULL || size <= 0 )
-	{
-		return NULL;
-	}
-
-	TmpChar = (char*)Buf;
-	TmpC = (char)c;
-
-	for( Pos = size-1; Pos >= 0; Pos-- )
-	{
-		if ( TmpChar[Pos] == TmpC )
-		{
-			return (void*)&TmpChar[Pos];
-		}
-	}
-	return NULL;
-}
-
 #endif
 
 
@@ -190,6 +188,8 @@ SimpleString Omiscid::GetLoggedUser()
 	SimpleString Login;
 
 #ifdef WIN32
+	#define MAX_LOGIN_LEN 512
+
 	DWORD len;
 	TemporaryMemoryBuffer UserName(MAX_LOGIN_LEN);	// for debugging purpose
 
@@ -200,6 +200,7 @@ SimpleString Omiscid::GetLoggedUser()
 	GetUserName( UserName, &len );
 	Login = UserName;
 
+	#undef MAX_LOGIN_LEN
 #else
 	// alternatively we could use getpwuid( geteuid() );
 	Login = getenv("LOGNAME");
