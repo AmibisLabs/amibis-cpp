@@ -28,7 +28,7 @@ public:
 		if ( Option == NULL || strcmp( Option, DefaultDomain.GetStr() ) == 0 )
 		{
 			OmiscidServiceDnsSdType = DefaultDomain;
-			TraceError( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
+			Trace( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
 			return;
 		}
 
@@ -46,13 +46,13 @@ public:
 		if ( sscanf( Option, "_bip_%[^.]._tcp", (char*)tmpdomain) != 1 )
 		{
 			OmiscidServiceDnsSdType = DefaultDomain;
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain.GetStr() );
+			TraceError( "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain.GetStr() );
 			return;
 		}
 
 		CommonServiceValues::OmiscidServiceDnsSdType = Option;
 
-		TraceError( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
+		Trace( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
 	};
 };
 

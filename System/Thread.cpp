@@ -149,7 +149,7 @@ unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 	t->event.Reset();
 
 #ifdef DEBUG
-	// TraceError( "%s\n", t->ThreadName.GetStr() );
+	// Trace( "%s\n", t->ThreadName.GetStr() );
 #endif
 
 	// Do my job
@@ -163,7 +163,7 @@ unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 	
 	// signal, my job is over
 	t->event.Signal();
-	// TraceError( "ThreadSignaled\n" );
+	// Trace( "ThreadSignaled\n" );
 	
 	return 0;
 }
@@ -178,7 +178,7 @@ void* Thread::CallRun(void* ptr)
 	t->ThreadIsRunning = true;
 
 #ifdef DEBUG
-	// TraceError( "%s\n", t->ThreadName.GetStr() );
+	// Trace( "%s\n", t->ThreadName.GetStr() );
 #endif
 
 	t->Run();

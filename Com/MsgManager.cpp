@@ -79,7 +79,7 @@ int MsgManager::ProcessMessages()
 	  }
 	  catch(SimpleException &e) // Catch every Omiscid exception within this, can break the whole system
 	  {
-		  TraceError( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
+		  Trace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
 	  }
       delete msg;
       listMsg.RemoveCurrent();
@@ -91,8 +91,7 @@ int MsgManager::ProcessMessages()
 
 void MsgManager::ProcessAMessage(Message* msg)
 {
-  TraceError( "processAMessage (pid= %u, mid=%u)\n", 
-	  msg->GetPeerId(), msg->GetMsgId());
+  Trace( "processAMessage (pid= %u, mid=%u)\n", msg->GetPeerId(), msg->GetMsgId());
 }
 
 

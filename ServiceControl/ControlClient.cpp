@@ -223,7 +223,7 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 
 			WaitersList.Unlock();
 
-			// TraceError( "AnswersManager::PushAnswer: PushMessage ok.\n" );
+			// Trace( "AnswersManager::PushAnswer: PushMessage ok.\n" );
 
 			return true;
 		}
@@ -233,7 +233,7 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 	}
 
 	// Do nothing with this message... probably timeout...
-	TraceError( "AnswersManager::PushAnswer: no waiters (probably timeout).\n" );
+	Trace( "AnswersManager::PushAnswer: no waiters (probably timeout).\n" );
 
 	// Unlock the list
 	WaitersList.Unlock();
@@ -326,7 +326,7 @@ VariableAttribut* ControlClient::QueryVariableDescription(const SimpleString var
 	{
 		if(!NameInList(var_name, listVariableName))
 		{
-			TraceError( "Unknown variable '%s', ask to the service.\n", var_name.GetStr());
+			Trace( "Unknown variable '%s', ask to the service.\n", var_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -365,7 +365,7 @@ VariableAttribut* ControlClient::QueryVariableModif(const SimpleString var_name,
 	VariableAttribut* var_attr = FindVariable(var_name);
 	if(!var_attr)
 	{    
-		TraceError( "Unknown Variable '%s' : Not Available Description.\n", var_name.GetStr());
+		Trace( "Unknown Variable '%s' : Not Available Description.\n", var_name.GetStr());
 		return NULL;
 	}
 
@@ -398,7 +398,7 @@ InOutputAttribut* ControlClient::QueryInputDescription(const SimpleString input_
 	{
 		if(!NameInList(input_name, listInputName))
 		{
-			TraceError( "Unknown Input '%s', ask to the service.\n",input_name.GetStr());
+			Trace( "Unknown Input '%s', ask to the service.\n",input_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -438,7 +438,7 @@ InOutputAttribut* ControlClient::QueryOutputDescription(const SimpleString outpu
 	{
 		if(!NameInList(output_name, listOutputName))
 		{
-			TraceError( "Unknown Output '%s', ask to the service.\n", output_name.GetStr());
+			Trace( "Unknown Output '%s', ask to the service.\n", output_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -478,7 +478,7 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const SimpleString in_
 	{
 		if(!NameInList(in_output_name, listInOutputName))
 		{
-			TraceError( "Unknown InOutput '%s', ask to the service.\n", in_output_name.GetStr());
+			Trace( "Unknown InOutput '%s', ask to the service.\n", in_output_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -785,7 +785,7 @@ void ControlClient::Subscribe(const SimpleString var_name)
 	}
 	else
 	{
-		TraceError( "variable unknown by client\n");
+		Trace( "variable unknown by client\n");
 	}
 }
 void ControlClient::Unsubscribe(const SimpleString var_name)
@@ -799,7 +799,7 @@ void ControlClient::Unsubscribe(const SimpleString var_name)
 	}
 	else
 	{
-		TraceError( "variable unknown by client\n");
+		Trace( "variable unknown by client\n");
 	}
 }
 

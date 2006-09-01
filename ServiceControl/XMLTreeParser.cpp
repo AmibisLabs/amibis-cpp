@@ -210,7 +210,7 @@ int XMLTreeParser::ProcessMessages()
 		}
 		catch( SimpleException &e )
 		{
-			TraceError( "'%s' occurs when processing XML message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
+			Trace( "'%s' occurs when processing XML message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
 		}
 		delete msg;
 		listXMLMsg.RemoveCurrent();
@@ -223,7 +223,7 @@ int XMLTreeParser::ProcessMessages()
 
 void XMLTreeParser::ProcessAMessage(XMLMessage* msg)
 {
-	TraceError( "XMLTreeParser::ProcessAMessage\n");
+	Trace( "XMLTreeParser::ProcessAMessage\n");
 	msg->Display();
 }
 
@@ -284,11 +284,11 @@ void XMLTreeParser::Run()
 		}
 		catch(...)
 		{
-			TraceError( "XMLTreeParser::Run: ExceptionRaisedFromDown\n" );
+			Trace( "XMLTreeParser::Run: ExceptionRaisedFromDown\n" );
 		}
 	}
 
-	// TraceError( "ThreadWasAskedToDie\n" );
+	// Trace( "ThreadWasAskedToDie\n" );
 }
 
 bool XMLTreeParser::HasMessages()

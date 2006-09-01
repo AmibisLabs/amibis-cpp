@@ -57,7 +57,7 @@ void TcpServer::Close()
 
 int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 {
-	// TraceError( "TcpServer::SendToClient\n");
+	// Trace( "TcpServer::SendToClient\n");
 	listConnections.Lock();
 	MsgSocket* ms = FindClientFromId(pid);
 	int nb_send = 0;
@@ -70,7 +70,7 @@ int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 		}
 		catch( SocketException &e )
 		{
-			TraceError( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			Trace( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
 	listConnections.Unlock();
@@ -93,7 +93,7 @@ int TcpServer::SendToClient(int* tab_len, const char** tab_buf, int nb_buf, unsi
 		}
 		catch( SocketException &e )
 		{
-			TraceError( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			Trace( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
 	listConnections.Unlock();
@@ -136,7 +136,7 @@ int TcpServer::SendToAllClients(int len, const char* buf)
 			}
 			catch( SocketException &e )
 			{
-				TraceError( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+				Trace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
 			}
 		}
 		else
@@ -187,7 +187,7 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 			}
 			catch( SocketException &e )
 			{
-				TraceError( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+				Trace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
 			}
 		}
 		else
@@ -226,7 +226,7 @@ int TcpServer::GetNbConnections()
 
 bool TcpServer::AcceptConnection(MsgSocket* sock)
 {
-	// TraceError( "in TcpServer::acceptConnection(MsgSocket*) %u\n", sock->GetPeerPid());
+	// Trace( "in TcpServer::acceptConnection(MsgSocket*) %u\n", sock->GetPeerPid());
 	listConnections.Lock();
 
 	// Init the socket

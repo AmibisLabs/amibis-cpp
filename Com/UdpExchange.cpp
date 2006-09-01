@@ -76,7 +76,7 @@ int UdpExchange::SendTo(int len, const char* buf, unsigned int pid)
 		}
 		catch( SocketException &e )
 		{
-			TraceError( "Error while sending to all peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			Trace( "Error while sending to all peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
 
@@ -96,7 +96,7 @@ void UdpExchange::SendToAll(int len, const char* buf)
 		}
 		catch( SocketException &e )
 		{
-			TraceError( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+			Trace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
 		}
     }  
   listUdpConnections.Unlock();
@@ -132,7 +132,7 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
     }
   else if (!msg_empty)
     {
-      TraceError( "Connection UDP from refused (Unknown, not initialized with empty message)\n");
+      Trace( "Connection UDP from refused (Unknown, not initialized with empty message)\n");
     }
   listUdpConnections.Unlock();
   return udp_found;

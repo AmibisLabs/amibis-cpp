@@ -97,9 +97,9 @@ void InOutputAttribut::GenerateLongDescription(SimpleString& str)
 
 void InOutputAttribut::GenerateRecordData(SimpleString& str)
 {
-  // TraceError( "in InOutputAttribut::GenerateRecordData\n");
-  // TraceError( "str before : |%s| \n", str.GetStr());
-  // TraceError( "Tcp port (%p) : %d %d \n", comTool, GetTcpPort() ,comTool->GetTcpPort());
+  // Trace( "in InOutputAttribut::GenerateRecordData\n");
+  // Trace( "str before : |%s| \n", str.GetStr());
+  // Trace( "Tcp port (%p) : %d %d \n", comTool, GetTcpPort() ,comTool->GetTcpPort());
   TemporaryMemoryBuffer tmp(30);
 
   int tcp, udp;
@@ -126,8 +126,8 @@ void InOutputAttribut::GenerateRecordData(SimpleString& str)
       str = str + "/" + tmp;
     }
 
-  // TraceError( "str after : %s \n", str.GetStr());
-  // TraceError( "out InOutputAttribut::GenerateRecordData\n");
+  // Trace( "str after : %s \n", str.GetStr());
+  // Trace( "out InOutputAttribut::GenerateRecordData\n");
 }
 
 const SimpleList<unsigned int>& InOutputAttribut::GetListPeerId()

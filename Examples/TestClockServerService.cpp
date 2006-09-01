@@ -107,10 +107,11 @@ void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags 
 
 int main(int argc, char * argv[])
 {
-	for( int i = 0; i<6; i++ )
+	for( int i = 0; i<15; i++ )
 	{
-		Service * pServ = ServiceFactory.Create( "Yop" );
-		pServ->AddConnector( "Input", "", AnInput );
+		Omiscid::Service * pServ = ServiceFactory.Create( "Yop" );
+		pServ->AddVariable( "RealNumber", "interger", "Just a number", ConstantAccess );
+		pServ->SetVariableValue( "RealNumber", i+1 );
 		pServ->Start();
 	}
 

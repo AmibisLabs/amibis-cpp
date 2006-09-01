@@ -142,7 +142,7 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt != NULL )
 	{
-		TraceError( "A connector nammed '%s' is already defined.\n", ConnectorName.GetStr() );
+		TraceError( "A connector named '%s' is already defined.\n", ConnectorName.GetStr() );
 		return false;
 	}
 
@@ -269,7 +269,7 @@ bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString 
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar != NULL )
 	{
-		TraceError( "A variable nammed '%s' is already defined.\n", VarName.GetStr() );
+		TraceError( "A variable named '%s' is already defined.\n", VarName.GetStr() );
 		return false;
 	}
 
@@ -298,7 +298,7 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable nammed '%s'.\n", VarName.GetStr() );
+		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return false;
 	}
 
@@ -319,7 +319,7 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable nammed '%s'.\n", VarName.GetStr() );
+		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return Empty;
 	}
 
@@ -337,7 +337,7 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable nammed '%s'.\n", VarName.GetStr() );
+		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return false;
 	}
 
@@ -358,7 +358,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable nammed '%s'.\n", VarName.GetStr() );
+		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return Empty;
 	}
 
@@ -373,13 +373,11 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	 */
 SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString);
-
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable nammed '%s'.\n", VarName.GetStr() );
-		return Empty;
+		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
+		return SimpleString::EmptyString;
 	}
 
 	return VariableAttribut::AccessToStr(pVar->GetAccess());

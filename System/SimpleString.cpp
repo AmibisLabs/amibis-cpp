@@ -798,34 +798,34 @@ bool SimpleString::ReplaceAll(const SimpleString SearchPattern, const SimpleStri
 	SimpleString Tutu;
 	
 	Tutu = "\\032Yop";
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 	Tutu.ReplaceFirst( "\\032", " " );
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 
 	Tutu = "Yop\\032";
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 	Tutu.ReplaceFirst( "\\032", " " );
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 
 	Tutu = "Yop\\032blib";
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 	Tutu.ReplaceFirst( "\\032", " " );
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 
 	Tutu = "Yop\\0 liajezijclz jl ijzzlij blib";
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 	Tutu.ReplaceFirst( "\\032", " " );
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 
 	Tutu = "Yop\\032liajezijclz jl ijzzlij blib";
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 	Tutu.ReplaceAll( "\\032", " " );
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 
 	Tutu = "Yop\\032liajezijclz jl\\032 ijzzlij blib";
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 	Tutu.ReplaceAll( "\\032", "+++" );
-	TraceError( "%s\n", Tutu.GetStr() );
+	Trace( "%s\n", Tutu.GetStr() );
 
 	*/
 

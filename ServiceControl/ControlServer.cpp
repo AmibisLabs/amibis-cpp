@@ -283,7 +283,7 @@ bool ControlServer::StartServer()
 		// Check if everything goes fine
 		if( registerDnsSd->IsRegistered() )
 		{
-			TraceError( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
+			Trace( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
 			serviceName = registerDnsSd->RegisteredName;
 			NameVariable->SetValue( serviceName );
 			StartThreadProcessMsg();
@@ -291,7 +291,7 @@ bool ControlServer::StartServer()
 		}
 
 		// Something was wrong...
-		TraceError( "registered failed\n");
+		TraceError( "Registration of '%s' failed\n", serviceName.GetStr() );
 	}
 	catch(SocketException e)
 	{
@@ -350,8 +350,8 @@ VariableAttribut* ControlServer::FindVariable(const SimpleString VarName)
 
 void ControlServer::ProcessAMessage(XMLMessage* msg)
 {
-	// TraceError( "in ControlServer::ProcessAMessage\n");
-	// TraceError( "from pid = %u \n",msg->pid);
+	// Trace( "in ControlServer::ProcessAMessage\n");
+	// Trace( "from pid = %u \n",msg->pid);
 
 	xmlNodePtr node = msg->GetRootNode();
 
@@ -381,7 +381,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 					name == InOutputAttribut::output_str.GetStr() || 
 					name == InOutputAttribut::inoutput_str.GetStr() )
 				{
-					// TraceError( " process io : %s \n", (*it)->name.GetStr());
+					// Trace( " process io : %s \n", (*it)->name.GetStr());
 					ProcessInOutputQuery(cur_node, str);
 				}
 				else if( name == VariableAttribut::variable_str.GetStr() )
@@ -430,14 +430,14 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			}
 			catch( SocketException& e )
 			{
-				TraceError( "Error when responding to a clien request : %s (%d)\n", e.msg.GetStr(), e.err );
+				TraceError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
 			}
 		}
 		TcpServer::listConnections.Unlock();
 	}
 	else
 	{
-		TraceError( "waited : controlQuery, received=%s\n", node->name);
+		TraceError( "waited : controlQuery, received='%s'\n", node->name);
 	}
 }
 
@@ -462,7 +462,7 @@ void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answ
 		}
 		else
 		{
-			TraceError( "understood query (name requested)\n");      
+			Trace( "understood query (name requested)\n");      
 		}
 	}
 }
@@ -508,7 +508,7 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 	}
 	else
 	{
-		TraceError( "understood query (name requested)\n");      
+		Trace( "understood query (name requested)\n");      
 	}
 }
 
@@ -561,7 +561,7 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 	}
 	else
 	{
-		TraceError( "understood query (name requested)\n");      
+		Trace( "understood query (name requested)\n");      
 	}
 }
 void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, bool subscribe)
@@ -569,7 +569,10 @@ void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, boo
 	//std::cerr << "connect query : not yet implemented\n";
 	xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
 	bool found = (attr != NULL);  
-	if(!found) TraceError( "understood query (name requested)\n");      
+	if(!found)
+	{
+		Trace( "understood query (name requested)\n");      
+	}
 	else
 	{
 		SimpleString name((const char*)attr->children->content);
@@ -641,7 +644,7 @@ void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutpu
 
 void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue, ControlServerStatus status )
 {
-	TraceError( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
+	Trace( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
 	// Do what we must do...
 
 	// va will call back me to know if I agree to change it's value
@@ -765,7 +768,7 @@ void ControlServer::NotifyValueChanged(VariableAttribut* var)
 				}
 				catch( SocketException& e )
 				{
-					TraceError( "Error notificattion of value changes : %s (%d)\n", e.msg.GetStr(), e.err );
+					Trace( "Error notification of value changes : %s (%d)\n", e.msg.GetStr(), e.err );
 				}
 			}
 			else
@@ -836,7 +839,7 @@ ValueListener::~ValueListener()
 
 void ValueListener::AddListener(unsigned int listener_id)
 { 
-	TraceError( "addListener  %s %u\n", var->GetName().GetStr(), listener_id);
+	Trace( "addListener  %s %u\n", var->GetName().GetStr(), listener_id);
 	listListener.Add(listener_id);
 }
 
