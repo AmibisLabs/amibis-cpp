@@ -765,7 +765,7 @@ void ControlServer::NotifyValueChanged(VariableAttribut* var)
 				}
 				catch( SocketException& e )
 				{
-					TraceError( "Error notificattion of value changes : %s (d)\n", e.msg.GetStr(), e.err );
+					TraceError( "Error notificattion of value changes : %s (%d)\n", e.msg.GetStr(), e.err );
 				}
 			}
 			else
