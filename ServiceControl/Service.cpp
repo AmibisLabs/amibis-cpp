@@ -50,12 +50,9 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	int Protocol = fullname.Find( TmpString.GetStr() );
 	if ( Protocol >= 0 )
 	{
-		// We've got it
-		SimpleString TmpString = fullname;
-
 		// Create a constant value with the name
 		SimpleString trace("c/");
-		trace += TmpString.SubString( 0, Protocol );
+		trace += fullname.SubString( 0, Protocol );
 		PropertiesForProxy["name"] = trace;
 	}
 	else
