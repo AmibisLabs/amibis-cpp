@@ -64,7 +64,7 @@ OmiscidCheckLibs(conf,[\'xml2\',\'dns_sd\',\'pthread\']);
 env = conf.Finish()
 
 # common environment settings
-env.AppendUnique(CXXFLAGS = [\'-g\',\'-Werror\',\'-Wall\',\'-pedantic\'])
+env.AppendUnique(CXXFLAGS = [\'-g\',\'-Werror\',\'-Wall\',\'-pedantic\',\'-std=c++98\'])
 
 binToInstall = []
 libToInstall = []
