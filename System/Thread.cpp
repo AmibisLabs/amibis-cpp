@@ -121,7 +121,7 @@ bool Thread::StopThread(int wait_ms)
 
 			if ( retcode == ETIMEDOUT )
 			{
-				TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d).\n", ThreadID, wait_ms );
+				TraceError( "Thread::StopThread: Thread do not stop before timeout (%d).\n", wait_ms );
 			}
 			return (retcode != ETIMEDOUT);
 		}

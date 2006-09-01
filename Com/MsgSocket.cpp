@@ -1045,7 +1045,7 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 {
 	if(l_buffer == NULL)
 	{
-		TraceError( "NULL buffer to prepare data to send\n", len, maxMessageSizeForTCP);
+		TraceError( "NULL buffer to prepare data to send\n" );
 		throw MsgSocketException("Message too big for TCP");
 	}
 
