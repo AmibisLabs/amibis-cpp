@@ -253,7 +253,7 @@ bool Socket::FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int 
 {
 	struct hostent *he;
 
-	printf("%p\t%s\t%i\n", pAdd, name.GetStr(), port );
+	printf("%p\t%s\t%i\n", (void*)pAdd, name.GetStr(), port );
 
 	if ( pAdd == NULL || port < 0 )
 		return false;
