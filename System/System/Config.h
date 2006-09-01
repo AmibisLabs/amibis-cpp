@@ -225,7 +225,7 @@ inline void TraceRealCall(const char * format, ... )
 	va_end( args );
 }
 
-#define TraceError if (OMISCID_TRACE_ENABLE_IS_ENABLED) TraceErrorRealCall
+#define TraceError if (OMISCID_TRACE_ENABLE_IS_ENABLED)	TraceErrorRealCall
 #define Trace	   if (OMISCID_TRACE_ENABLE_IS_ENABLED)	TraceRealCall
 
 #ifdef WIN32
