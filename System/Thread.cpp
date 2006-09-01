@@ -85,7 +85,7 @@ bool Thread::StopThread(int wait_ms)
 		if ( event.Wait(wait_ms) == false )
 		{
 			// Timeout !!!
-			// TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d). Kill it.\n", ThreadID, wait_ms );
+			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d).\n", ThreadID, wait_ms );
 			// TerminateThread( ThreadHandle, 0 );
 		}
 
@@ -118,6 +118,11 @@ bool Thread::StopThread(int wait_ms)
 		
 			retcode = pthread_cond_timedwait(&condition, &mutex, &timeout);
 			pthread_mutex_unlock(&mutex);
+
+			if ( retcode == ETIMEDOUT )
+			{
+				TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d).\n", ThreadID, wait_ms );
+			}
 			return (retcode != ETIMEDOUT);
 		}
 		else

@@ -355,7 +355,6 @@ int MsgSocket::WriteHeaderForBip(char * buf, int service_id, int message_id )
 
 void MsgSocket::InitForTcpClient(const SimpleString addr, int port)
 {
-	printf( "InitForTcpClient\n" );
 	socket->Connect(addr, port);
 	bufferSize = TCP_BUFFER_SIZE;
 	buffer = new unsigned char[bufferSize];
@@ -380,7 +379,6 @@ void MsgSocket::InitForTcpClient(const SimpleString addr, int port)
 
 void MsgSocket::InitForTcpServer(int port)
 {
-	printf( "InitForTcpServer\n" );
 	socket->Bind(SimpleString::EmptyString, port);    
 	socket->Listen();
 	kind = TCP_SERVER_KIND;
@@ -396,7 +394,6 @@ void MsgSocket::InitForTcpServer(int port)
 
 void MsgSocket::InitForUdpExchange(int port)
 {
-	printf( "InitForUdpExchange\n" );
 	socket->Bind(SimpleString::EmptyString, port);    
 	bufferSize = TCP_BUFFER_SIZE;
 	buffer = new unsigned char[bufferSize];

@@ -80,7 +80,7 @@ ControlServer::~ControlServer()
 	// Stop myself
 	TcpServer::RemoveAllCallbackObjects();
 	TcpServer::Close();
-	XMLTreeParser::StopThread();
+	XMLTreeParser::StopThread(0);
 
 	listValueListener.Lock();
 	for(listValueListener.First(); listValueListener.NotAtEnd(); 
@@ -143,7 +143,13 @@ ControlServer::~ControlServer()
 }
 
 bool ControlServer::StartServer()
-{ 
+{
+	if ( GetStatus() != STATUS_INIT )
+	{
+		// server already launch
+		return false;
+	}
+
 	try
 	{
 
