@@ -371,7 +371,6 @@ void WaitForDnsSdServices::Run()
 						SearchServices[i].DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
 					}
 				}
-				printf( "\n" );
 
 				// delete the list
 				delete pList;
