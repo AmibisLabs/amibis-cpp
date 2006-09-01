@@ -226,7 +226,7 @@ namespace Omiscid {
 	{
 	}
 
-	inline int Trace(const char * format, ... )
+	inline void Trace(const char * format, ... )
 	{
 	}
 #endif
