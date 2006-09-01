@@ -204,28 +204,31 @@ namespace Omiscid {
 	/** @fct TraceError
 	 *  @brief used to warn messages
 	 */
-	inline int TraceError(const char * format, ... )
+	inline void TraceError(const char * format, ... )
 	{
 	   va_list args;
 	   va_start( args, format );
 	   vfprintf( stderr, format, args );
 	   va_end( args );
-	   return 0;
 	}
 
-	inline int Trace(const char * format, ... )
+	inline void Trace(const char * format, ... )
 	{
 	   va_list args;
 	   va_start( args, format );
 	   vprintf( format, args );
 	   va_end( args );
-	   return 0;
 	}
 
 #else
 	// in other mode, we do not print nothing
-	#define TraceError(SomeThingWeDoNotWantToDo)
-	#define Trace(SomeThingWeDoNotWantToDo)
+	inline void TraceError(const char * format, ... )
+	{
+	}
+
+	inline int Trace(const char * format, ... )
+	{
+	}
 #endif
 
 
