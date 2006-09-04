@@ -34,6 +34,7 @@
 	#pragma warning(disable : 4996) // deprecated API
 	#pragma warning(disable : 4100) // formal parameter not used, mostly in virtual fonction
 	#pragma warning(disable : 4512) // Could not generate automatically operator= for a class
+	// #pragma warning(disable : 4127)	// to remove carning about constant expression when compiling...
 
 	// If U are using MFC and co...
 	#ifdef USE_AFX
@@ -201,15 +202,15 @@ namespace Omiscid {
 
 // Almost ugly for the moment
 #ifdef OMISCID_TRACE_ENABLE
-	#define OMISCID_TRACE_ENABLE_IS_ENABLED true
+	#define OMISCID_TRACE_IS_ENABLED 1
 #else
-	#define OMISCID_TRACE_ENABLE_IS_ENABLED false
+	#define OMISCID_TRACE_IS_ENABLED 0
 #endif
 
 /** @fct TraceError
 	*  @brief used to warn messages
 	*/
-inline void TraceErrorRealCall(const char * format, ... )
+inline void TraceError(const char * format, ... )
 {
 	va_list args;
 	va_start( args, format );
@@ -217,7 +218,7 @@ inline void TraceErrorRealCall(const char * format, ... )
 	va_end( args );
 }
 
-inline void TraceRealCall(const char * format, ... )
+inline void Trace(const char * format, ... )
 {
 	va_list args;
 	va_start( args, format );
@@ -225,8 +226,14 @@ inline void TraceRealCall(const char * format, ... )
 	va_end( args );
 }
 
-#define TraceError if (OMISCID_TRACE_ENABLE_IS_ENABLED)	TraceErrorRealCall
-#define Trace	   if (OMISCID_TRACE_ENABLE_IS_ENABLED)	TraceRealCall
+/* 
+
+#define TraceError if (OMISCID_TRACE_IS_ENABLED)	TraceErrorRealCall
+#define Trace	   if (OMISCID_TRACE_IS_ENABLED)	TraceRealCall
+
+*/
+#define TraceError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : TraceError
+#define Trace		!(OMISCID_TRACE_IS_ENABLED) ? (void)0 : Trace
 
 #ifdef WIN32
 
