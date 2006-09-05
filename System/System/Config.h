@@ -226,12 +226,6 @@ inline void Trace(const char * format, ... )
 	va_end( args );
 }
 
-/* 
-
-#define TraceError if (OMISCID_TRACE_IS_ENABLED)	TraceErrorRealCall
-#define Trace	   if (OMISCID_TRACE_IS_ENABLED)	TraceRealCall
-
-*/
 #define TraceError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : TraceError
 #define Trace		!(OMISCID_TRACE_IS_ENABLED) ? (void)0 : Trace
 
