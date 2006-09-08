@@ -231,12 +231,11 @@ void VariableAttribut::SetDefaultValue(const SimpleString str)
 
 SimpleString& VariableAttribut::GetValue()
 {
-
 	if ( Initialised == false )
 	{
 		SimpleString TmpString;
-		TmpString = this->GetName();
-		TmpString += "Not initialised";
+		TmpString = GetName();
+		TmpString += " not initialised";
 		throw TmpString.GetStr();
 	}
 	return valueStr; 
