@@ -13,13 +13,13 @@ using namespace Omiscid;
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
-#ifdef DEBUG
+#ifdef DEBUG_THREAD
 Thread::Thread(bool autostart, const SimpleString Name /* = SimpleString::EmptyString */)
 #else
 Thread::Thread(bool autostart)
 #endif
 {
-#ifdef DEBUG
+#ifdef DEBUG_THREAD
 	ThreadName = Name;
 #endif
 
@@ -109,7 +109,7 @@ void* Thread::CallRun(void* ptr)
 	// Reset stat event
 	t->IsEnded.Reset();
 
-#ifdef DEBUG
+#ifdef DEBUG_THREAD
 	// OmiscidTrace( "%s\n", t->ThreadName.GetStr() );
 #endif
 

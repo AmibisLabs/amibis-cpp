@@ -43,7 +43,7 @@ SearchService::~SearchService()
 
 WaitForDnsSdServices::WaitForDnsSdServices()
 	: 
-#ifdef DEBUG
+#ifdef DEBUG_THREAD
 	Thread( false, "WaitForDnsSdServices" ),
 #endif
 	ServicesUsed(MaxSearchServices)

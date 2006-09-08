@@ -108,7 +108,7 @@ void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags 
 class TestRegister : public Thread
 {
 public:
-	TestRegister() : Thread(false)
+	TestRegister()
 	{
 	}
 
@@ -162,7 +162,7 @@ int main(int argc, char * argv[])
 	gettimeofday(&temps,NULL);
 	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
 
-	TraceError( "Total register time %u\n", t2 - t1 );
+	OmiscidError( "Total register time %u\n", t2 - t1 );
 
 	t1 = t2;
 
@@ -176,7 +176,7 @@ int main(int argc, char * argv[])
     gettimeofday(&temps,NULL);
 	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
 
-	TraceError( "Total unregister time %u\n", t2 - t1 );
+	OmiscidError( "Total unregister time %u\n", t2 - t1 );
 
 	Mutex MyLock;
 	MyLock.EnterMutex();

@@ -31,7 +31,7 @@ namespace Omiscid {
 class Thread
 {
 
-#ifdef DEBUG
+#ifdef DEBUG_THREAD
 public:
 	// For debugging mode
 	SimpleString ThreadName;

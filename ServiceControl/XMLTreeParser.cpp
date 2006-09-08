@@ -148,7 +148,7 @@ SimpleString XMLMessage::ExtractTextContent(xmlNodePtr node)
 ///////////////////////////////////////////////////////////////////
 
 XMLTreeParser::XMLTreeParser()
-#ifdef DEBUG
+#ifdef DEBUG_THREAD
 	: Thread( false, "XMLTreeParser" )
 #endif
 {
