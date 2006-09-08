@@ -9,6 +9,7 @@
 
 #include <System/Config.h>
 #include <System/Event.h>
+#include <System/Mutex.h>
 
 #ifdef DEBUG
 #include <System/SimpleString.h>
@@ -36,7 +37,7 @@ public:
 	SimpleString ThreadName;
 	
 public:
-	Thread(const SimpleString Name, bool autostart=false);
+	Thread(bool autostart = false, const SimpleString Name = SimpleString::EmptyString );
 
 #else
 
@@ -80,15 +81,6 @@ public:
 	 */
 	bool IsRunning() const;
 	
-	/** @brief Return if stop is required
-	 * @return true if the thread should stop
-	 */
-	bool StopPending() const;
-
-#ifdef WIN32
-	unsigned long GetThreadId() { return ThreadID; };
-#endif
-
 protected:
 	enum TIMEOUTS { DEFAULT_THREAD_DESTRUCTOR_TIMEOUT = 1000 }; // 1 second
 
@@ -99,15 +91,27 @@ protected:
 	 */
 	virtual void Run() = 0;
 
+	/** @brief Return if stop is required
+	 * @return true if the thread should stop
+	 */
+	bool StopPending() const;
+
+	/** @brief Wait until if stop is required
+	 *
+	 */
+	void WaitForStop();
+
 private:
-	bool StopWasAsked; /*!< store if stop is required */
-	bool ThreadIsRunning; /*!< state of the thread */
+	bool  StopWasAsked;			/*!< store if stop is required, pseudo active wait */
+	Event StopWasAskedEvent;	/*!< store if stop is required, full unactive wait */
+	bool  ThreadIsRunning;		/*!< state of the thread */
+
+	Mutex Locker;				/*!< In order to protect my content */
+	Event IsEnded;				/*!< To say I am ended */
 	
 #ifdef WIN32
 	unsigned long	ThreadID;
 	HANDLE ThreadHandle;
-	
-	Event event;
 	
 	static unsigned long FUNCTION_CALL_TYPE CallRun(void* ptr);
 #else
@@ -120,15 +124,6 @@ private:
 	 * @param ptr pointer on a Thread object
 	 */
 	static void* CallRun(void* ptr); 
-	
-	/** @name for the stop signal 
-	 *
-	 * The thread signal the threads waiting for its stop, when is stops
-	 */
-	//@{
-	pthread_cond_t condition;
-	pthread_mutex_t mutex;
-	//@}
 #endif
 
 };

@@ -77,7 +77,8 @@ public:
 
 	virtual ~RegisterService();
 
-	bool Register();
+	bool Register(bool AutoRename = true);
+
 	bool IsRegistered();
 
 private:

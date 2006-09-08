@@ -105,19 +105,78 @@ void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags 
 	}
 }
 
+class TestRegister : public Thread
+{
+public:
+	TestRegister() : Thread(false)
+	{
+	}
+
+	static AtomicCounter NbRegister;
+
+	void Run()
+	{
+		Omiscid::Service * pServ = ServiceFactory.Create( "Yop" );
+		pServ->AddVariable( "RealNumber", "interger", "Just a number", ConstantAccess );
+		pServ->SetVariableValue( "RealNumber", (int)this );
+		pServ->Start();
+		NbRegister++;
+
+		// Wait for some to ask me to stop
+		WaitForStop();
+
+		// Delete the constructed service
+		delete pServ;
+	}
+};
+
+AtomicCounter TestRegister::NbRegister;
+
 int main(int argc, char * argv[])
 {
-	TemporaryMemoryBuffer MemBuf(50);
+	const int NbServiceToRegister = 50;
 
-	for( int i = 0; i<50; i++ )
+	SimpleList<TestRegister*> ListOfRegisteredService;
+
+	struct timeval temps;
+	unsigned int t1, t2;
+
+    gettimeofday(&temps,NULL);
+	t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
+
+	for( int i = 0; i<NbServiceToRegister; i++ )
 	{
-		snprintf( MemBuf, 49, "%8.8x", ComTools::GeneratePeerId() );
-
-		Omiscid::Service * pServ = ServiceFactory.Create( (char*)MemBuf );
-		pServ->AddVariable( "RealNumber", "interger", "Just a number", ConstantAccess );
-		pServ->SetVariableValue( "RealNumber", i+1 );
-		pServ->Start();
+		TestRegister * pRegServ = new TestRegister();
+		if ( pRegServ )
+		{
+			pRegServ->StartThread();
+			ListOfRegisteredService.Add(pRegServ);
+		}
 	}
+
+	while( TestRegister::NbRegister != NbServiceToRegister )
+	{
+		Thread::Sleep(10);
+	}
+
+	gettimeofday(&temps,NULL);
+	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
+
+	TraceError( "Total register time %u\n", t2 - t1 );
+
+	t1 = t2;
+
+	// Destroy service
+	for( ListOfRegisteredService.First(); ListOfRegisteredService.NotAtEnd(); ListOfRegisteredService.Next() )
+	{
+		ListOfRegisteredService.GetCurrent()->StopThread(0);
+		ListOfRegisteredService.RemoveCurrent();
+	}
+
+    gettimeofday(&temps,NULL);
+	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
+
+	TraceError( "Total unregister time %u\n", t2 - t1 );
 
 	Mutex MyLock;
 	MyLock.EnterMutex();

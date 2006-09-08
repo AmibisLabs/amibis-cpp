@@ -44,7 +44,7 @@ SearchService::~SearchService()
 WaitForDnsSdServices::WaitForDnsSdServices()
 	: 
 #ifdef DEBUG
-	Thread( "WaitForDnsSdServices" ),
+	Thread( false, "WaitForDnsSdServices" ),
 #endif
 	ServicesUsed(MaxSearchServices)
 {

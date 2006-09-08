@@ -124,7 +124,7 @@ int main(int argc, char * argv[])
 	Service * finder = ServiceFactory.Create("Browser");
 	filter = NameIs("Yop");
 
-    for(int iter = 1; iter <= 6; iter++)
+    for(int iter = 1; iter <= 10; iter++)
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;

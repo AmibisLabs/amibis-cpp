@@ -34,11 +34,11 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 
 	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord.GetStr() );
 
-	// Need to add name of the service
+	// Need to add id of the service
 #ifdef DEBUG
-	if ( PropertiesForProxy.IsDefined("name") )
+	if ( PropertiesForProxy.IsDefined("id") )
 	{
-		TraceError( "Property name defined in TxtRecord as '%s'.", PropertiesForProxy["name"].GetValue().GetStr() );
+		TraceError( "Property id defined in TxtRecord as '%s'.\n", PropertiesForProxy["id"].GetValue().GetStr() );
 	}
 #endif
 
@@ -48,18 +48,14 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 
 	// Search it
 	int Protocol = fullname.Find( TmpString.GetStr() );
+	SimpleString NewId("c");
 	if ( Protocol >= 0 )
 	{
 		// Create a constant value with the name
-		SimpleString trace("c/");
-		trace += fullname.SubString( 0, Protocol );
-		PropertiesForProxy["name"] = trace;
+		NewId += "/";
+		NewId += fullname.SubString( 0, Protocol );
 	}
-	else
-	{
-		PropertiesForProxy["name"] = "c/Service";
-	}
-
+	PropertiesForProxy["id"] = NewId;
 
 	// To say if the service is the one we are looking for...
 	ServiceProxy * SP = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId

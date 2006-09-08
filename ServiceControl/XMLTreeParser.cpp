@@ -149,7 +149,7 @@ SimpleString XMLMessage::ExtractTextContent(xmlNodePtr node)
 
 XMLTreeParser::XMLTreeParser()
 #ifdef DEBUG
-	: Thread( "XMLTreeParser" )
+	: Thread( false, "XMLTreeParser" )
 #endif
 {
 	// Initialise XsdValidators

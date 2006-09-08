@@ -14,7 +14,7 @@ using namespace Omiscid;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 #ifdef DEBUG
-Thread::Thread(const SimpleString Name, bool autostart)
+Thread::Thread(bool autostart, const SimpleString Name /* = SimpleString::EmptyString */)
 #else
 Thread::Thread(bool autostart)
 #endif
@@ -34,11 +34,6 @@ Thread::Thread(bool autostart)
 #else
 	ThreadIsRunning = false;	
 	StopWasAsked = false;
-	
-	if(pthread_mutex_init(&mutex, NULL) != 0)
-		throw "Error Mutex Init";
-	if(pthread_cond_init(&condition, NULL) != 0)
-		throw "Error Condition Init";
 #endif
 	
 	if (autostart)
@@ -78,67 +73,48 @@ bool Thread::StartThread()
 
 bool Thread::StopThread(int wait_ms)
 {
-#ifdef WIN32	
+	bool ThreadStopInTime = true;
+
 	if (IsRunning())
 	{
-		StopWasAsked = true;
-		if ( event.Wait(wait_ms) == false )
+		// Notify thread !
+		StopWasAsked = true;			// Notification for pseudo active waiting
+		StopWasAskedEvent.Signal();		// other notification
+
+		ThreadStopInTime = IsEnded.Wait(wait_ms);
+		if ( ThreadStopInTime == false )
 		{
 			// Timeout !!!
 			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d).\n", ThreadID, wait_ms );
+#ifdef WIN32
 			// TerminateThread( ThreadHandle, 0 );
+#endif
 		}
+
+//		Locker.EnterMutex();
+
+#ifdef WIN32
 
 		// Close the Thread handle
 		// CloseHandle( ThreadHandle );
 
 		ThreadID = 0;
 		ThreadHandle = NULL;
-		ThreadIsRunning = false;	
-		StopWasAsked = false;
-
-	}
 #else
-	pthread_mutex_lock(&mutex);
-	if (IsRunning())
-	{
-		StopWasAsked = true;
-		
-		if(wait_ms != 0)
-		{
-			struct timeval now;
-			struct timespec timeout; 
-			int retcode;
-			int second = wait_ms/1000;
-			int nanos = (wait_ms-second*1000)*1000000;
-		
-			gettimeofday(&now, NULL);
-			timeout.tv_sec = now.tv_sec + second;
-			timeout.tv_nsec = now.tv_usec * 1000 + nanos;
-		
-			retcode = pthread_cond_timedwait(&condition, &mutex, &timeout);
-			pthread_mutex_unlock(&mutex);
-
-			if ( retcode == ETIMEDOUT )
-			{
-				TraceError( "Thread::StopThread: Thread do not stop before timeout (%d).\n", wait_ms );
-			}
-			return (retcode != ETIMEDOUT);
-		}
-		else
-		{
-			pthread_cond_wait(&condition, &mutex);
-			pthread_mutex_unlock(&mutex);
-			return true;
-		}
-	}
-	pthread_mutex_unlock(&mutex);
+		// m_thread	: something to do with ?
 #endif
-	return true;
+
+//		Locker.LeaveMutex();
+	}
+
+	return ThreadStopInTime;
 }
 
 #ifdef WIN32
 unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
+#else
+void Thread::CallRun(void* ptr)
+#endif
 {
 	Thread* t = (Thread*)ptr;
 
@@ -146,7 +122,7 @@ unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 	RandomInit();
 
 	// Reset stat event
-	t->event.Reset();
+	t->IsEnded.Reset();
 
 #ifdef DEBUG
 	// Trace( "%s\n", t->ThreadName.GetStr() );
@@ -162,34 +138,14 @@ unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 	t->ThreadHandle = 0;
 	
 	// signal, my job is over
-	t->event.Signal();
-	// Trace( "ThreadSignaled\n" );
-	
+	t->IsEnded.Signal();
+
+#ifdef WIN32
 	return 0;
-}
 #else
-void* Thread::CallRun(void* ptr)
-{
-	Thread* t = (Thread*)ptr;
-
-	// init thread random generator
-	RandomInit();
-
-	t->ThreadIsRunning = true;
-
-#ifdef DEBUG
-	// Trace( "%s\n", t->ThreadName.GetStr() );
-#endif
-
-	t->Run();
-	pthread_mutex_lock(&(t->mutex));
-	t->ThreadIsRunning = false;
-	pthread_cond_broadcast(&(t->condition));	
-	pthread_mutex_unlock(&(t->mutex));
 	pthread_exit(NULL);
+#endif
 }
-#endif /* WIN32 */
-
 
 void Thread::Sleep(int nb_ms)
 {
@@ -202,14 +158,15 @@ void Thread::Sleep(int nb_ms)
 
 bool Thread::IsRunning() const 
 { 
-#ifdef WIN32
-	return (ThreadHandle != 0); 
-#else
 	return ThreadIsRunning;
-#endif
 }
 
 bool Thread::StopPending() const 
 { 
 	return StopWasAsked;
+}
+
+void Thread::WaitForStop()
+{
+	StopWasAskedEvent.Wait(0);
 }

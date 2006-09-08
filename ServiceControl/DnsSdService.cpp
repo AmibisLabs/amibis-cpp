@@ -313,6 +313,7 @@ RegisterService::RegisterService( const SimpleString ServiceName, const SimpleSt
 {
 	Registered = false;
 	ConnectionOk = false;
+	DnsSdConnection = NULL;
 
 	if ( AutoRegister )
 	{
@@ -352,21 +353,29 @@ bool RegisterService::IsRegistered()
 	return Registered;
 }
 
-bool RegisterService::Register()
+bool RegisterService::Register(bool AutoRename /*= true */)
 {
-	int err;
+	if ( Registered )
+	{
+		TraceError( "Service is already registrered.\n" );
+		return false;
+	}
+
+	int err = kDNSServiceErr_Unknown;
 	SimpleString ProtocolAndTransport;		// <Name> . "_tcp" or <Name> . "_udp"
 
 	ProtocolAndTransport  = Protocol;
 	ProtocolAndTransport += ".";
 	ProtocolAndTransport += Transport;
 
-	err = DNSServiceRegister( &DnsSdConnection, 0, 0, (char*)Name.GetStr(), (char*)ProtocolAndTransport.GetStr(),
+	err = DNSServiceRegister( &DnsSdConnection,  kDNSServiceFlagsNoAutoRename, 0 /* all network */,
+		(char*)Name.GetStr(), (char*)ProtocolAndTransport.GetStr(),
 		(char*)Domain.GetStr(), NULL, (uint16_t)htons(Port), (uint16_t)Properties.GetTXTRecordLength(),
 		(char*)Properties.ExportTXTRecord(), DnsRegisterReply, (void*)this );
 
-	// err = DNSServiceRegister( &DnsSdConnection, 0, 0, "Yop", "_bip._tcp", "local.", NULL, (uint16_t)htons(Port),
-	//	0, "", DnsRegisterReply, (void*)this );
+	 //err = DNSServiceRegister( &DnsSdConnection, kDNSServiceFlagsNoAutoRename, 0,
+		//	"Yop", "_bip._tcp", "local.", NULL, (uint16_t)htons(Port),
+		//0, "", DnsRegisterReply, (void*)this );
 
 	if ( err == kDNSServiceErr_NoError )
 	{
@@ -382,6 +391,8 @@ bool RegisterService::Register()
 	else
 	{
 		ConnectionOk = false;
+		DNSServiceRefDeallocate(DnsSdConnection);
+		DnsSdConnection = NULL;
 	}
 
 	return Registered;

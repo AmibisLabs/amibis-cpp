@@ -25,7 +25,7 @@ using namespace Omiscid;
 
 BrowseForDNSSDService::BrowseForDNSSDService()
 #ifdef DEBUG
-	: Thread( "BrowseForDNSSDService" )
+	: Thread( false, "BrowseForDNSSDService" )
 #endif
 {
 	RegType[0] = '\0';
@@ -35,7 +35,7 @@ BrowseForDNSSDService::BrowseForDNSSDService()
 
 BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, BrowseCallBack eCallBack, void * eUserData, bool AutoStart /* = false */)
 #ifdef DEBUG
-	: Thread( "BrowseForDNSSDService" )
+	: Thread( false, "BrowseForDNSSDService" )
 #endif
 {
 	RegType  = eRegtype;

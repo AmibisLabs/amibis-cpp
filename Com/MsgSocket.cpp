@@ -83,7 +83,7 @@ MsgSocket::DEBUGFLAGS MsgSocket::Debug = MsgSocket::DBG_NONE;
 
 MsgSocket::MsgSocket(Socket* s) : 
 #ifdef DEBUG
-	Thread( "MsgSocket" ),
+	Thread( false, "MsgSocket" ),
 #endif
 callbackSyncLinkFct(NULL),
 socket(s),
@@ -110,7 +110,7 @@ sendSyncLinkMsg(false)
 
 MsgSocket::MsgSocket(Socket::SocketKind type) :
 #ifdef DEBUG
-	Thread( "MsgSocket" ),
+	Thread( false, "MsgSocket" ),
 #endif
 callbackSyncLinkFct(NULL),
 socket(NULL),    
