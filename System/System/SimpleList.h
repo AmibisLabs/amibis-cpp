@@ -691,7 +691,7 @@ bool MutexedSimpleList<TYPE>::Unlock()
 #ifdef DEBUG
 	if ( NbLocks == 0 )
 	{
-		Trace( "List already unlock. something goes wrong ?" );
+		OmiscidTrace( "List already unlock. something goes wrong ?" );
 	}
 
 	// Only for MutexedSimpleList debugging

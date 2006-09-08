@@ -357,7 +357,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 {
 	if ( Registered )
 	{
-		TraceError( "Service is already registrered.\n" );
+		OmiscidError( "Service is already registrered.\n" );
 		return false;
 	}
 

@@ -555,7 +555,7 @@ bool MsgSocket::SendSyncLinkMsg()
 	}
 	catch(SocketException& e)
 	{
-		Trace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message
@@ -605,7 +605,7 @@ void MsgSocket::Run()
 		break;
 
 	default:
-		TraceError( "run : unknown type of connection\n");
+		OmiscidError( "run : unknown type of connection\n");
 		break;
 	}
 }
@@ -638,7 +638,7 @@ void MsgSocket::Receive()
 		if(socket->Select())
 		{
 			int nb_read = socket->Recv(bufferSize-occupiedSize, (buffer+occupiedSize));
-			// Trace( "%d %d \n ",nb_read, occupiedSize);
+			// OmiscidTrace( "%d %d \n ",nb_read, occupiedSize);
 			if(nb_read == 0) 	    
 			{
 				if ( connected )
@@ -762,11 +762,11 @@ void MsgSocket::Receive()
 					//					}
 					else if((unsigned int)size < length_header + length_msg + tag_end_size)
 					{
-						// Trace( "wait more byte\n");
+						// OmiscidTrace( "wait more byte\n");
 						int total = (int)(length_header + length_msg + tag_end_size);
 						if ( total >= bufferSize )
 						{
-							Trace( "buffer too small : new buffer allocation\n");
+							OmiscidTrace( "buffer too small : new buffer allocation\n");
 							//allocation new buffer
 							bufferSize = (total+1023)&~1023; // bufferSize = total arrondi au kilo d'octet superieur
 							unsigned char* tmp_buffer = new unsigned char[bufferSize];
@@ -790,7 +790,7 @@ void MsgSocket::Receive()
 						//verif end tag		     
 						if( memcmp(tag_end, (msgptr + length_msg), tag_end_size))
 						{
-							Trace( "warning end tag\n");
+							OmiscidTrace( "warning end tag\n");
 							size =  occupiedSize - offset;
 						}
 						else
@@ -881,7 +881,7 @@ void MsgSocket::Receive()
 	}
 	catch(SocketException& e)
 	{
-		Trace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message
@@ -924,7 +924,7 @@ int MsgSocket::Send(int len, const char* buf)
 
 	if(len > maxMessageSizeForTCP)
 	{
-		Trace( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
+		OmiscidTrace( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
 		throw MsgSocketException("Message too big for TCP");
 	}
 
@@ -962,7 +962,7 @@ int MsgSocket::Send(int len, const char* buf)
 	}
 	catch(SocketException& e)
 	{
-		Trace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message
@@ -1003,7 +1003,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 #ifdef DEBUG
 		if ( Debug & DBG_SEND )
 		{
-			Trace( "MsgSocket::SendPreparedBuffer %s\n", SendBuffer );
+			OmiscidTrace( "MsgSocket::SendPreparedBuffer %s\n", SendBuffer );
 		}
 #endif
 
@@ -1019,7 +1019,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	}
 	catch(SocketException& e)
 	{
-		Trace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message
@@ -1045,13 +1045,13 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 {
 	if(l_buffer == NULL)
 	{
-		TraceError( "SendPreparedBuffer : NULL mesg\n" );
+		OmiscidError( "SendPreparedBuffer : NULL mesg\n" );
 		throw MsgSocketException("Message NULL for TCP");
 	}
 
 	if(len > maxMessageSizeForTCP)
 	{
-		TraceError( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
+		OmiscidError( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
 		throw MsgSocketException("Message too big for TCP");
 	}
 
@@ -1063,7 +1063,7 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 #ifdef DEBUG
 		if ( Debug & DBG_SEND )
 		{
-			Trace( "MsgSocket::SendPreparedBuffer %s\n", l_buffer );
+			OmiscidTrace( "MsgSocket::SendPreparedBuffer %s\n", l_buffer );
 		}
 #endif
 
@@ -1076,14 +1076,14 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 			protectSend.LeaveMutex();
 			return res;		
 		}	
-		Trace( "Erreur Send (-1)\n" );
+		OmiscidTrace( "Erreur Send (-1)\n" );
 		protectSend.LeaveMutex();
 		return -1;
 
 	}
 	catch(SocketException& e)
 	{
-		Trace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message
@@ -1108,10 +1108,10 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 
 int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 {
-	//   Trace( "in MsgSocket::SendTo\n");
-	//   Trace( "send to pid : %u\n", dest->pid);
+	//   OmiscidTrace( "in MsgSocket::SendTo\n");
+	//   OmiscidTrace( "send to pid : %u\n", dest->pid);
 	if(len > UDP_MAX_MSG_SIZE){
-		TraceError( "Message too big for UDP size=%d,  sizemax=%d\n", len, UDP_MAX_MSG_SIZE);
+		OmiscidError( "Message too big for UDP size=%d,  sizemax=%d\n", len, UDP_MAX_MSG_SIZE);
 		throw MsgSocketException("Message too big for UDP");
 	}
 
@@ -1147,7 +1147,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 	}
 	catch(SocketException& e)
 	{
-		Trace( "SocketException: %s %d \n", e.msg.GetStr(), e.err);
+		OmiscidTrace( "SocketException: %s %d \n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message
@@ -1216,12 +1216,12 @@ bool MsgSocket::MoveToMessage(unsigned char* buf, int len, int& decal)
 
 UdpConnection* MsgSocket::AcceptConnection(const UdpConnection& udp_connect, bool msg_empty)
 {
-	Trace( "AcceptConnection UDP (2)\n");
+	OmiscidTrace( "AcceptConnection UDP (2)\n");
 	if(msg_empty)
 	{
-		Trace( "[Empty Msg]\n");
+		OmiscidTrace( "[Empty Msg]\n");
 	}
-	Trace( "\n");
+	OmiscidTrace( "\n");
 	return NULL;
 }
 
@@ -1280,7 +1280,7 @@ void MsgSocket::ReceiveUdpExchange()
 						//verif end tag		     
 						if(memcmp(tag_end, (msgptr + length_msg), tag_end_size))
 						{
-							Trace( "warning end tag\n");
+							OmiscidTrace( "warning end tag\n");
 							//ignore message, search for new header after the detected header
 							size =  occupiedSize - offset;
 						}
@@ -1347,7 +1347,7 @@ void MsgSocket::ReceiveUdpExchange()
 	}
 	catch(SocketException& e)
 	{
-		Trace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
+		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message

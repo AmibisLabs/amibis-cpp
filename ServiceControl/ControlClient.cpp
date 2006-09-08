@@ -165,7 +165,7 @@ AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 		pWaiterInfo = new AnswerWaiter;
 		if ( pWaiterInfo == NULL )
 		{
-			TraceError( "AnswersManager::WaitAndGetAnswer: no more memory.\n" );
+			OmiscidError( "AnswersManager::WaitAndGetAnswer: no more memory.\n" );
 			WaitersList.Unlock();
 			return NULL;
 		}
@@ -223,7 +223,7 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 
 			WaitersList.Unlock();
 
-			// Trace( "AnswersManager::PushAnswer: PushMessage ok.\n" );
+			// OmiscidTrace( "AnswersManager::PushAnswer: PushMessage ok.\n" );
 
 			return true;
 		}
@@ -233,7 +233,7 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 	}
 
 	// Do nothing with this message... probably timeout...
-	Trace( "AnswersManager::PushAnswer: no waiters (probably timeout).\n" );
+	OmiscidTrace( "AnswersManager::PushAnswer: no waiters (probably timeout).\n" );
 
 	// Unlock the list
 	WaitersList.Unlock();
@@ -326,7 +326,7 @@ VariableAttribut* ControlClient::QueryVariableDescription(const SimpleString var
 	{
 		if(!NameInList(var_name, listVariableName))
 		{
-			Trace( "Unknown variable '%s', ask to the service.\n", var_name.GetStr());
+			OmiscidTrace( "Unknown variable '%s', ask to the service.\n", var_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -365,7 +365,7 @@ VariableAttribut* ControlClient::QueryVariableModif(const SimpleString var_name,
 	VariableAttribut* var_attr = FindVariable(var_name);
 	if(!var_attr)
 	{    
-		Trace( "Unknown Variable '%s' : Not Available Description.\n", var_name.GetStr());
+		OmiscidTrace( "Unknown Variable '%s' : Not Available Description.\n", var_name.GetStr());
 		return NULL;
 	}
 
@@ -398,7 +398,7 @@ InOutputAttribut* ControlClient::QueryInputDescription(const SimpleString input_
 	{
 		if(!NameInList(input_name, listInputName))
 		{
-			Trace( "Unknown Input '%s', ask to the service.\n",input_name.GetStr());
+			OmiscidTrace( "Unknown Input '%s', ask to the service.\n",input_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -438,7 +438,7 @@ InOutputAttribut* ControlClient::QueryOutputDescription(const SimpleString outpu
 	{
 		if(!NameInList(output_name, listOutputName))
 		{
-			Trace( "Unknown Output '%s', ask to the service.\n", output_name.GetStr());
+			OmiscidTrace( "Unknown Output '%s', ask to the service.\n", output_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -478,7 +478,7 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const SimpleString in_
 	{
 		if(!NameInList(in_output_name, listInOutputName))
 		{
-			Trace( "Unknown InOutput '%s', ask to the service.\n", in_output_name.GetStr());
+			OmiscidTrace( "Unknown InOutput '%s', ask to the service.\n", in_output_name.GetStr());
 			name_in_list = false;
 		}
 	}
@@ -639,7 +639,7 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 			}
 			else
 			{
-				TraceError( "unwaited tag : %s\n", node_name);
+				OmiscidError( "unwaited tag : %s\n", node_name);
 			}
 		}
 	}
@@ -785,7 +785,7 @@ void ControlClient::Subscribe(const SimpleString var_name)
 	}
 	else
 	{
-		Trace( "variable unknown by client\n");
+		OmiscidTrace( "variable unknown by client\n");
 	}
 }
 void ControlClient::Unsubscribe(const SimpleString var_name)
@@ -799,7 +799,7 @@ void ControlClient::Unsubscribe(const SimpleString var_name)
 	}
 	else
 	{
-		Trace( "variable unknown by client\n");
+		OmiscidTrace( "variable unknown by client\n");
 	}
 }
 
@@ -850,12 +850,12 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 			}
 			else
 			{
-				TraceError( "in CtrlEventProcess : Unknown variable %s\n", (const char*)attr_name->children->content);	  
+				OmiscidError( "in CtrlEventProcess : Unknown variable %s\n", (const char*)attr_name->children->content);	  
 			}
 		}
 		else
 		{
-			TraceError( "in CtrlEventProcess : Unknown control event :%s\n", cur_name);
+			OmiscidError( "in CtrlEventProcess : Unknown control event :%s\n", cur_name);
 		}
 	}
 }

@@ -498,7 +498,7 @@ bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionI
 	InOutputAttribut * pAtt = FindConnector( Connector );
 	if ( pAtt == NULL )
 	{
-		TraceError( "Could not find connector nammed '%s'\n", Connector.GetStr() );
+		OmiscidError( "Could not find connector nammed '%s'\n", Connector.GetStr() );
 		return false;
 	}
 
@@ -520,7 +520,7 @@ VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 	if ( pVar == NULL )
 	{
 		// Not found
-		TraceError( "Variable '%s' not found\n", VarName.GetStr() );
+		OmiscidError( "Variable '%s' not found\n", VarName.GetStr() );
 		return NULL;
 	}
 	return pVar;
@@ -544,7 +544,7 @@ InOutputAttribut * ServiceProxy::FindConnector( SimpleString ConnectortName )
 	}
 
 	// Here we did not find the connector
-	TraceError( "Connector '%s' not found\n", ConnectortName.GetStr() );
+	OmiscidError( "Connector '%s' not found\n", ConnectortName.GetStr() );
 	return NULL;
 }
 

@@ -45,13 +45,13 @@ bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidat
 	if ( ValidCtxt != NULL )
 	{
 		// Already create
-		TraceError( "CreateSchemaFromString: Schema is already initialised. Call DestroySchema() first.\n" );
+		OmiscidError( "CreateSchemaFromString: Schema is already initialised. Call DestroySchema() first.\n" );
 		return false;
 	}
 
 	if ( XsdSchemaToValidate == SimpleString::EmptyString )
 	{
-		TraceError( "CreateSchemaFromFile: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromFile: Invalid parameter.\n" );
 		return false;
 	}
 
@@ -59,14 +59,14 @@ bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidat
 	ParserCtxt	= xmlSchemaNewMemParserCtxt( XsdSchemaToValidate.GetStr(), XsdSchemaToValidate.GetLength() );
 	if ( ParserCtxt == NULL )
 	{
-		TraceError( "CreateSchemaFromString: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromString: Invalid parameter.\n" );
 		return false;
 	}
 	Schema = xmlSchemaParse( ParserCtxt );
 	if ( Schema == NULL )
 	{
 		xmlSchemaFreeParserCtxt( ParserCtxt );
-		TraceError( "CreateSchemaFromString: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromString: Invalid parameter.\n" );
 		return false;
 	}
 	ValidCtxt = xmlSchemaNewValidCtxt( Schema );
@@ -74,12 +74,12 @@ bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidat
 	{
 		xmlSchemaFree( Schema );
 		xmlSchemaFreeParserCtxt( ParserCtxt );
-		TraceError( "CreateSchemaFromString: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromString: Invalid parameter.\n" );
 		return false;
 	}
 
 #ifdef DEBUG
-	// Trace errors during validation
+	// OmiscidTrace errors during validation
 	xmlSchemaSetValidErrors( ValidCtxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
 #endif
 
@@ -91,13 +91,13 @@ bool XsdValidator::CreateSchemaFromFile( const SimpleString XsdSchemaFile )
 	if ( ValidCtxt != NULL )
 	{
 		// Already create
-		TraceError( "CreateSchemaFromFile: Schema is already initialised. Call DestroySchema() first.\n" );
+		OmiscidError( "CreateSchemaFromFile: Schema is already initialised. Call DestroySchema() first.\n" );
 		return false;
 	}
 
 	if ( XsdSchemaFile == SimpleString::EmptyString )
 	{
-		TraceError( "CreateSchemaFromFile: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromFile: Invalid parameter.\n" );
 		return false;
 	}
 
@@ -105,14 +105,14 @@ bool XsdValidator::CreateSchemaFromFile( const SimpleString XsdSchemaFile )
 	ParserCtxt	= xmlSchemaNewParserCtxt( XsdSchemaFile.GetStr() );
 	if ( ParserCtxt == NULL )
 	{
-		TraceError( "CreateSchemaFromFile: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromFile: Invalid parameter.\n" );
 		return false;
 	}
 	Schema = xmlSchemaParse( ParserCtxt );
 	if ( Schema == NULL )
 	{
 		xmlSchemaFreeParserCtxt( ParserCtxt );
-		TraceError( "CreateSchemaFromFile: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromFile: Invalid parameter.\n" );
 		return false;
 	}
 	ValidCtxt = xmlSchemaNewValidCtxt( Schema );
@@ -120,12 +120,12 @@ bool XsdValidator::CreateSchemaFromFile( const SimpleString XsdSchemaFile )
 	{
 		xmlSchemaFree( Schema );
 		xmlSchemaFreeParserCtxt( ParserCtxt );
-		TraceError( "CreateSchemaFromFile: Invalid parameter.\n" );
+		OmiscidError( "CreateSchemaFromFile: Invalid parameter.\n" );
 		return false;
 	}
 
 #ifdef DEBUG
-	// Trace errors during validation
+	// OmiscidTrace errors during validation
 	xmlSchemaSetValidErrors( ValidCtxt, (xmlSchemaValidityErrorFunc) fprintf, (xmlSchemaValidityWarningFunc) fprintf, stderr);
 #endif
 
@@ -140,7 +140,7 @@ bool XsdValidator::ValidateDoc( const SimpleString Doc )
 	// First parse doc in order to get a tree
 	if ( ValidCtxt == NULL || Doc.IsEmpty() || (pDoc=xmlParseMemory(Doc.GetStr(),Doc.GetLength())) == NULL )
 	{
-		TraceError( "ValidateDoc: unable to parse xml stream.\n" );
+		OmiscidError( "ValidateDoc: unable to parse xml stream.\n" );
 		return false;
 	}
 
@@ -158,7 +158,7 @@ bool XsdValidator::ValidateDoc( const xmlDocPtr Doc )
 {
 	if ( ValidCtxt == NULL || Doc == NULL || xmlSchemaValidateDoc( ValidCtxt, Doc ) != 0 )
 	{
-		TraceError( "ValidateDoc: unable to parse xml stream.\n" );
+		OmiscidError( "ValidateDoc: unable to parse xml stream.\n" );
 		return false;
 	}
 

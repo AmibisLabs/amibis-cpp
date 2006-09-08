@@ -203,7 +203,7 @@ void TcpUdpClientServer::SetServiceId(unsigned int pid)
 
 void TcpUdpClientServer::SendToAll(int len, const char* buf, bool fastsend)
 {
-	// Trace( "in SerndToAll\n");
+	// OmiscidTrace( "in SerndToAll\n");
 	if ( fastsend && len > UDP_MAX_MSG_SIZE )
 	{
 		fastsend = false;
@@ -262,7 +262,7 @@ void TcpUdpClientServer::SendToAll(int len, const char* buf, bool fastsend)
 			}
 			catch( SocketException &e )
 			{
-				Trace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+				OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
 			}
 		}
 		else
@@ -272,7 +272,7 @@ void TcpUdpClientServer::SendToAll(int len, const char* buf, bool fastsend)
 		}
 	}  
 	listClient.Unlock();
-	// Trace( "out SendToAll\n");
+	// OmiscidTrace( "out SendToAll\n");
 }
 
 int TcpUdpClientServer::SendToPeer(int len, const char* buf, unsigned int pid, bool fastsend)
@@ -304,7 +304,7 @@ int TcpUdpClientServer::SendToPeer(int len, const char* buf, unsigned int pid, b
 			}
 			catch( SocketException &e )
 			{
-				Trace( "Error while sending to peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+				OmiscidTrace( "Error while sending to peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 			}
 			listClient.Unlock();
 			return ret;
@@ -387,7 +387,7 @@ bool TcpUdpClientServer::RemoveCallbackObject(MsgSocketCallbackObject * Callback
 
 UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_connect, bool NewConnection )
 {
-	// Trace( "in TcpUdpClientServer::acceptConnection(UdpConnection*)\n");
+	// OmiscidTrace( "in TcpUdpClientServer::acceptConnection(UdpConnection*)\n");
 
 	UdpExchange::listUdpConnections.Lock();
 
@@ -426,7 +426,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 			for(TcpServer::listConnections.First(); (tcp_found == NULL) && TcpServer::listConnections.NotAtEnd();
 				TcpServer::listConnections.Next())
 			{
-				// Trace( "among  connexion server : %u\n", (*its)->GetPeerPid());
+				// OmiscidTrace( "among  connexion server : %u\n", (*its)->GetPeerPid());
 				if (udp_connect.pid == (TcpServer::listConnections.GetCurrent())->GetPeerPid()) tcp_found = TcpServer::listConnections.GetCurrent();
 			}
 
@@ -434,7 +434,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 			{
 				if(tcp_found->IsConnected())
 				{
-					// Trace("Creation connection udp associe TcpServer\n");
+					// OmiscidTrace("Creation connection udp associe TcpServer\n");
 					udp_found = new UdpConnection(udp_connect);
 					UdpExchange::listUdpConnections.Add(udp_found);
 				}
@@ -452,7 +452,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 	}
 	if(!udp_found)
 	{
-		Trace( "UDP connection Refused or not initialise from peer %x\n", udp_connect.pid);
+		OmiscidTrace( "UDP connection Refused or not initialise from peer %x\n", udp_connect.pid);
 	}
 
 	UdpExchange::listUdpConnections.Unlock();

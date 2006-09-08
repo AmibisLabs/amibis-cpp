@@ -189,10 +189,10 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 				}
 				else 
 				{
-					TraceError( "Unknow Access kind : %s\n", cur_node->children->content );
+					OmiscidError( "Unknow Access kind : %s\n", cur_node->children->content );
 				}
 			}
-			else TraceError( "Unwaited Tag : %s\n", cur_name.GetStr() );
+			else OmiscidError( "Unwaited Tag : %s\n", cur_name.GetStr() );
 		}
 	}
 

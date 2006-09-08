@@ -97,9 +97,9 @@ void InOutputAttribut::GenerateLongDescription(SimpleString& str)
 
 void InOutputAttribut::GenerateRecordData(SimpleString& str)
 {
-  // Trace( "in InOutputAttribut::GenerateRecordData\n");
-  // Trace( "str before : |%s| \n", str.GetStr());
-  // Trace( "Tcp port (%p) : %d %d \n", comTool, GetTcpPort() ,comTool->GetTcpPort());
+  // OmiscidTrace( "in InOutputAttribut::GenerateRecordData\n");
+  // OmiscidTrace( "str before : |%s| \n", str.GetStr());
+  // OmiscidTrace( "Tcp port (%p) : %d %d \n", comTool, GetTcpPort() ,comTool->GetTcpPort());
   TemporaryMemoryBuffer tmp(30);
 
   int tcp, udp;
@@ -126,8 +126,8 @@ void InOutputAttribut::GenerateRecordData(SimpleString& str)
       str = str + "/" + tmp;
     }
 
-  // Trace( "str after : %s \n", str.GetStr());
-  // Trace( "out InOutputAttribut::GenerateRecordData\n");
+  // OmiscidTrace( "str after : %s \n", str.GetStr());
+  // OmiscidTrace( "out InOutputAttribut::GenerateRecordData\n");
 }
 
 const SimpleList<unsigned int>& InOutputAttribut::GetListPeerId()
@@ -211,7 +211,7 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
 		  }
 		  else 
 		  {
-			  TraceError( "Unwaited Tag : %s\n", cur_name.GetStr() );
+			  OmiscidError( "Unwaited Tag : %s\n", cur_name.GetStr() );
 		  }
 	  }
   }

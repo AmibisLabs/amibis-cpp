@@ -38,7 +38,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 #ifdef DEBUG
 	if ( PropertiesForProxy.IsDefined("id") )
 	{
-		TraceError( "Property id defined in TxtRecord as '%s'.\n", PropertiesForProxy["id"].GetValue().GetStr() );
+		OmiscidError( "Property id defined in TxtRecord as '%s'.\n", PropertiesForProxy["id"].GetValue().GetStr() );
 	}
 #endif
 
@@ -138,14 +138,14 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt != NULL )
 	{
-		TraceError( "A connector named '%s' is already defined.\n", ConnectorName.GetStr() );
+		OmiscidError( "A connector named '%s' is already defined.\n", ConnectorName.GetStr() );
 		return false;
 	}
 
 	TcpUdpClientServer * pConnector = new TcpUdpClientServer();
 	if ( pConnector == NULL )
 	{
-		TraceError( "Could not allocate a new connector\n" );
+		OmiscidError( "Could not allocate a new connector\n" );
 		return false;
 	}
 
@@ -167,18 +167,18 @@ bool Service::SendToAllClients(SimpleString ConnectorName, char * Buffer, int Bu
 {
 	if ( Buffer == NULL && BufferLen != 0 )
 	{
-		TraceError( "Could not send (null) buffer\n" );
+		OmiscidError( "Could not send (null) buffer\n" );
 		return false;
 	}
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
-		TraceError( "Could not find connector '%s'.\n", ConnectorName.GetStr() );
+		OmiscidError( "Could not find connector '%s'.\n", ConnectorName.GetStr() );
 		return false;
 	}
 	if ( pAtt->IsAnInput() )
 	{
-		TraceError( "Could not send data on an input connector.\n" );
+		OmiscidError( "Could not send data on an input connector.\n" );
 		return false;
 	}
 
@@ -205,18 +205,18 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 {
 	if ( Buffer == NULL && BufferLen != 0 )
 	{
-		TraceError( "Could not send (null) buffer\n" );
+		OmiscidError( "Could not send (null) buffer\n" );
 		return false;
 	}
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
-		TraceError( "Could not find connector '%s'.\n", ConnectorName.GetStr() );
+		OmiscidError( "Could not find connector '%s'.\n", ConnectorName.GetStr() );
 		return false;
 	}
 	if ( pAtt->IsAnInput() )
 	{
-		TraceError( "Could not send data on an input connector.\n" );
+		OmiscidError( "Could not send data on an input connector.\n" );
 		return false;
 	}
 
@@ -247,7 +247,7 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 {
 	if ( ServProxy == NULL )
 	{
-		TraceError( "Coulnd not send data to (null) proxy\n" );
+		OmiscidError( "Coulnd not send data to (null) proxy\n" );
 		return false;
 	}
 	return SendToOneClient(ConnectorName, Buffer, BufferLen, ServProxy->GetPeerId(), FastSend );
@@ -265,14 +265,14 @@ bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString 
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar != NULL )
 	{
-		TraceError( "A variable named '%s' is already defined.\n", VarName.GetStr() );
+		OmiscidError( "A variable named '%s' is already defined.\n", VarName.GetStr() );
 		return false;
 	}
 
 	pVar = ControlServer::AddVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not allocate a new variable\n" );
+		OmiscidError( "Could not allocate a new variable\n" );
 		return false;
 	}
 
@@ -294,7 +294,7 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
+		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return false;
 	}
 
@@ -315,7 +315,7 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
+		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return Empty;
 	}
 
@@ -333,7 +333,7 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
+		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return false;
 	}
 
@@ -354,7 +354,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
+		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return Empty;
 	}
 
@@ -372,7 +372,7 @@ SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 	VariableAttribut * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		TraceError( "Could not find variable named '%s'.\n", VarName.GetStr() );
+		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return SimpleString::EmptyString;
 	}
 
@@ -442,14 +442,14 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, Si
 	InOutputAttribut * pAtt = FindInOutput( LocalConnector );
 	if ( pAtt == NULL )
 	{
-		TraceError( "Could not find local connector '%s'.\n", LocalConnector.GetStr() );
+		OmiscidError( "Could not find local connector '%s'.\n", LocalConnector.GetStr() );
 		return false;
 	}
 
 	ConnectionInfos Connection;
 	if ( ServProxy.GetConnectionInfos( RemoteConnector, Connection ) == false )
 	{
-		// TraceError already done in GetConnectionInfos
+		// OmiscidError already done in GetConnectionInfos
 		return false;
 	}
 
@@ -460,7 +460,7 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, Si
 			// Can connect only on output and inoutput
 			if ( Connection.Type == AnInput )
 			{
-				TraceError( "Cound not connect local input connector '%s' to another input connector '%s'\n", LocalConnector.GetStr(), RemoteConnector.GetStr() );
+				OmiscidError( "Cound not connect local input connector '%s' to another input connector '%s'\n", LocalConnector.GetStr(), RemoteConnector.GetStr() );
 				return false;
 			}
 			break;
@@ -469,7 +469,7 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, Si
 			// Can connect only on input and inoutput
 			if ( Connection.Type == AnOutput )
 			{
-				TraceError( "Cound not connect local output connector '%s' to another output connector '%s'\n", LocalConnector.GetStr(), RemoteConnector.GetStr() );
+				OmiscidError( "Cound not connect local output connector '%s' to another output connector '%s'\n", LocalConnector.GetStr(), RemoteConnector.GetStr() );
 				return false;
 			}
 			break;
@@ -493,7 +493,7 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, Si
 {
 	if ( ServProxy == NULL )
 	{
-		TraceError( "Coulnd not connect to (null) proxy service\n" );
+		OmiscidError( "Coulnd not connect to (null) proxy service\n" );
 		return false;
 	}
 	return ConnectTo(LocalConnector, *ServProxy, RemoteConnector);
@@ -509,13 +509,13 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
-		TraceError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
+		OmiscidError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
 		return false;
 	}
 
 	if ( pAtt->IsAnOutput() )	// can be Input, InOutput, but limited on Output
 	{
-		TraceError( "Could only receive connection/deconnecion notification over a simple output connector.\n" );
+		OmiscidError( "Could only receive connection/deconnecion notification over a simple output connector.\n" );
 	}
 
 	// Get the connector
@@ -537,7 +537,7 @@ bool Service::RemoveConnectorListener(SimpleString ConnectorName, ConnectorListe
 	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
-		TraceError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
+		OmiscidError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
 		return false;
 	}
 

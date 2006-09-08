@@ -505,7 +505,7 @@ bool Socket::SetTcpNoDelay(bool Set)
 #ifdef WIN32
 	if ( setsockopt(descriptor, IPPROTO_TCP, TCP_NODELAY, (char*)&OptVal, sizeof(OptVal)) < 0 )
 	{
-		TraceError("setsockopt: could not set TCP nodelay\n");
+		OmiscidError("setsockopt: could not set TCP nodelay\n");
 		return false;
 	}
 	return true;
@@ -514,7 +514,7 @@ bool Socket::SetTcpNoDelay(bool Set)
 	p = getprotobyname("tcp");
 	if( p && setsockopt(descriptor, p->p_proto, TCP_NODELAY, &OptVal, sizeof(OptVal)) < 0)
 	{
-		TraceError("setsockopt: could not set TCP nodelay\n");
+		OmiscidError("setsockopt: could not set TCP nodelay\n");
 		return false;
 	}
 	return true;

@@ -301,7 +301,7 @@ bool ControlServer::StartServer()
 			// Check if everything goes fine
 			if( registerDnsSd->IsRegistered() )
 			{
-				Trace( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
+				OmiscidTrace( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
 				// serviceName = registerDnsSd->RegisteredName;
 				// NameVariable->SetValue( serviceName );
 				StartThreadProcessMsg();
@@ -312,17 +312,17 @@ bool ControlServer::StartServer()
 			delete registerDnsSd;
 			registerDnsSd = NULL;
 
-			TraceError( "Changing PeerId from %8.8x ", serviceId );
+			OmiscidError( "Changing PeerId from %8.8x ", serviceId );
 
 			// Generate a new PeerId and set it !
 			serviceId = ComTools::GeneratePeerId();
 			TcpServer::SetServiceId( serviceId );
 
-			TraceError( "to %8.8x because of name conflict.\n", serviceId );
+			OmiscidError( "to %8.8x because of name conflict.\n", serviceId );
 		}
 
 		// Something was wrong...
-		TraceError( "Registration of '%s' failed\n", serviceName.GetStr() );
+		OmiscidError( "Registration of '%s' failed\n", serviceName.GetStr() );
 	}
 	catch(SocketException e)
 	{
@@ -381,8 +381,8 @@ VariableAttribut* ControlServer::FindVariable(const SimpleString VarName)
 
 void ControlServer::ProcessAMessage(XMLMessage* msg)
 {
-	// Trace( "in ControlServer::ProcessAMessage\n");
-	// Trace( "from pid = %u \n",msg->pid);
+	// OmiscidTrace( "in ControlServer::ProcessAMessage\n");
+	// OmiscidTrace( "from pid = %u \n",msg->pid);
 
 	xmlNodePtr node = msg->GetRootNode();
 
@@ -412,7 +412,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 					name == InOutputAttribut::output_str.GetStr() || 
 					name == InOutputAttribut::inoutput_str.GetStr() )
 				{
-					// Trace( " process io : %s \n", (*it)->name.GetStr());
+					// OmiscidTrace( " process io : %s \n", (*it)->name.GetStr());
 					ProcessInOutputQuery(cur_node, str);
 				}
 				else if( name == VariableAttribut::variable_str.GetStr() )
@@ -441,10 +441,10 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 				}
 				else
 				{
-					TraceError( "unknow tag : %s\n", name.GetStr() );
+					OmiscidError( "unknow tag : %s\n", name.GetStr() );
 				}
 			}	 
-			// TraceError( "Send : %s \n", str.GetStr());
+			// OmiscidError( "Send : %s \n", str.GetStr());
 		}
 
 		str = "<controlAnswer id=\""+id+"\">" 
@@ -461,14 +461,14 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			}
 			catch( SocketException& e )
 			{
-				TraceError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
+				OmiscidError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
 			}
 		}
 		TcpServer::listConnections.Unlock();
 	}
 	else
 	{
-		TraceError( "waited : controlQuery, received='%s'\n", node->name);
+		OmiscidError( "waited : controlQuery, received='%s'\n", node->name);
 	}
 }
 
@@ -476,7 +476,7 @@ void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answ
 {
 	if(node->children != NULL)
 	{
-		TraceError( "unknown inoutput query (unwaited child)\n");
+		OmiscidError( "unknown inoutput query (unwaited child)\n");
 	}
 	else
 	{
@@ -493,7 +493,7 @@ void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answ
 		}
 		else
 		{
-			Trace( "understood query (name requested)\n");      
+			OmiscidTrace( "understood query (name requested)\n");      
 		}
 	}
 }
@@ -539,7 +539,7 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 	}
 	else
 	{
-		Trace( "understood query (name requested)\n");      
+		OmiscidTrace( "understood query (name requested)\n");      
 	}
 }
 
@@ -577,7 +577,7 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 				}
 				else 
 				{
-					TraceError( "in connect query : unused tag :\n");
+					OmiscidError( "in connect query : unused tag :\n");
 #if defined DEBUG
 					XMLMessage::DisplayNode(cur_node, stderr);
 #endif
@@ -592,7 +592,7 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 	}
 	else
 	{
-		Trace( "understood query (name requested)\n");      
+		OmiscidTrace( "understood query (name requested)\n");      
 	}
 }
 void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, bool subscribe)
@@ -602,7 +602,7 @@ void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, boo
 	bool found = (attr != NULL);  
 	if(!found)
 	{
-		Trace( "understood query (name requested)\n");      
+		OmiscidTrace( "understood query (name requested)\n");      
 	}
 	else
 	{
@@ -675,7 +675,7 @@ void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutpu
 
 void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue, ControlServerStatus status )
 {
-	Trace( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
+	OmiscidTrace( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
 	// Do what we must do...
 
 	// va will call back me to know if I agree to change it's value
@@ -708,7 +708,7 @@ VariableAttribut* ControlServer::AddVariable(const SimpleString VarName)
 	if ( FindVariable( VarName ) != NULL )
 	{
 		// Already exists
-		TraceError( "A variable with the same name already exists.\n" );
+		OmiscidError( "A variable with the same name already exists.\n" );
 		return NULL;
 	}
 
@@ -716,7 +716,7 @@ VariableAttribut* ControlServer::AddVariable(const SimpleString VarName)
 	if ( FindInOutput( VarName ) != NULL )
 	{
 		// Already exists
-		TraceError( "A connector with the same name already exists. Could not add variable.\n" );
+		OmiscidError( "A connector with the same name already exists. Could not add variable.\n" );
 		return NULL;
 	}
 
@@ -740,7 +740,7 @@ InOutputAttribut* ControlServer::AddInOutput(const SimpleString InOutputName, Co
 	if ( FindInOutput( InOutputName ) != NULL )
 	{
 		// Already exists
-		TraceError( "A connector with the same name already exists.\n" );
+		OmiscidError( "A connector with the same name already exists.\n" );
 		return NULL;
 	}
 
@@ -748,7 +748,7 @@ InOutputAttribut* ControlServer::AddInOutput(const SimpleString InOutputName, Co
 	if ( FindVariable( InOutputName ) != NULL )
 	{
 		// Already exists
-		TraceError( "A variable with the same name already exists. Could not add connector.\n" );
+		OmiscidError( "A variable with the same name already exists. Could not add connector.\n" );
 		return NULL;
 	}
 
@@ -799,7 +799,7 @@ void ControlServer::NotifyValueChanged(VariableAttribut* var)
 				}
 				catch( SocketException& e )
 				{
-					Trace( "Error notification of value changes : %s (%d)\n", e.msg.GetStr(), e.err );
+					OmiscidTrace( "Error notification of value changes : %s (%d)\n", e.msg.GetStr(), e.err );
 				}
 			}
 			else
@@ -870,7 +870,7 @@ ValueListener::~ValueListener()
 
 void ValueListener::AddListener(unsigned int listener_id)
 { 
-	Trace( "addListener  %s %u\n", var->GetName().GetStr(), listener_id);
+	OmiscidTrace( "addListener  %s %u\n", var->GetName().GetStr(), listener_id);
 	listListener.Add(listener_id);
 }
 

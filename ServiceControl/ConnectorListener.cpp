@@ -18,7 +18,7 @@ ConnectorListener::~ConnectorListener()
      */
 void ConnectorListener::Connected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId)
 {
-	Trace( "A new peer %.8x connects to %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
+	OmiscidTrace( "A new peer %.8x connects to %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
 }
 
     /**
@@ -30,7 +30,7 @@ void ConnectorListener::Connected(Service& TheService, const SimpleString LocalC
      */
 void ConnectorListener::Disconnected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId)
 {
-	Trace( "The peer %.8x disconnects from %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
+	OmiscidTrace( "The peer %.8x disconnects from %s:%s.\n", PeerId, TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr() );
 }
 
 	/**

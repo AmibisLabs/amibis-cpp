@@ -85,7 +85,7 @@ bool Thread::StopThread(int wait_ms)
 		if ( ThreadStopInTime == false )
 		{
 			// Timeout !!!
-			TraceError( "Thread::StopThread: Thread do not stop before timeout (%d).\n", wait_ms );
+			OmiscidError( "Thread::StopThread: Thread do not stop before timeout (%d).\n", wait_ms );
 #ifdef WIN32
 			// TerminateThread( ThreadHandle, 0 );
 #endif
@@ -110,7 +110,7 @@ void* Thread::CallRun(void* ptr)
 	t->IsEnded.Reset();
 
 #ifdef DEBUG
-	// Trace( "%s\n", t->ThreadName.GetStr() );
+	// OmiscidTrace( "%s\n", t->ThreadName.GetStr() );
 #endif
 
 	// Do my job

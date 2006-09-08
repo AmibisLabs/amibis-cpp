@@ -7,7 +7,7 @@ using namespace Omiscid;
 
 SimpleException::SimpleException(const SimpleString m, int i) 
 {
-	Trace( "%s : %d\n", m.GetStr(), i );
+	OmiscidTrace( "%s : %d\n", m.GetStr(), i );
 
 	msg = m;
 	err = i;
@@ -29,7 +29,7 @@ SimpleException::~SimpleException()
 
 void SimpleException::Display() const
 {
-  Trace( "SimpleException: %s (%d)\n", msg.GetStr(), err);
+  OmiscidTrace( "SimpleException: %s (%d)\n", msg.GetStr(), err);
 }
 
 SimpleString SimpleException::GetExceptionType() const 

@@ -20,7 +20,7 @@ namespace Omiscid {
 		if ( Option == NULL || strcmp( Option, DefaultDomain.GetStr() ) == 0 )
 		{
 			OmiscidServiceDnsSdType = DefaultDomain;
-			Trace( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
+			OmiscidTrace( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
 			return;
 		}
 	};
@@ -76,7 +76,7 @@ DnsSdProxy::DnsSdProxy()
 	if ( InstancesCount == 1 )
 	{
 		// First Instance
-		Trace( "Launch DnsSdProxy instance.\n" );
+		OmiscidTrace( "Launch DnsSdProxy instance.\n" );
 
 		// Reset Event (in case we were over 1 instance, under 1 and them over 1 again
 		Changes.Reset();
@@ -84,7 +84,7 @@ DnsSdProxy::DnsSdProxy()
 		ServiceBroswer = new BrowseForDNSSDService( CommonServiceValues::OmiscidServiceDnsSdType, BrowseCollect, (void *)this, true);
 		if ( ServiceBroswer == NULL )
 		{
-			TraceError( "Launch DnsSdProxy instance => failed\n" );
+			OmiscidError( "Launch DnsSdProxy instance => failed\n" );
 			// Let InstancesCount be 0, we will retry later
 			InstancesCount = 0;
 		}
@@ -97,7 +97,7 @@ DnsSdProxy::~DnsSdProxy()
 	Locker.EnterMutex();
 	if ( --InstancesCount <= 0 )
 	{
-		Trace( "Last DnsSdProxy instance. Stop it.\n" );
+		OmiscidTrace( "Last DnsSdProxy instance. Stop it.\n" );
 		if ( ServiceBroswer )
 		{
 			delete ServiceBroswer;

@@ -207,10 +207,10 @@ namespace Omiscid {
 	#define OMISCID_TRACE_IS_ENABLED 0
 #endif
 
-/** @fct TraceError
+/** @fct OmiscidError
 	*  @brief used to warn messages
 	*/
-inline void OmiscidTraceError(const char * format, ... )
+inline void OmiscidError(const char * format, ... )
 {
 	va_list args;
 	va_start( args, format );
@@ -226,8 +226,8 @@ inline void OmiscidTrace(const char * format, ... )
 	va_end( args );
 }
 
-#define TraceError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTraceError
-#define Trace	    !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTrace
+#define OmiscidError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidError
+#define OmiscidTrace  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTrace
 
 #ifdef WIN32
 
