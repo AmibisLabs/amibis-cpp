@@ -284,7 +284,7 @@ void XMLTreeParser::Run()
 		}
 		catch(SimpleException& e)
 		{
-			OmiscidTrace( "XMLTreeParser::Run: ExceptionRaisedFromDown (%s)\n", e.msg );
+			OmiscidTrace( "XMLTreeParser::Run: ExceptionRaisedFromDown (%s)\n", e.msg.GetStr() );
 		}
 	}
 
