@@ -141,6 +141,8 @@ int main(int argc, char * argv[])
 	struct timeval temps;
 	unsigned int t1, t2;
 
+	OmiscidTrace( "Start register\n" );
+
     gettimeofday(&temps,NULL);
 	t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
 
@@ -165,6 +167,8 @@ int main(int argc, char * argv[])
 	OmiscidError( "Total register time %u\n", t2 - t1 );
 
 	t1 = t2;
+
+	OmiscidTrace( "Start unregister\n" );
 
 	// Destroy service
 	for( ListOfRegisteredService.First(); ListOfRegisteredService.NotAtEnd(); ListOfRegisteredService.Next() )
