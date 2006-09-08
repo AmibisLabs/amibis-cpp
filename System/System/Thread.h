@@ -106,7 +106,6 @@ private:
 	Event StopWasAskedEvent;	/*!< store if stop is required, full unactive wait */
 	bool  ThreadIsRunning;		/*!< state of the thread */
 
-	Mutex Locker;				/*!< In order to protect my content */
 	Event IsEnded;				/*!< To say I am ended */
 	
 #ifdef WIN32

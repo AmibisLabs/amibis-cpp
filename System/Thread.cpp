@@ -90,21 +90,6 @@ bool Thread::StopThread(int wait_ms)
 			// TerminateThread( ThreadHandle, 0 );
 #endif
 		}
-
-//		Locker.EnterMutex();
-
-#ifdef WIN32
-
-		// Close the Thread handle
-		// CloseHandle( ThreadHandle );
-
-		ThreadID = 0;
-		ThreadHandle = NULL;
-#else
-		// m_thread	: something to do with ?
-#endif
-
-//		Locker.LeaveMutex();
 	}
 
 	return ThreadStopInTime;
@@ -133,9 +118,16 @@ void Thread::CallRun(void* ptr)
 	t->Run();
 	t->ThreadIsRunning = false;
 
-	// revert my data
+#ifdef WIN32
+
+	// Close the Thread handle
+	// CloseHandle( ThreadHandle );
+
 	t->ThreadID = 0;
-	t->ThreadHandle = 0;
+	t->ThreadHandle = NULL;
+#else
+	// m_thread	: something to do with ?
+#endif
 	
 	// signal, my job is over
 	t->IsEnded.Signal();
