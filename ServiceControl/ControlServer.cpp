@@ -507,7 +507,10 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 	if ( found )
 	{
 		SimpleString name((const char*)attr->children->content);
-		VariableAttribut* va = FindVariable(name);     
+		VariableAttribut* va = FindVariable(name);    
+
+		OmiscidTrace( "Query on name\n" );
+
 		if(va)
 		{
 			if(node->children == NULL)
