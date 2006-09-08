@@ -210,7 +210,7 @@ namespace Omiscid {
 /** @fct TraceError
 	*  @brief used to warn messages
 	*/
-inline void TraceError(const char * format, ... )
+inline void OmiscidTraceError(const char * format, ... )
 {
 	va_list args;
 	va_start( args, format );
@@ -218,7 +218,7 @@ inline void TraceError(const char * format, ... )
 	va_end( args );
 }
 
-inline void Trace(const char * format, ... )
+inline void OmiscidTrace(const char * format, ... )
 {
 	va_list args;
 	va_start( args, format );
@@ -226,8 +226,8 @@ inline void Trace(const char * format, ... )
 	va_end( args );
 }
 
-#define TraceError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : TraceError
-#define Trace		!(OMISCID_TRACE_IS_ENABLED) ? (void)0 : Trace
+#define TraceError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTraceError
+#define Trace	    !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTrace
 
 #ifdef WIN32
 
