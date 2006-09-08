@@ -282,9 +282,9 @@ void XMLTreeParser::Run()
 				ProcessMessages();
 			}
 		}
-		catch(...)
+		catch(SimpleException& e)
 		{
-			OmiscidTrace( "XMLTreeParser::Run: ExceptionRaisedFromDown\n" );
+			OmiscidTrace( "XMLTreeParser::Run: ExceptionRaisedFromDown (%s)\n", e.msg );
 		}
 	}
 
