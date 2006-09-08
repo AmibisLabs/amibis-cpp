@@ -85,7 +85,7 @@ bool Thread::StopThread(int wait_ms)
 		if ( ThreadStopInTime == false )
 		{
 			// Timeout !!!
-			TraceError( "Thread::StopThread: Thread %u do not stop before timeout (%d).\n", ThreadID, wait_ms );
+			TraceError( "Thread::StopThread: Thread do not stop before timeout (%d).\n", wait_ms );
 #ifdef WIN32
 			// TerminateThread( ThreadHandle, 0 );
 #endif
@@ -98,7 +98,7 @@ bool Thread::StopThread(int wait_ms)
 #ifdef WIN32
 unsigned long FUNCTION_CALL_TYPE Thread::CallRun(void* ptr)
 #else
-void Thread::CallRun(void* ptr)
+void* Thread::CallRun(void* ptr)
 #endif
 {
 	Thread* t = (Thread*)ptr;
