@@ -105,33 +105,33 @@ void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags 
 	}
 }
 
-int main(int argc, char * argv[])
+class TestRegister : public Thread
 {
-#if 0
-	int err;
-
-	DNSServiceRef DnsSdConnection[10];
-	
-	for( int zz = 0; zz < 6; zz++ )
+public:
+	TestRegister()
 	{
-		err = DNSServiceRegister( &DnsSdConnection[zz], 0, 0, "yop", "_bip._tcp", "local.", NULL, (uint16_t)rand(),
-			(uint16_t)0, "", DnsRegisterReply2, (void*)NULL );
+	}
 
-		if ( err == kDNSServiceErr_NoError )
-		{
-			// We did connection to the DNS-SD Daemon
+	static AtomicCounter NbRegister;
 
-			// Wait for an answer
-				// Get the socket FD
-			SOCKET DnsSocketFd = DNSServiceRefSockFD(DnsSdConnection[zz]); 
+	void Run()
+	{
+		Omiscid::Service * pServ = ServiceFactory.Create( "Yop" );
+		pServ->AddVariable( "RealNumber", "interger", "Just a number", ConstantAccess );
+		pServ->SetVariableValue( "RealNumber", (int)this );
+		pServ->Start();
+		NbRegister++;
 
-			// Loop forever
-			for(;;)
-			{
-				fd_set socketfds;
-				timeval timeout;
+		// Wait for some to ask me to stop
+		WaitForStop();
 
-<<<<<<< .mine
+		// Delete the constructed service
+		delete pServ;
+	}
+};
+
+AtomicCounter TestRegister::NbRegister;
+
 int main(int argc, char * argv[])
 {
 
@@ -186,47 +186,57 @@ int main(int argc, char * argv[])
 
   return 0;
 
-
 	const int NbServiceToRegister = 50;
-=======
-				FD_ZERO(&socketfds);
-				FD_SET(DnsSocketFd, &socketfds);
->>>>>>> .r1185
 
-				// First check for event (like disconnection...)
-				timeout.tv_sec  = 10;	// 10 seconds
-				timeout.tv_usec = 0;
+	SimpleList<TestRegister*> ListOfRegisteredService;
 
-				// Ask if some event are waiting on this socket
-				if ( select((int)DnsSocketFd+1, &socketfds, NULL, NULL, &timeout) > 0 )
-				{
-					break;
-				}
-			}
+	struct timeval temps;
+	unsigned int t1, t2;
 
-			// Wait for its answer
-			if ( DNSServiceProcessResult( DnsSdConnection[zz] ) == kDNSServiceErr_NoError )
-			{
-				printf( "done %d\n", zz+1 ); // To write 1, 2... and not 0, 1...
-			}
-		}
+	printf( "Start register\n" );
 
-		Sleep( 2000 );
-	}
+    gettimeofday(&temps,NULL);
+	t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
 
-	return 0;
-#endif
-
-	for( int i = 0; i<6; i++ )
+	for( int i = 0; i<NbServiceToRegister; i++ )
 	{
-		Service * pServ = ServiceFactory.Create( "Yop" );
-		pServ->AddConnector( "Input", "", AnInput );
-		pServ->Start();
+		TestRegister * pRegServ = new TestRegister();
+		if ( pRegServ )
+		{
+			pRegServ->StartThread();
+			ListOfRegisteredService.Add(pRegServ);
+		}
 	}
 
-	Mutex MyLock;
-	MyLock.EnterMutex();
-	MyLock.EnterMutex();
+	while( TestRegister::NbRegister != NbServiceToRegister )
+	{
+		Thread::Sleep(10);
+	}
+
+	gettimeofday(&temps,NULL);
+	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
+
+	fprintf( stderr, "Total register time %u\n", t2 - t1 );
+
+	t1 = t2;
+
+	printf( "Start unregister\n" );
+
+	// Destroy service
+	for( ListOfRegisteredService.First(); ListOfRegisteredService.NotAtEnd(); ListOfRegisteredService.Next() )
+	{
+		ListOfRegisteredService.GetCurrent()->StopThread(0);
+		ListOfRegisteredService.RemoveCurrent();
+	}
+
+    gettimeofday(&temps,NULL);
+	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
+
+	fprintf( stderr, "Total unregister time %u\n", t2 - t1 );
+
+	Mutex MyLock2;
+	MyLock2.EnterMutex();
+	MyLock2.EnterMutex();
 
 	return 0;
 
