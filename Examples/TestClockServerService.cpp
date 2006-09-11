@@ -170,10 +170,6 @@ int main(int argc, char * argv[])
 
 	OmiscidTrace( "Start unregister\n" );
 
-	Mutex MyLock;
-	MyLock.EnterMutex();
-	MyLock.EnterMutex();
-
 	// Destroy service
 	for( ListOfRegisteredService.First(); ListOfRegisteredService.NotAtEnd(); ListOfRegisteredService.Next() )
 	{
