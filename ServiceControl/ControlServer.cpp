@@ -515,10 +515,12 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 		{
 			if(node->children == NULL)
 			{
+				OmiscidTrace( "GenerateLongDescription\n" );
 				va->GenerateLongDescription(str_answer);
 			}
 			else
 			{
+				OmiscidTrace( "VariableChange\n" );
 				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", node);
 				if(val_node)
 				{
