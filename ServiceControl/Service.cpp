@@ -35,12 +35,12 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord.GetStr() );
 
 	// Need to add id of the service
-#ifdef DEBUG
 	if ( PropertiesForProxy.IsDefined("id") )
 	{
-		OmiscidError( "Property id defined in TxtRecord as '%s'.\n", PropertiesForProxy["id"].GetValue().GetStr() );
-	}
+#ifdef DEBUG
+		OmiscidError( "Property id defined in TxtRecord as '%s'. Old style Service ?\n", PropertiesForProxy["id"].GetValue().GetStr() );
 #endif
+	}
 
 	// Create search pattern
 	SimpleString TmpString(".");
