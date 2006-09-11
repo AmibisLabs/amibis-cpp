@@ -97,7 +97,7 @@ void VariableAttribut::SetValue(const SimpleString value_str)
 		{
 			// someone disagree
 			Listeners.Unlock();
-			OmiscidError( "VariableAttribut::SetValue: someone disagree on variable change\n");
+			// OmiscidError( "VariableAttribut::SetValue: someone disagree on variable change\n");
 			return;
 		}
 	}

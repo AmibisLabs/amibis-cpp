@@ -25,7 +25,8 @@ class VariableAttribut;
  *
  * @author Sebastien Pesnel
  */
-class IntVariableAttribut{
+class IntVariableAttribut
+{
  public:
   /** @brief Constructor
    * @param va the description object
@@ -44,8 +45,9 @@ class IntVariableAttribut{
    *
    * Change the integer value, and also the description for the service
    * @param value the new value for the integer
+   * @param ForceChange shall we force change !
    */
-  void SetValue( int value );
+  void SetValue( int value, bool ForceChange = false );
   
   /** @brief Increment the  integer value
    * @see SetValue*/
