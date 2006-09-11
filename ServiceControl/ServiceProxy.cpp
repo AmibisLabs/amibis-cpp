@@ -40,7 +40,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 
 	// Is the description
 	TmpString = ServiceProps["desc"].GetValue();
-	if ( TmpString == "fullmonty" )
+	if ( TmpString == "full" )
 	{
 		FullDescription = true;
 
@@ -351,6 +351,10 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 
 	// Il all other cases
 	pVar = QueryVariableDescription( VarName );
+	if ( pVar == NULL )
+	{
+		throw  SimpleException("Unknown variable. Call HasVariableFirst.");
+	}
 	return pVar->GetValue();
 }
 
@@ -520,9 +524,15 @@ VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 	// }
 	if ( pVar == NULL )
 	{
-		// Not found
-		OmiscidError( "Variable '%s' not found\n", VarName.GetStr() );
-		return NULL;
+		if ( FullDescription == true )
+		{
+			// Not found
+			OmiscidError( "Variable '%s' not found\n", VarName.GetStr() );
+			return NULL;
+		}
+
+		// Try to get the variable if we do not get the full description
+		pVar = QueryVariableDescription(VarName);
 	}
 	return pVar;
 }

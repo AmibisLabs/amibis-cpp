@@ -134,7 +134,7 @@ AtomicCounter TestRegister::NbRegister;
 
 int main(int argc, char * argv[])
 {
-	const int NbServiceToRegister = 50;
+	const int NbServiceToRegister = 10;
 
 	SimpleList<TestRegister*> ListOfRegisteredService;
 

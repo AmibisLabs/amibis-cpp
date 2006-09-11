@@ -378,8 +378,8 @@ void WaitForDnsSdServices::Run()
 				if ( NbServicesReady == NbSearchServices )
 				{
 					AllFound.Signal();
-					ThreadSafeSection.LeaveMutex();
-					break;
+					// ThreadSafeSection.LeaveMutex();
+					// break;
 				}
 
 				ThreadSafeSection.LeaveMutex();
@@ -447,8 +447,8 @@ void WaitForDnsSdServices::Run()
 			if ( NbServicesReady == NbSearchServices )
 			{
 				AllFound.Signal();
-				ThreadSafeSection.LeaveMutex();
-				break;
+				// ThreadSafeSection.LeaveMutex();
+				// break;
 			}
 
 			ThreadSafeSection.LeaveMutex();

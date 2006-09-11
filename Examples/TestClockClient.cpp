@@ -96,27 +96,8 @@ void CompteARebours2(unsigned int Reste)
 
 int main(int argc, char * argv[])
 {
-
-
-#if 0 
 	DnsSdProxy MyProxy;
-	SimpleList<DnsSdService*>* pList;
-
-	for(;;)
-	{
-		Thread::Sleep(2000);
-		pList = DnsSdProxy::GetCurrentServicesList();
-
-		printf( "\nCurrent List\n" );
-		for( pList->First(); pList->NotAtEnd(); pList->Next() )
-		{
-			printf( "%s\n", pList->GetCurrent()->CompleteServiceName );
-		}
-	}
-#endif
-
-	DnsSdProxy MyProxy;
-	long timeout = 5000;
+	long timeout = 50000;
 
 	struct timeval temps;
 	unsigned int t1, t2;
@@ -125,11 +106,13 @@ int main(int argc, char * argv[])
 	ServiceFilterList Filters;
 	Filters.Add( NameIs("Yop") );
 
+    ServiceProxyList * Proxys = finder->FindServices(Filters, timeout);
+
     for(int iter = 1; iter <= 10; iter++)
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
-        ServiceProxyList * Proxys = finder->FindServices(Filters, timeout);
+        Proxys = finder->FindServices(Filters, timeout);
         gettimeofday(&temps,NULL);
 		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
 		if (Proxys == NULL)
