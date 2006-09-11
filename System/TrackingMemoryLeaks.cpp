@@ -1,5 +1,5 @@
 
-// #include <System/TrackingMemoryLeaks.h>
+#include <System/TrackingMemoryLeaks.h>
 
 #ifdef TRACKING_MEMORY_LEAKS
 
@@ -373,7 +373,7 @@ template <typename TYPE>
 TYPE& MemoryList<TYPE>::GetCurrent() const
 {
 	if ( RemoveCurrentHasOccured )
-		throw ("RemoveCurrentHasOccured");
+		throw  SimpleException("RemoveCurrentHasOccured");
 
 	return CurrentElement->ElementContainer;
 }
@@ -383,7 +383,7 @@ template <typename TYPE>
 bool MemoryList<TYPE>::RemoveCurrent()
 {
 	if(RemoveCurrentHasOccured)
-		throw ("RemoveCurrentHasOccured");
+		throw  SimpleException("RemoveCurrentHasOccured");
 
 	RemoveCurrentHasOccured = true;
 	SimpleListElement<TYPE> * tmp = CurrentElement;

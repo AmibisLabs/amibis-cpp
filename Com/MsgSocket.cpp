@@ -360,17 +360,17 @@ void MsgSocket::InitForTcpClient(const SimpleString addr, int port)
 	buffer = new unsigned char[bufferSize];
 	if ( buffer == NULL )
 	{
-		throw new MsgSocketException( "Not enougth memory" );
+		throw MsgSocketException( "Not enougth memory" );
 	}
 	SendBuffer = new unsigned char[TCP_BUFFER_SIZE];
 	if ( SendBuffer == NULL )
 	{
-		throw new MsgSocketException( "Not enougth memory" );
+		throw MsgSocketException( "Not enougth memory" );
 	}
 	start_tag = new char[tag_size+1];
 	if ( start_tag == NULL )
 	{
-		throw new MsgSocketException( "Not enougth memory" );
+		throw MsgSocketException( "Not enougth memory" );
 	}
 	kind = TCP_CLIENT_KIND;
 	connected = true;

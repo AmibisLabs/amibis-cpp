@@ -584,7 +584,7 @@ char SimpleString::operator[](int i) const
 {
 	if ( i >= (int)stringData->GetLength() )
 	{
-		throw "SimpleString::out of bound";
+		throw  SimpleException("SimpleString::out of bound");
 	}
 	return *(stringData->GetDataPtr()+i);
 }

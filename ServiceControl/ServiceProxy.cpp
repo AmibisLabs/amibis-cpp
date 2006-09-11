@@ -21,7 +21,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	}
 	else
 	{
-		// throw "ServiceProxy failed";
+		// throw  SimpleException("ServiceProxy failed");
 	}
 }
 
@@ -335,7 +335,7 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 	VariableAttribut * pVar = FindVariable(VarName);
 	if ( pVar == NULL )
 	{
-		throw "Unknown variable. Call HasVariableFirst.";
+		throw  SimpleException("Unknown variable. Call HasVariableFirst.");
 	}
 
 	// If the variable is initialised

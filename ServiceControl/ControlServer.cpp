@@ -509,19 +509,18 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 		SimpleString name((const char*)attr->children->content);
 		VariableAttribut* va = FindVariable(name);    
 
-		OmiscidTrace( "Query on name '%s'\n", name.GetStr() ); 
-		OmiscidTrace( "Query on name '%s'\n", name.GetStr() ); 
+		// OmiscidTrace( "Query on name '%s'\n", name.GetStr() ); 
 
 		if(va)
 		{
 			if(node->children == NULL)
 			{
-				OmiscidTrace( "GenerateLongDescription\n" );
+				// OmiscidTrace( "GenerateLongDescription\n" );
 				va->GenerateLongDescription(str_answer);
 			}
 			else
 			{
-				OmiscidTrace( "VariableChange\n" );
+				// OmiscidTrace( "VariableChange\n" );
 				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", node);
 				if(val_node)
 				{

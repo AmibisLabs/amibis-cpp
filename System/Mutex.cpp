@@ -19,7 +19,7 @@ Mutex::Mutex()
 	OwnerId = 0;
 #else
 	if(pthread_mutex_init(&mutex, NULL) != 0)
-		throw "Error Mutex Init";
+		throw  SimpleException("Error Mutex Init");
 #endif	
 }
 
@@ -32,7 +32,7 @@ Mutex::~Mutex()
 	}
 #else
 	if(pthread_mutex_destroy(&mutex) != 0)
-		throw "Error Mutex Destroy";
+		throw SimpleException("Error Mutex Destroy");
 #endif
 }
 

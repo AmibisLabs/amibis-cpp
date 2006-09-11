@@ -8,12 +8,12 @@ Event::Event()
 {
 #ifndef WIN32
 	if(pthread_mutex_init(&mutex, NULL) != 0)
-		throw "Error Mutex Init";
+		throw SimpleException("Error Mutex Init");
 	if(pthread_cond_init(&condition, NULL) != 0)
-		throw "Error Condition Init";
+		throw SimpleException("Error Condition Init");
 #else
 	if((handle = CreateEvent(NULL, TRUE, FALSE, NULL)) == NULL)
-		throw "Error CreateEvent";
+		throw  SimpleException("Error CreateEvent");
 #endif /* WIN32 */
 }
 

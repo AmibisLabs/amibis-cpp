@@ -286,11 +286,6 @@ void XMLTreeParser::Run()
 		{
 			OmiscidTrace( "XMLTreeParser::Run: ExceptionRaisedFromDown (%s)\n", e.msg.GetStr() );
 		}
-		catch(const char* msg)
-		{
-			OmiscidTrace( "XMLTreeParser::Run: ExceptionRaisedFromDown (%s)\n", msg );
-		}
-
 	}
 
 	// OmiscidTrace( "ThreadWasAskedToDie\n" );

@@ -236,7 +236,7 @@ SimpleString& VariableAttribut::GetValue()
 		SimpleString TmpString;
 		TmpString = GetName();
 		TmpString += " not initialised";
-		throw TmpString.GetStr();
+		throw  SimpleException( TmpString );
 	}
 	return valueStr; 
 }

@@ -298,6 +298,7 @@ sub GenerateIncludeGraph()
 {
  	my $FileName = shift @_;
   	my $ShortFileName = shift @_;
+  	my $CurrentLine;
 	
  	if ( $FileName =~ /System\/Config.h$/ )
  	{
@@ -340,6 +341,47 @@ sub ConstantStringCount()
 	close( $fd );
 }
 
+sub CheckExceptionConsistancy()
+{
+ 	my $FileName = shift @_;
+   	my $CurrentLine;
+  	my $CurrentLineNumber = 0;
+	
+ 	open( $fd, "<$FileName" ) or return;
+	while( $CurrentLine = <$fd> )
+	{
+		$CurrentLineNumber++;
+		
+		$CurrentLine =~ s/(\/\/.*)$//;
+		$CurrentLine =~ s/(\/\*.*)$//;
+		
+		if ( $CurrentLine =~ /^throw\s+/ || $CurrentLine =~ /\s+throw\s+/ )
+		{
+			if ( $CurrentLine =~ /throw\s+\w+Exception\W/ || $CurrentLine =~ /throw\s+e\W/ )
+			{
+			}
+			else
+			{
+				print "$FileName ($CurrentLineNumber): bad throw patern ?\n";
+			}
+		}
+		
+		if ( $CurrentLine =~ /catch\s*\(([^)]+)\)/ )
+		{
+			$CurrentLine = $1;
+			if ( $CurrentLine =~ /Exception\s*/ )
+			{
+			}
+			else
+			{
+				print "$FileName ($CurrentLineNumber): bad throw patern ?\n";
+			}
+			next;
+		}
+		
+	}
+	close( $fd );
+}
 
 sub WorkOnFile()
 {
@@ -382,10 +424,13 @@ sub WorkOnFile()
 		# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
 		&CheckEmptyLineAtEnd($CompleteFileName);
 		
-		&ConstantStringCount($CompleteFileName);
+		# &ConstantStringCount($CompleteFileName);
 		
 		# Check for unattended include (done in Config.h)
 		&FirstDoesNotIncludeStdLibs($CompleteFileName);
+		
+		# check thow consistancy
+		&CheckExceptionConsistancy($CompleteFileName);
 	}
 	else
 	{

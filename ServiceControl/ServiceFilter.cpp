@@ -272,8 +272,9 @@ bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 			return (Name == ServiceName);
 		}
 	}
-	catch (...)
+	catch (SimpleException& e)
 	{
+		TraceError( "ServiceNameIs::IsAGoodService: %s (%d).\n", e.msg.GetStr(), e.err );
 	}
 	return false;
 }

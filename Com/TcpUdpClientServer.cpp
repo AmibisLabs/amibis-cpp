@@ -156,7 +156,7 @@ unsigned int TcpUdpClientServer::ConnectTo(const SimpleString addr, int port_tcp
 		Thread::Sleep(5);
 	}
 
-	// Copy my callback objects to the neW connection
+	// Copy my callback objects to the new connection
 	TcpServer::CallbackObjects.Lock();
 	for( TcpServer::CallbackObjects.First(); TcpServer::CallbackObjects.NotAtEnd(); TcpServer::CallbackObjects.Next() )
 	{
