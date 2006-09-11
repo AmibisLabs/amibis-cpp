@@ -20,6 +20,7 @@
 #include <ServiceControl/VariableAttribut.h>
 #include <ServiceControl/XMLTreeParser.h>
 #include <ServiceControl/VariableAttributListener.h>
+#include <ServiceControl/XsdValidator.h>
 
 
 namespace Omiscid {
@@ -359,6 +360,16 @@ protected:
   RegisterOmiscidService* registerDnsSd; /*!< Object for registering the service to DNS-SD */
   
   MutexedSimpleList<ValueListener*> listValueListener; /*!< list of group variable - peer id intereted in variable modification */
+
+protected:
+  // standard Omiscid Xsd Schemas validators
+  // non static because we are not sure that libxml functions are thread-safe
+  XsdValidator ControlQueryValidator;
+
+  // If we are in debug mode, check also outgoing answer
+#ifdef DEBUG
+  XsdValidator ControlAnswerValidator;
+#endif
 };
 
 

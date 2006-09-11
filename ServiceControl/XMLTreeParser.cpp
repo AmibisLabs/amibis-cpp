@@ -152,9 +152,6 @@ XMLTreeParser::XMLTreeParser()
 	: Thread( false, "XMLTreeParser" )
 #endif
 {
-	// Initialise XsdValidators
-	ControlQueryValidator.CreateSchemaFromString( ControlQueryXsdSchema );
-	ControlAnswerValidator.CreateSchemaFromString( ControlAnswerXsdSchema );
 }
 
 XMLTreeParser::~XMLTreeParser()

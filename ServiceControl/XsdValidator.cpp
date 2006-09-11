@@ -140,7 +140,7 @@ bool XsdValidator::ValidateDoc( const SimpleString Doc )
 	// First parse doc in order to get a tree
 	if ( ValidCtxt == NULL || Doc.IsEmpty() || (pDoc=xmlParseMemory(Doc.GetStr(),Doc.GetLength())) == NULL )
 	{
-		OmiscidError( "ValidateDoc: unable to parse xml stream.\n" );
+		OmiscidError( "ValidateDoc: unable to validate xml stream.\n" );
 		return false;
 	}
 
@@ -154,11 +154,11 @@ bool XsdValidator::ValidateDoc( const SimpleString Doc )
 	return ret;
 }
 
-bool XsdValidator::ValidateDoc( const xmlDocPtr Doc )
+bool XsdValidator::ValidateDoc( xmlDocPtr Doc )
 {
 	if ( ValidCtxt == NULL || Doc == NULL || xmlSchemaValidateDoc( ValidCtxt, Doc ) != 0 )
 	{
-		OmiscidError( "ValidateDoc: unable to parse xml stream.\n" );
+		OmiscidError( "ValidateDoc: unable to validate xml stream.\n" );
 		return false;
 	}
 

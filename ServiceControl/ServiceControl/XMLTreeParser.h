@@ -15,7 +15,6 @@
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
 #include <Com/MsgSocket.h>
-#include <ServiceControl/XsdValidator.h>
 
 #include <libxml/tree.h>
 
@@ -205,11 +204,6 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
   MutexedSimpleList<XMLMessage*> listXMLMsg; /*!< list of the waiting message*/
   Event event; /*!< Condition used by the method WaitMessage */
 
-protected:
-  // standard Omiscid Xsd Schemas validators
-  // non static because we are not sure that libxml functions are thread-safe
-  XsdValidator ControlQueryValidator;
-  XsdValidator ControlAnswerValidator;
 };
 
 

@@ -24,7 +24,7 @@ public:
 	bool CreateSchemaFromFile( const SimpleString XsdSchemaFile );
 
 	bool ValidateDoc( const SimpleString Doc );
-	bool ValidateDoc( const xmlDocPtr Doc );
+	bool ValidateDoc( xmlDocPtr Doc );
 
 private:
 	void DestroySchema();

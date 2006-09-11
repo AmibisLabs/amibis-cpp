@@ -5,6 +5,7 @@
 #include <System/SocketException.h>
 #include <ServiceControl/ControlUtils.h>
 #include <ServiceControl/ServicesTools.h>
+#include <ServiceControl/XsdSchema.h>
 
 #ifndef WIN32
 #include <sys/time.h>
@@ -29,6 +30,15 @@ void ControlServer::InitInstance()
 	TcpServer::SetServiceId(GetServiceId());
 	TcpServer::SetTcpNoDelay(true);
 	TcpServer::AddCallbackObject( this ); // Will use my XMLTreeParser side
+
+	// In order to check parse data
+	// Initialise XsdValidators for :
+	// - control query validation
+	ControlQueryValidator.CreateSchemaFromString( ControlQueryXsdSchema );
+#ifdef DEBUG
+	// - control answer validation in debug mode
+	ControlAnswerValidator.CreateSchemaFromString( ControlAnswerXsdSchema );
+#endif
 
 	// Give a pointer to myself on my VariableAttributListener side
 	VariableAttributListener::SetUserData( this );
@@ -386,7 +396,8 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 
 	xmlNodePtr node = msg->GetRootNode();
 
-	if( strcmp((const char*)node->name, "controlQuery") == 0 )
+	// if( strcmp((const char*)node->name, "controlQuery") == 0 )
+	if ( ControlQueryValidator.ValidateDoc((xmlNodePtr)node) )
 	{
 		SimpleString id;
 		xmlAttrPtr attr = XMLMessage::FindAttribute("id", node);
@@ -441,6 +452,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 				}
 				else
 				{
+					// Should not appear
 					OmiscidError( "unknow tag : %s\n", name.GetStr() );
 				}
 			}	 
@@ -450,6 +462,10 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 		str = "<controlAnswer id=\""+id+"\">" 
 			+ str	  
 			+ "</controlAnswer>";
+
+#ifdef DEBUG
+		
+#endif
 
 		TcpServer::listConnections.Lock();
 		MsgSocket* ms = FindClientFromId( msg->pid );
