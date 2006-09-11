@@ -186,9 +186,9 @@ int main(int argc, char * argv[])
 
 	OmiscidError( "Total unregister time %u\n", t2 - t1 );
 
-	Mutex MyLock;
-	MyLock.EnterMutex();
-	MyLock.EnterMutex();
+	Mutex MyLock2;
+	MyLock2.EnterMutex();
+	MyLock2.EnterMutex();
 
 	return 0;
 
