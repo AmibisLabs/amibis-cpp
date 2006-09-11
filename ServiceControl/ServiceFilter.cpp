@@ -274,7 +274,7 @@ bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 	}
 	catch (SimpleException& e)
 	{
-		TraceError( "ServiceNameIs::IsAGoodService: %s (%d).\n", e.msg.GetStr(), e.err );
+		OmiscidError( "ServiceNameIs::IsAGoodService: %s (%d).\n", e.msg.GetStr(), e.err );
 	}
 	return false;
 }

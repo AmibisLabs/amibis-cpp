@@ -227,6 +227,9 @@ int TcpServer::GetNbConnections()
 bool TcpServer::AcceptConnection(MsgSocket* sock)
 {
 	// OmiscidTrace( "in TcpServer::acceptConnection(MsgSocket*) %u\n", sock->GetPeerPid());
+
+	OmiscidTrace( "TcpServer::AcceptConnection:: connection from (%s)\n", sock->GetSocket()->GetConnectedHost().GetStr());
+
 	listConnections.Lock();
 
 	// Init the socket

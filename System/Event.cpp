@@ -1,4 +1,5 @@
 #include <System/Event.h>
+#include <System/SimpleException.h>
 
 #include <errno.h>
 
