@@ -311,7 +311,7 @@ bool ControlServer::StartServer()
 			// Check if everything goes fine
 			if( registerDnsSd->IsRegistered() )
 			{
-				OmiscidTrace( "registered as '%s' ok\n", registerDnsSd->RegisteredName.GetStr() );
+				OmiscidTrace( "registered '%s' as '%s' ok\n", serviceName.GetStr(), registerDnsSd->RegisteredName.GetStr() );
 				// serviceName = registerDnsSd->RegisteredName;
 				// NameVariable->SetValue( serviceName );
 				StartThreadProcessMsg();
