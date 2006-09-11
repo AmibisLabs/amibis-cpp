@@ -5,6 +5,7 @@
 #include <Com/MsgManager.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/XsdSchema.h>
 
 #ifdef DEBUG
 #define TIME_TO_WAIT_ANSWER 5000
@@ -257,6 +258,15 @@ ControlClient::ControlClient(unsigned int serviceId)
 	// By default, I will process the ConrolFlow by myself
 	callback    = NULL;
 	userDataPtr = 0;
+
+	// In order to check parse data
+	// Initialise XsdValidators for :
+	// - control answer validation
+	ControlAnswerValidator.CreateSchemaFromString( ControlQueryXsdSchema );
+#ifdef DEBUG
+	// - control query validation in debug mode
+	ControlQueryValidator.CreateSchemaFromString( ControlAnswerXsdSchema );
+#endif
 }
 
 ControlClient::~ControlClient()
@@ -556,8 +566,6 @@ bool ControlClient::QueryDetailedDescription()
 	return true;
 }
 
-
-
 XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer)
 {
 	unsigned int msg_id = BeginEndTag(requete);
@@ -565,7 +573,10 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer
 #ifdef DEBUG
 	// In debug mode, we validate xml before sending it, but nevertheless we send it...
 	// just for warning and conformity
-	// ControlQueryValidator;
+	if ( ControlQueryValidator.ValidateDoc( requete ) == false )
+	{
+		OmiscidError( "ControlClient::QueryToServer: bad query sent.\n" );
+	}
 #endif
 
 	// Create an answer waiter
@@ -805,19 +816,26 @@ void ControlClient::Unsubscribe(const SimpleString var_name)
 
 void ControlClient::ProcessAMessage(XMLMessage* msg)
 {
-	// Validate against XSD schema
-	if ( msg == NULL ) // || ControlAnswerValidator.ValidateDoc( msg->doc ) == false )
+	if ( msg == NULL )
 	{
-		// no message or bad message...
+		// Nothing to do
 		return;
 	}
 
-	if(strcmp((const char*)msg->GetRootNode()->name, "controlAnswer")==0)
+	// Validate against XSD schema
+	if ( ControlAnswerValidator.ValidateDoc( msg->doc ) == false )
+	{
+		// bad message...
+		OmiscidError( "ControlClient::ProcessAMessage: bad controlAnswer/controlEvent.\n" );
+		return;
+	}
+
+	if( strcmp((const char*)msg->GetRootNode()->name, "controlAnswer") ==0 )
 	{
 		// Set the message and way to the rigth Waiter that is ok
 		PushAnswer(msg);
 	}
-	else if(strcmp((const char*)msg->GetRootNode()->name, "controlEvent")==0)
+	else if( strcmp((const char*)msg->GetRootNode()->name, "controlEvent") == 0 )
 	{
 		CtrlEventProcess( msg );
 		if ( callback != NULL )

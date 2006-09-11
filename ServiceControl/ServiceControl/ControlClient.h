@@ -13,6 +13,7 @@
 #include <System/AtomicCounter.h>
 #include <Com/TcpClient.h>
 #include <ServiceControl/XMLTreeParser.h>
+#include <ServiceControl/XsdValidator.h>
 
 namespace Omiscid {
 
@@ -357,6 +358,16 @@ protected:
 private:
   CtrlEventListener callback; /*!< callback for event processing */
   void* userDataPtr; /*!< pointer on data for the callback */
+
+protected:
+  // standard Omiscid Xsd Schemas validators
+  // non static because we are not sure that libxml functions are thread-safe
+  XsdValidator ControlAnswerValidator;
+
+  // If we are in debug mode, check also outgoing query
+#ifdef DEBUG
+  XsdValidator ControlQueryValidator;
+#endif
 };
 
 } // namespace Omiscid

@@ -394,10 +394,16 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 	// OmiscidTrace( "in ControlServer::ProcessAMessage\n");
 	// OmiscidTrace( "from pid = %u \n",msg->pid);
 
+	if ( msg == NULL )
+	{
+		// Nothing to do
+		return;
+	}
+
 	xmlNodePtr node = msg->GetRootNode();
 
 	// if( strcmp((const char*)node->name, "controlQuery") == 0 )
-	if ( ControlQueryValidator.ValidateDoc((xmlNodePtr)node) )
+	if ( ControlQueryValidator.ValidateDoc(msg->doc) )
 	{
 		SimpleString id;
 		xmlAttrPtr attr = XMLMessage::FindAttribute("id", node);
@@ -464,7 +470,10 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			+ "</controlAnswer>";
 
 #ifdef DEBUG
-		
+		if ( ControlAnswerValidator.ValidateDoc( str ) == false )
+		{
+			OmiscidError( "ControlServer::ProcessAMessage: bad ControlAnswer sent.\n" );
+		}
 #endif
 
 		TcpServer::listConnections.Lock();
@@ -807,6 +816,16 @@ void ControlServer::NotifyValueChanged(VariableAttribut* var)
 		SimpleString str("<variable name=\"");
 		str = str + var->GetName()+"\"><value>"+ var->GetValue()+"</value></variable>";
 		str = "<controlEvent>" + str + "</controlEvent>";
+
+#ifdef DEBUG
+		// Validate against XSD schema
+		if ( ControlAnswerValidator.ValidateDoc( str ) == false )
+		{
+			// bad message...
+			OmiscidError( "ControlServer::NotifyValueChanged: bad controlEvent sent.\n" );
+			return;
+		}
+#endif
 
 		for(vl->listListener.First(); vl->listListener.NotAtEnd(); vl->listListener.Next())
 		{
