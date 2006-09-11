@@ -1,7 +1,7 @@
 /**
- * @file TcpUdpClientServer.h
+ * @file Connector.h
  * @ingroup Com
- * @brief Definition of TcpUdpClientServer class, ClientConnection class
+ * @brief Definition of Connector class, ClientConnection class
  */
 
 #ifndef __TCP_UDP_CLIENT_SERVER_H__
@@ -19,10 +19,10 @@
 namespace Omiscid {
 
 /** 
- * @class ClientConnection TcpUdpClientServer.h Com/TcpUdpClientServer.h
+ * @class ClientConnection Connector.h Com/Connector.h
  * \brief Group Data about Conection TCP and UDP.
  *
- * Use to group data about one client connection in a TcpUdpClientServer object.
+ * Use to group data about one client connection in a Connector object.
  * Contains the data about TCP and UDP connection.
  * Manages UDP connection based on a TCP Connection
  *
@@ -51,7 +51,7 @@ class ClientConnection
 };
 
 /** 
- * @class TcpUdpClientServer TcpUdpClientServer.h Com/TcpUdpClientServer.h
+ * @class Connector Connector.h Com/Connector.h
  * @brief Group TCP and UDP communication means.
  *
  * Manage connection as a server or can be connected as client.
@@ -60,7 +60,7 @@ class ClientConnection
  * \author Sebastien Pesnel
  * \author Dominique Vaufreydaz
  */
-class TcpUdpClientServer : public TcpServer, public UdpExchange
+class Connector : public TcpServer, public UdpExchange
 {
  public:
 
@@ -68,10 +68,10 @@ class TcpUdpClientServer : public TcpServer, public UdpExchange
    * \brief Constructor.
    * \param a_pid [in] the service identifier
    */
-  TcpUdpClientServer(int a_pid = 0);
+  Connector(int a_pid = 0);
 
   /** \brief Destructor. */
-  virtual ~TcpUdpClientServer();
+  virtual ~Connector();
 
   /**
    * \brief Run a TcpServer, an UdpExchange object

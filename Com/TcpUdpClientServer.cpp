@@ -1,4 +1,4 @@
-#include <Com/TcpUdpClientServer.h>
+#include <Com/Connector.h>
 
 #include <System/SocketException.h>
 
@@ -16,7 +16,7 @@ ClientConnection::~ClientConnection()
 	if (udpConnection) delete udpConnection;
 }
 
-TcpUdpClientServer::TcpUdpClientServer(int a_pid)
+Connector::Connector(int a_pid)
 : TcpServer(), UdpExchange()
 {
 	SetServiceId(a_pid);
@@ -24,7 +24,7 @@ TcpUdpClientServer::TcpUdpClientServer(int a_pid)
 	CallbackObject = NULL;
 }
 
-TcpUdpClientServer::~TcpUdpClientServer()
+Connector::~Connector()
 {
 	// Stop all other activities...
 	TcpServer::RemoveAllCallbackObjects();
@@ -43,19 +43,20 @@ TcpUdpClientServer::~TcpUdpClientServer()
 	listClient.Unlock();
 }
 
-void TcpUdpClientServer::Create(int port_tcp, int port_udp)
+void Connector::Create(int port_tcp, int port_udp)
 {
 	// REVIEW add support of UDP Port
 	UdpExchange::Create(port_udp);
 
-	SimpleString tmps = "UDP:";
+	SimpleString tmps = MagicUdp;
+	tmps +=	":";
 	tmps += UdpExchange::GetUdpPort();
 	TcpServer::SetSyncLinkData( tmps );
 	TcpServer::SetCallbackSyncLink( ProcessLyncSyncMsg, (void*)this, (void*)0 );
 	TcpServer::Create(port_tcp);
 }
 
-void TcpUdpClientServer::SetName(const SimpleString NewName)
+void Connector::SetName(const SimpleString NewName)
 {
 	// Change to all my views...
 	TcpServer::SetName(NewName);
@@ -69,15 +70,15 @@ void TcpUdpClientServer::SetName(const SimpleString NewName)
 	listClient.Unlock();
 }
 
-const SimpleString TcpUdpClientServer::GetName()
+const SimpleString Connector::GetName()
 {
 	// Change to all my views...
 	return TcpServer::GetName();
 }
 
-void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, MsgSocket * MyMsgSocket )
+void FUNCTION_CALL_TYPE Connector::ProcessLyncSyncMsg( MsgSocketCallBackData * MsgData, MsgSocket * MyMsgSocket )
 {
-	TcpUdpClientServer * pThis = (TcpUdpClientServer*)MsgData->userData1;
+	Connector * pThis = (Connector*)MsgData->userData1;
 
 	if ( ((UdpExchange*)pThis)->GetUdpPort() == 0 )
 	{
@@ -115,38 +116,48 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 			// memset(&(udpConnection.addr.sin_zero), 0, 8);
 			Socket::FillAddrIn(&udpConnection.addr, ConnectedHost, tmpudp );
 
-			pThis->AcceptConnection( udpConnection, true );
+			pThis->AcceptConnection( udpConnection, false );
 		}
 	}
 }
 
-unsigned int TcpUdpClientServer::ConnectTo(const SimpleString addr, int port_tcp) // , int port_udp)
+unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , int port_udp)
 {
 	TcpClient* tcpclient = new TcpClient();
+
+	if ( tcpclient == NULL )
+	{
+		return 0;
+	}
+
 	tcpclient->SetServiceId(GetServiceId());
 	tcpclient->SetName(TcpServer::GetName());
+	tcpclient->SetCallbackSyncLink( ProcessLyncSyncMsg, (void*)this, (void*)0 );
 
 	// REVIEW
 	// Do we plan to use UDP ?  Always yes, open first a UDP port for us
-	UdpConnection* udp_connect = NULL;
-	// if ( port_udp != 0 )
-	{
-		// connection udp
-		// udp_connect = new UdpConnection(addr, port_udp);
-		// udp_connect->pid = tcpclient->GetPeerPid();
+	// The 0 will be replaced by ProcessLynkSyncMsg
+	UdpConnection* udp_connect = new UdpConnection(addr, 0);
 
-		// REVIEW : done by the TCP Port
-		if ( UdpExchange::GetUdpPort() == 0 )
-		{
-			UdpExchange::Create(0);
-		}
-		// Set UDP Port as property for the Sync Link paquet of the TCP Connection
-		SimpleString tmps = MagicUdp;
-		tmps += ":";
-		tmps += UdpExchange::GetUdpPort();
-		TcpServer::SetSyncLinkData( tmps );
-		tcpclient->SetSyncLinkData( tmps );
+	// REVIEW : done by the TCP Port
+	if ( UdpExchange::GetUdpPort() == 0 )
+	{
+		UdpExchange::Create(0);
 	}
+	// Set UDP Port as property for the Sync Link paquet of the TCP Connection
+	SimpleString tmps = MagicUdp;
+	tmps += ":";
+	tmps += UdpExchange::GetUdpPort();
+	TcpServer::SetSyncLinkData( tmps );
+	tcpclient->SetSyncLinkData( tmps );
+
+	// add the client to my list
+
+	ClientConnection* client_connect = new ClientConnection(tcpclient, udp_connect);
+
+	listClient.Lock();
+	listClient.Add(client_connect);
+	listClient.Unlock();
 
 	tcpclient->ConnectToServer(addr, port_tcp);
 	// REVIEW
@@ -164,23 +175,17 @@ unsigned int TcpUdpClientServer::ConnectTo(const SimpleString addr, int port_tcp
 	}
 	TcpServer::CallbackObjects.Unlock();
 
-	ClientConnection* client_connect = new ClientConnection(tcpclient, udp_connect);
-
-	listClient.Lock();
-	listClient.Add(client_connect);
-	listClient.Unlock();
-
 	return client_connect->GetPeerPid();
 }
 
-void TcpUdpClientServer::SetServiceId(unsigned int pid)
+void Connector::SetServiceId(unsigned int pid)
 {
 	// Check validity of a service Id
 	if ( (pid & ComTools::CONNECTOR_ID) == 0 )
 	{
 		// pid = pid | 0xffffff01;
 #ifdef DEBUG
-		//		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpUdpClientServer. Value changes to 1 (PeerId = %x)\n", pid );
+		//		fprintf( stderr, "Warning: ConnectorId could not be 0 for Connector. Value changes to 1 (PeerId = %x)\n", pid );
 #endif
 	}
 
@@ -201,7 +206,7 @@ void TcpUdpClientServer::SetServiceId(unsigned int pid)
 	listClient.Unlock();
 }
 
-void TcpUdpClientServer::SendToAll(int len, const char* buf, bool fastsend)
+void Connector::SendToAll(int len, const char* buf, bool fastsend)
 {
 	// OmiscidTrace( "in SerndToAll\n");
 	if ( fastsend && len > UDP_MAX_MSG_SIZE )
@@ -243,7 +248,7 @@ void TcpUdpClientServer::SendToAll(int len, const char* buf, bool fastsend)
 		UdpExchange::listUdpConnections.Unlock();
 	}
 
-	//send to all server where it is connected
+	// send to all server where it is connected
 	listClient.Lock();
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
 	{
@@ -275,7 +280,7 @@ void TcpUdpClientServer::SendToAll(int len, const char* buf, bool fastsend)
 	// OmiscidTrace( "out SendToAll\n");
 }
 
-int TcpUdpClientServer::SendToPeer(int len, const char* buf, unsigned int pid, bool fastsend)
+int Connector::SendToPeer(int len, const char* buf, unsigned int pid, bool fastsend)
 {
 	// If we can not send it fast, let's send is slower
 	if ( fastsend && len > UDP_MAX_MSG_SIZE )
@@ -329,9 +334,9 @@ int TcpUdpClientServer::SendToPeer(int len, const char* buf, unsigned int pid, b
 	return -1;
 }
 
-bool TcpUdpClientServer::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
+bool Connector::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 { 
-	//printf("TcpUdpClientServer::SetCallBackOnRecv\n");
+	//printf("Connector::SetCallBackOnRecv\n");
 
 	if ( TcpServer::AddCallbackObject(CallbackObject) == false )
 	{
@@ -358,9 +363,9 @@ bool TcpUdpClientServer::AddCallbackObject(MsgSocketCallbackObject * CallbackObj
 	return true;
 }
 
-bool TcpUdpClientServer::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
+bool Connector::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 { 
-	//printf("TcpUdpClientServer::SetCallBackOnRecv\n");
+	//printf("Connector::SetCallBackOnRecv\n");
 
 	if ( TcpServer::RemoveCallbackObject(CallbackObject) == false )
 	{
@@ -385,9 +390,9 @@ bool TcpUdpClientServer::RemoveCallbackObject(MsgSocketCallbackObject * Callback
 	return true;
 }
 
-UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_connect, bool NewConnection )
+UdpConnection*  Connector::AcceptConnection(const UdpConnection& udp_connect, bool NewConnection )
 {
-	// OmiscidTrace( "in TcpUdpClientServer::acceptConnection(UdpConnection*)\n");
+	// OmiscidTrace( "in Connector::acceptConnection(UdpConnection*)\n");
 
 	UdpExchange::listUdpConnections.Lock();
 
@@ -416,7 +421,13 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 				}
 			}
 			listClient.Unlock();
+
+			if ( udp_found )
+			{
+				udp_found->SetAddr(udp_connect.getAddr());
+			}
 		}
+
 		if((udp_found == NULL) && NewConnection) //recherche connection tcp associe aupres des connection au serveur 
 		{
 			//std::cout << "recherche dans server connexion\n";
@@ -460,7 +471,7 @@ UdpConnection*  TcpUdpClientServer::AcceptConnection(const UdpConnection& udp_co
 }
 
 
-int TcpUdpClientServer::GetNbConnection()
+int Connector::GetNbConnection()
 {
 	listClient.Lock();  
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
@@ -476,7 +487,7 @@ int TcpUdpClientServer::GetNbConnection()
 	return nb;
 }
 
-int TcpUdpClientServer::GetListPeerId(SimpleList<unsigned int>& listId)
+int Connector::GetListPeerId(SimpleList<unsigned int>& listId)
 {
 	int nb = TcpServer::GetListPeerId(listId);
 	listClient.Lock();
@@ -497,7 +508,7 @@ int TcpUdpClientServer::GetListPeerId(SimpleList<unsigned int>& listId)
 	return nb;
 }
 
-void TcpUdpClientServer::SetMaxMessageSizeForTCP(int max)
+void Connector::SetMaxMessageSizeForTCP(int max)
 {
 	TcpServer::SetMaxMessageSizeForTCP(max);
 	listClient.Lock();
@@ -508,12 +519,12 @@ void TcpUdpClientServer::SetMaxMessageSizeForTCP(int max)
 	listClient.Unlock();
 }
 
-ComTools* TcpUdpClientServer::Cast()
+ComTools* Connector::Cast()
 {
 	return dynamic_cast<ComTools*>(this);
 }
 
-ClientConnection* TcpUdpClientServer::FindClientConnectionFromId(unsigned int pid)
+ClientConnection* Connector::FindClientConnectionFromId(unsigned int pid)
 {
 	// Check first for a specific connection
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
@@ -549,32 +560,32 @@ unsigned int ClientConnection::GetPeerPid() const
 	return tcpClient->GetPeerPid();
 }
 
-unsigned short TcpUdpClientServer::GetUdpPort()
+unsigned short Connector::GetUdpPort()
 {
 	return UdpExchange::GetUdpPort(); 
 }
 
-unsigned short TcpUdpClientServer::GetTcpPort()
+unsigned short Connector::GetTcpPort()
 {
 	return TcpServer::GetTcpPort(); 
 }
 
-unsigned int TcpUdpClientServer::GetServiceId() const
+unsigned int Connector::GetServiceId() const
 {
 	return TcpServer::GetServiceId();
 }
 
-bool TcpUdpClientServer::LinkToMsgManager(MsgManager* msgManager)
+bool Connector::LinkToMsgManager(MsgManager* msgManager)
 {
 	return AddCallbackObject(msgManager);
 }
 
-bool TcpUdpClientServer::UnlinkFromMsgManager(MsgManager* msgManager)
+bool Connector::UnlinkFromMsgManager(MsgManager* msgManager)
 {
 	return RemoveCallbackObject(msgManager);
 }
 
-int TcpUdpClientServer::GetMaxMessageSizeForTCP()
+int Connector::GetMaxMessageSizeForTCP()
 {
 	return TcpServer::GetMaxMessageSizeForTCP();
 } 

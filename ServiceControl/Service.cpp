@@ -3,7 +3,7 @@
 #include <ServiceControl/Service.h>
 
 #include <Com/MsgManager.h>
-#include <Com/TcpUdpClientServer.h>
+#include <Com/Connector.h>
 #include <ServiceControl/WaitForDnsSdServices.h>
 #include <ServiceControl/ConnectorListener.h>
 #include <ServiceControl/ServiceFilter.h>
@@ -142,7 +142,7 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 		return false;
 	}
 
-	TcpUdpClientServer * pConnector = new TcpUdpClientServer();
+	Connector * pConnector = new Connector();
 	if ( pConnector == NULL )
 	{
 		OmiscidError( "Could not allocate a new connector\n" );
@@ -182,7 +182,7 @@ bool Service::SendToAllClients(SimpleString ConnectorName, char * Buffer, int Bu
 		return false;
 	}
 
-	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
 
 	// if ReliableSend == true, we should send over udp so the last parameter (udp send)
 	// must be true
@@ -220,7 +220,7 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 		return false;
 	}
 
-	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
 
 	// if ReliableSend == true, we should send over udp so the last parameter (udp send)
 	// must be true
@@ -481,15 +481,19 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, Si
 	}
 
 	// Ok, here we go
-	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
 
 	// Let's connect to him
 	try
 	{
-		if ( pConnector->ConnectTo( ServProxy.GetHostName(), Connection.TcpPort );
+		if ( pConnector->ConnectTo( ServProxy.GetHostName(), Connection.TcpPort ) == 0 )
+		{
+			return false;
+		}
 	}
 	catch(SimpleException& e)
 	{
+		OmiscidError( "%s (%d)\n.", e.msg.GetStr(), e.err );
 		return false;
 	}
 
@@ -526,7 +530,7 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener
 	}
 
 	// Get the connector
-	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
 
 	MsgListener->ServiceOfTheConnector = this;
 
@@ -549,7 +553,7 @@ bool Service::RemoveConnectorListener(SimpleString ConnectorName, ConnectorListe
 	}
 
 	// Get the connector
-	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
 
 	// Link to receive messages
 	return pConnector->RemoveCallbackObject( MsgListener );

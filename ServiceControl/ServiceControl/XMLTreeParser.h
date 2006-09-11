@@ -103,7 +103,7 @@ class XMLMessage
  * @class XMLTreeParser  XMLTreeParser.h  ServiceControl/XMLTreeParser.h
  * @brief Class to receive and parse and store XML Message.
  *  
- * Provides a callback methods for the received message by TcpClient, TcpServer or TcpUdpClientServer.
+ * Provides a callback methods for the received message by TcpClient, TcpServer or Connector.
  * The message are parsed and pushed in a list. There, they wait for processing.
  * It is similar to MsgManager, with a message processing to change XML message in XML tree.
  * This class is used also to call parse method of the library XML 2 (example ParseFile)

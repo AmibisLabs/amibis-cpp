@@ -361,7 +361,7 @@ protected:
 
   /** \brief Accept new TCP connection 
    *
-   * method called by TCP or TcpUdpClientServer server when it accepts new connection.
+   * method called by TCP or Connector server when it accepts new connection.
    * (method called by AcceptConnection())
    * Default Implementation : Close the connection.
    * \param s object created with the new accepted TCP connection 

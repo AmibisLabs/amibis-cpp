@@ -2,7 +2,7 @@
 
 #include <ServiceControl/ServiceProxy.h>
 
-#include <Com/TcpUdpClientServer.h>
+#include <Com/Connector.h>
 #include <ServiceControl/InOutputAttribut.h>
 #include <ServiceControl/VariableAttribut.h>
 

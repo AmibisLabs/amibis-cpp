@@ -164,7 +164,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    *
    * Create a new Input or Output and give the pointer on this object to change or add some data.
    * @param name [in]  name of input or  output to add.
-   * @param com_tool object used for the communication (TcpServer, TcpClient, TcpUdpClientServer)
+   * @param com_tool object used for the communication (TcpServer, TcpClient, Connector)
    * @param kind_of_input [in] define if it is input or output or inoutput
    * @return a new InOutputAttribut object (will be deleted by the controlServer)
    */

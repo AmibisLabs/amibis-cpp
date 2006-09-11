@@ -18,7 +18,7 @@ namespace Omiscid {
  * @class ComTools ComTools.h Com/ComTools.h
  * \brief Interface the communication tools
  *
- * Common interface for TcpServer, TcpClient, UdpExchange, TcpUdpClientServer
+ * Common interface for TcpServer, TcpClient, UdpExchange, Connector
  * \author Sebastien Pesnel
  * \author Dominique Vaufreydaz
  */
