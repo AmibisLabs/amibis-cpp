@@ -534,7 +534,7 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 		SimpleString name((const char*)attr->children->content);
 		VariableAttribut* va = FindVariable(name);    
 
-		OmiscidTrace( "Query on name '%s' in %8.8x\n", name.GetStr(), GetServiceId() ); 
+		// OmiscidTrace( "Query on name '%s' in %8.8x\n", name.GetStr(), GetServiceId() ); 
 
 		if(va)
 		{
