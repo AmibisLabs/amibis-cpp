@@ -4,6 +4,7 @@
 
 
 #include <System/Mutex.h>
+#include <System/SimpleException.h>
 
 using namespace Omiscid;
 
