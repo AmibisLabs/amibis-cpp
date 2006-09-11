@@ -484,9 +484,16 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, Si
 	TcpUdpClientServer * pConnector = dynamic_cast<TcpUdpClientServer *>(pAtt->GetComTool());
 
 	// Let's connect to him
-	pConnector->ConnectTo( ServProxy.GetHostName(), Connection.TcpPort, Connection.UdpPort );
+	try
+	{
+		if ( pConnector->ConnectTo( ServProxy.GetHostName(), Connection.TcpPort );
+	}
+	catch(SimpleException& e)
+	{
+		return false;
+	}
 
-	return false;
+	return true;
 }
 
 bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, SimpleString RemoteConnector)

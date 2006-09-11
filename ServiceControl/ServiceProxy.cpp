@@ -32,7 +32,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	VariableAttribut * VarAtt;
 	InOutputAttribut * IOAtt;
 	int Pos;
-	int Port;
+	unsigned int Port;
 
 	HostName	= eHostName;
 	ControlPort	= eControlPort;
@@ -130,7 +130,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Check if we've got a correct port
-					Port = -1;
+					Port = 0;
 					Port = atoi(TmpChar+2);
 					if ( Port <= 0 || Port >= 0x0000ffff )
 					{
@@ -144,6 +144,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						FullDescription = false;
 						continue;
 					}
+					IOAtt->SetTcpPort( (unsigned short)Port );
 					listInputName.Add( LocalProp.GetName() );
 					listInputAttr.Add( IOAtt );
 					break;
@@ -156,7 +157,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Check if we've got a correct port
-					Port = -1;
+					Port = 0;
 					Port = atoi(TmpChar+2);
 					if ( Port <= 0 || Port >= 0x0000ffff )
 					{
@@ -170,6 +171,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						FullDescription = false;
 						continue;
 					}
+					IOAtt->SetTcpPort( (unsigned short)Port );
 					listOutputName.Add( LocalProp.GetName() );
 					listOutputAttr.Add( IOAtt );
 					break;
@@ -182,7 +184,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Check if we've got a correct port
-					Port = -1;
+					Port = 0;
 					Port = atoi(TmpChar+2);
 					if ( Port <= 0 || Port >= 0x0000ffff )
 					{
@@ -196,6 +198,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						FullDescription = false;
 						continue;
 					}
+					IOAtt->SetTcpPort( (unsigned short)Port );
 					listInOutputName.Add( LocalProp.GetName() );
 					listInOutputAttr.Add( IOAtt );
 					break;

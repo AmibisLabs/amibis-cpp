@@ -120,20 +120,20 @@ void FUNCTION_CALL_TYPE TcpUdpClientServer::ProcessLyncSyncMsg( MsgSocketCallBac
 	}
 }
 
-unsigned int TcpUdpClientServer::ConnectTo(const SimpleString addr, int port_tcp, int port_udp)
+unsigned int TcpUdpClientServer::ConnectTo(const SimpleString addr, int port_tcp) // , int port_udp)
 {
 	TcpClient* tcpclient = new TcpClient();
 	tcpclient->SetServiceId(GetServiceId());
 	tcpclient->SetName(TcpServer::GetName());
 
 	// REVIEW
-	// Do we plan to use UDP ?  yes, open first a UDP port for us
+	// Do we plan to use UDP ?  Always yes, open first a UDP port for us
 	UdpConnection* udp_connect = NULL;
-	if ( port_udp != 0 )
+	// if ( port_udp != 0 )
 	{
 		// connection udp
-		udp_connect = new UdpConnection(addr, port_udp);
-		udp_connect->pid = tcpclient->GetPeerPid();
+		// udp_connect = new UdpConnection(addr, port_udp);
+		// udp_connect->pid = tcpclient->GetPeerPid();
 
 		// REVIEW : done by the TCP Port
 		if ( UdpExchange::GetUdpPort() == 0 )
@@ -519,7 +519,9 @@ ClientConnection* TcpUdpClientServer::FindClientConnectionFromId(unsigned int pi
 	for(listClient.First(); listClient.NotAtEnd(); listClient.Next())
 	{
 		if(!(listClient.GetCurrent())->tcpClient->IsConnected())
+		{
 			listClient.RemoveCurrent();
+		}
 		else if((listClient.GetCurrent())->GetPeerPid() == pid)
 		{
 			return listClient.GetCurrent();

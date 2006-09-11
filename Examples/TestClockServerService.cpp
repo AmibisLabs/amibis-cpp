@@ -105,86 +105,128 @@ void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags 
 	}
 }
 
-class TestRegister : public Thread
-{
-public:
-	TestRegister()
-	{
-	}
-
-	static AtomicCounter NbRegister;
-
-	void Run()
-	{
-		Omiscid::Service * pServ = ServiceFactory.Create( "Yop" );
-		pServ->AddVariable( "RealNumber", "interger", "Just a number", ConstantAccess );
-		pServ->SetVariableValue( "RealNumber", (int)this );
-		pServ->Start();
-		NbRegister++;
-
-		// Wait for some to ask me to stop
-		WaitForStop();
-
-		// Delete the constructed service
-		delete pServ;
-	}
-};
-
-AtomicCounter TestRegister::NbRegister;
-
 int main(int argc, char * argv[])
 {
-	const int NbServiceToRegister = 50;
+#if 0
+	int err;
 
-	SimpleList<TestRegister*> ListOfRegisteredService;
-
-	struct timeval temps;
-	unsigned int t1, t2;
-
-	printf( "Start register\n" );
-
-    gettimeofday(&temps,NULL);
-	t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
-
-	for( int i = 0; i<NbServiceToRegister; i++ )
+	DNSServiceRef DnsSdConnection[10];
+	
+	for( int zz = 0; zz < 6; zz++ )
 	{
-		TestRegister * pRegServ = new TestRegister();
-		if ( pRegServ )
+		err = DNSServiceRegister( &DnsSdConnection[zz], 0, 0, "yop", "_bip._tcp", "local.", NULL, (uint16_t)rand(),
+			(uint16_t)0, "", DnsRegisterReply2, (void*)NULL );
+
+		if ( err == kDNSServiceErr_NoError )
 		{
-			pRegServ->StartThread();
-			ListOfRegisteredService.Add(pRegServ);
+			// We did connection to the DNS-SD Daemon
+
+			// Wait for an answer
+				// Get the socket FD
+			SOCKET DnsSocketFd = DNSServiceRefSockFD(DnsSdConnection[zz]); 
+
+			// Loop forever
+			for(;;)
+			{
+				fd_set socketfds;
+				timeval timeout;
+
+<<<<<<< .mine
+int main(int argc, char * argv[])
+{
+
+	CommonServiceValues::OmiscidServiceDnsSdType = "_bip_mat._tcp";
+
+	Service * TrackerServer = ServiceFactory.Create("TrackerServer");
+
+  //NAME OF SERVICES WAITING FOR
+  SimpleString serviceName = "positionEstimator" ;
+  SimpleString serviceOwner = "langet";
+
+  //nb OF SERVICES NEADED
+  int nbCameras = 1;
+  ServiceFilterList filter;
+  for (int i=0; i<nbCameras; i++) {
+    filter.Add(And(NameIs(serviceName),OwnerIs(serviceOwner)));
+  }
+  printf("\nWaiting for a services named %s\n", serviceName.GetStr() );
+  ServiceProxyList* detectorServer = TrackerServer->FindServices( filter , 30000);
+  printf("\nend\n");
+
+  TrackerServer->AddConnector( "In", "in", AnInOutput );
+
+  for (int i=0; i<nbCameras; i++) {
+    ServiceProxy* servicetmp = detectorServer->ExtractFirst();
+    // SimpleList<SimpleString> llist = servicetmp->GetVariables();
+    // llist.First();
+    try {
+      TrackerServer->ConnectTo( "In", servicetmp, "moments" );
+    }
+    catch (SimpleException& ex) {
+      printf("toto:%s\n",ex.msg.GetStr());
+    }
+    SimpleString calibFile = servicetmp->GetVariableValue("calibrationFile");
+    SimpleString calibrationFileName;// = (char*)malloc(sizeof(char)*30);
+    calibrationFileName = calibFile;
+
+    // query the size of the images w and h
+    SimpleString widthStr = servicetmp->GetVariableValue("imageWidth");
+    int width = atoi(widthStr.GetStr());
+    SimpleString heigthStr = servicetmp->GetVariableValue("imageHeigth");
+    int heigth = atoi(heigthStr.GetStr());
+    if(true) printf("widthheigth = %d, %d\n", width, heigth);
+
+    // adding the new camera in the tracker camera list.
+    // std::cout<<"file: "<<calibFile.GetStr()<<" width: "<<width<<" heigth:"<<heigth<<"peer:"<<servicetmp->GetPeerId()<<std::endl; 
+    // treeParser.AddCamera(servicetmp->GetPeerId(),calibrationFileName, width, heigth, i);
+    // tcpClient->SetCallbackReceive(MyXMLTreeParserClient::CumulMessage, &treeParser);
+    }
+  // printf("NbOfSearchedServices : %d\n", wfs.GetNbOfSearchedServices());
+  fprintf(stderr, "all %d %s services found\n", nbCameras, serviceName );
+
+  return 0;
+
+
+	const int NbServiceToRegister = 50;
+=======
+				FD_ZERO(&socketfds);
+				FD_SET(DnsSocketFd, &socketfds);
+>>>>>>> .r1185
+
+				// First check for event (like disconnection...)
+				timeout.tv_sec  = 10;	// 10 seconds
+				timeout.tv_usec = 0;
+
+				// Ask if some event are waiting on this socket
+				if ( select((int)DnsSocketFd+1, &socketfds, NULL, NULL, &timeout) > 0 )
+				{
+					break;
+				}
+			}
+
+			// Wait for its answer
+			if ( DNSServiceProcessResult( DnsSdConnection[zz] ) == kDNSServiceErr_NoError )
+			{
+				printf( "done %d\n", zz+1 ); // To write 1, 2... and not 0, 1...
+			}
 		}
+
+		Sleep( 2000 );
 	}
 
-	while( TestRegister::NbRegister != NbServiceToRegister )
+	return 0;
+#endif
+
+	for( int i = 0; i<6; i++ )
 	{
-		Thread::Sleep(10);
+		Service * pServ = ServiceFactory.Create( "Yop" );
+		pServ->AddConnector( "Input", "", AnInput );
+		pServ->Start();
 	}
 
-	gettimeofday(&temps,NULL);
-	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
-
-	fprintf( stderr, "Total register time %u\n", t2 - t1 );
-
-	t1 = t2;
-
-	printf( "Start unregister\n" );
-
-	// Destroy service
-	for( ListOfRegisteredService.First(); ListOfRegisteredService.NotAtEnd(); ListOfRegisteredService.Next() )
-	{
-		ListOfRegisteredService.GetCurrent()->StopThread(0);
-		ListOfRegisteredService.RemoveCurrent();
-	}
-
-    gettimeofday(&temps,NULL);
-	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
-
-	fprintf( stderr, "Total unregister time %u\n", t2 - t1 );
-
-	Mutex MyLock2;
-	MyLock2.EnterMutex();
-	MyLock2.EnterMutex();
+	Mutex MyLock;
+	MyLock.EnterMutex();
+	MyLock.EnterMutex();
 
 	return 0;
 
