@@ -122,26 +122,27 @@ int main(int argc, char * argv[])
 	unsigned int t1, t2;
 
 	Service * finder = ServiceFactory.Create("Browser");
-	filter = NameIs("Yop");
+	ServiceFilterList Filters;
+	Filters.Add( NameIs("Yop") );
 
     for(int iter = 1; iter <= 10; iter++)
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
-        ServiceProxy * proxy = finder->FindService(*filter, timeout);
+        ServiceProxyList * Proxys = finder->FindServices(Filters, timeout);
         gettimeofday(&temps,NULL);
 		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
-		if (proxy == NULL)
+		if (Proxys == NULL)
 		{
             break;
         }
 		else
 		{
-		   printf( "%s %8.8x\n", proxy->GetName().GetStr(), proxy->GetPeerId() );
+		   // printf( "%s %8.8x\n", proxy->GetName().GetStr(), proxy->GetPeerId() );
 		   printf( "%d => %u\n", iter, t2-t1 );
-           filter = And(Not(proxy),filter);
+           Filters.Add( NameIs("Yop") );
 
-		   delete proxy;
+		   delete Proxys;
 			// break;
         }
     }

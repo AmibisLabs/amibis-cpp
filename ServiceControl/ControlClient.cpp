@@ -262,10 +262,10 @@ ControlClient::ControlClient(unsigned int serviceId)
 	// In order to check parse data
 	// Initialise XsdValidators for :
 	// - control answer validation
-	ControlAnswerValidator.CreateSchemaFromString( ControlQueryXsdSchema );
+	ControlAnswerValidator.CreateSchemaFromString( ControlAnswerXsdSchema );
 #ifdef DEBUG
 	// - control query validation in debug mode
-	ControlQueryValidator.CreateSchemaFromString( ControlAnswerXsdSchema );
+	ControlQueryValidator.CreateSchemaFromString( ControlQueryXsdSchema );
 #endif
 }
 

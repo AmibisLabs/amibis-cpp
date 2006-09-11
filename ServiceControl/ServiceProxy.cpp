@@ -38,11 +38,9 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	ControlPort	= eControlPort;
 	FullDescription = false;
 
-	// TmpString = ServiceProperties["desc"];
-
 	// Is the description
 	TmpString = ServiceProps["desc"].GetValue();
-	if ( ServiceProps["desc"].GetValue() == "full" )
+	if ( TmpString == "fullmonty" )
 	{
 		FullDescription = true;
 
@@ -132,7 +130,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					// Check if we've got a correct port
 					Port = 0;
 					Port = atoi(TmpChar+2);
-					if ( Port <= 0 || Port >= 0x0000ffff )
+					if ( Port == 0 || Port >= 0x0000ffff )
 					{
 						FullDescription = false;
 						continue;
@@ -159,7 +157,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					// Check if we've got a correct port
 					Port = 0;
 					Port = atoi(TmpChar+2);
-					if ( Port <= 0 || Port >= 0x0000ffff )
+					if ( Port == 0 || Port >= 0x0000ffff )
 					{
 						FullDescription = false;
 						continue;
@@ -186,7 +184,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					// Check if we've got a correct port
 					Port = 0;
 					Port = atoi(TmpChar+2);
-					if ( Port <= 0 || Port >= 0x0000ffff )
+					if ( Port == 0 || Port >= 0x0000ffff )
 					{
 						FullDescription = false;
 						continue;

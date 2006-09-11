@@ -134,58 +134,6 @@ AtomicCounter TestRegister::NbRegister;
 
 int main(int argc, char * argv[])
 {
-
-	CommonServiceValues::OmiscidServiceDnsSdType = "_bip_mat._tcp";
-
-	Service * TrackerServer = ServiceFactory.Create("TrackerServer");
-
-  //NAME OF SERVICES WAITING FOR
-  SimpleString serviceName = "positionEstimator" ;
-  SimpleString serviceOwner = "langet";
-
-  //nb OF SERVICES NEADED
-  int nbCameras = 1;
-  ServiceFilterList filter;
-  for (int i=0; i<nbCameras; i++) {
-    filter.Add(And(NameIs(serviceName),OwnerIs(serviceOwner)));
-  }
-  printf("\nWaiting for a services named %s\n", serviceName.GetStr() );
-  ServiceProxyList* detectorServer = TrackerServer->FindServices( filter , 30000);
-  printf("\nend\n");
-
-  TrackerServer->AddConnector( "In", "in", AnInOutput );
-
-  for (int i=0; i<nbCameras; i++) {
-    ServiceProxy* servicetmp = detectorServer->ExtractFirst();
-    // SimpleList<SimpleString> llist = servicetmp->GetVariables();
-    // llist.First();
-    try {
-      TrackerServer->ConnectTo( "In", servicetmp, "moments" );
-    }
-    catch (SimpleException& ex) {
-      printf("toto:%s\n",ex.msg.GetStr());
-    }
-    SimpleString calibFile = servicetmp->GetVariableValue("calibrationFile");
-    SimpleString calibrationFileName;// = (char*)malloc(sizeof(char)*30);
-    calibrationFileName = calibFile;
-
-    // query the size of the images w and h
-    SimpleString widthStr = servicetmp->GetVariableValue("imageWidth");
-    int width = atoi(widthStr.GetStr());
-    SimpleString heigthStr = servicetmp->GetVariableValue("imageHeigth");
-    int heigth = atoi(heigthStr.GetStr());
-    if(true) printf("widthheigth = %d, %d\n", width, heigth);
-
-    // adding the new camera in the tracker camera list.
-    // std::cout<<"file: "<<calibFile.GetStr()<<" width: "<<width<<" heigth:"<<heigth<<"peer:"<<servicetmp->GetPeerId()<<std::endl; 
-    // treeParser.AddCamera(servicetmp->GetPeerId(),calibrationFileName, width, heigth, i);
-    // tcpClient->SetCallbackReceive(MyXMLTreeParserClient::CumulMessage, &treeParser);
-    }
-  // printf("NbOfSearchedServices : %d\n", wfs.GetNbOfSearchedServices());
-  fprintf(stderr, "all %d %s services found\n", nbCameras, serviceName );
-
-  return 0;
-
 	const int NbServiceToRegister = 50;
 
 	SimpleList<TestRegister*> ListOfRegisteredService;
@@ -219,6 +167,10 @@ int main(int argc, char * argv[])
 	fprintf( stderr, "Total register time %u\n", t2 - t1 );
 
 	t1 = t2;
+
+	Mutex MyLock;
+	MyLock.EnterMutex();
+	MyLock.EnterMutex();
 
 	printf( "Start unregister\n" );
 
