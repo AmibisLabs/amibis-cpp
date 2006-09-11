@@ -97,6 +97,7 @@ void VariableAttribut::SetValue(const SimpleString value_str)
 		{
 			// someone disagree
 			Listeners.Unlock();
+			TraceError( "VariableAttribut::SetValue: someone disagree on variable change\n");
 			return;
 		}
 	}
