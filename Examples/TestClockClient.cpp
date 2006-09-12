@@ -25,6 +25,8 @@ public:
 
 	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 	{
+		SimpleString TmpString;
+
 		if ( Msg.GetOrigine() == FromUDP )
 		{
 			printf( "Receive UDP" );
@@ -33,8 +35,15 @@ public:
 		{
 			printf( "Receive TCP" );
 		}
-		printf( " '%s' :: '%s'\n%5.5s...\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
-	}
+
+		TmpString = " '%s' :: '%s'\n%";
+		TmpString += Msg.GetLength();
+		TmpString += ".";
+		TmpString += Msg.GetLength();
+		TmpString += "s\n";
+
+		printf( TmpString.GetStr(), TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
+	};
 };
 
 class TestRemoteVariableChangeListener : public RemoteVariableChangeListener
@@ -101,7 +110,6 @@ void CompteARebours2(unsigned int Reste)
     MyMutex.LeaveMutex();
 }
 
-
 int main(int argc, char * argv[])
 {
 	DnsSdProxy MyProxy;
@@ -165,24 +173,26 @@ int main(int argc, char * argv[])
 
 	ClockServer = MyService->FindService( And(NameIs("Clock Server"),HasVariable("Minutes")) );
 
-	if ( ClockServer != NULL )
+	if ( ClockServer == NULL )
 	{
-		SimpleString TmpString;
-		cout << "Service found" << endl;
-		ClockServer->AddRemoteVariableChangeListener( "Minutes", &TRVCL );
-		MyService->ConnectTo( "Local", ClockServer, "PushClock" );
-
-		TmpString = "test udp";
-		MyService->SendToAllClients( "Local", (char*)TmpString.GetStr(), TmpString.GetLength(), true  );
-		TmpString = "test tcp";
-		MyService->SendToAllClients( "Local", (char*)TmpString.GetStr(), TmpString.GetLength(), false  );
-		MyService->AddConnectorListener( "Local", &TCL );
+		return 0;
 	}
 
-	// ClockServer->SetVariableValue( "Hours", "12" );
 
-	Event Ev;
-	Ev.Wait();
+	SimpleString TmpString;
+	cout << "Service found" << endl;
+	ClockServer->AddRemoteVariableChangeListener( "Minutes", &TRVCL );
+	MyService->ConnectTo( "Local", ClockServer, "PushClock" );
+	MyService->AddConnectorListener( "Local", &TCL );
+
+	bool FastSend = true;
+	TmpString = "Message";
+	for(;;)
+	{
+		MyService->SendToAllClients( "Local", (char*)TmpString.GetStr(), TmpString.GetLength(), FastSend );
+		Thread::Sleep(1000);	// 1 seconds
+		FastSend = !FastSend;
+	}
 
 	return 0;
 	/*

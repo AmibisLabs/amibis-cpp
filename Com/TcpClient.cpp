@@ -38,7 +38,7 @@ void TcpClient::SetServiceId(unsigned int pid)
 	{
 		// pid = pid | 0xffffff01;
 #ifdef DEBUG
-//		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpClient. Value changes to 1 (PeerId = %x)\n", pid );
+//		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpClient. Value changes to 1 (PeerId = %8.8x)\n", pid );
 #endif
 	}
 	MsgSocket::SetServiceId(pid);

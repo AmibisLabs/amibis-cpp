@@ -322,6 +322,13 @@ class MsgSocket : public Thread
    */
   bool ReceivedSyncLinkMsg();
 
+  /** \brief wait for a synclink message
+   *
+   * @param[in]	TimeToWait the max time to wait in ms (default 250 ms)
+   * @return	true if the Socket has received a SyncLink message before timeout
+   */
+  bool WaitSyncLinkMsg(unsigned int TimeToWait = 250);
+
   /** \brief test if the Socket has sent the link message
    *
    * An link message is exchanged when the socket are connected. 

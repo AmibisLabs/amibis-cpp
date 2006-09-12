@@ -192,7 +192,7 @@ class Connector : public TcpServer, public UdpExchange
 
  protected:
 
-	 // REVIEW
+  // REVIEW
   static void FUNCTION_CALL_TYPE ProcessLyncSyncMsg(MsgSocketCallBackData*MsgData, MsgSocket * MyMsgSocket );
 
   /** \brief Call on source of UDP message
@@ -202,12 +202,12 @@ class Connector : public TcpServer, public UdpExchange
    * (first contact is done with empty message). The research is done by using the peer identifier
    * \param udp_connection [in] the data of the connection, base for the research or the 
    * creation of a new UdpConnection object, contains the peer identifier.
-   * \param msg_empty [in] define if the message, sent by peer, was empty.
+   * \param NewConnection [in] define if the message was done for a new connection.
    * \return NULL if connection refused, or the UdpConnection oebjct associated to the connection.
    */
-  UdpConnection* AcceptConnection(const UdpConnection& udp_connection, bool msg_empty);
+  UdpConnection* AcceptConnection(const UdpConnection& udp_connection, bool NewConnection);
 
- private:
+private:
   /** \brief Find data on Client Connection to a server with a particular id
    * \param pid [in] the id to look for.
    * \return NULL if not found
@@ -216,7 +216,7 @@ class Connector : public TcpServer, public UdpExchange
 
   unsigned int pid; /*!< identifier of the service associated to this object */
   
-  MutexedSimpleList<ClientConnection*> listClient; /*!< list of client connections*/
+  MutexedSimpleList<ClientConnection*> ListClients; /*!< list of client connections*/
 
   /** \name Callback information */
   //@{

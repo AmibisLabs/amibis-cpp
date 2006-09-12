@@ -45,8 +45,8 @@ void TcpServer::Disconnect()
 		delete listConnections.GetCurrent();
 		listConnections.RemoveCurrent();
 	}
-	listConnections.Unlock();
 
+	listConnections.Unlock();
 }
 
 void TcpServer::Close()
@@ -70,7 +70,7 @@ int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 		}
 		catch( SocketException &e )
 		{
-			OmiscidTrace( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
 	listConnections.Unlock();
@@ -93,7 +93,7 @@ int TcpServer::SendToClient(int* tab_len, const char** tab_buf, int nb_buf, unsi
 		}
 		catch( SocketException &e )
 		{
-			OmiscidTrace( "Error while sending to %8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
 	listConnections.Unlock();
@@ -380,7 +380,7 @@ void TcpServer::SetServiceId(unsigned int pid)
 	{
 		// pid = pid | 0xffffff01;
 #ifdef DEBUG
-		//		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpServer. Value changes to 1 (PeerId = %x)\n", pid );
+		//		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpServer. Value changes to 1 (PeerId = %8.8x)\n", pid );
 #endif
 	}
 	MsgSocket::SetServiceId(pid); 

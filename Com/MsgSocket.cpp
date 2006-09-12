@@ -1291,7 +1291,7 @@ void MsgSocket::ReceiveUdpExchange()
 							if(length_msg != 0)	     		     		  
 							{
 								CallbackObjects.Lock();
-								if( CallbackObjects.GetNumberOfElements() && connection )
+								if( connection && CallbackObjects.GetNumberOfElements() )
 								{
 									*(msgptr+length_msg)='\0';
 									callbackData.Msg.len = length_msg;
@@ -1414,6 +1414,26 @@ bool MsgSocket::ReceivedSyncLinkMsg()
 	tmpb = receivedSyncLinkMsg;
 	protectSend.LeaveMutex();
 	return tmpb;
+}
+
+  /** \brief wait for a synclink message
+   *
+   * @param[in]	TimeToWait the max time to wait in ms (default 250 ms)
+   * @return	true if the Socket has received a SyncLink message before timeout
+   */
+bool MsgSocket::WaitSyncLinkMsg(unsigned int TimeToWait/* = 250 */)
+{
+	unsigned int LocalTime = 0;
+	while( LocalTime < TimeToWait && connected == true )
+	{
+		if ( ReceivedSyncLinkMsg() )
+		{
+			return true;
+		}
+		Thread::Sleep(10);
+		LocalTime += 10;
+	}
+	return false;
 }
 
 bool MsgSocket::SyncLinkMsgSent() const 

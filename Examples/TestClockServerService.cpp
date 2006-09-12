@@ -1,5 +1,5 @@
 /**
- * @file Test/TestClockServerService.cpp
+ * @file Examples/TestClockServerService.cpp
  * @ingroup Examples
  * @brief Illustration for the use of a Service as a server
  *
@@ -81,30 +81,6 @@ private:
 };
 
 
-/**
- * @fc main
- * @ingroup Examples
- * @brief main entry point of our ClockServer program. This program
- * is a dummy one in order to illustrate some OMiSCID point :
- * - service creation
- * - local variable management
- * - connector sends
- * 
- */
-void FUNCTION_CALL_TYPE DnsRegisterReply2( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context )
-{
-	if ( flags == 1 )
-	{
-		// Never here...
-		printf( "wait for more...\n" );
-	}
-
-	if ( errorCode == kDNSServiceErr_NoError )
-	{
-		printf( "service '%s' registrerd\n", name );
-	}
-}
-
 class TestRegister : public Thread
 {
 public:
@@ -142,6 +118,8 @@ public:
 
 	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 	{
+		SimpleString TmpString;
+
 		if ( Msg.GetOrigine() == FromUDP )
 		{
 			printf( "Receive UDP" );
@@ -150,8 +128,15 @@ public:
 		{
 			printf( "Receive TCP" );
 		}
-		printf( " '%s' :: '%s'\n%5.5s...\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
-	}
+
+		TmpString = " '%s' :: '%s'\n%";
+		TmpString += Msg.GetLength();
+		TmpString += ".";
+		TmpString += Msg.GetLength();
+		TmpString += "s\n";
+
+		printf( TmpString.GetStr(), TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
+	};
 };
 
 int main(int argc, char * argv[])
@@ -283,13 +268,15 @@ int main(int argc, char * argv[])
 	// First, needed stuff
 	SimpleString TempValue;				// A SimpleString to create the value
 	unsigned int NumberOfSeconds = 0;	// An unsigned integer to compute hours
-	struct timeval now;					// A struct to get the current time of day
+	// struct timeval now;					// A struct to get the current time of day
 
 	// MsgSocket::Debug = (MsgSocket::DEBUGFLAGS)(MsgSocket::DEBUGFLAGS::DBG_RECV | MsgSocket::DEBUGFLAGS::DBG_SEND);
 
 	// Loop forever
 	for(;;)
 	{
+		// Shall we use the fast send ?
+		bool FastSend = true;
 
 		// Loop for a precise number of seconds
 		int TimeToWaitForThisLoop = MyVarListener.GetTimeToWait();
@@ -314,16 +301,20 @@ int main(int argc, char * argv[])
 		// Send a new Clock Server
 
 		// retrieve the current time
-		gettimeofday(&now, NULL);
+		// gettimeofday(&now, NULL);
 
 		// generate the time message => "time in second since 01/01 of 1970:microseconds"
-		TempValue  = now.tv_sec;
-		TempValue += ":";
-		TempValue += now.tv_usec;
+		//TempValue  = now.tv_sec;
+		//TempValue += ":";
+		//TempValue += now.tv_usec;
+		TempValue = NumberOfSeconds;
 
 		// Send it to all connected clients of the PushClock connector,
 		// in fast mode *if possible* (maybe we can lost message), in normal mode otherwise
-		ClockServer->SendToAllClients( "PushClock", (char*)TempValue.GetStr(), TempValue.GetLength(), true );
+		ClockServer->SendToAllClients( "PushClock", (char*)TempValue.GetStr(), TempValue.GetLength(), FastSend );
+
+		// Invert fastsend choice
+		FastSend = ! FastSend;
 	}
 	
 	return 0;
