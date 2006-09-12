@@ -429,7 +429,7 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 				// On unix we must give the max fd value + one
 				if ( SearchServices.GetCurrent()->DNSSocket > MaxDesc )
 				{
-					MaxDesc = SearchServices.GetCurrent()->DNSSocketDNSSocket;
+					MaxDesc = SearchServices.GetCurrent()->DNSSocket;
 				}
 #endif
 			}
