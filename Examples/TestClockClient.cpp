@@ -25,7 +25,15 @@ public:
 
 	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 	{
-		printf( "Receive '%s' :: '%s'\n%5.5s\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
+		if ( Msg.GetOrigine() == FromUDP )
+		{
+			printf( "Receive UDP" );
+		}
+		else
+		{
+			printf( "Receive TCP" );
+		}
+		printf( " '%s' :: '%s'\n%5.5s...\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
 	}
 };
 
@@ -97,6 +105,8 @@ void CompteARebours2(unsigned int Reste)
 int main(int argc, char * argv[])
 {
 	DnsSdProxy MyProxy;
+
+#if 0
 	long timeout = 50000;
 
 	struct timeval temps;
@@ -108,7 +118,7 @@ int main(int argc, char * argv[])
 
     ServiceProxyList * Proxys = finder->FindServices(Filters, timeout);
 
-    for(int iter = 1; iter <= 10; iter++)
+    for(int iter = 1; iter <= 100; iter++)
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
@@ -135,12 +145,15 @@ int main(int argc, char * argv[])
 
     return 0;
 
-#if 0
+#endif
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
-	TestRemoteVariableChangeListener TL;
+	TestRemoteVariableChangeListener TRVCL;
+	TestConnectorListener TCL;
 
 	Omiscid::Service * MyService = ServiceFactory.Create( "Clock Client" );
+
+	MyService->AddConnector( "Local", "local", AnInOutput );
 
 	// First, create a service filter. You *must* not free it after use
 	// SimpleList<ServiceFilter *> MySearch;
@@ -154,9 +167,16 @@ int main(int argc, char * argv[])
 
 	if ( ClockServer != NULL )
 	{
+		SimpleString TmpString;
 		cout << "Service found" << endl;
-		ClockServer->AddRemoteVariableChangeListener( "Minutes", &TL );
+		ClockServer->AddRemoteVariableChangeListener( "Minutes", &TRVCL );
+		MyService->ConnectTo( "Local", ClockServer, "PushClock" );
 
+		TmpString = "test udp";
+		MyService->SendToAllClients( "Local", (char*)TmpString.GetStr(), TmpString.GetLength(), true  );
+		TmpString = "test tcp";
+		MyService->SendToAllClients( "Local", (char*)TmpString.GetStr(), TmpString.GetLength(), false  );
+		MyService->AddConnectorListener( "Local", &TCL );
 	}
 
 	// ClockServer->SetVariableValue( "Hours", "12" );
@@ -257,8 +277,6 @@ int main(int argc, char * argv[])
 	//}
 	//
 	//return 0; */
-
-#endif
 }
 
 

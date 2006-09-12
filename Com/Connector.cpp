@@ -116,7 +116,7 @@ void FUNCTION_CALL_TYPE Connector::ProcessLyncSyncMsg( MsgSocketCallBackData * M
 			// memset(&(udpConnection.addr.sin_zero), 0, 8);
 			Socket::FillAddrIn(&udpConnection.addr, ConnectedHost, tmpudp );
 
-			pThis->AcceptConnection( udpConnection, false );
+			pThis->AcceptConnection( udpConnection, true );
 		}
 	}
 }
@@ -144,6 +144,7 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 	{
 		UdpExchange::Create(0);
 	}
+
 	// Set UDP Port as property for the Sync Link paquet of the TCP Connection
 	SimpleString tmps = MagicUdp;
 	tmps += ":";
@@ -154,6 +155,12 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 	// add the client to my list
 
 	ClientConnection* client_connect = new ClientConnection(tcpclient, udp_connect);
+
+	if ( client_connect == NULL )
+	{
+		delete tcpclient;
+		delete udp_connect;
+	}
 
 	listClient.Lock();
 	listClient.Add(client_connect);
@@ -239,7 +246,7 @@ void Connector::SendToAll(int len, const char* buf, bool fastsend)
 			else
 			{
 				UdpConnection* udp_found =  UdpExchange::FindConnectionFromId(tcp_pid);
-				if(udp_found) UdpExchange::SendTo(len, buf, udp_found);
+				if (udp_found) UdpExchange::SendTo(len, buf, udp_found);
 				else (TcpServer::listConnections.GetCurrent())->Send(len, buf);
 			}
 		}       

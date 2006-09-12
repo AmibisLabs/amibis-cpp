@@ -132,9 +132,32 @@ public:
 
 AtomicCounter TestRegister::NbRegister;
 
+
+class TestConnectorListener : public ConnectorListener
+{
+public:
+	~TestConnectorListener()
+	{
+	}
+
+	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
+	{
+		if ( Msg.GetOrigine() == FromUDP )
+		{
+			printf( "Receive UDP" );
+		}
+		else
+		{
+			printf( "Receive TCP" );
+		}
+		printf( " '%s' :: '%s'\n%5.5s...\n", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
+	}
+};
+
 int main(int argc, char * argv[])
 {
-	const int NbServiceToRegister = 10;
+#if 0
+	const int NbServiceToRegister = 100;
 
 	SimpleList<TestRegister*> ListOfRegisteredService;
 
@@ -168,10 +191,6 @@ int main(int argc, char * argv[])
 
 	t1 = t2;
 
-	Mutex MyLock;
-	MyLock.EnterMutex();
-	MyLock.EnterMutex();
-
 	printf( "Start unregister\n" );
 
 	// Destroy service
@@ -191,9 +210,12 @@ int main(int argc, char * argv[])
 	MyLock2.EnterMutex();
 
 	return 0;
+#endif
 
 	// Let's create a service named "Clock Server" 
 	Omiscid::Service * ClockServer = ServiceFactory.Create( "Clock Server" );
+
+	TestConnectorListener TCL;
 
 	/*
 	 * Add a output connector to push clock :
@@ -201,12 +223,14 @@ int main(int argc, char * argv[])
 	 * - Description	= "A way to push clock"
 	 * - Type			= AnOutput (we can not receveive data on it)
 	 */
-	if ( ClockServer->AddConnector( "PushClock", "A way to push clock", AnOutput ) == false )
+	if ( ClockServer->AddConnector( "PushClock", "A way to push clock", AnInOutput ) == false )
 	{
 		// something goes wrong
 		delete ClockServer;
 		return -1;
 	}
+
+	ClockServer->AddConnectorListener( "PushClock", &TCL );
 
 	/*
 	 * Add a read-only variable to count ellaped hours
@@ -278,7 +302,7 @@ int main(int argc, char * argv[])
 
 			// Increase time value for one second more
 			NumberOfSeconds++;
-			if ( (NumberOfSeconds % 10) == 0 )
+			// if ( (NumberOfSeconds % 10) == 0 )
 			{
 				// One minute ellapses, change value of our Minutes variable
 				// All clients who subscribe to this will be notified 
