@@ -100,7 +100,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	}
 }
 
-void BrowseForDNSSDService::Run()
+void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 {
 	::timeval timeout;
 	fd_set fds;

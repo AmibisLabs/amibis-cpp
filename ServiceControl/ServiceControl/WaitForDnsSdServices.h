@@ -17,6 +17,7 @@
 #include <System/Event.h>
 #include <System/Thread.h>
 #include <System/Mutex.h>
+#include <System/ReentrantMutex.h>
 #include <System/AtomicCounter.h>
 #include <System/SimpleString.h>
 #include <ServiceControl/DnsSdService.h>
@@ -86,21 +87,22 @@ public:
 
 protected:
 
-	void Run();
+	void FUNCTION_CALL_TYPE Run();
 
 	bool LockService( const SimpleString ServiceName );
 	void UnlockService( const SimpleString ServiceName );
 	bool IsServiceLocked( const SimpleString ServiceName );
 
 	AtomicCounter NbServicesReady;
-	Event AllFound;
-	Mutex ThreadSafeSection;
 	Mutex mutexServicesUsed;
 
-	enum SEARCHLIMITS { MaxSearchServices = 10 };
+	ReentrantMutex ThreadSafeSection;
 
-	int NbSearchServices;
-	SearchService SearchServices[MaxSearchServices];
+	// Review
+	// enum SEARCHLIMITS { MaxSearchServices = 10 };
+	// int NbSearchServices;
+	// SearchService SearchServices[MaxSearchServices];
+	SimpleList<SearchService*> SearchServices;
 
 	ServiceProperties ServicesUsed;
 };

@@ -268,7 +268,7 @@ bool XMLTreeParser::WaitForMessage(unsigned long timer)
 }
 
 
-void XMLTreeParser::Run()
+void FUNCTION_CALL_TYPE XMLTreeParser::Run()
 {
 	while(!StopPending())
 	{

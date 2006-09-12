@@ -82,30 +82,7 @@ private:
 };
 
 
-class TestRegister : public Thread
-{
-public:
-	TestRegister()
-	{
-	}
 
-	static AtomicCounter NbRegister;
-
-	void Run()
-	{
-		Omiscid::Service * pServ = ServiceFactory.Create( "Yop" );
-		pServ->AddVariable( "RealNumber", "interger", "Just a number", ConstantAccess );
-		pServ->SetVariableValue( "RealNumber", (int)this );
-		pServ->Start();
-		NbRegister++;
-
-		// Wait for some to ask me to stop
-		WaitForStop();
-
-		// Delete the constructed service
-		delete pServ;
-	}
-};
 
 AtomicCounter TestRegister::NbRegister;
 

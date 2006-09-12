@@ -89,7 +89,7 @@ protected:
 	 * Overload this virtual function and provide your own
 	 * thread implementation.
 	 */
-	virtual void Run() = 0;
+	virtual void FUNCTION_CALL_TYPE Run() = 0;
 
 	/** @brief Return if stop is required
 	 * @return true if the thread should stop

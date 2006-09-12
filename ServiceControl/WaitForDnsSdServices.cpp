@@ -42,24 +42,18 @@ SearchService::~SearchService()
 }
 
 WaitForDnsSdServices::WaitForDnsSdServices()
-	: 
 #ifdef DEBUG_THREAD
-	Thread( false, "WaitForDnsSdServices" ),
+		: Thread( false, "WaitForDnsSdServices" )
 #endif
-	ServicesUsed(MaxSearchServices)
 {
-	NbSearchServices = 0;
 	NbServicesReady = 0;
-
-	// Reset my event
-	AllFound.Reset();
 
 	StartThread();
 }
 
 WaitForDnsSdServices::~WaitForDnsSdServices()
 {
-  StopThread(); 
+	StopThread(); 
 }
 
 bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
@@ -324,28 +318,43 @@ bool SearchService::StartSearch( const SimpleString eName, const SimpleString eR
 
 int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleString eRegType, IsServiceValidForMe eCallBack, void * eUserData )
 {
+	int PosOfNewSearchService;
+	SearchService * pNewSearchService = new SearchService;
+
 	ThreadSafeSection.EnterMutex();
 
-	if ( NbSearchServices == MaxSearchServices || SearchServices[NbSearchServices].StartSearch( eName, eRegType, this, eCallBack, eUserData ) == false )
+	if ( pNewSearchService == NULL ) 
 	{
 		ThreadSafeSection.LeaveMutex();
 		return -1;
 	}
 
-	NbSearchServices++;
+	if ( pNewSearchService->StartSearch( eName, eRegType, this, eCallBack, eUserData ) == false )
+	{
+		// Could not start search, destroy search service
+		delete pNewSearchService;
+		ThreadSafeSection.LeaveMutex();
+		return -1;
+	}
 
+	// Everything fine, so add it to my search list
+	SearchServices.Add(pNewSearchService);
+
+	// compute virtual position of service
+	PosOfNewSearchService = SearchServices.GetNumberOfElements() - 1;
+	
 	ThreadSafeSection.LeaveMutex();
 
-	return (NbSearchServices - 1); // Information about the service pos in the table
+	return PosOfNewSearchService; // Information about the service pos in the table
 }
 
-void WaitForDnsSdServices::Run()
+void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 {
 	fd_set fds;
 	int nReady;
 	timeval timeout;
-	int i;
 	int MaxDesc = 0;	// Maximal descriptor for the select function
+	int NumberOfSearchServices = 0;
 
 	if ( DnsSdProxy::IsEnabled() )
 	{
@@ -354,36 +363,38 @@ void WaitForDnsSdServices::Run()
 		// We work until the end using a Dns proxy
 		while(  !StopPending()  )
 		{
+			ThreadSafeSection.EnterMutex();
+
+			NumberOfSearchServices = SearchServices.GetNumberOfElements();
+			if ( NumberOfSearchServices == 0 || NbServicesReady == NumberOfSearchServices )
+			{
+				Sleep(30);
+				ThreadSafeSection.LeaveMutex();
+				continue;
+			}
+
 			pList = DnsSdProxy::GetCurrentServicesList();
 			if ( pList != NULL )
 			{
-				ThreadSafeSection.EnterMutex();
 				// Find the readable sockets, first version, must be improve
 				// printf( "%u;", GetTickCount() );
-				for( i = 0; i < NbSearchServices; i++ )
+				for( SearchServices.First(); SearchServices.NotAtEnd(); SearchServices.Next() )
 				{
-					if ( SearchServices[i].IsResolved )
+					if ( SearchServices.GetCurrent()->IsResolved )
 					{
 						continue;
 					}
 					for( pList->First(); pList->NotAtEnd(); pList->Next() )
 					{
-						SearchServices[i].DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
+						SearchServices.GetCurrent()->DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
 					}
 				}
 
 				// delete the list
 				delete pList;
-
-				if ( NbServicesReady == NbSearchServices )
-				{
-					AllFound.Signal();
-					// ThreadSafeSection.LeaveMutex();
-					// break;
-				}
-
-				ThreadSafeSection.LeaveMutex();
 			}
+			ThreadSafeSection.LeaveMutex();
+
 			// Wait for DnsSd Changes
 			DnsSdProxy::WaitForChanges(30);
 		}
@@ -395,7 +406,8 @@ void WaitForDnsSdServices::Run()
 		{
 			ThreadSafeSection.EnterMutex();
 
-			if ( NbSearchServices == 0 )
+			NumberOfSearchServices = SearchServices.GetNumberOfElements();
+			if ( NumberOfSearchServices == 0 || NbServicesReady == NumberOfSearchServices )
 			{
 				ThreadSafeSection.LeaveMutex();
 				Sleep(30);	// 30 ms
@@ -410,9 +422,9 @@ void WaitForDnsSdServices::Run()
 			timeout.tv_sec = 0;
 			timeout.tv_usec = 30000;	// 10ms
 
-			for( i = 0; i < NbSearchServices; i++ )
+			for( SearchServices.First(); SearchServices.NotAtEnd(); SearchServices.Next() )
 			{
-				FD_SET( SearchServices[i].DNSSocket, &fds );
+				FD_SET( SearchServices.GetCurrent()->DNSSocket, &fds );
 #ifndef WIN32
 				// On unix we must give the max fd value + one
 				if ( SearchServices[i].DNSSocket > MaxDesc )
@@ -434,21 +446,14 @@ void WaitForDnsSdServices::Run()
 			if ( nReady > 0 )
 			{
 				// Find the readable sockets
-				for( i = 0; i < NbSearchServices; i++ )
+				for( SearchServices.First(); SearchServices.NotAtEnd(); SearchServices.Next() )
 				{
-					if ( FD_ISSET( SearchServices[i].DNSSocket, &fds ) )
+					if ( FD_ISSET( SearchServices.GetCurrent()->DNSSocket, &fds ) )
 					{
 						// Process the result
-						DNSServiceProcessResult(SearchServices[i].Ref);
+						DNSServiceProcessResult(SearchServices.GetCurrent()->Ref);
 					}
 				}
-			}
-
-			if ( NbServicesReady == NbSearchServices )
-			{
-				AllFound.Signal();
-				// ThreadSafeSection.LeaveMutex();
-				// break;
 			}
 
 			ThreadSafeSection.LeaveMutex();
@@ -459,24 +464,49 @@ void WaitForDnsSdServices::Run()
 
 bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 {
-	// return AllFound.Wait( DelayMax );
+	bool Done;
+
 	if ( DelayMax == 0 )
 	{
 		// INFINITE wait
-		while ( NbServicesReady != NbSearchServices )
+		Done = false;
+		for(;;)
 		{
+			// Is the work done ?
+			ThreadSafeSection.EnterMutex();
+			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
+			ThreadSafeSection.LeaveMutex();
+
+			if ( Done == true )
+			{
+				return true;
+			}
+
+			// Wait
 			Sleep( 10 );
 		}
 	}
 	else
 	{
 		unsigned int LocalDelay = 0;
-		while ( NbServicesReady != NbSearchServices )
+		Done = false;
+		for(;;)
 		{
 			if ( LocalDelay >= DelayMax )
 			{
 				return false;
 			}
+
+			// Is the work done ?
+			ThreadSafeSection.EnterMutex();
+			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
+			ThreadSafeSection.LeaveMutex();
+
+			if ( Done == true )
+			{
+				return true;
+			}
+
 			Sleep( 10 );
 			LocalDelay += 10;
 		}
@@ -486,20 +516,42 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 
 int WaitForDnsSdServices::GetNbOfSearchedServices()
 {
-	return NbSearchServices;
+	int res;
+
+	ThreadSafeSection.EnterMutex();
+	res = (int)SearchServices.GetNumberOfElements();
+	ThreadSafeSection.LeaveMutex();
+
+	return res;
 }
 
 SearchService & WaitForDnsSdServices::operator[](int nPos)
 {
-	if ( nPos < 0 || nPos >= NbSearchServices )
+	int i;
+	SearchService * pSearchService = NULL;
+
+	ThreadSafeSection.EnterMutex();
+
+	if ( nPos < 0 || nPos >= (int)SearchServices.GetNumberOfElements() )
 	{
+		ThreadSafeSection.LeaveMutex();
 		throw ServiceException( "Out of band" ) ;
 	}
 
-	return SearchServices[nPos];
+	// Search in the list and return the value
+	for( i = 0, SearchServices.First(); SearchServices.NotAtEnd(); i++, SearchServices.Next() )
+	{
+		if ( i == nPos )
+		{
+			pSearchService = SearchServices.GetCurrent();
+		}
+	}
+	ThreadSafeSection.LeaveMutex();
+
+	return *pSearchService;
 }
 
 bool SearchService::IsAvailable()
 {
-	return IsResolved;
+	return (IsResolved == false);
 }

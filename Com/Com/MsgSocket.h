@@ -228,7 +228,7 @@ class MsgSocket : public Thread
    * - receive the message on UDP, on TCP,
    * - accept the connection for TCP_SERVER
    */
-  void Run();
+  void FUNCTION_CALL_TYPE Run();
 
   /** \brief Send a message (on TCP) by using the BIP protocol
    *

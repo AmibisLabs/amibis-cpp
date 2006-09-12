@@ -34,7 +34,7 @@ public:
 	void Start();
 
 protected:
-	void Run();
+	void FUNCTION_CALL_TYPE Run();
 
 	BrowseCallBack CallBack;
 	void* UserData;

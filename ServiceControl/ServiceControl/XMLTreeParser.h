@@ -191,7 +191,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    * Enable to process automatically the message by a new thread.
    * This thread is launched by a call to the method StartThread
    */
-  void Run();
+  void FUNCTION_CALL_TYPE Run();
 
   /** @brief Generate a tree structure from XML in a file 
    * @param filename [in] file to parse

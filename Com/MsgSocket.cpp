@@ -577,7 +577,7 @@ bool MsgSocket::SendSyncLinkMsg()
 	}
 }
 
-void MsgSocket::Run()
+void FUNCTION_CALL_TYPE MsgSocket::Run()
 {
 	switch (kind)
 	{
