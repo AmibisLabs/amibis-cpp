@@ -8,43 +8,14 @@
 #include <System/Portage.h>
 #include <ServiceControl/Factory.h>
 #include <ServiceControl/ServiceFilter.h>
-#include <ServiceControl/ConnectorListener.h>
 #include <ServiceControl/RemoteVariableChangeListener.h>
+
+#include <Examples/TestConnectorListener.h>
 
 #include <iostream>
 
 using namespace Omiscid;
 using namespace std;
-
-class TestConnectorListener : public ConnectorListener
-{
-public:
-	~TestConnectorListener()
-	{
-	}
-
-	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
-	{
-		SimpleString TmpString;
-
-		if ( Msg.GetOrigine() == FromUDP )
-		{
-			printf( "Receive UDP" );
-		}
-		else
-		{
-			printf( "Receive TCP" );
-		}
-
-		TmpString = " '%s' :: '%s'\n%";
-		TmpString += Msg.GetLength();
-		TmpString += ".";
-		TmpString += Msg.GetLength();
-		TmpString += "s\n";
-
-		printf( TmpString.GetStr(), TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
-	};
-};
 
 class TestRemoteVariableChangeListener : public RemoteVariableChangeListener
 {
@@ -59,56 +30,7 @@ public:
 	}
 };
 
-ServiceFilter * filter;
-
 #include <ServiceControl/DnsSdProxy.h>
-
-ReentrantMutex MyReentrantMutex; // Une classe que j'ai ecrite pour gerer un mutext reentrant
-
-// Fonction publique...
-void CompteARebours1(unsigned int Reste)
-{
-    MyReentrantMutex.EnterMutex();
-	// qqchose de debile a faire... Pour ne pas avoir a appeler
-	// la fonction et faire un stack overflow...
-	for( int i = 0; i < 100000; i++)
-	{
-	}
-    if ( Reste == 0 )
-    {
-        // C'est finit
-            MyReentrantMutex.LeaveMutex();
-        return;
-    }
-        // On appelle recursivement et ca marche parceque le mutex est reentrant
-    CompteARebours1(Reste-1);
-    MyReentrantMutex.LeaveMutex();
-}
-
-Mutex MyMutex;
-
-// Fonction publique...
-void InternalCompteARebours2(unsigned int Reste)
-{
-	for( int i = 0; i < 100000; i++)
-	{
-	}
-    if ( Reste == 0 )
-    {
-        // C'est finit
-        return;
-    }
-        // On appelle recursivement et ca marche parceque le mutex est reentrant
-    CompteARebours1(Reste-1);
-}
-
-// Fonction publique...
-void CompteARebours2(unsigned int Reste)
-{
-    MyMutex.EnterMutex();
-    InternalCompteARebours2(Reste);
-    MyMutex.LeaveMutex();
-}
 
 int main(int argc, char * argv[])
 {

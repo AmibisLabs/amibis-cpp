@@ -386,7 +386,7 @@ bool ServiceProxy::AddRemoteVariableChangeListener(const SimpleString VarName, R
 		return false;
 	}
 
-	// If it is the first listenner, subscribe to the variable changes
+	// If it is the first listener, subscribe to the variable changes
 	if ( pVar->GetNumberOfListeners() == 1 )
 	{
 		// first listener

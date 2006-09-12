@@ -10,6 +10,8 @@
 
 #include <Com/Config.h>
 
+#include <System/SimpleString.h>
+
 namespace Omiscid {
 
 /**
@@ -62,6 +64,12 @@ public:
   unsigned int GetPeerId() const; /*!< The PeerId who send this message */
   unsigned int GetMsgId() const; /*!< The unique message id comming from a Peer */
   //@}
+
+  /** @brief ToString
+   *
+   * Generate a description of the message
+   */
+  SimpleString ToString(unsigned int MaxBufferLenToWrite = 30) const;
 
 private:
 

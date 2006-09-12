@@ -9,8 +9,9 @@
 #include <System/Portage.h>
 #include <System/Mutex.h>
 #include <ServiceControl/Factory.h>
-#include <ServiceControl/ConnectorListener.h>
 #include <ServiceControl/LocalVariableListener.h>
+
+#include <Examples/TestConnectorListener.h>
 
 using namespace Omiscid;
 
@@ -108,36 +109,6 @@ public:
 
 AtomicCounter TestRegister::NbRegister;
 
-
-class TestConnectorListener : public ConnectorListener
-{
-public:
-	~TestConnectorListener()
-	{
-	}
-
-	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
-	{
-		SimpleString TmpString;
-
-		if ( Msg.GetOrigine() == FromUDP )
-		{
-			printf( "Receive UDP" );
-		}
-		else
-		{
-			printf( "Receive TCP" );
-		}
-
-		TmpString = " '%s' :: '%s'\n%";
-		TmpString += Msg.GetLength();
-		TmpString += ".";
-		TmpString += Msg.GetLength();
-		TmpString += "s\n";
-
-		printf( TmpString.GetStr(), TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), Msg.GetBuffer() );
-	};
-};
 
 int main(int argc, char * argv[])
 {
@@ -249,7 +220,7 @@ int main(int argc, char * argv[])
 		return -1;
 	}
 
-	// Create a LocalVariableListenner to manage the variable
+	// Create a LocalVariableListener to manage the variable
 	TestVariableListener MyVarListener;
 
 	// Set values to the same one and add the listener to the variable
@@ -272,12 +243,12 @@ int main(int argc, char * argv[])
 
 	// MsgSocket::Debug = (MsgSocket::DEBUGFLAGS)(MsgSocket::DEBUGFLAGS::DBG_RECV | MsgSocket::DEBUGFLAGS::DBG_SEND);
 
+	// Shall we use the fast send ?
+	bool FastSend = true;
+
 	// Loop forever
 	for(;;)
 	{
-		// Shall we use the fast send ?
-		bool FastSend = true;
-
 		// Loop for a precise number of seconds
 		int TimeToWaitForThisLoop = MyVarListener.GetTimeToWait();
 		for( int i = 0; i < TimeToWaitForThisLoop; i++ )
