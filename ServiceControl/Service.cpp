@@ -68,7 +68,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	// printf( "%u;", GetTickCount() );
 	if ( MyData->Filter->IsAGoodService( *SP ) == false )
 	{
-		printf( "%u;\n", GetTickCount() );
+		// printf( "%u;\n", GetTickCount() );
 		delete SP;
 		return false;
 	}
