@@ -12,7 +12,8 @@ using namespace Omiscid;
 DnsSdProxy::DnsSdServiceInstanceManager::DnsSdServiceInstanceManager( DnsSdService& ToCopy )
 	: DnsSdService(ToCopy)
 {
-	IsPresent = false;
+	// When creating this service, it is here
+	IsPresent = true;
 }
 
 DnsSdProxy::DnsSdServiceInstanceManager::~DnsSdServiceInstanceManager()
@@ -61,6 +62,7 @@ DnsSdServicesList::~DnsSdServicesList()
 DnsSdProxy::DnsSdProxy()
 {
 	Locker.EnterMutex();
+
 	InstancesCount++;
 	if ( InstancesCount == 1 )
 	{
@@ -86,8 +88,11 @@ DnsSdProxy::~DnsSdProxy()
 {
 	Locker.EnterMutex();
 
-	if ( --InstancesCount <= 0 )
+	if ( InstancesCount == 1 )
 	{
+		// I am the last Instance
+		InstancesCount = 0;
+
 		OmiscidTrace( "Last DnsSdProxy instance. Stop it.\n" );
 		if ( ServiceBroswer )
 		{
