@@ -456,10 +456,14 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 				{
 					ProcessLockQuery(cur_node, msg->pid, false, str);
 				}
+				else if( name == "fullDescription" )
+				{
+					ProcessFullDescriptionQuery(cur_node, str);
+				}
 				else
 				{
 					// Should not appear
-					OmiscidError( "unknow tag : %s\n", name.GetStr() );
+					OmiscidError( "unknown tag : %s\n", name.GetStr() );
 				}
 			}	 
 			// OmiscidError( "Send : %s \n", str.GetStr());
@@ -679,6 +683,20 @@ void ControlServer::ProcessLockQuery(xmlNodePtr node, unsigned int pid, bool loc
 	str_answer += result;
 }
 
+void ControlServer::ProcessFullDescriptionQuery(xmlNodePtr node, SimpleString& str_answer)
+{
+	// Add InOutput description
+	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next() )
+	{
+		listInOutput.GetCurrent()->GenerateLongDescription(str_answer);
+	}
+
+	// Add variable description
+	for( listVariable.First(); listVariable.NotAtEnd(); listVariable.Next() )
+	{
+		listVariable.GetCurrent()->GenerateLongDescription(str_answer);
+	}
+}
 
 bool ControlServer::LockOk(unsigned int peer){
 	RefreshLock();

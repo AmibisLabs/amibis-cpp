@@ -301,6 +301,7 @@ protected:
   void ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answer);
   void ProcessSubscribeQuery(xmlNodePtr node, unsigned int peer_id, bool subscribe);
   void ProcessLockQuery(xmlNodePtr node, unsigned int pid, bool lock, SimpleString& str_answer);
+  void ProcessFullDescriptionQuery(xmlNodePtr node, SimpleString& str_answer);
   //@}
 
   /** @brief Callback for value changed

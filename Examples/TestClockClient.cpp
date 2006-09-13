@@ -36,7 +36,6 @@ int main(int argc, char * argv[])
 {
 	DnsSdProxy MyProxy;
 
-#if 0
 	long timeout = 50000;
 
 	struct timeval temps;
@@ -70,12 +69,10 @@ int main(int argc, char * argv[])
         }
     }
 
-	delete filter;
 	delete finder;
 
     return 0;
 
-#endif
 	// MsgSocket::Debug = MsgSocket::DBG_ALL;
 
 	TestRemoteVariableChangeListener TRVCL;

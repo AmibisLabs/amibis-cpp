@@ -522,45 +522,38 @@ InOutputAttribut* ControlClient::QueryInOutputDescription(const SimpleString in_
 
 bool ControlClient::QueryDetailedDescription()
 {
-	if ( QueryGlobalDescription() == false )
+	SimpleString requete = "<fullDescription/>";
+	XMLMessage* msg = QueryToServer(requete);
+	if ( msg )
 	{
-		return false;
-	}
+		// Reset
 
-	// Ask for all variable
-	for( listVariableName.First(); listVariableName.NotAtEnd(); listVariableName.Next() )
-	{
-		if ( QueryVariableDescription( listVariableName.GetCurrent() ) == false )
-		{
-			return false;
-		}
-	}
 
-	// Ask for all Input
-	for( listInputName.First(); listInputName.NotAtEnd(); listInputName.Next() )
-	{
-		if ( QueryInputDescription( listInputName.GetCurrent() ) == false )
+		xmlNodePtr cur_node = msg->GetRootNode()->children;	  
+		for(; cur_node; cur_node = cur_node->next)
 		{
-			return false;
-		}
-	}
-
-	// Ask for all Output
-	for( listOutputName.First(); listOutputName.NotAtEnd(); listOutputName.Next() )
-	{
-		if ( QueryOutputDescription( listOutputName.GetCurrent() ) == false )
-		{
-			return false;
-		}
-	}
-
-	// Ask for all InOutput
-	for( listInOutputName.First(); listInOutputName.NotAtEnd(); listInOutputName.Next() )
-	{
-		if ( QueryInOutputDescription( listInOutputName.GetCurrent() ) == false )
-		{
-			return false;
-		}
+			SimpleString name = (const char*)(cur_node->name);
+			//std::cerr << "tag name="<<(*it)->name <<"\n";
+			if( name == InOutputAttribut::input_str.GetStr() ||
+				name == InOutputAttribut::output_str.GetStr() || 
+				name == InOutputAttribut::inoutput_str.GetStr() )
+			{
+				// OmiscidTrace( " process io : %s \n", (*it)->name.GetStr());
+				// ProcessInOutputDescription(cur_node, str);
+				int zz = 0;
+			}
+			else if( name == VariableAttribut::variable_str.GetStr() )
+			{
+				int zz = 0;
+				// ProcessVariableQuery(cur_node, msg->pid,  str);		 
+			}
+			else
+			{
+				// Should not appear
+				OmiscidError( "unknown tag : %s\n", name.GetStr() );
+			}
+		}	 
+		// OmiscidError( "Send : %s \n", str.GetStr());
 	}
 
 	return true;
