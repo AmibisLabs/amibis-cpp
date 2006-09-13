@@ -47,7 +47,9 @@ public:
 private:
 #ifdef WIN32
 	HANDLE mutex;
-	DWORD OwnerId;
+	#ifdef DEBUG
+		DWORD OwnerId;
+	#endif
 #else
 	pthread_mutex_t mutex; /*!< Posix Mutex*/
 #endif /* WIN32 */

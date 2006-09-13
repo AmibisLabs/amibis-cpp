@@ -67,10 +67,12 @@ bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
 	if ( ServicesUsed.IsDefined( ServiceName ) )
 	{
 		mutexServicesUsed.LeaveMutex();
+		// OmiscidTrace( "     '%s' is locked.\n", ServiceName.GetStr() );
 		return true;
 	}
 
 	mutexServicesUsed.LeaveMutex();
+	// OmiscidTrace( "     '%s' is not locked.\n", ServiceName.GetStr() );
 	return false;
 }
 
@@ -85,10 +87,12 @@ bool WaitForDnsSdServices::LockService( const SimpleString ServiceName )
 	if ( ServicesUsed.IsDefined( ServiceName ) )
 	{
 		mutexServicesUsed.LeaveMutex();
+		// OmiscidTrace( "Lock '%s' is already set.\n", ServiceName.GetStr() );
 		return false;
 	}
 
-	ServicesUsed[ServiceName];	// identical to ServicesUsed[ServiceName] = NULL
+	ServicesUsed[ServiceName] = SimpleString::EmptyString;	// identical to ServicesUsed[ServiceName] = NULL
+	// OmiscidTrace( "Lock '%s' set.\n", ServiceName.GetStr() );
 
 	mutexServicesUsed.LeaveMutex();
 
@@ -105,6 +109,9 @@ void WaitForDnsSdServices::UnlockService( const SimpleString ServiceName )
 	mutexServicesUsed.EnterMutex();
 	ServicesUsed.Undefine( ServiceName );
 	mutexServicesUsed.LeaveMutex();
+
+	// OmiscidTrace( "Lock '%s' removed.\n", ServiceName.GetStr() );
+	return;
 }
 
 
@@ -390,10 +397,6 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 						{
 							// Go out of the 2 for at the same time.
 							goto AllFound;
-						}
-						if ( IsServiceLocked(pList->GetCurrent()->Name) )
-						{
-							continue;
 						}
 						SearchServices.GetCurrent()->DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
 					}

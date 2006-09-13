@@ -17,7 +17,9 @@ Mutex::Mutex()
 #ifdef WIN32
 	// mutex = CreateMutex( NULL, false, NULL );
 	mutex = CreateSemaphore(NULL, 1, 2^32-1, NULL );
-	OwnerId = 0;
+	#ifdef DEBUG
+		OwnerId = 0;
+	#endif
 #else
 	if(pthread_mutex_init(&mutex, NULL) != 0)
 		throw  SimpleException("Error Mutex Init");
@@ -43,8 +45,11 @@ bool Mutex::EnterMutex()
 	unsigned int Result = WaitForSingleObject( mutex, INFINITE );
 	if ( Result == WAIT_OBJECT_0 )
 	{
-		// Here we go, we've got the mutex
+#ifdef DEBUG
+		// In debug mode, set the owner id
 		OwnerId = GetCurrentThreadId();
+#endif
+		// Here we go, we've got the mutex
 		return true;
 	}
 #else	
@@ -65,7 +70,9 @@ bool Mutex::LeaveMutex()
 	{
 		return false;
 	}
-	OwnerId = 0;
+	#ifdef DEBUG
+		OwnerId = 0;
+	#endif
 
 #else
 	if( pthread_mutex_unlock(&mutex) != 0 )

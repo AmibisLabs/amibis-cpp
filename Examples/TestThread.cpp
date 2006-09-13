@@ -11,7 +11,7 @@ public:
 
 	virtual ~TimerProvider() {};
 
-	void Run()
+	void FUNCTION_CALL_TYPE Run()
 	{
 		unsigned int TimerNumber = 0;
 		

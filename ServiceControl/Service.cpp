@@ -61,13 +61,14 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	ServiceProxy * SP = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
 	if ( SP == NULL )
 	{
+		// printf( "%u;\n", GetTickCount() );
 		return false;
 	}
 
 	// printf( "%u;", GetTickCount() );
 	if ( MyData->Filter->IsAGoodService( *SP ) == false )
 	{
-		// printf( "%u;\n", GetTickCount() );
+		printf( "%u;\n", GetTickCount() );
 		delete SP;
 		return false;
 	}

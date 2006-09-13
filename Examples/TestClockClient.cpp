@@ -34,9 +34,7 @@ public:
 
 int main(int argc, char * argv[])
 {
-	CommonServiceValues::OmiscidServiceDnsSdType = "_bip_mat._tcp";
-
-	// DnsSdProxy MyProxy;
+	DnsSdProxy MyProxy;
 
 	long timeout = 50000;
 
@@ -46,20 +44,19 @@ int main(int argc, char * argv[])
 
 	Service * finder = ServiceFactory.Create("Browser");
 	ServiceFilterList Filters;
-	// Filters.Add( NameIs("RegisterThread") );
-	Filters.Add( And(NameIs("positionEstimator"),OwnerIs("langet")) );
-	Filters.Add( And(NameIs("positionEstimator"),OwnerIs("langet")) );
+    ServiceProxyList * Proxys;
 
-    ServiceProxyList * Proxys = finder->FindServices(Filters, timeout);
+	Filters.Add( NameIs("RegisterThread") );
 
-    for(int iter = 1; iter <= 100; iter++)
+
+    for(int iter = 1; iter <= 10; iter++)
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
         Proxys = finder->FindServices(Filters, timeout);
         gettimeofday(&temps,NULL);
 		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
-		if (Proxys == NULL)
+		if ( Proxys == NULL )
 		{
             break;
         }
