@@ -383,6 +383,15 @@ sub CheckExceptionConsistancy()
 	close( $fd );
 }
 
+# 
+sub ConvertFiles()
+{
+ 	my $FileName = shift @_;
+
+	`unix2dos $FileName`;
+}
+
+
 sub WorkOnFile()
 {
  	my $CompleteFileName = shift @_;
@@ -431,6 +440,10 @@ sub WorkOnFile()
 		
 		# check thow consistancy
 		&CheckExceptionConsistancy($CompleteFileName);
+		
+		# Convert files to Windows CD/LR mode in order to prevent
+		# problems using VC2003 and VC2005
+		&ConvertFiles($CompleteFileName);
 	}
 	else
 	{
@@ -442,6 +455,7 @@ sub WorkOnFile()
 &RecurseWork::RecurseWork( 'System', 0 );
 &RecurseWork::RecurseWork( 'Com', 0 );
 &RecurseWork::RecurseWork( 'ServiceControl', 0 );
+&RecurseWork::RecurseWork( 'Examples', 0 );
 
 foreach $prep ( keys %Headers )
 {
