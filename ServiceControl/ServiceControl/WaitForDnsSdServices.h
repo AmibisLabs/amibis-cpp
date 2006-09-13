@@ -61,6 +61,9 @@ private:
 	IsServiceValidForMe CallBack;
 	void * UserData;
 
+	// To memorise that a service is not suitable for us
+	ServiceProperties ServicesNotSuitable;
+
 	// Search call back when using DnsSd directly
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context );
@@ -94,7 +97,6 @@ protected:
 	bool IsServiceLocked( const SimpleString ServiceName );
 
 	AtomicCounter NbServicesReady;
-	Mutex mutexServicesUsed;
 
 	ReentrantMutex ThreadSafeSection;
 
@@ -104,6 +106,8 @@ protected:
 	// SearchService SearchServices[MaxSearchServices];
 	SimpleList<SearchService*> SearchServices;
 
+	// To validate that a single service is used once !
+	Mutex mutexServicesUsed;
 	ServiceProperties ServicesUsed;
 };
 

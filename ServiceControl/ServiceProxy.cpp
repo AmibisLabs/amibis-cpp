@@ -50,8 +50,8 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	//	OmiscidError( "Warning, forced fallback for %8.8x.\n", PeerId );
 	//}
 	//if ( TmpString == "forced fallback" )
-	OmiscidTrace( "Working on'%s' (%s).\n",
-			ServiceProps["name"].GetValue().GetStr(), ServiceProps["id"].GetValue().GetStr() );
+	// OmiscidTrace( "Working on'%s' (%s).\n",
+	// 	ServiceProps["name"].GetValue().GetStr(), ServiceProps["id"].GetValue().GetStr() );
 
 	if ( TmpString == "full" )
 	{

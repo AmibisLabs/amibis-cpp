@@ -92,13 +92,7 @@ DnsSdProxy::~DnsSdProxy()
 	{
 		// I am the last Instance
 		InstancesCount = 0;
-
 		OmiscidTrace( "Last DnsSdProxy instance. Stop it.\n" );
-		if ( ServiceBroswer )
-		{
-			delete ServiceBroswer;
-			ServiceBroswer = NULL;
-		}
 
 		// Empty the list of current services
 		while( ServicesList.GetNumberOfElements() != 0 )
@@ -108,6 +102,17 @@ DnsSdProxy::~DnsSdProxy()
 
 		// Say that we do not need to do cleanup action
 		NeedToCleanupServicesList = false;
+
+		if ( ServiceBroswer )
+		{
+			// Leave mutex to prevent deadlock
+			Locker.LeaveMutex();
+			delete ServiceBroswer;
+
+			// Reenter mutex
+			Locker.EnterMutex();
+			ServiceBroswer = NULL;
+		}
 
 		// Send signals to wake up everybody waiting...
 		Changes.Signal();
@@ -139,6 +144,14 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, DNS
 	DnsSdServiceInstanceManager * pServiceInfo;
 
 	Locker.EnterMutex(); // To prevent destroy of myself...
+
+	// Look is we need to continue to work
+	if ( InstancesCount == 0 )
+	{
+		// quit
+		Locker.LeaveMutex();
+		return;
+	}
 
 	if ( flags & kDNSServiceFlagsAdd )
 	{
