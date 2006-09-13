@@ -15,18 +15,18 @@ namespace Omiscid {
 
 #ifdef WIN32
 
-// Time function port under Windows
-int gettimeofday(struct timeval*tv,struct timezone*tz ); // tz is ignored on windows plateforms
-void * memrchr( const void * Buf, int c, size_t size );
+	// Time function port under Windows
+	int gettimeofday(struct timeval*tv,struct timezone*tz ); // tz is ignored on windows plateforms
+	void * memrchr( const void * Buf, int c, size_t size );
 
-// random port
-int random();
+	// random port
+	int random();
 
 #endif	// ifdef WIN32
 
 #ifndef __APPLE__
-// Port of the apple function
-size_t strlcpy(char *dst, const char *src, size_t size);
+	// Port of the apple function
+	size_t strlcpy(char *dst, const char *src, size_t size);
 #endif
 
 // RandomInit()

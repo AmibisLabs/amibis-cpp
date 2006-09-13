@@ -1,5 +1,6 @@
 #include <Com/MsgSocket.h>
 
+#include <System/ElapsedTime.h>
 #include <System/Portage.h>
 #include <System/Socket.h>
 #include <System/SocketException.h>
@@ -1423,15 +1424,14 @@ bool MsgSocket::ReceivedSyncLinkMsg()
    */
 bool MsgSocket::WaitSyncLinkMsg(unsigned int TimeToWait/* = 250 */)
 {
-	unsigned int LocalTime = 0;
-	while( LocalTime < TimeToWait && connected == true )
+	ElapsedTime CountWaitedTime;
+	while( connected == true )
 	{
-		if ( ReceivedSyncLinkMsg() )
+		if ( ReceivedSyncLinkMsg() || CountWaitedTime.Get() >= TimeToWait )
 		{
 			return true;
 		}
 		Thread::Sleep(10);
-		LocalTime += 10;
 	}
 	return false;
 }

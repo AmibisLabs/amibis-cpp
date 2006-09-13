@@ -36,6 +36,8 @@ int main(int argc, char * argv[])
 {
 	DnsSdProxy MyProxy;
 
+	// Thread::Sleep(10000);
+
 	long timeout = 50000;
 
 	struct timeval temps;
@@ -53,12 +55,13 @@ int main(int argc, char * argv[])
 	{
         gettimeofday(&temps,NULL);
 		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
+ici:
         Proxys = finder->FindServices(Filters, timeout);
         gettimeofday(&temps,NULL);
 		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
 		if ( Proxys == NULL )
 		{
-            break;
+            goto ici;
         }
 		else
 		{
@@ -214,5 +217,3 @@ int main(int argc, char * argv[])
 	//
 	//return 0; */
 }
-
-

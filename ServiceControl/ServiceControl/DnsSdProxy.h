@@ -9,7 +9,7 @@
 
 #include <ServiceControl/Config.h>
 
-#include <System/Mutex.h>
+#include <System/ReentrantMutex.h>
 #include <System/Event.h>
 #include <System/SimpleString.h>
 #include <System/SimpleList.h>
@@ -18,13 +18,17 @@
 
 namespace Omiscid {
 
+class DnsSdProxy;
+
 class DnsSdServicesList : public SimpleList<DnsSdService*>
 {
-public:
-	DnsSdServicesList();
-	virtual ~DnsSdServicesList();
+	friend class DnsSdProxy;
 
-	void Empty();	// Empty the list and free data...
+private: // can only be constructed by DnsSdProxy
+	DnsSdServicesList();
+
+public:
+	virtual ~DnsSdServicesList();
 };
 
 class DnsSdProxyClient
@@ -38,6 +42,8 @@ public:
 
 class DnsSdProxy
 {
+	friend class DnsSdServicesList; // In order to access to mutex
+
 public:
 	DnsSdProxy();
 	virtual ~DnsSdProxy();
@@ -53,11 +59,34 @@ public:
 
 private:
 	// A counter of instances
-	static Mutex Locker;		// To protect all my private stuff...
+	static ReentrantMutex Locker;		// To protect all my private stuff...
 	static unsigned int InstancesCount;
 
 	// Storage of Services
-	static DnsSdServicesList ServicesList;
+	// Local class definition in order to manage Services
+	class DnsSdServiceInstanceManager : public DnsSdService
+	{
+		friend class DnsSdProxy;
+
+	private:
+		// A way to construct such object using a mother class instance
+		DnsSdServiceInstanceManager( DnsSdService& ToCopy );
+		virtual ~DnsSdServiceInstanceManager();
+
+		bool IsPresent;	/** A boolean to know if the service is present of not */
+	};
+
+	// A list to contain all the services
+	static SimpleList<DnsSdServiceInstanceManager*> ServicesList;
+
+	// A boolean saying that we need to remove services in the list
+	static bool NeedToCleanupServicesList;
+
+	// Number of "copies" of the service in use
+	static unsigned int CurrentNumberOfClients;
+
+	// An inline function to Cleanup the list
+	static inline void CleanupServicesList();
 
 	// Browsing of Services
 	static Event Changes;
@@ -67,6 +96,34 @@ private:
 	// To manadge client list Not supported yet
 	static SimpleList<DnsSdProxyClient*> ClientsList;
 };
+
+// inline functions
+// WARNING : we do not call the mutex lock !
+inline void DnsSdProxy::CleanupServicesList()
+{
+	DnsSdServiceInstanceManager * pServiceInfo;
+
+	// Shall we cleanup the List ?
+	if ( NeedToCleanupServicesList == true && CurrentNumberOfClients == 0 )
+	{
+		// walk among the list to remove old entries
+		for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )
+		{
+			pServiceInfo = ServicesList.GetCurrent();
+			if ( pServiceInfo->IsPresent == false )
+			{
+				// ok remove it from the list
+				ServicesList.RemoveCurrent();
+
+				// destroy it
+				delete pServiceInfo;
+			}
+		}
+
+		// cleanup done
+		NeedToCleanupServicesList = false;
+	}
+}
 
 } // namespace Omiscid
 

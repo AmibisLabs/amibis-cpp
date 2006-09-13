@@ -142,7 +142,8 @@ void* Thread::CallRun(void* ptr)
 void Thread::Sleep(int nb_ms)
 {
 #ifdef WIN32
-	::Sleep(nb_ms);
+	// Use SleepEx because accuracy of the wait time is better than with ::Sleep
+	::SleepEx(nb_ms, FALSE);
 #else
 	usleep(nb_ms*1000);	
 #endif

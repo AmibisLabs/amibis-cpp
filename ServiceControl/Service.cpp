@@ -652,6 +652,9 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 	// Let's serach for the services
 	bool ret = WFOS->WaitAll(WaitTime);
 
+	// Stop the thread
+	WFOS->StopThread();
+
 	if ( ret == true && (ResultServicesProxy = new ServiceProxyList) != NULL )
 	{
 		// We found what we need and we manadge to construct a list

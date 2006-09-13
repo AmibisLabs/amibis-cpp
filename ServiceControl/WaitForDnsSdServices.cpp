@@ -10,6 +10,7 @@
 #include <ServiceControl/WaitForDnsSdServices.h>
 #include <ServiceControl/DnsSdProxy.h>
 
+#include <System/ElapsedTime.h>
 #include <System/Portage.h>
 
 #ifndef WIN32
@@ -375,7 +376,7 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 			NumberOfSearchServices = SearchServices.GetNumberOfElements();
 			if ( NumberOfSearchServices == 0 || NbServicesReady == NumberOfSearchServices )
 			{
-				Sleep(30);
+				Sleep(10);
 				ThreadSafeSection.LeaveMutex();
 				continue;
 			}
@@ -423,7 +424,7 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 			if ( NumberOfSearchServices == 0 || NbServicesReady == NumberOfSearchServices )
 			{
 				ThreadSafeSection.LeaveMutex();
-				Sleep(30);	// 30 ms
+				Sleep(10);	// 30 ms
 				continue;
 			}
 
@@ -501,27 +502,21 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 	}
 	else
 	{
-		unsigned int LocalDelay = 0;
+		ElapsedTime CountWaitedTime;
 		Done = false;
 		for(;;)
 		{
-			if ( LocalDelay >= DelayMax )
-			{
-				return false;
-			}
-
 			// Is the work done ?
 			ThreadSafeSection.EnterMutex();
 			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
 			ThreadSafeSection.LeaveMutex();
 
-			if ( Done == true )
+			if ( Done == true || CountWaitedTime.Get() >= DelayMax )
 			{
 				return true;
 			}
 
 			Sleep( 10 );
-			LocalDelay += 10;
 		}
 	}
 	return true;
