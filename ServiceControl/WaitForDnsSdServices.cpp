@@ -386,9 +386,19 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 					}
 					for( pList->First(); pList->NotAtEnd(); pList->Next() )
 					{
+						if ( StopPending() || NbServicesReady == NumberOfSearchServices )
+						{
+							// Go out of the 2 for at the same time.
+							goto AllFound;
+						}
+						if ( IsServiceLocked(pList->GetCurrent()->Name) )
+						{
+							continue;
+						}
 						SearchServices.GetCurrent()->DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
 					}
 				}
+			AllFound:
 
 				// delete the list
 				delete pList;
@@ -446,7 +456,7 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 			if ( nReady > 0 )
 			{
 				// Find the readable sockets
-				for( SearchServices.First(); SearchServices.NotAtEnd(); SearchServices.Next() )
+				for( SearchServices.First(); !StopPending() && SearchServices.NotAtEnd(); SearchServices.Next() )
 				{
 					if ( FD_ISSET( SearchServices.GetCurrent()->DNSSocket, &fds ) )
 					{

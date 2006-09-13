@@ -286,6 +286,12 @@ private:
   /** \brief Extract global description from message 
    * \param xml_msg [in] message to parse */
   void ProcessGlobalDescription(XMLMessage* xml_msg);
+
+  /** \name Message processing */
+  //@{
+  /** \brief Extract global description from message 
+   * \param xml_msg [in] message to parse */
+  void ProcessDetailedDescription(XMLMessage* xml_msg);
   
   /** \brief Extract variable description from a message
    * \param node part of message where extract data
@@ -336,7 +342,7 @@ private:
    */
   bool NameInList(const SimpleString name, SimpleList<SimpleString>& list_name);
 
-  unsigned int id; /*!< query id */
+   unsigned int id; /*!< query id */
 
 protected:
   /** \name List of name */
@@ -354,6 +360,14 @@ protected:
   SimpleList<InOutputAttribut*> listOutputAttr; /*!< list of output attribute*/ 
   SimpleList<InOutputAttribut*> listInOutputAttr; /*!< list of inoutput attribute*/
   //@}
+
+ /** @brief Init this object
+   */
+  void Init();
+
+  /** @brief Empty the given list
+   */
+  void EmptyInOutputAttributList(SimpleList<InOutputAttribut*>& List);
 
 private:
   CtrlEventListener callback; /*!< callback for event processing */

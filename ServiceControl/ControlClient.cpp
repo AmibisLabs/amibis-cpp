@@ -269,6 +269,47 @@ ControlClient::ControlClient(unsigned int serviceId)
 #endif
 }
 
+void ControlClient::EmptyInOutputAttributList(SimpleList<InOutputAttribut*>& List)
+{
+	InOutputAttribut* pAtt;
+
+	while( List.GetNumberOfElements() > 0 )
+	{
+		pAtt = List.ExtractFirst();
+		if ( pAtt != NULL )
+		{
+			delete pAtt;
+		}
+	}
+}
+
+
+void ControlClient::Init()
+{
+	VariableAttribut * pVar;
+
+	// Empty variable names lists
+	listVariableName.Empty();
+	listInputName.Empty();
+	listOutputName.Empty();
+	listInOutputName.Empty();
+
+	// Empty InOutputAttribut lists
+	EmptyInOutputAttributList( listInputAttr );
+	EmptyInOutputAttributList( listOutputAttr );
+	EmptyInOutputAttributList( listInOutputAttr );
+
+	// Empty VariableAttribnut list
+	while( listVariableAttr.GetNumberOfElements() > 0 )
+	{
+		pVar = listVariableAttr.GetCurrent();
+		if ( pVar != NULL )
+		{
+			delete pVar;
+		}
+	}
+}
+
 ControlClient::~ControlClient()
 {
 	TcpClient::RemoveAllCallbackObjects();
@@ -526,34 +567,10 @@ bool ControlClient::QueryDetailedDescription()
 	XMLMessage* msg = QueryToServer(requete);
 	if ( msg )
 	{
-		// Reset
+		ProcessDetailedDescription( msg );
 
-
-		xmlNodePtr cur_node = msg->GetRootNode()->children;	  
-		for(; cur_node; cur_node = cur_node->next)
-		{
-			SimpleString name = (const char*)(cur_node->name);
-			//std::cerr << "tag name="<<(*it)->name <<"\n";
-			if( name == InOutputAttribut::input_str.GetStr() ||
-				name == InOutputAttribut::output_str.GetStr() || 
-				name == InOutputAttribut::inoutput_str.GetStr() )
-			{
-				// OmiscidTrace( " process io : %s \n", (*it)->name.GetStr());
-				// ProcessInOutputDescription(cur_node, str);
-				int zz = 0;
-			}
-			else if( name == VariableAttribut::variable_str.GetStr() )
-			{
-				int zz = 0;
-				// ProcessVariableQuery(cur_node, msg->pid,  str);		 
-			}
-			else
-			{
-				// Should not appear
-				OmiscidError( "unknown tag : %s\n", name.GetStr() );
-			}
-		}	 
-		// OmiscidError( "Send : %s \n", str.GetStr());
+		// delete msg
+		delete msg;
 	}
 
 	return true;
@@ -611,9 +628,7 @@ unsigned int ControlClient::BeginEndTag(SimpleString& str)
 
 void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 {
-	listVariableName.Empty();
-	listInputName.Empty();
-	listOutputName.Empty();
+	Init();
 
 	xmlNodePtr cur_node = xml_msg->GetRootNode()->children;
 	for(; cur_node; cur_node = cur_node->next)
@@ -647,6 +662,64 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 			}
 		}
 	}
+}
+
+void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
+{
+	InOutputAttribut * pAtt;
+	VariableAttribut * pVar;
+
+	Init();
+
+	// Reset
+	xmlNodePtr cur_node = xml_msg->GetRootNode()->children;	  
+	for(; cur_node; cur_node = cur_node->next)
+	{
+		SimpleString name = (const char*)(cur_node->name);
+		// std::cerr << "tag name="<<(*it)->name <<"\n";
+		if( name == InOutputAttribut::input_str.GetStr() )	// an Inpout
+		{
+			pAtt = ProcessInputDescription( cur_node, NULL );
+			if ( pAtt != NULL )
+			{
+				listInputName.Add( pAtt->GetName() );
+				listInputAttr.Add( pAtt );
+			}
+		}
+		else if ( name == InOutputAttribut::output_str.GetStr() ) // an Output
+		{
+			pAtt = ProcessOutputDescription( cur_node, NULL );
+			if ( pAtt != NULL )
+			{
+				listOutputName.Add( pAtt->GetName() );
+				listOutputAttr.Add( pAtt );
+			}
+		}
+		else if ( name == InOutputAttribut::inoutput_str.GetStr() ) // an InOutput
+		{
+			pAtt = ProcessInOutputDescription( cur_node, NULL );
+			if ( pAtt != NULL )
+			{
+				listInOutputName.Add( pAtt->GetName() );
+				listInOutputAttr.Add( pAtt );
+			}
+		}
+		else if( name == VariableAttribut::variable_str.GetStr() )
+		{
+			pVar = ProcessVariableDescription( cur_node, NULL );
+			if ( pVar != NULL )
+			{
+				listVariableName.Add( pVar->GetName() );
+				listVariableAttr.Add( pVar );
+			}
+		}
+		else
+		{
+			// Should not appear
+			OmiscidError( "unknown tag : %s\n", name.GetStr() );
+		}
+	}	 
+	// OmiscidError( "Send : %s \n", str.GetStr());
 }
 
 VariableAttribut* ControlClient::ProcessVariableDescription(xmlNodePtr node, 

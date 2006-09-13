@@ -40,8 +40,17 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 
 	// Is the description
 	TmpString = ServiceProps["desc"].GetValue();
-	OmiscidError( "Warning, forced fallback" );
-	if ( TmpString == "fullmonty" )
+	if ( ServiceProps.IsDefined( "name" ) )
+	{
+		OmiscidError( "Warning, forced fallback for '%s' (%s).\n",
+			ServiceProps["name"].GetValue().GetStr(), ServiceProps["id"].GetValue().GetStr() );
+	}
+	else
+	{
+		OmiscidError( "Warning, forced fallback for %8.8x.\n", PeerId );
+	}
+	if ( TmpString == "fullmonthy" )
+	// if ( TmpString == "full" )
 	{
 		FullDescription = true;
 

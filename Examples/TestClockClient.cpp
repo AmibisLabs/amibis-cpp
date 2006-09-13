@@ -34,16 +34,21 @@ public:
 
 int main(int argc, char * argv[])
 {
-	DnsSdProxy MyProxy;
+	CommonServiceValues::OmiscidServiceDnsSdType = "_bip_mat._tcp";
+
+	// DnsSdProxy MyProxy;
 
 	long timeout = 50000;
 
 	struct timeval temps;
 	unsigned int t1, t2;
 
+
 	Service * finder = ServiceFactory.Create("Browser");
 	ServiceFilterList Filters;
-	Filters.Add( NameIs("Yop") );
+	// Filters.Add( NameIs("RegisterThread") );
+	Filters.Add( And(NameIs("positionEstimator"),OwnerIs("langet")) );
+	Filters.Add( And(NameIs("positionEstimator"),OwnerIs("langet")) );
 
     ServiceProxyList * Proxys = finder->FindServices(Filters, timeout);
 
@@ -62,7 +67,12 @@ int main(int argc, char * argv[])
 		{
 		   // printf( "%s %8.8x\n", proxy->GetName().GetStr(), proxy->GetPeerId() );
 		   printf( "%d => %u\n", iter, t2-t1 );
-           Filters.Add( NameIs("Yop") );
+           Filters.Add( NameIs("RegisterThread") );
+
+		   for( Proxys->First(); Proxys->NotAtEnd(); Proxys->Next() )
+		   {
+			   printf( "  %s (%8.8x)\n", Proxys->GetCurrent()->GetName().GetStr(), Proxys->GetCurrent()->GetPeerId() );
+		   }
 
 		   delete Proxys;
 			// break;
