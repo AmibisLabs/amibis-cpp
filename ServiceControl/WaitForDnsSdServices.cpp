@@ -516,8 +516,6 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 				return true;
 			}
 
-			fprintf( stderr, "Wait since %u\n", CountWaitedTime.Get() );
-
 			Sleep( 10 );
 		}
 	}
