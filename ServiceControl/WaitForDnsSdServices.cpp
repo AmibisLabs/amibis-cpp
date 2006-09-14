@@ -507,9 +507,11 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 		for(;;)
 		{
 			// Is the work done ?
+			fprintf( stderr, "=>\n" );
 			ThreadSafeSection.EnterMutex();
 			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
 			ThreadSafeSection.LeaveMutex();
+			fprintf( stderr, "<=\n" );
 
 			if ( Done == true || CountWaitedTime.Get() >= DelayMax )
 			{
