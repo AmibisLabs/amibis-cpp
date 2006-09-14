@@ -371,6 +371,12 @@ int main(int argc, char*argv[] )
 	// delete the Search service
 	delete Searcher;
 
+	// delete the proxy is any
+	if ( MyProxy != NULL )
+	{
+		delete MyProxy;
+	}
+
 	// exit
 	return 0;
 }
