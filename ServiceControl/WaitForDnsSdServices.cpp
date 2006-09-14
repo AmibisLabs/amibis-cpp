@@ -371,21 +371,17 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 		// We work until the end using a Dns proxy
 		while(  !StopPending()  )
 		{
-			fprintf( stderr, "==>\n" );
 			ThreadSafeSection.EnterMutex();
 
 			NumberOfSearchServices = SearchServices.GetNumberOfElements();
 			if ( NumberOfSearchServices == 0 || NbServicesReady == NumberOfSearchServices )
 			{
-				fprintf( stderr, "<==\n" );
 				ThreadSafeSection.LeaveMutex();
 				Sleep(10);
 				continue;
 			}
 
-			fprintf( stderr, "===>\n" );
 			pList = DnsSdProxy::GetCurrentServicesList();
-			fprintf( stderr, "<===\n" );
 			if ( pList != NULL )
 			{
 				// Find the readable sockets, first version, must be improve
@@ -411,7 +407,6 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 				// delete the list
 				delete pList;
 			}
-			fprintf( stderr, "<==\n" );
 			ThreadSafeSection.LeaveMutex();
 
 			// Wait for DnsSd Changes
@@ -512,11 +507,9 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 		for(;;)
 		{
 			// Is the work done ?
-			fprintf( stderr, "=>\n" );
 			ThreadSafeSection.EnterMutex();
 			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
 			ThreadSafeSection.LeaveMutex();
-			fprintf( stderr, "<=\n" );
 
 			if ( Done == true || CountWaitedTime.Get() >= DelayMax )
 			{
