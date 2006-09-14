@@ -110,9 +110,15 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 	delete pServ;
 }
 
-/* @brief main program entry. No need to give parameter */
-void RegisterAndSearchUsage()
+/* @brief Usage function */
+void RegisterAndSearchUsage(char * ProgramName)
 {
+	fprintf( stderr, "%s is used to demonstrate register and search methods using OMiSCID.\n", ProgramName );
+	fprintf( stderr, "Usage: %s [-n <Number of services>] [-proxy]\n", ProgramName );
+	fprintf( stderr, "Default option values:\n" );
+	fprintf( stderr, "          -n <Number of services>: from 2 to 100 services. Default is 20.\n" );
+	fprintf( stderr, "          -proxy: activated DnsSdProxy features to speedup reserach process.\n", ProgramName );
+	fprintf( stderr, "                  Not activated by default.\n\n", ProgramName );
 	exit(-1);
 }
 
@@ -139,7 +145,7 @@ int main(int argc, char*argv[] )
 		if ( argv[j][0] != '-' )
 		{
 			fprintf( stderr, "Bad parameter '%s'. See Usage :\n\n", argv[j] );
-			RegisterAndSearchUsage();
+			RegisterAndSearchUsage(argv[0]);
 		}
 
 		// Do the user ask for help
@@ -147,7 +153,7 @@ int main(int argc, char*argv[] )
 			 strcmp( argv[j], "-help" ) == 0 ||
 			 strcmp( argv[j], "--help" ) == 0 )
 		{
-			RegisterAndSearchUsage();
+			RegisterAndSearchUsage(argv[0]);
 		}
 
 		// Check the number of services
@@ -157,17 +163,17 @@ int main(int argc, char*argv[] )
 			if ( j >= argc )
 			{
 				fprintf( stderr, "Missing parameter value for '%s' option. See Usage :\n\n", argv[j-1] );
-				RegisterAndSearchUsage();
+				RegisterAndSearchUsage(argv[0]);
 			}
 			if ( sscanf( argv[j], "%d", &NumberOfServicesToRegister ) != 1 )
 			{
 				fprintf( stderr, "Bad parameter value '%s' for '%s' option. See Usage :\n\n", argv[j], argv[j-1] );
-				RegisterAndSearchUsage();
+				RegisterAndSearchUsage(argv[0]);
 			}
 			if ( NumberOfServicesToRegister < 2 || NumberOfServicesToRegister > 100 )
 			{
 				fprintf( stderr, "You must set the number of service from 2 and to 100 maximum. See Usage:\n\n" );
-				RegisterAndSearchUsage();
+				RegisterAndSearchUsage(argv[0]);
 			}
 
 			continue;
@@ -184,7 +190,7 @@ int main(int argc, char*argv[] )
 		}
 
 		fprintf( stderr, "Bad parameter '%s'. See Usage :\n\n", argv[j] );
-		RegisterAndSearchUsage();
+		RegisterAndSearchUsage(argv[0]);
 	}
 
 	// A simple list to store RegisterThread objects
@@ -309,7 +315,7 @@ int main(int argc, char*argv[] )
 	ListOfFilters.Empty();
 
 // Now Search for all services named RegisterThread with a pair number and get a ServiceProxyList for Them
-	printf( "Search for single RegisterThread service with a pair number.\n" );
+	printf( "Search for all RegisterThread services with a pair number.\n" );
 	
 	// We need to a filters list, give a NameIs filter for each service
 	for( i = 2; i <= EffectiveNumberOfRegisteredServices; i += 2 )
