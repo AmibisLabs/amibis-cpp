@@ -19,7 +19,8 @@ mode:
     --prefix              print the prefix where lib script and headers are
     --doc                 print the path to the html documentation
     --doc-tag             print theline for doxyfile to link with the documentation
-
+    --all                 equivalent to `--cflags --libs`
+    
 EOF
     exit $1
 }
@@ -73,9 +74,14 @@ case "$1" in
 	exit 0
 	;;
     --doc-tag)
-	    echo "@DOCDIR_COM@/doc_com.tag=@DOCDIR_COM@"
-	    exit 0
-	    ;;
+	echo "@DOCDIR_COM@/doc_com.tag=@DOCDIR_COM@"
+	exit 0
+	;;
+    --all)
+	echo "-I@includedir@ `OmiscidSystem-config --cflags` -L@libdir@ -lOmiscidCom"
+	;;
+
+	   
     *)
 	echo "Unknown mode \"$1\""
 	echo

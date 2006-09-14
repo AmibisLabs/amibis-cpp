@@ -223,13 +223,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 
 	if ( FullDescription == false )
 	{
-		if ( ConnectToCtrlServer(HostName, ControlPort) == true )
-		{
-			if ( FullDescription == false )
-			{
-				UpdateDescription();
-			}
-		}
+		UpdateDescription();
 	}
 }
 
@@ -252,6 +246,15 @@ SimpleList<SimpleString>& ServiceProxy::GetVariables()
 	*/
 SimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
 {
+	// We got everything
+	if ( FullDescription )
+	{
+		return GetInputNameList();
+	}
+
+	// In other case, update the description
+	UpdateDescription();
+
 	return GetInputNameList();
 }
 
@@ -261,6 +264,15 @@ SimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
     */
 SimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
 {
+	// We got everything
+	if ( FullDescription )
+	{
+		return GetOutputNameList();
+	}
+
+	// In other case, update the description
+	UpdateDescription();
+
 	return GetOutputNameList();
 }
 
@@ -270,6 +282,15 @@ SimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
      */
 SimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
 {
+	// We got everything
+	if ( FullDescription )
+	{
+		return GetInOutputNameList();
+	}
+
+	// In other case, update the description
+	UpdateDescription();
+
 	return GetInOutputNameList();
 }
 
@@ -282,14 +303,16 @@ SimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
      */
 void ServiceProxy::UpdateDescription()
 {
+	if ( IsConnected() == false )
+	{
+		ConnectToCtrlServer( HostName, ControlPort );
+	}
+
 	if ( QueryDetailedDescription() )
 	{
 		FullDescription = true;
 	}
-	else
-	{
-		FullDescription = false;
-	}
+	// else the value of FullDescription remain the same
 }
 
     /**
@@ -330,8 +353,13 @@ unsigned int ServiceProxy::GetPeerId()
      */
 bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleString Value)
 {
-	VariableAttribut * pVar = QueryVariableModif(VarName, Value);
-	if ( pVar == NULL )
+	// Update description if needed
+	if ( FullDescription == false )
+	{
+		UpdateDescription();
+	}
+
+	if ( QueryVariableModif(VarName, Value) == NULL )
 	{
 		return false;
 	}
@@ -366,7 +394,8 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 	pVar = QueryVariableDescription( VarName );
 	if ( pVar == NULL )
 	{
-		throw  SimpleException("Unknown variable. Call HasVariableFirst.");
+		// This should not appear
+		throw SimpleException("Unknown variable. Call HasVariableFirst.");
 	}
 	return pVar->GetValue();
 }
@@ -483,6 +512,12 @@ bool ServiceProxy::HasConnector( const SimpleString ConnectorName, ConnectorKind
      */
 SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 {
+	// Update description if needed
+	if ( FullDescription == false )
+	{
+		UpdateDescription();
+	}
+
 	// Serach for the connector
 	for( listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next() )
 	{
@@ -530,6 +565,12 @@ bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionI
 // Utility functions
 VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 {
+	// Update description if needed
+	if ( FullDescription == false )
+	{
+		UpdateDescription();
+	}
+
 	VariableAttribut * pVar = ControlClient::FindVariable(VarName);
 	// if ( pVar == NULL )
 	// {
@@ -554,13 +595,15 @@ InOutputAttribut * ServiceProxy::FindConnector( SimpleString ConnectortName )
 {
 	InOutputAttribut * pAtt;
 
+	// Update description if needed
+	if ( FullDescription == false )
+	{
+		UpdateDescription();
+	}
 	
 	if (   (pAtt = FindInput(ConnectortName)) != NULL					// Is is an Input ?
 		|| (pAtt = FindOutput(ConnectortName)) != NULL					// Is it an Output
 		|| (pAtt = FindInOutput(ConnectortName)) != NULL				// Is is an InOutput ?
-//		|| (pAtt = QueryInputDescription(ConnectortName)) != NULL		// again remotely
-//		|| (pAtt = QueryOutputDescription(ConnectortName)) != NULL		// again remotely
-//		|| (pAtt = QueryInOutputDescription(ConnectortName)) != NULL	// again remotely
 		)
 	{
 		// We found it

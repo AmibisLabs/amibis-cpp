@@ -47,36 +47,36 @@ int main(int argc, char * argv[])
 	Service * finder = ServiceFactory.Create("Browser");
 	ServiceFilterList Filters;
     ServiceProxyList * Proxys;
+	int iter;
 
-	Filters.Add( NameIs("RegisterThread") );
-
-
-    for(int iter = 1; iter <= 10; iter++)
+    for( iter = 1; iter <= 10; iter++ )
 	{
-        gettimeofday(&temps,NULL);
-		t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
+		Filters.Add( NameIs("RegisterThread") );
+	}
+
+    gettimeofday(&temps,NULL);
+	t1 = temps.tv_sec * 1000 + temps.tv_usec/1000;
 ici:
-        Proxys = finder->FindServices(Filters, timeout);
-        gettimeofday(&temps,NULL);
-		t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
-		if ( Proxys == NULL )
-		{
-            goto ici;
-        }
-		else
-		{
-		   // printf( "%s %8.8x\n", proxy->GetName().GetStr(), proxy->GetPeerId() );
-		   printf( "%d => %u\n", iter, t2-t1 );
-           Filters.Add( NameIs("RegisterThread") );
+    Proxys = finder->FindServices(Filters, timeout);
+    gettimeofday(&temps,NULL);
+	t2 = temps.tv_sec * 1000 + temps.tv_usec/1000; 
+	if ( Proxys == NULL )
+	{
+        goto ici;
+    }
+	else
+	{
+	   // printf( "%s %8.8x\n", proxy->GetName().GetStr(), proxy->GetPeerId() );
+	   printf( "%d => %u\n", iter-1, t2-t1 );
+       Filters.Add( NameIs("RegisterThread") );
 
-		   for( Proxys->First(); Proxys->NotAtEnd(); Proxys->Next() )
-		   {
-			   printf( "  %s (%8.8x)\n", Proxys->GetCurrent()->GetName().GetStr(), Proxys->GetCurrent()->GetPeerId() );
-		   }
+	   for( Proxys->First(); Proxys->NotAtEnd(); Proxys->Next() )
+	   {
+		   printf( "  %s (%8.8x)\n", Proxys->GetCurrent()->GetName().GetStr(), Proxys->GetCurrent()->GetPeerId() );
+	   }
 
-		   delete Proxys;
-			// break;
-        }
+	   delete Proxys;
+		// break;
     }
 
 	delete finder;

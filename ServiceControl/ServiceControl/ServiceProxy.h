@@ -66,8 +66,8 @@ public:
 	/**
      * Updates the local view of a remote Omiscid service :
      * <ul>
-     * <li> the list of variables
-     * <li> the list of connectors
+     * <li> the list of variables (and value)
+     * <li> the list of connectors (and port)
      * </ul>
      */
     void UpdateDescription();
@@ -151,6 +151,7 @@ private:
      */
 	bool GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection );
 
+	// Connection data
 	SimpleString HostName;
 	unsigned int ControlPort;
 

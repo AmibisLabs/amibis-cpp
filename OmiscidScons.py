@@ -128,15 +128,6 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
      hTargetToInstall += env.Install(os.path.join(prefix_h,i[1]),i[0])
    #env.Install(prefix_h, hTargetToInstall)
    toInstall = [prefix_bin,prefix_lib,hTargetToInstall]
-   if "ravimoduledest" in ARGUMENTS:
-    destScm = ARGUMENTS.get("ravimoduledest")
-    destSo = os.path.join(destScm,os.popen(WhereIs('ravitool')+' --host').read().strip("\n"))
-    for i in modToInstall:
-     if i.name.endswith(".scm"):
-      env.Install(destScm, i)
-     elif not i.name.endswith(".cpp"):
-      env.Install(destSo, i)
-    toInstall += [destScm,destSo]
    env.Alias("install", toInstall)
   else :
    OmiscidMessage('prefix must be given for installation')

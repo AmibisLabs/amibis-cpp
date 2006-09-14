@@ -21,7 +21,6 @@ mode:
     --doc-tag             print theline for doxyfile to link with the documentation
     --all                 equivalent to `--cflags --libs`
 
-
 EOF
     exit $1
 }
@@ -75,13 +74,13 @@ case "$1" in
 	exit 0
 	;;
     --doc-tag)
-	    echo "@DOCDIR_CONTROL@/doc_control.tag=@DOCDIR_CONTROL@"
-	    exit 0
-	    ;;
+	echo "@DOCDIR_CONTROL@/doc_control.tag=@DOCDIR_CONTROL@"
+	exit 0
+	;;
     --all)
-	    echo "-I@includedir@ `OmiscidCom-config --cflags` `xml2-config --cflags` -L@libdir@ -lOmiscidControl `xml2-config --libs`"
-	    exit 0
-	    ;;	    
+	echo "-I@includedir@ `OmiscidCom-config --cflags` `xml2-config --cflags` -L@libdir@ -lOmiscidControl `xml2-config --libs`"
+	exit 0
+	;;	    
     *)
 	echo "Unknown mode \"$1\""
 	echo
