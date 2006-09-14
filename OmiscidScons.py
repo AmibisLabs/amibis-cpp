@@ -145,20 +145,14 @@ def OmiscidCheckLibs(conf,libs=[]):
    
  for lib in libs:
   if type(lib) in (str, unicode):
-   if "svideo" == lib:
-    if not conf.CheckLibWithHeader("svideo","svideotools/VideoClient.h","CXX"):
-     missing += ["svideo"]
-   elif "dns_sd" == lib:
+   if "dns_sd" == lib:
     if not conf.CheckCXXHeader("dns_sd.h") or \
        not conf.CheckLib([None, "dns_sd"], "DNSServiceRegister"):
      missing += ["dns_sd"]
    elif "xml2" == lib:
     if not conf.CheckLibWithHeader("xml2","libxml/tree.h","CXX"):
      missing += ["xml2"]
-   elif "bip" == lib:
-    if not conf.CheckLibWithHeader("xml2","libxml/tree.h","CXX"):
-     missing += ["xml2"]
-    if not conf.CheckLibWithHeader("control","ServiceControl/ControlServer.h","CXX"):
+   elif not conf.CheckLibWithHeader("control","ServiceControl/ControlServer.h","CXX"):
      missing += ["control"]
    elif not conf.CheckLib(lib):
     missing += [lib]
