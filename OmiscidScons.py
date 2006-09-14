@@ -101,7 +101,7 @@ def OmiscidMapping():
  if "prefix" in ARGUMENTS:
   return {
         "@prefix@": ARGUMENTS.get("prefix"),
-        "@includedir@": os.path.join(ARGUMENTS.get("prefix"), "include"),
+        "@includedir@": os.path.join(ARGUMENTS.get("prefix"), "include", "Omiscid"),
         "@bindir@": os.path.join(ARGUMENTS.get("prefix"), "bin"),
         "@libdir@": os.path.join(ARGUMENTS.get("prefix"), "lib")}
  else:
@@ -117,7 +117,7 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
   if "prefix" in ARGUMENTS :
    prefix_bin = os.path.join(ARGUMENTS.get("prefix"), "bin")
    prefix_lib = os.path.join(ARGUMENTS.get("prefix"), "lib")
-   prefix_h = os.path.join(ARGUMENTS.get("prefix"), "include")
+   prefix_h = os.path.join(ARGUMENTS.get("prefix"), "include", "Omiscid")
    env.Install(prefix_bin, binToInstall)
    env.Install(prefix_lib, libToInstall)
    hTargetToInstall = []
