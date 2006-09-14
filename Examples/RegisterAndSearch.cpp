@@ -150,6 +150,7 @@ int main(int argc, char*argv[] )
 			RegisterAndSearchUsage();
 		}
 
+		// Check the number of services
 		if ( strcmp( argv[j], "-n" ) == 0 )
 		{
 			j++;
