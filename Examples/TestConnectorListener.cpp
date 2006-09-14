@@ -22,5 +22,5 @@ void TestConnectorListener::MessageReceived(Service& TheService, const SimpleStr
 {
 	SimpleString TmpString = Msg.ToString();
 
-	printf( "%s::%s: %s", TheService.GetVariableValue("name").GetStr(), LocalConnectorName.GetStr(), TmpString.GetStr() );
+	printf( "%s::%s: %s", TheService.GetName().GetStr(), LocalConnectorName.GetStr(), TmpString.GetStr() );
 }

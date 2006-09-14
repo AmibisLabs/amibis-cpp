@@ -317,7 +317,7 @@ int Connector::SendToPeer(int len, const char* buf, unsigned int pid, bool fasts
 		}
 		catch( SocketException &e )
 		{
-			OmiscidTrace( "Error while sending to peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			OmiscidTrace( "Error while sending to peer %8.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 		ListClients.Unlock();
 		return ret;

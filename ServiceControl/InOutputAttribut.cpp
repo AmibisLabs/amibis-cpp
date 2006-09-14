@@ -71,7 +71,7 @@ void InOutputAttribut::GenerateLongDescription(SimpleString& str)
       str = str + "<udp>"+tmp+"</udp>";
     }
 
-	snprintf( tmp, 30, "%.8x", comTool->GetServiceId() );
+	snprintf( tmp, 30, "%8.8x", comTool->GetServiceId() );
 	str = str + "<peerId>" + tmp+ "</peerId>";
 
   AddTagDescriptionToStr(str);

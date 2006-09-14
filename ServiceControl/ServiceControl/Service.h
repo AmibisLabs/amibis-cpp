@@ -185,6 +185,18 @@ public:
 	SimpleString GetVariableType(SimpleString VarName);
 
     /**
+     * @brief Retrieve the name of this service
+     * @return the name of this service
+     */
+	const SimpleString GetName();
+
+    /**
+     * @brief Retrieve the name of this service
+     * @return the name of this service
+     */
+	const SimpleString GetPeerId();
+	
+	/**
      * Connects a local connector to a remote connector of a remote ServiceProxy
      * @param LocalConnector
      * @param ServProxy the proxy of the remote service
@@ -262,7 +274,7 @@ public:
 	 * in the assigned time.
 	 * @see ServiceFilter
      */
-	ServiceProxyList * FindServices( ServiceFilterList& Filters, unsigned int WaitTime );
+	ServiceProxyList * FindServices( ServiceFilterList& Filters, unsigned int WaitTime = 0 );
 
 };
 

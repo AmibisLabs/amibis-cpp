@@ -76,7 +76,7 @@ int UdpExchange::SendTo(int len, const char* buf, unsigned int pid)
 		}
 		catch( SocketException &e )
 		{
-			OmiscidTrace( "Error while sending to all peer %.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+			OmiscidTrace( "Error while sending to all peer %8.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
 

@@ -47,31 +47,31 @@ void ControlServer::InitInstance()
 
 	VariableAttribut* va = NULL;
 
-	va = AddVariable("lock");
+	va = AddVariable(LockString);
 	va->SetType("integer");
 	va->SetAccess(ReadWriteAccess);
 	va->SetDescription("Use for locking access");
 	lockIntVariable = new IntVariableAttribut(va, 0);
 
-	va = AddVariable("name");
+	va = AddVariable(NameString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Registered name of this service");
 	NameVariable = new StringVariableAttribut( va, serviceName );
 
-	va = AddVariable("owner");
+	va = AddVariable(OwnerString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Login which launches this service");
 	OwnerVariable = new StringVariableAttribut( va, "none" );
 
-	va = AddVariable("class");
+	va = AddVariable(ClassString);
 	va->SetType("class");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of this service");
 	ClassVariable = new StringVariableAttribut( va, DefaultServiceClassName );
 
-	va = AddVariable("id");
+	va = AddVariable(PeerIdString);
 	va->SetType("hexadecimal");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("PeerId of this service");
@@ -229,7 +229,7 @@ bool ControlServer::StartServer()
 			}
 
 			// remove Name variable from TxtRecord list, when using DNS-SD, we've got the "id" as service name
-			registerDnsSd->Properties.Undefine( "id" );
+			registerDnsSd->Properties.Undefine( PeerIdString );
 
 			// Add inputs/outputs/inoutputs
 			if ( TxtRecordIsFull != true )

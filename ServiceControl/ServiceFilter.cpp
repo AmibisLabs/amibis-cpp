@@ -155,12 +155,15 @@ ServiceFilterList::~ServiceFilterList()
 
 void ServiceFilterList::Empty()
 {
+	ServiceFilter * pFilter;
+
 	for( First(); NotAtEnd(); Next() )
 	{
-		if ( GetCurrent() != NULL )
+		pFilter = GetCurrent();
+		if ( pFilter != NULL )
 		{
 			// Delete the current filter
-			delete GetCurrent();
+			delete pFilter;
 		}
 		RemoveCurrent();
 	}
@@ -297,7 +300,7 @@ ServiceOwnerIs::~ServiceOwnerIs()
 bool ServiceOwnerIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceOwner;
-	ServiceOwner = SP.GetVariableValue( "owner" );
+	ServiceOwner = SP.GetVariableValue( OwnerString );
 	if ( ServiceOwner.IsEmpty() )
 	{
 		return false;
@@ -429,12 +432,12 @@ ServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensitive)
 */
 ServiceFilter * Omiscid::PeerIdIs(unsigned int PeerId)
 {
-	SimpleString VarName( "id" );
+	SimpleString VarName( PeerIdString );
 	SimpleString VarValue;
 	
 	// generate PeerId string
 	TemporaryMemoryBuffer Buffer(30);
-	snprintf( Buffer, 30, "%.8x", PeerId & ComTools::SERVICE_PEERID );
+	snprintf( Buffer, 30, "%8.8x", PeerId & ComTools::SERVICE_PEERID );
 	VarValue = (char*)Buffer;
 
 	return new ServiceHasVariable( VarName, VarValue );
@@ -448,7 +451,7 @@ ServiceFilter * Omiscid::PeerIdIs(unsigned int PeerId)
 */
 ServiceFilter * Omiscid::ClassIs( const SimpleString ClassName )
 {
-	SimpleString VarName( "class" );
+	SimpleString VarName( ClassString );
 	SimpleString LocalClassName;
 
 	// If no class given, use the default class

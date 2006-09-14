@@ -43,7 +43,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	//if ( ServiceProps.IsDefined( "name" ) )
 	//{
 	//	OmiscidError( "Warning, forced fallback for '%s' (%s).\n",
-	//		ServiceProps["name"].GetValue().GetStr(), ServiceProps["id"].GetValue().GetStr() );
+	//		ServiceProps[NameString].GetValue().GetStr(), ServiceProps["id"].GetValue().GetStr() );
 	//}
 	//else
 	//{
@@ -51,7 +51,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	//}
 	//if ( TmpString == "forced fallback" )
 	// OmiscidTrace( "Working on'%s' (%s).\n",
-	// 	ServiceProps["name"].GetValue().GetStr(), ServiceProps["id"].GetValue().GetStr() );
+	// 	ServiceProps[ControlServer::NameString].GetValue().GetStr(), ServiceProps["id"].GetValue().GetStr() );
 
 	if ( TmpString == "full" )
 	{
@@ -75,7 +75,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 			{
 				// Work on Variables
 				case 'c':
-					if ( TmpString[1] != '/' || TmpString.GetLength() <= 2 )
+					if ( TmpString.GetLength() <= 2 || TmpString[1] != '/' )
 					{
 						FullDescription = false;
 						continue;
@@ -326,7 +326,7 @@ SimpleString ServiceProxy::GetHostName()
 
 SimpleString ServiceProxy::GetName()
 {
-	return GetVariableValue( "name" );
+	return GetVariableValue( NameString );
 }
 
 /**
@@ -336,7 +336,7 @@ SimpleString ServiceProxy::GetName()
 unsigned int ServiceProxy::GetPeerId()
 {
 	unsigned int tmpPeerId = 0;
-	SimpleString lPeerId = GetVariableValue( "id" );
+	SimpleString lPeerId = GetVariableValue( PeerIdString );
 
 	if ( sscanf( lPeerId.GetStr(), "%x", &tmpPeerId ) == 1 )
 	{

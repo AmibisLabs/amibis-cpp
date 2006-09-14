@@ -35,10 +35,10 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord.GetStr() );
 
 	// Need to add id of the service
-	if ( PropertiesForProxy.IsDefined("id") )
+	if ( PropertiesForProxy.IsDefined(PeerIdString) )
 	{
 #ifdef DEBUG
-		OmiscidError( "Property id defined in TxtRecord as '%s'. Old style Service ?\n", PropertiesForProxy["id"].GetValue().GetStr() );
+		OmiscidError( "Property id defined in TxtRecord as '%s'. Old style Service ?\n", PropertiesForProxy[PeerIdString].GetValue().GetStr() );
 #endif
 	}
 
@@ -55,7 +55,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 		NewId += "/";
 		NewId += fullname.SubString( 0, Protocol );
 	}
-	PropertiesForProxy["id"] = NewId;
+	PropertiesForProxy[PeerIdString] = NewId;
 
 	// To say if the service is the one we are looking for...
 	ServiceProxy * SP = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
@@ -676,4 +676,22 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 	}
 
 	return ResultServicesProxy;
+}
+
+/**
+  * @brief Retrieve the name of this service
+  * @return the name of this service
+  */
+const SimpleString Service::GetName()
+{
+	return serviceName;
+}
+
+    /**
+     * @brief Retrieve the name of this service
+     * @return the name of this service
+     */
+const SimpleString Service::GetPeerId()
+{
+	return PeerIdVariable->GetValue();
 }
