@@ -234,7 +234,7 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 }
 
    /**
-	* Sends a message to a particular client. This client is identified by BipServiceProxy because
+	* Sends a message to a particular client. This client is identified by ServiceProxy because
 	* we have been looking for it to create the connexion.
 	* @param connectorName the name of the connector that will send the message
 	* @param msg the message to send
@@ -307,7 +307,7 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 	 * Returns the description associated to a variable
 	 * @param VarName the variable name
 	 * @return the description
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 SimpleString Service::GetVariableDescription(SimpleString VarName)
 {
@@ -327,7 +327,7 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 	 * Sets the value of a service variable
 	 * @param VarName the variable name
 	 * @param varValue the variable value
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 {
@@ -346,7 +346,7 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 	 * Returns the variable value
 	 * @param VarName the variable name
 	 * @return the variable value
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 SimpleString Service::GetVariableValue(SimpleString VarName)
 {
@@ -366,7 +366,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	 * Returns the variable access type
 	 * @param VarName the variable name
 	 * @return the access type (SimpleString version)
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 {
@@ -385,7 +385,7 @@ SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 	 * @param VarName the variable name
 	 * @return the variable type
 	 * @throws UnknownBipVariable thrown if the variable has not been declared
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 SimpleString Service::GetVariableType(SimpleString VarName)
 {

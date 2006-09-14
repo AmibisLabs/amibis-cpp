@@ -29,18 +29,10 @@ Connector::~Connector()
 	// Stop all other activities...
 	TcpServer::RemoveAllCallbackObjects();
 	TcpServer::Stop();
-	TcpServer::Disconnect();
 	UdpExchange::RemoveAllCallbackObjects();
 	UdpExchange::Stop();
-	UdpExchange::Disconnect();
 
-	ListClients.Lock();  
-	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
-	{
-		delete ListClients.GetCurrent();
-		ListClients.RemoveCurrent();
-	}
-	ListClients.Unlock();
+	Disconnect();
 }
 
 void Connector::Create(int port_tcp, int port_udp)
@@ -554,7 +546,7 @@ ClientConnection* Connector::FindClientConnectionFromId(unsigned int pid)
 	// Check first for a specific connection
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
-		if(!(ListClients.GetCurrent())->tcpClient->IsConnected())
+		if( (ListClients.GetCurrent())->tcpClient->IsConnected() == false )
 		{
 			ListClients.RemoveCurrent();
 		}
@@ -614,3 +606,47 @@ int Connector::GetMaxMessageSizeForTCP()
 {
 	return TcpServer::GetMaxMessageSizeForTCP();
 } 
+
+  /** @brief disconnect all connection to this Connector
+   */
+void Connector::Disconnect()
+{
+	// disconnect every one in my two other side
+	TcpServer::Disconnect();
+	UdpExchange::Disconnect();
+
+	// disconnect my connections
+	ListClients.Lock();  
+	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
+	{
+		delete ListClients.GetCurrent();
+		ListClients.RemoveCurrent();
+	}
+	ListClients.Unlock();
+}
+
+  /** @brief disconnect all connection to this Connector
+   */
+bool Connector::DisconnectPeerId(unsigned int PeerId)
+{
+	bool ret = false;
+	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
+
+	// Disconnect all connection
+	ret = ret || TcpServer::DisconnectPeerId(SearchId);
+	ret = ret || UdpExchange::DisconnectPeerId(SearchId);
+
+	// remove locally the PeerId
+	ListClients.Lock();  
+	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
+	{
+		if ( SearchId == (ListClients.GetCurrent()->tcpClient->GetPeerId() & ComTools::SERVICE_PEERID ) )
+		{
+			ret = true;
+			ListClients.RemoveCurrent();
+		}
+	}
+	ListClients.Unlock();
+
+	return ret;
+}

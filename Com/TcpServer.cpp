@@ -428,7 +428,7 @@ MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 		ms = listConnections.GetCurrent();
 		if( *ms == id )
 		{
-			if(ms->IsConnected())
+			if( ms->IsConnected() )
 			{
 				return ms;
 			}
@@ -437,11 +437,54 @@ MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 				delete listConnections.GetCurrent();
 				listConnections.RemoveCurrent();
 				// look forward to look if there is not another pid
-				// return NULL;
 			}
 		}
 	}
+
+	unsigned int SearchId = id & ComTools::SERVICE_PEERID;
+
+	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+	{
+		ms = listConnections.GetCurrent();
+		if( SearchId == (ms->GetPeerPid() & ComTools::SERVICE_PEERID) )
+		{
+			if ( ms->IsConnected() )
+			{
+				return ms;
+			}
+		}
+	}
+
 	return NULL;
+}
+
+/** \brief Destroy a specific connection */
+bool TcpServer::DisconnectPeerId(unsigned int PeerId)
+{
+	MsgSocket * ms;
+	bool ret = false;
+	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
+		
+	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+	{
+		ms = listConnections.GetCurrent();
+		if( ms->IsConnected() == false )
+		{
+			delete listConnections.GetCurrent();
+			listConnections.RemoveCurrent();
+			continue;
+		}
+
+		if ( SearchId == (ms->GetPeerPid() & ComTools::SERVICE_PEERID) )
+		{
+			delete listConnections.GetCurrent();
+			listConnections.RemoveCurrent();
+			ret = true;
+			continue;
+		}
+	}
+
+	return ret;
 }
 
 bool TcpServer::SetTcpNoDelay(bool Set)

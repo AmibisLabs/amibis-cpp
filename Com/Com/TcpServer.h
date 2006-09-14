@@ -61,8 +61,11 @@ class TcpServer : public MsgSocket, virtual public ComTools
    */
   void Create(int port = 0);
 
-  /** \brief Destroy the connections */
+  /** \brief Destroy all the connections */
   void Disconnect();
+
+  /** \brief Destroy a specific connection */
+  bool DisconnectPeerId(unsigned int PeerId);
 
   /** \brief Close the Server Socket. */
   void Close();

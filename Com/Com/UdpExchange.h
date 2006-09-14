@@ -61,6 +61,9 @@ class UdpExchange : public MsgSocket, virtual public ComTools
   /** \brief Destroy all UDP connections on this socket.*/
   void Disconnect();
 
+  /** \brief Destroy a specific connection */
+  bool DisconnectPeerId(unsigned int PeerId);
+
   /** \brief Close this socket.*/
   void Close();
 

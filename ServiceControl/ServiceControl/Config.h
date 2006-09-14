@@ -22,8 +22,8 @@ typedef enum ControlServerStatus { STATUS_INIT = 1, STATUS_RUNNING = 2 };
 typedef enum VariableAccessType { ReadAccess = 0, ConstantAccess = 1, ReadWriteAccess = 2 };
 
 // Constant string values for service registration
-extern SimpleString LockString;	// = "lock"
-extern SimpleString NameString;	// = "name"
+extern SimpleString LockString;		// = "lock"
+extern SimpleString NameString;		// = "name"
 extern SimpleString OwnerString;	// = "owner"
 extern SimpleString ClassString;	// = "class"
 extern SimpleString PeerIdString;	// = "peerId"

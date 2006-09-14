@@ -101,7 +101,7 @@ public:
 	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool UnreliableButFastSend = false );
 
 	/**
-	 * Sends a mesage to a particular client. This client is identified by BipServiceProxy because
+	 * Sends a mesage to a particular client. This client is identified by ServiceProxy because
 	 * we have been looking for it to create the connexion. We will send message to the first connector
 	 * connected to this service.
 	 * @param ConnectorName the name of the connector that will send the message
@@ -113,7 +113,7 @@ public:
 	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool UnreliableButFastSend = false );
 
 	/**
-	 * Sends a mesage to a particular client. This client is identified by BipServiceProxy because
+	 * Sends a mesage to a particular client. This client is identified by ServiceProxy because
 	 * we have been looking for it to create the connexion. We will send message to the first connector
 	 * connected to this service.
 	 * @param ConnectorName the name of the connector that will send the message
@@ -164,7 +164,7 @@ public:
 	 * Returns the variable value
 	 * @param VarName the variable name
 	 * @return the variable value
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 	SimpleString GetVariableValue(SimpleString VarName);
 
@@ -172,7 +172,7 @@ public:
 	 * Returns the variable access type
 	 * @param VarName the variable name
 	 * @return the access type (SimpleString version)
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 	SimpleString GetVariableAccessTypeType(SimpleString VarName);
 
@@ -180,7 +180,7 @@ public:
 	 * Returns the string version of the variable type
 	 * @param VarName the variable name
 	 * @return the variable type
-	 * @see BipService#addVariable
+	 * @see Service#addVariable
 	 */
 	SimpleString GetVariableType(SimpleString VarName);
 

@@ -143,6 +143,14 @@ class Connector : public TcpServer, public UdpExchange
    */
   int GetNbConnection();
 
+  /** @brief disconnect all connection to this Connector
+   */
+  void Disconnect();
+
+  /** @brief disconnect all connection to this Connector
+   */
+  bool DisconnectPeerId(unsigned int PeerId);
+
   /** \brief List of peer id for all the connections
    * \param listId [in, out] add to the end of this list the peer id of each connection
    * \return the number of id added

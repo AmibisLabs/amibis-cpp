@@ -4,7 +4,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = "OMiSCID(aka O3MiSCID)"
-PROJECT_NUMBER         = 1.0
+PROJECT_NUMBER         = 1.0.x
 OUTPUT_DIRECTORY       = Doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -80,23 +80,9 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./System/System/Config.h \
-                         ./System/System/SimpleString.h \
-                         ./System/System/SimpleList.h \
-                         ./Com/Com/Config.h \
-                         ./Com/Com/Message.h \
-                         ./ServiceControl/ServiceControl/Config.h \
-                         ./ServiceControl/ServiceControl/ConnectorListener.h \
-                         ./ServiceControl/ServiceControl/Factory.h \
-                         ./ServiceControl/ServiceControl/LocalVariableListener.h \
-                         ./ServiceControl/ServiceControl/RemoteVariableChangeListener.h \
-                         ./ServiceControl/ServiceControl/Service.h \
-                         ./ServiceControl/ServiceControl/ServiceProxy.h \
-                         ./ServiceControl/ServiceControl/ServiceFilter.h \
-                         ./Examples/ForDoxygenExamples.h \
-                         ./Examples/TestClockServerService.cpp
+INPUT                  = 
 FILE_PATTERNS          = 
-RECURSIVE              = NO
+RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 

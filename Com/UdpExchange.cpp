@@ -154,13 +154,49 @@ int UdpExchange::GetListPeerId(SimpleList<unsigned int>& listId)
 
 UdpConnection* UdpExchange::FindConnectionFromId(unsigned int id)
 {
-  for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
-      listUdpConnections.Next())
-    {
-      if(listUdpConnections.GetCurrent()->pid == id)
-	return listUdpConnections.GetCurrent();
-    }
-  return NULL;
+	unsigned int SearchId = id;
+
+	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
+	{
+		if( listUdpConnections.GetCurrent()->pid == SearchId )
+		{
+			return listUdpConnections.GetCurrent();
+		}
+	}
+
+	// By default search for the ServiceId
+	SearchId = id & ComTools::SERVICE_PEERID;
+
+	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
+	{
+		if ( SearchId == (listUdpConnections.GetCurrent()->pid & ComTools::SERVICE_PEERID) )
+		{
+			return listUdpConnections.GetCurrent();
+		}
+	}
+
+	return NULL;
+}
+
+/** \brief Destroy a specific connection */
+bool UdpExchange::DisconnectPeerId(unsigned int PeerId)
+{
+	bool ret = false;
+
+	// remove all connection from a service !
+	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
+
+	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
+	{
+		if( SearchId == (listUdpConnections.GetCurrent()->pid & ComTools::SERVICE_PEERID))
+		{
+			delete listUdpConnections.GetCurrent();
+			listUdpConnections.RemoveCurrent();
+			ret = true;
+		}
+	}
+
+	return ret;
 }
 
 bool UdpExchange::RemoveConnectionWithId(unsigned int pid)
