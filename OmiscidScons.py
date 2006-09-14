@@ -152,12 +152,6 @@ def OmiscidCheckLibs(conf,libs=[]):
    elif "xml2" == lib:
     if not conf.CheckLibWithHeader("xml2","libxml/tree.h","CXX"):
      missing += ["xml2"]
-   elif not conf.CheckCXXHeader("./System/Config.h"):
-     missing += ["OmiscidSystem"]
-   elif not conf.CheckCXXHeader("./Com/Config.h"):
-     missing += ["OmiscidCom"]
-   elif not conf.CheckCXXHeader("./ServiceControl/Control.h"):
-     missing += ["OmiscidControl"]
    elif not conf.CheckLib(lib):
     missing += [lib]
   elif len(lib) == 1:
