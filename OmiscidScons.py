@@ -152,8 +152,12 @@ def OmiscidCheckLibs(conf,libs=[]):
    elif "xml2" == lib:
     if not conf.CheckLibWithHeader("xml2","libxml/tree.h","CXX"):
      missing += ["xml2"]
-   elif not conf.CheckLibWithHeader("control","Omiscid/ServiceControl/ControlServer.h","CXX"):
-     missing += ["control"]
+   elif not conf.CheckLibWithHeader("OmiscidSystem","System/Config.h","CXX"):
+     missing += ["OmiscidSystem"]
+   elif not conf.CheckLibWithHeader("OmiscidCom","Com/Config.h","CXX"):
+     missing += ["OmiscidCom"]
+   elif not conf.CheckLibWithHeader("OmiscidControl","ServiceControl/Control.h","CXX"):
+     missing += ["OmiscidControl"]
    elif not conf.CheckLib(lib):
     missing += [lib]
   elif len(lib) == 1:
@@ -171,11 +175,6 @@ def OmiscidCheckLibs(conf,libs=[]):
  if not missing == []:
   OmiscidMessage("Some libraries are missing: ")
   OmiscidMessage("   "+", ".join(missing))
-  for miss in missing:
-   if miss == "svideo":
-    OmiscidMessage("missing "+miss)
-    OmiscidMessage("       You can specify svideo path using 'scons svideo=/prefix/for/svideo'")
-    sys.exit(1)
   
   
 ########################################################################################
