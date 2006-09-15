@@ -299,7 +299,7 @@ protected:
   void ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answer);
   void ProcessVariableQuery(xmlNodePtr node, unsigned int peer_id, SimpleString& str_answer);
   void ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answer);
-  void ProcessSubscribeQuery(xmlNodePtr node, unsigned int peer_id, bool subscribe);
+  void ProcessSubscribeQuery(xmlNodePtr node, unsigned int peer_id, bool subscribe, SimpleString& str_answer);
   void ProcessLockQuery(xmlNodePtr node, unsigned int pid, bool lock, SimpleString& str_answer);
   void ProcessFullDescriptionQuery(xmlNodePtr node, SimpleString& str_answer);
   //@}

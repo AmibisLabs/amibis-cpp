@@ -73,6 +73,7 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 	int  StartUsefullInfo;
 
 	// parse string to understand command
+	// Start lock myself using my mutex (needed if multiple clients)
 	Locker.EnterMutex();
 
 	// Get the pointer to the data
@@ -146,6 +147,7 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 		TheService.SendToOneClient( LocalConnectorName, (char*)ErrorMessage.GetStr(), ErrorMessage.GetLength(), Msg.GetPeerId(), false );
 	}
 
+	// Unlock myself 
 	Locker.LeaveMutex();
 }
 
@@ -184,6 +186,9 @@ int main(int argc, char*argv[] )
 
 	// register the service and launch everything	
 	pAccuServer->Start();
+
+	// Trace
+	fprintf( stderr, "Accumulator service started.\n" );
 
 	// Create an Event and wait for it. As no one will signal it, we will
 	// stay forever stuck here.

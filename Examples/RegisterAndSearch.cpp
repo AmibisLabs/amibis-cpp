@@ -2,7 +2,7 @@
  * @file Examples/RegisterSearchTest.cpp
  * @ingroup Examples
  * @brief Illustration of the use of a #Thread, #Event and of the Registration
- * of a #Service. Illustration os seraches using #Service::FindService, #Service::FindServices
+ * of a #Service. Illustration os searches using #Service::FindService, #Service::FindServices
  * and using #ServiceProxy to comunicate/interact with distant service.
  *
  * @author Dominique Vaufreydaz

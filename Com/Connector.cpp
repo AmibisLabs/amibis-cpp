@@ -163,9 +163,17 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 	TcpServer::CallbackObjects.Lock();
 	for( TcpServer::CallbackObjects.First(); TcpServer::CallbackObjects.NotAtEnd(); TcpServer::CallbackObjects.Next() )
 	{
-		tcpclient->AddCallbackObject( CallbackObject );
+		tcpclient->AddCallbackObject( TcpServer::CallbackObjects.GetCurrent() );
 	}
 	TcpServer::CallbackObjects.Unlock();
+
+	while( tcpclient->IsConnected() )
+	{
+		if ( tcpclient->WaitSyncLinkMsg(30) == true )
+		{
+			break;
+		}
+	}
 
 	return tcpclient->GetPeerPid();
 }

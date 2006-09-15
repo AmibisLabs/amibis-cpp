@@ -382,7 +382,7 @@ VariableAttribut* ControlClient::QueryVariableDescription(const SimpleString var
 		}
 	}
 
-	SimpleString requete = "<variable name=\"" + SimpleString(var_name) + "\"/>";
+	SimpleString requete = "<variable name=\"" + var_name + "\"/>";
 	XMLMessage* msg = QueryToServer(requete);
 	if(msg)
 	{
@@ -589,11 +589,16 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer
 	}
 #endif
 
+	AnswerWaiter * pWaiter = NULL;
+
 	// Create an answer waiter
-	AnswerWaiter * pWaiter = CreateAnswerWaiter( msg_id );
-	if ( pWaiter == NULL )
+	if ( wait_answer == true )
 	{
-		return NULL;
+		pWaiter = CreateAnswerWaiter( msg_id );
+		if ( pWaiter == NULL )
+		{
+			return NULL;
+		}
 	}
 
 	if ( SendToServer((int)requete.GetLength(), requete.GetStr()) == SOCKET_ERROR )
@@ -606,7 +611,6 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer
 	if ( wait_answer == false ) // For request without answer like (un)subscribe...
 	{
 		// Ok, we will not wait for anything...
-		pWaiter->Free();
 		return NULL;
 	}
 
@@ -858,7 +862,7 @@ void ControlClient::Subscribe(const SimpleString var_name)
 	{
 		SimpleString request("<subscribe name=\"");
 		request = request + va->GetName()  +"\"/>";
-		QueryToServer(request, false);
+		QueryToServer(request, true);
 	}
 	else
 	{

@@ -359,6 +359,15 @@ bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleStri
 		UpdateDescription();
 	}
 
+	if ( IsConnected() == false )
+	{
+		// Update description if needed
+		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+		{
+			throw SimpleException("Can not connect to the Service.");
+		}
+	}
+
 	if ( QueryVariableModif(VarName, Value) == NULL )
 	{
 		return false;
@@ -390,11 +399,20 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 		}
 	}
 
+	if ( IsConnected() == false )
+	{
+		// Update description if needed
+		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+		{
+			throw SimpleException("Can not connect to the Service.");
+		}
+	}
+
 	// Il all other cases
 	pVar = QueryVariableDescription( VarName );
 	if ( pVar == NULL )
 	{
-		// This should not appear
+		// This one *here* should not appear
 		throw SimpleException("Unknown variable. Call HasVariableFirst.");
 	}
 	return pVar->GetValue();
@@ -413,6 +431,15 @@ bool ServiceProxy::AddRemoteVariableChangeListener(const SimpleString VarName, R
 	{
 		// not found
 		return false;
+	}
+
+	if ( IsConnected() == false )
+	{
+		// Update description if needed
+		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+		{
+			throw SimpleException("Can not connect to the Service.");
+		}
 	}
 
 	// Add information about me
@@ -455,6 +482,15 @@ bool ServiceProxy::RemoveRemoteVariableChangeListener(const SimpleString VarName
 	{
 		// Not found	
 		return false;
+	}
+
+	if ( IsConnected() == false )
+	{
+		// Update description if needed
+		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+		{
+			throw SimpleException("Can not connect to the Service.");
+		}
 	}
 
 	// Aswk to remove the listener
@@ -583,6 +619,15 @@ VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 			// Not found
 			OmiscidError( "Variable '%s' not found\n", VarName.GetStr() );
 			return NULL;
+		}
+
+		if ( IsConnected() == false )
+		{
+			// Update description if needed
+			if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+			{
+				throw SimpleException("Can not connect to the Service.");
+			}
 		}
 
 		// Try to get the variable if we do not get the full description

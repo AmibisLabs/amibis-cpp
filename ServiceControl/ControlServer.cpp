@@ -410,6 +410,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 		if(attr)
 		{ id = SimpleString((const char*)attr->children->content);}
 
+		bool ReplyAnAnswer = true;	// default
 		SimpleString str;
 
 		if(node->children == NULL)
@@ -442,11 +443,12 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 				}
 				else if( name == "subscribe" )
 				{
-					ProcessSubscribeQuery(cur_node, msg->pid, true);
+					ProcessSubscribeQuery(cur_node, msg->pid, true, str);
 				}
 				else if( name == "unsubscribe" )
 				{
-					ProcessSubscribeQuery(cur_node, msg->pid, false);
+					ReplyAnAnswer = false;
+					ProcessSubscribeQuery(cur_node, msg->pid, false, str);
 				}
 				else if( name == "lock" )
 				{
@@ -469,28 +471,31 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			// OmiscidError( "Send : %s \n", str.GetStr());
 		}
 
-		str = "<controlAnswer id=\""+id+"\">" 
-			+ str	  
-			+ "</controlAnswer>";
-
-#ifdef DEBUG
-		if ( ControlAnswerValidator.ValidateDoc( str ) == false )
+		if ( ReplyAnAnswer == true )
 		{
-			OmiscidError( "ControlServer::ProcessAMessage: bad ControlAnswer sent.\n" );
-		}
-#endif
+			str = "<controlAnswer id=\""+id+"\">" 
+				+ str	  
+				+ "</controlAnswer>";
 
-		TcpServer::listConnections.Lock();
-		MsgSocket* ms = FindClientFromId( msg->pid );
-		if( ms )
-		{
-			try
+	#ifdef DEBUG
+			if ( ControlAnswerValidator.ValidateDoc( str ) == false )
 			{
-				ms->Send((int)str.GetLength(), str.GetStr());
+				OmiscidError( "ControlServer::ProcessAMessage: bad ControlAnswer sent.\n" );
 			}
-			catch( SocketException& e )
+	#endif
+
+			TcpServer::listConnections.Lock();
+			MsgSocket* ms = FindClientFromId( msg->pid );
+			if( ms )
 			{
-				OmiscidError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
+				try
+				{
+					ms->Send((int)str.GetLength(), str.GetStr());
+				}
+				catch( SocketException& e )
+				{
+					OmiscidError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
+				}
 			}
 		}
 		TcpServer::listConnections.Unlock();
@@ -629,7 +634,7 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 		OmiscidTrace( "understood query (name requested)\n");      
 	}
 }
-void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, bool subscribe)
+void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, bool subscribe, SimpleString& str_answer)
 {
 	//std::cerr << "connect query : not yet implemented\n";
 	xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);    
@@ -642,10 +647,17 @@ void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, boo
 	{
 		SimpleString name((const char*)attr->children->content);
 		VariableAttribut* va = FindVariable(name);     
-		if(va)
+		if( va )
 		{
-			if(subscribe) AddListener(va, peer_id);
-			else RemoveListener(va, peer_id);
+			if (subscribe)
+			{
+				AddListener(va, peer_id);
+				va->GenerateLongDescription( str_answer );
+			}
+			else
+			{
+				RemoveListener(va, peer_id);
+			}
 		}
 	}
 }
