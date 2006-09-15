@@ -23,14 +23,14 @@ sub WorkOnFile()
 	$FilesToAdd{$FileName} = 1;
 }
 
-@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'LICENSE', 'README', 'Doxyfile' );
+@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'LICENCE', 'README', 'Doxyfile' );
 $Version = "1.0.0";
 
 if ( -e 'LastVersion.info' )
 {
 	open( $fd, '<LastVersion.info' ) or die "Unable to open 'LastVersion.info'\n";
 	$line = <$fd>;
-	if ( $line =~ /^\d+\.\d+\.\d+[\s\r\n]+$/ )
+	if ( $line =~ /^(\d+)\.(\d+)\.(\d+)[\s\r\n]+$/ )
 	{
 		$tmp = $3+1;
 		$Version = "$1.$2.$tmp";
@@ -68,13 +68,16 @@ print "Generate Doc\n";
 $command = "zip -9 $VersionFile ";
 foreach $file ( @UsualFiles )
 {
-	$command .= "$file ";
+	$command .= "OMiSCID-Dev/$file ";
 }
 foreach $file ( keys %FilesToAdd )
 {
-	$command .= "$file ";
+	$command .= "OMiSCID-Dev/$file ";
 }
 
 # print $command;
 
+chdir('..');
 system( $command );
+
+`echo $Version > LastVersion.info`;
