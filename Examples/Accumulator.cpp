@@ -62,7 +62,7 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 {
 	// Error management
 	bool IsWrong = true;	// by default, the command is wrong
-	SimpleString ErrorMessage = "Bad command.\n";
+	SimpleString ErrorMessage = "Bad command.";
 
 	// Which operand ? 3 will be read by the integer and 3.5 will be read by the float
 	int dRightOperand   = 0;
@@ -91,7 +91,8 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 
 	// Is it a legal command ?
 	if ( Command[StartUsefullInfo] == '-' || Command[StartUsefullInfo] == '+' ||
-			Command[StartUsefullInfo] == '/' || Command[StartUsefullInfo] == '*' )
+			Command[StartUsefullInfo] == '/' || Command[StartUsefullInfo] == '*' ||
+			Command[StartUsefullInfo] == '=' )
 	{
 		// look for a float like 3.14 and then for 
 		if ( sscanf( &Command[StartUsefullInfo+1], "%f", &fRightOperand ) == 1 )
@@ -118,10 +119,10 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 
 				case '*':
 					// Compute new value
-					Accu -= fRightOperand;
+					Accu *= fRightOperand;
 					break;
 
-				default:	// here, Command[0] == '/'
+				case '/':
 					if ( fRightOperand == 0.0f )
 					{
 						// we can not divide by 0
@@ -132,6 +133,10 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 						// Compute new value
 						Accu /= fRightOperand;
 					}
+					break;
+
+				default: 	// here, Command[0] == '='
+					Accu = fRightOperand;
 					break;
 			}
 		}

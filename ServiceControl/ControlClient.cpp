@@ -862,7 +862,14 @@ void ControlClient::Subscribe(const SimpleString var_name)
 	{
 		SimpleString request("<subscribe name=\"");
 		request = request + va->GetName()  +"\"/>";
-		QueryToServer(request, true);
+		XMLMessage* msg = QueryToServer(request, true);
+		if ( msg )
+		{
+			if(msg->GetRootNode()->children != NULL)
+			{
+				ProcessVariableDescription(msg->GetRootNode()->children, va);      
+			}
+		}
 	}
 	else
 	{
