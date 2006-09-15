@@ -1,7 +1,7 @@
 /**
- * @file Examples/Accumulator.cpp
+ * @file Examples/ClientForAccumulator.cpp
  * @ingroup Examples
- * @brief Demonstartion of usage of communication between services.
+ * @brief Demonstration of an Accumulator client.
  *
  * @author Dominique Vaufreydaz
  */

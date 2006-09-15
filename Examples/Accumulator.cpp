@@ -1,7 +1,12 @@
-/**
+/** 
+ * @defgroup Examples Examples of how to use OMiSCID. 
+ *
+ */
+ 
+ /**
  * @file Examples/Accumulator.cpp
  * @ingroup Examples
- * @brief Demonstartion of usage of communication between services.
+ * @brief Demonstartion of an accumulator server.
  *
  * @author Dominique Vaufreydaz
  */

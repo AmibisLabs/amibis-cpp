@@ -1,9 +1,4 @@
 /** 
- * @defgroup ServiceControl Layer 2 : Omiscid multiplateform Service Control layer. 
- *
- */
-
-/** 
  * @file ServiceControl/Config.cpp
  * @ingroup ServiceControl
  * @brief defines global values for the ServiceControl layer

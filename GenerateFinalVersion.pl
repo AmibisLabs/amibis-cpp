@@ -23,6 +23,7 @@ sub WorkOnFile()
 	$FilesToAdd{$FileName} = 1;
 }
 
+@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'LICENSE', 'README', 'Doxyfile' );
 $Version = "1.0.0";
 
 if ( -e 'LastVersion.info' )
@@ -42,14 +43,38 @@ if ( -e 'LastVersion.info' )
 
 print "=> $Version\n";
 
-&RecurseWork::RecurseWork("System/");
+$VersionFile = "Omiscid-$Version.zip";
+if ( -e $VersionFile )
+{
+	print "Remove $VersionFile";
+	`rm -rf $VersionFile`;
+}
 
-$command = "zip -9 Omiscid-$Version.zip ";
+if ( -e 'Doc' && -d 'Doc' )
+{
+	print "Remove Doc";
+	`rm -rf Doc`;
+}
+
+print "Generate Doc\n";
+`doxygen`;
+
+&RecurseWork::RecurseWork("System/");
+&RecurseWork::RecurseWork("Com/");
+&RecurseWork::RecurseWork("ServiceControle/");
+&RecurseWork::RecurseWork("Examples/");
+&RecurseWork::RecurseWork("Doc/");
+
+$command = "zip -9 $VersionFile ";
+foreach $file ( @UsualFiles )
+{
+	$command .= "$file ";
+}
 foreach $file ( keys %FilesToAdd )
 {
 	$command .= "$file ";
 }
 
-print $command;
+# print $command;
 
 system( $command );

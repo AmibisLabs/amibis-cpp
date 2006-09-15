@@ -20,7 +20,7 @@
 namespace Omiscid {
 
 /** 
- * @class RegisterOmiscidService OmiscidServicesTools.h ServiceControl/OmiscidServices.h
+ * @class RegisterOmiscidService ServicesTools.cpp ServiceControl/ServicesTools.h
  * @brief To Comment
  */
 class RegisterOmiscidService : public RegisterService

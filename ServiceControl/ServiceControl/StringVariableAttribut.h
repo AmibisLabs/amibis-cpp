@@ -18,7 +18,7 @@ namespace Omiscid {
 class VariableAttribut;
 
 /**
- * @class IntVariableAttribut IntVariableAttribut.h ServiceControl/IntVariableAttribut.h
+ * @class StringVariableAttribut IntVariableAttribut.h ServiceControl/IntVariableAttribut.h
  * @brief Group an integer with its representation in the service description
  *
  * The methods enable to manipulate the integer value, and to modify the
