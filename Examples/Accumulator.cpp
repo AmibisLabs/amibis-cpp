@@ -38,7 +38,7 @@ public:
 	/* @brief destructor */
 	virtual ~AccumulatorConnectorListener();
 
-	/* @brief call bacl function to receive data */
+	/* @brief callback function to receive data */
 	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
 
 private:
@@ -54,7 +54,7 @@ private:
 AccumulatorConnectorListener::AccumulatorConnectorListener()
 {
 	// set initial value to the Accu
-	Accu = 0.0;
+	Accu = 0.0f;
 }
 
 	/* @brief destructor */
@@ -148,7 +148,7 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 	}
 	if ( IsWrong == false )
 	{
-		// export the new Accu value
+		// export the new Accu value, so the clients will receive notification
 		TheService.SetVariableValue("Accu", Accu);
 	}
 	else
