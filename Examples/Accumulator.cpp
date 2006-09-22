@@ -39,7 +39,7 @@ public:
 	virtual ~AccumulatorConnectorListener();
 
 	/* @brief callback function to receive data */
-	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
+	virtual void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
 
 private:
 	Mutex Locker;		/*!< Lock access to my variable */
@@ -62,7 +62,7 @@ AccumulatorConnectorListener::~AccumulatorConnectorListener()
 {
 }
 
-	/* @brief call bacl function to receive data */
+	/* @brief callback function to receive data */
 void AccumulatorConnectorListener::MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 {
 	// Error management
@@ -166,7 +166,7 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int main(int argc, char*argv[] )
 {
-	// Instanciate a Connector listener (must *not* be destroy before it has
+	// Instanciate a Connector listener (must *not* be destroyed before it has
 	// been removed for the connector or until the service is destroyed).
 	AccumulatorConnectorListener MyCommandsListener;
 

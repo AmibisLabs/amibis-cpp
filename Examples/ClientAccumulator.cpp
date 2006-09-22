@@ -61,7 +61,7 @@ public:
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int main(int argc, char*argv[] )
 {
-	// Instanciate a Connector and a Variable listener (must *not* be destroy before it has
+	// Instanciate a Connector and a Variable listener (must *not* be destroyed before it has
 	// been removed for the connector or until the service is destroyed).
 	ClientConnectorAndVariableListener MyListener;
 
@@ -125,7 +125,7 @@ int main(int argc, char*argv[] )
 	// Connect to the Accumulator
 	if ( pAccuClient->ConnectTo( "SendCommands", OneAccumulator, "Commands" ) == true )
 	{
-		// Subscribe to variables changes for Accu. I will receive a first callback
+		// Subscribe to variables changes for Accu. We will receive a first callback
 		// when done
 		OneAccumulator->AddRemoteVariableChangeListener( "Accu", &MyListener );
 
@@ -139,7 +139,7 @@ int main(int argc, char*argv[] )
 			// Get the local command at keyboard
 			cin >> LocalCommand;
 
-			// Send to all connected Client... Here we are connected ton only one accumulator
+			// Send to all connected Client... Here we are connected to only one accumulator
 			// we can also use SentToOneClient...
 			pAccuClient->SendToAllClients( "SendCommands", (char*)LocalCommand.GetStr(), LocalCommand.GetLength(), false );
 		}
