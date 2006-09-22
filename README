@@ -1,0 +1,108 @@
+
+				O3MiSCID (aka OMiSCID)
+
+Documentation is available on-line at
+    http://omiscid.gforge.inria.fr/documentation.html
+
+This code is released under the MIT Licence see the LICENCE file.
+
+To report bugs, follow the instructions at: 
+	http://gforge.inria.fr/tracker/?group_id=363
+
+I. Description
+
+O3MiSCID stands for Object Oriented Opensource Middleware for Service Communication, Inspection and Discovery.
+It is also simply known as OMiSCID. It can be use in C++ under Mac OSX, Linux and Windows (2000 and later versions)
+and/or in Java. In this README you will find information about how to compile under Linux/Mac OSX (section II)
+and under Windows (section III). You might refer to http://omiscid.gforge.inria.fr/ for more information,
+documentations and tutorials.
+
+II. How to compile OMiSCID and build your own program using it (Linux/Mac OSX).
+
+II.1 Installing software
+
+In order to compile OMiSCID, you need the following software :
+- scons (http://www.scons.org/) and python installed in your system. Scons is a tool
+	dedicated to replace autoconf and make.
+- libxml and lixmldev (http://www.xmlsoft.org/downloads.html). OMiSCID uses it in order to validate
+	and parse messages.
+- Bonjour from Apple installed and running on your computer
+	(http://developer.apple.com/networking/bonjour/download/)
+- g++, the standard gnu compiler.
+
+In order to install OMiSCID, you can run, *as root*, the following command:
+
+* scons install prefix=/usr/local
+
+In this example, everything related to OMiSCID will be installed using the
+'/usr/local' as root folder. You can obviously change it.
+
+II.2 OMiSCID options
+
+OMiSCID can be compiled using several options. Under Mac OSX/Linux, these options
+are accessible when invoking scons:
+- If you add debug=1 to the command line, you will have some extra checks
+	and thus more processing when using OMiSCID. For example, when using a
+	MutexedSimpleList, OMiSCID will check that you lock the list before
+	accessing to it.
+- If you add trace=1, you will have working messages on the standard
+	output and error. It may be useful for debugging.
+	
+You can use either one or both options in your project without any problem.
+For example, you can invoke scons in several ways :
+* scons install prefix=/usr/local trace=1
+* scons install prefix=/usr/local debug=1
+* scons install prefix=/usr/local debug=1 trace=1
+
+II.3 Compiling your program
+
+Let's say that you want to compile the Accumulator.cpp example available
+in the 'Examples' folder (see the tutorial on http://omiscid.gforge.inria.fr/
+to understand what this program does). Just go into the 'Examples' folder and
+invoke gcc :
+* gcc -o Accumulator Accumulator.cpp `OmiscidControl-config --all`
+
+The Accumulator program should be ready to be executed.
+
+III. How to compile OMiSCID and build your own program using it (Windows).
+
+III.1 Installing software
+
+In order to compile OMiSCID, you need the following software :
+- libxml and its headers and libs (http://www.xmlsoft.org/downloads.html). OMiSCID uses it in order to validate
+	and parse messages. Sometimes, you may also need the iconv library.
+- Bonjour and Bonjour SDK from Apple. Bonjour will install the mDNSresponder daemon
+	and Bonjour SDK contains headers and lib to build applications.
+	(http://developer.apple.com/networking/bonjour/download/)
+- Visual Studio (2003 or later, OMiSCID was not tested on previous versions). In the next version,
+	we hope also to provide a cygwin support.
+	
+All you need in order to compile your project using OMiSCID is to follow these steps:
+- unzip the archive somewhere on your computer, let's say in 'C:\Dev\'.
+- add 'C:\Dev\OMiSCID\System\', 'C:\Dev\OMiSCID\Com\', 'C:\Dev\OMiSCID\ServiceControl\' as
+	additional include folders.
+- add all '.cpp' and '.h' files from theses folders abd subfolders to your project.
+- add the include folder of Bonjour SDK and of libxml to your project (do the same
+	for iconv if necessary)
+- say to the linker to link with the dns_sd.lib (Bonjour), libxml2.lib (libxml) and
+	Ws2_32.lib (Winsock2) and maybe add the iconv.lib
+	
+Everything should be fine now to compile your code. You can try to compile the
+examples in the 'Examples' folders to check that everything is fine.
+
+III.2 OMiSCID options
+
+OMiSCID can use several options when compiling. Under windows, these options
+are accessible using defined values:
+- If you define DEBUG (in Debug mode), you will have some extra checks
+	and thus more processing when using OMiSCID. For example, when using a
+	MutexedSimpleList, OMiSCID will check that you lock the list before
+	accessing to it.
+- If you define OMISCID_TRACE_ENABLE, you will have working messages on the standard
+	output and error. It may be useful for debugging.
+	
+You can use either one or both options in your project without any problem.
+
+III.3 Compiling your project
+
+See section III.1 in order to now how to compile your project.	
