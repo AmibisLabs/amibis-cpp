@@ -25,33 +25,31 @@ namespace Omiscid {
  * @ingroup Examples
  * @brief this class is used to monitor incomming activity the Accumalator
  */
-class ClientConnectorListener : public ConnectorListener
+class ClientConnectorAndVariableListener : public ConnectorListener, public RemoteVariableChangeListener
 {
 public:
 	/* @brief constructor */
-	ClientConnectorListener();
+	ClientConnectorAndVariableListener()
+	{
+	}
+
 	/* @brief destructor */
-	virtual ~ClientConnectorListener();
+	virtual ~ClientConnectorAndVariableListener()
+	{
+	}
 
 	/* @brief callback function overide to receive data */
-	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
-};
+	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
+	{
+		// Create a SimpleString with message and output it
+		// even if we can directly output it. Show usage of SimpleString
 
-/**
- * @class VariableListener
- * @ingroup Examples
- * @brief this class is used to monitor remote variable changes
- */
-class AccuChange : public RemoteVariableChangeListener
-{
-public:
-    /**
-     * Notification of a value change on a variable. Overide here because it is pur virtual.
-     *
-     * @param SP the ServiceProxy containing the variable
-     * @param VarName the name of the variable
-     * @param NewValue the new value of the variable
-     */
+		SimpleString Message = Msg.GetBuffer();
+
+		cerr << Message << endl;
+	}
+
+    /* @ brief callback for variable changes notification */
     void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
 	{
 		cout << "Current Accu value: " << NewValue << endl;
@@ -60,38 +58,13 @@ public:
 
 } // namespace Omiscid
 
-	/* @brief constructor */
-ClientConnectorListener::ClientConnectorListener()
-{
-}
-
-	/* @brief destructor */
-ClientConnectorListener::~ClientConnectorListener()
-{
-}
-
-void ClientConnectorListener::MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
-{
-	// Create a SimpleString with message and output it
-	// even if we can directly output it. Show usage of SimpleString
-
-	SimpleString Message = Msg.GetBuffer();
-
-	cerr << Message << endl;
-}
-
-
-
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int main(int argc, char*argv[] )
 {
-	// Instanciate a Connector listener (must *not* be destroy before it has
+	// Instanciate a Connector and a Variable listener (must *not* be destroy before it has
 	// been removed for the connector or until the service is destroyed).
-	ClientConnectorListener MyCommandListener;
+	ClientConnectorAndVariableListener MyListener;
 
-	// Instanciate a Connector listener (must *not* be destroy before it has
-	// been removed for the connector or until the service is destroyed).
-	AccuChange MyAccuListener;
 	
 	// Ask to the service factory to create a Service. The service is not
 	// register yet. We do not provide the service class, the default value 'Service'
@@ -110,13 +83,13 @@ int main(int argc, char*argv[] )
 	// Add a Connector to send commands and receive error messages (AnInOutput) and set my callback
 	// object to receive notification of messages
 	pAccuClient->AddConnector( "SendCommands", "A way to send commands to the Accumulator", AnInOutput );
-	pAccuClient->AddConnectorListener( "SendCommands", &MyCommandListener );
+	pAccuClient->AddConnectorListener( "SendCommands", &MyListener );
 
 	// Trace
 	printf( "Accumulator Client created.\n" );
 
 	// A proxy to communicate with the Accumulator
-	ServiceProxy * OneAccumulator;
+	ServiceProxy * OneAccumulator = NULL;
 
 	// Loop for searching an Accumulator
 	printf( "Search for an Accumulator service.\n" );
@@ -154,7 +127,7 @@ int main(int argc, char*argv[] )
 	{
 		// Subscribe to variables changes for Accu. I will receive a first callback
 		// when done
-		OneAccumulator->AddRemoteVariableChangeListener( "Accu", &MyAccuListener );
+		OneAccumulator->AddRemoteVariableChangeListener( "Accu", &MyListener );
 
 		// Enter command prompt, 1er time with help
 		cout << "Enter new command ('+4', '/5.5', ' *8.59', '-6', ' = 8.2'...): " << endl;

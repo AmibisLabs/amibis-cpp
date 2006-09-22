@@ -68,16 +68,17 @@ print "Generate Doc\n";
 $command = "zip -9 $VersionFile ";
 foreach $file ( @UsualFiles )
 {
-	$command .= "OMiSCID-Dev/$file ";
+	$command .= "OMiSCID/$file ";
 }
 foreach $file ( keys %FilesToAdd )
 {
-	$command .= "OMiSCID-Dev/$file ";
+	$command .= "OMiSCID/$file ";
 }
 
 # print $command;
 
 chdir('..');
 system( $command );
+chdir('OMiSCID');
 
 `echo $Version > LastVersion.info`;
