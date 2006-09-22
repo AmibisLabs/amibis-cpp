@@ -49,8 +49,8 @@ public:
 		cerr << Message << endl;
 	}
 
-    /* @ brief callback for variable changes notification */
-    void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
+	/* @ brief callback for variable changes notification */
+	void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
 	{
 		cout << "Current Accu value: " << NewValue << endl;
 	};
@@ -69,7 +69,7 @@ int main(int argc, char*argv[] )
 	// Ask to the service factory to create a Service. The service is not
 	// register yet. We do not provide the service class, the default value 'Service'
 	// will be used
-	Omiscid::Service * pAccuClient = ServiceFactory.Create( "Accumulator Client" );
+	Service * pAccuClient = ServiceFactory.Create( "Accumulator Client" );
 
 	// If something tricky occurred, exit
 	if ( pAccuClient == NULL )
@@ -96,7 +96,7 @@ int main(int argc, char*argv[] )
 	for( int NbTry = 1; NbTry <= 5; NbTry ++ )
 	{
 		// Search for services, wait 5 s (5000 ms) to get an answer
-		// Get in return a ServiceProxy List. This service is nammed Accumalator, gets a variable
+		// Get in return a ServiceProxy*. This service is nammed Accumalator, gets a variable
 		// Accu and an InOutput connector "Commands"
 		OneAccumulator = pAccuClient->FindService( And(NameIs("Accumulator"),HasVariable("Accu"), HasConnector("Commands",AnInOutput) ), 5000 );
 
@@ -139,7 +139,7 @@ int main(int argc, char*argv[] )
 			// Get the local command at keyboard
 			cin >> LocalCommand;
 
-			// Send to all connected Client... Here we aqre connected ton only one accumulator
+			// Send to all connected Client... Here we are connected ton only one accumulator
 			// we can also use SentToOneClient...
 			pAccuClient->SendToAllClients( "SendCommands", (char*)LocalCommand.GetStr(), LocalCommand.GetLength(), false );
 		}
