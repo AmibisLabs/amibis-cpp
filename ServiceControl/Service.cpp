@@ -32,7 +32,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	SimpleString Host(hosttarget);
 	ServiceProperties PropertiesForProxy;
 
-	PropertiesForProxy.ImportTXTRecord( txtLen, txtRecord.GetStr() );
+	PropertiesForProxy.ImportTXTRecord( txtLen, (const unsigned char*)txtRecord.GetStr() );
 
 	// Need to add id of the service
 	if ( PropertiesForProxy.IsDefined(PeerIdString) )

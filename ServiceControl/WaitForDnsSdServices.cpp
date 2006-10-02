@@ -118,7 +118,7 @@ void WaitForDnsSdServices::UnlockService( const SimpleString ServiceName )
 
 void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags,
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
-	uint16_t txtLen, const char *txtRecord, void *context )
+	uint16_t txtLen, const unsigned char *txtRecord, void *context )
 {
 	SearchService * MyThis = (SearchService *)context;
 
@@ -139,7 +139,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNS
 	// Call the callback
 	if ( MyThis->CallBack )
 	{
-		if ( MyThis->CallBack( FullName.GetStr(), hosttarget, ntohs(port), txtLen, txtRecord, MyThis->UserData) == false )
+		if ( MyThis->CallBack( FullName.GetStr(), hosttarget, ntohs(port), txtLen, (const char*)txtRecord, MyThis->UserData) == false )
 		{
 			return;
 		}
@@ -191,7 +191,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 			// A new service in the list, resolve it to see if it is the searched one...
 			DNSServiceRef Ref;
 
-			if ( DNSServiceResolve( &Ref, 0, interfaceIndex, serviceName, replyType, replyDomain, SearchCallBackDNSServiceResolveReply, context ) == kDNSServiceErr_NoError )
+			if ( DNSServiceResolve( &Ref, 0, interfaceIndex, serviceName, replyType, replyDomain, (DNSServiceResolveReply)SearchCallBackDNSServiceResolveReply, context ) == kDNSServiceErr_NoError )
 			{
 				DNSServiceProcessResult( Ref );
 				DNSServiceRefDeallocate( Ref );
@@ -248,7 +248,7 @@ void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const D
 			if ( CallBack )
 			{
 				if ( CallBack( FullName.GetStr(), CurrentService.HostName.GetStr(), CurrentService.Port,
-					(uint16_t)CurrentService.Properties.GetTXTRecordLength(), CurrentService.Properties.ExportTXTRecord(),
+					(uint16_t)CurrentService.Properties.GetTXTRecordLength(), (const char*)CurrentService.Properties.ExportTXTRecord(),
 					UserData) == false )
 				{
 					return;

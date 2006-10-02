@@ -421,7 +421,7 @@ bool ServiceProperties::TxtRecordIsFull() const
 	return false;
 }
 
-const char * ServiceProperties::ExportTXTRecord() const
+const unsigned char * ServiceProperties::ExportTXTRecord() const
 {
 	int i;
 	int CopyHere;
@@ -476,15 +476,15 @@ void ServiceProperties::Empty()
 }
 
 
-bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
+bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char * Record )
 {
 	int i;
 	int NbKeys;
 	char KeyName[256];
 	char KeyValue[256];
     uint8_t valueLen;
-    char *value;
-	char **pvalue = &value; // in order to prevent dumb warning from gcc 4.1.2...
+    unsigned char *value;
+	unsigned char **pvalue = &value; // in order to prevent dumb warning from gcc >= 4.1.2...
 	
 	Empty();
 	
@@ -503,7 +503,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const char * Record )
 			}
 
 			// General case
-			strncpy( KeyValue, value, valueLen );
+			strncpy( KeyValue, (const char*)value, valueLen );
 			KeyValue[valueLen] = '\0';
 			(*this)[KeyName] = KeyValue;
 		}

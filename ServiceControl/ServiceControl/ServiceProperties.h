@@ -162,7 +162,7 @@ public:
 	int GetNumberOfProperties() { return NbProperties; }
 
 	int GetTXTRecordLength() const;
-	const char * ExportTXTRecord() const;
+	const unsigned char * ExportTXTRecord() const;
 	
 	operator char*();
 	operator const char*();
@@ -170,7 +170,7 @@ public:
 	operator const unsigned char*();
 
 	bool TxtRecordIsFull() const;
-	bool ImportTXTRecord( int RecordLength, const char * Record );
+	bool ImportTXTRecord( int RecordLength, const unsigned char * Record );
 
 	void NotifyChanges();
 
@@ -187,7 +187,7 @@ protected:
 
 	// Max size of the TXT record field
 	int TXTRecordLength;
-	char TXTRecord[MaxTxtRecordSize];
+	unsigned char TXTRecord[MaxTxtRecordSize];
 
 	int NbProperties;
 	int MaxProperties;

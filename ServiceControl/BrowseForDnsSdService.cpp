@@ -55,7 +55,7 @@ BrowseForDNSSDService::~BrowseForDNSSDService()
 
 void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags,
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
-	uint16_t txtLen, const char *txtRecord, void *context )
+	uint16_t txtLen, const unsigned char *txtRecord, void *context )
 {
 	SimpleString FullName;
 
@@ -87,7 +87,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 		// A new service in the list, resolve it to see if it is the searched one...
 		DNSServiceRef Ref;
 
-		if ( DNSServiceResolve( &Ref, 0, interfaceIndex, serviceName, replyType, replyDomain, SearchCallBackDNSServiceResolveReply, context ) == kDNSServiceErr_NoError )
+		if ( DNSServiceResolve( &Ref, 0, interfaceIndex, serviceName, replyType, replyDomain, (DNSServiceResolveReply)SearchCallBackDNSServiceResolveReply, context ) == kDNSServiceErr_NoError )
 		{
 			DNSServiceProcessResult( Ref );
 			DNSServiceRefDeallocate( Ref );
