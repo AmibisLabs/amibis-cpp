@@ -6,7 +6,7 @@ In this files, you will find changes between OMiSCID versions.
 
 1.0.2
 	Change to be compliant with Bonjour version 107.6 (change
-	in API) and at the same time with previous ones.
+	in API, 2006-09-18) and at the same time with previous ones.
 
 1.0.1
 	Add missing folder ServiceControl

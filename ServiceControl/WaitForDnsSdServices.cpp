@@ -519,6 +519,8 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 			Sleep( 10 );
 		}
 	}
+	// never here
+
 	return true;
 }
 
