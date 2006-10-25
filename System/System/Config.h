@@ -191,27 +191,21 @@
 	#include <pthread.h>
 #endif
 
+// mandatory included files. Some are included here in order to
+// let us define a new/delete operator
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 
-#include <string.h>
-#include <iostream>
-
 #ifdef TRACKING_MEMORY_LEAKS
-	#ifdef WIN32
-		#ifndef DEBUG
-			#include <System/TrackingMemoryLeaks.h>
-		#endif
-	#else
-		#include <System/TrackingMemoryLeaks.h>
-	#endif
+	// include redefinition of new/delete operator
+	#include <System/TrackingMemoryLeaks.h>
 #endif
 
 namespace Omiscid {
 
 
-// Almost ugly for the moment
+// Trace management
 #ifdef OMISCID_TRACE_ENABLE
 	#define OMISCID_TRACE_IS_ENABLED 1
 #else

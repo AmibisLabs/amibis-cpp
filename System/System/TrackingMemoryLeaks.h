@@ -7,7 +7,10 @@
 #ifndef __TRACKING_MEMORY_LEAKS_H__
 #define __TRACKING_MEMORY_LEAKS_H__
 
-#if defined WIN32 || defined _WIN32
+// Only when asked
+#ifdef TRACKING_MEMORY_LEAKS
+
+#if defined WIN32
 	#ifndef _CRT_SECURE_NO_DEPRECATE
 		#define _CRT_SECURE_NO_DEPRECATE
 	#endif
@@ -15,36 +18,32 @@
 
 #include <memory>
 
-namespace Omiscid {
-
-void StartTrackingMemoryLeaks();
-void StopTrackingMemoryLeaks();
-
-} // namespace Omiscid
-
-// Only when asked
-#ifdef TRACKING_MEMORY_LEAKS
 	#ifdef WIN32
 		#pragma warning(disable : 4291)
 	#endif
 
-	void * operator new( size_t size, int line, const char *file );
-	void * operator new[]( size_t size, int line, const char *file );
-	void operator delete( void *p );
-	void operator delete[]( void *p );
+	void * operator new( size_t size ) throw ();
+	void * operator new[]( size_t size ) throw ();
+	void operator delete( void *p ) throw ();
+	void operator delete[]( void *p ) throw ();
 
-	#ifdef OMISCID_NEW
-		#undef OMISCID_NEW
-	#endif
-	
-	#define OMISCID_NEW new( __LINE__, __FILE__ )
+namespace Omiscid {
 
-#else
+	class TrackMemoryLeaks
+	{
+	public:
+		TrackMemoryLeaks();
+		virtual ~TrackMemoryLeaks();
 
-	#define OMISCID_NEW new
-	
+		static void DumpUnfreed();
+
+	private:
+		static void StartTrackingMemory();
+		static void StopTrackingMemory();
+	};
+
+} // namespace Omiscid
+
 #endif
-
-#define new OMISCID_NEW
 
 #endif	// __TRACKING_MEMORY_LEAKS_H__

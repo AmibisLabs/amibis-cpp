@@ -1,5 +1,7 @@
 
-// #include <System/TrackingMemoryLeaks.h>
+#include <System/TrackingMemoryLeaks.h>
+
+#include <System/Mutex.h>
 
 #ifdef TRACKING_MEMORY_LEAKS
 
@@ -12,10 +14,6 @@
 	#define snprintf _snprintf
 #else
 namespace Omiscid {
-
-	void AddMemoryBlock(void* addr,  size_t asize,  const char *fname, int lnum);
-	void RemoveMemoryBlock(void* addr);
-
 	inline void OutputDebugString(const char * OutputString)
 	{
 		if ( OutputString )
@@ -27,71 +25,66 @@ namespace Omiscid {
 } // namespace Omiscid
 #endif
 
+using namespace Omiscid;
+
+namespace Omiscid {
+	Mutex TrackingMemoryLocker;
+	unsigned int NumberOfTrackingMemoryClient = 0;
+}	// namespace Omiscid
+
+TrackMemoryLeaks::TrackMemoryLeaks()
+{
+	TrackingMemoryLocker.EnterMutex();
+	NumberOfTrackingMemoryClient++;
+	TrackingMemoryLocker.LeaveMutex();
+}
+
+TrackMemoryLeaks::~TrackMemoryLeaks()
+{
+	TrackingMemoryLocker.EnterMutex();
+	NumberOfTrackingMemoryClient--;
+	TrackingMemoryLocker.LeaveMutex();
+
+	// Dump unfreed will lock data...
+	DumpUnfreed();
+}
+
+namespace Omiscid {
+
+	void AddMemoryBlock(size_t asize, void** addr);
+	void RemoveMemoryBlock(void* addr);
+} // namespace Omiscid
+
 #include <stdio.h>
 #include <stdlib.h>
 
 
+using namespace Omiscid;
+
 // Local Omiscid declaration
 namespace Omiscid {
 
-template <typename TYPE> class MemoryList;
-
 /**
- * @class SimpleListElement MemoryList.h System/MemoryList.h
- * \brief Template class for cells of the list.
- *
- * It enable to link several between them 
- * The instances of this class are cells of a list.
- * They contains different elements according to the template.
- * They have a pointer on another cell.
  * \author Dominique Vaufreydaz
  */
-template <typename TYPE>
-class SimpleListElement
+struct SimpleMemoryElement
 {
-	friend class MemoryList<TYPE>; 	
-
-public:
-	/** \brief Default Constructor */
-	SimpleListElement()
-	{
-		NextElement = NULL;
-	}
-
-	/** \brief Initialize the object */
-	void Init()
-	{
-	  	NextElement = NULL;
-	}
-
-	/** \brief Destructor */
-	virtual ~SimpleListElement();
-
-private:
-	TYPE ElementContainer; /*!< the data contains by the cell */
- 	SimpleListElement<TYPE> * NextElement; /*!< a pointer on the next cell in the list */
+	/*!< the data contains by the cell */
+	void*	Where;			// Given pointer returned by new
+	size_t	Size;			// Original size of block
+ 	struct SimpleMemoryElement * NextElement; /*!< a pointer on the next cell in the list */
 };
-
-/** \brief Default Constructor */
-template <typename TYPE>
-SimpleListElement<TYPE>::~SimpleListElement()
-{
-}
 
 /**
  * @class MemoryList MemoryList.h System/MemoryList.h
- * @brief Template class to manage list of object.
+ * @brief class to manage list of allocated memory blocks.
  * 
- * This class provides methods to go through the list elements.
- * It is possble to delete an element and then go to the next.
- * It is possible to delete an element by giving its value. 
  * \author Dominique Vaufreydaz
  */
-template <typename TYPE>
 class MemoryList  
 {
 public:
-        /** \brief Constructor 
+    /** \brief Constructor 
 	 *
 	 * Build an empty list
 	 */
@@ -100,23 +93,23 @@ public:
 	/** \brief Destructor */
 	virtual ~MemoryList();
 
-	/** \brief Function to add an item at tail of the list 
+	/** \brief Function to add a SimpleMemoryElement 
 	 * \param Val [in] the item to add
 	 * \return false if a new cell has not been allocated
 	 */
-	bool Add( const TYPE& Val );
+	bool Add( size_t SizeOfBlock );
 
-	/** \brief Function to add an item at head of the list 
+	/** \brief Function to add a SimpleMemoryElement
 	 * \param Val [in] the item to add
 	 * \return false if a new cell has not been allocated
 	 */
-	bool AddHead( const TYPE& Val );
+	bool AddHead( size_t SizeOfBlock );
 
-	/** \brief Function to add an item at tail of the list 
+	/** \brief Function to add a SimpleMemoryElement
 	 * \param Val [in] the item to add
 	 * \return false if a new cell has not been allocated
 	 */
-	bool AddTail( const TYPE& Val );
+	bool AddTail( size_t SizeOfBlock );
 
 	/** \brief Retrieve the current number of elements in the list
 	 * \return the current number of elements
@@ -147,7 +140,7 @@ public:
 	 * \return the current element of the list 
 	 * \exception SimpleListException raised if GetCurrent is called after a call to RemoveCurrent
 	 */
-	TYPE& GetCurrent() const;
+	SimpleMemoryElement * GetCurrent() const;
 
 	/** \brief Remove the current element
 	 * \return false if called on an empty list
@@ -172,13 +165,13 @@ public:
 	 * \return the first element in the list
 	 * \exception  SimpleListException raised if the list is empty
 	 */
-	TYPE ExtractFirst();
+	SimpleMemoryElement * ExtractFirst();
 
 	/** \brief Remove a specific element 
 	 * \param Element [in] the element to remove
 	 * \return false if the element to delete has not been found in the list
 	 */
-	bool Remove(const TYPE& Element);
+	bool Remove(void * LegalPointer);
 
 
 	/** \brief  Empty (so empty) the whole list */
@@ -186,29 +179,28 @@ public:
 
 
  protected:
-	/** \brief Obtain a new SimpleListElement object 
+	/** \brief Obtain a new struct SimpleMemoryElement object 
 	 *
-	 * Create a new instance of SimpleListElement object 
+	 * Create a new instance of struct SimpleMemoryElement object 
 	 */
-	virtual SimpleListElement<TYPE>* GetNewSimpleListElement() const;
+	virtual struct SimpleMemoryElement* GetNewSimpleListElement(size_t SizeOfBlock) const;
 
-	/** \brief Release a SimpleListElement object 
+	/** \brief Release a struct SimpleMemoryElement object 
 	 *
-	 * Delete the SimpleListElement object 
+	 * Delete the struct SimpleMemoryElement object 
 	 * @param elt the element to release
 	 */
-	virtual void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const;
+	virtual void ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const;
 	
- private:
-	SimpleListElement<TYPE> * Head, * Tail; /*!< pointers on head and tail of the list */
+ public:
+	struct SimpleMemoryElement * Head, * Tail; /*!< pointers on head and tail of the list */
 	unsigned int NumberOfElements; /*!< number of elements in the list*/
 
-	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
+	struct SimpleMemoryElement * PreviousElement, * CurrentElement; /*!< pointer on list cells */
 	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
 };
 
-template <typename TYPE>
-MemoryList<TYPE>::MemoryList()
+MemoryList::MemoryList()
 {
 	// There is nothing in the list
 	NumberOfElements = 0;
@@ -221,21 +213,20 @@ MemoryList<TYPE>::MemoryList()
 	RemoveCurrentHasOccured = false;
 }
 
-template <typename TYPE>
-MemoryList<TYPE>::~MemoryList()
+MemoryList::~MemoryList()
 {
 	Empty();
 }
 
 // Access fonction
-template <typename TYPE>
-bool MemoryList<TYPE>::Add( const TYPE& Val )
+bool MemoryList::Add( size_t SizeOfBlock )
 {
-	SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
-	if ( tmp == NULL ) // Plus assez de memoire
+	struct SimpleMemoryElement * tmp = GetNewSimpleListElement(SizeOfBlock);
+	if ( tmp == NULL )
+	{
 		return false;
+	}
 
-	tmp->ElementContainer = Val;
 	if ( Head == NULL ) // La liste etait vide
 	{
 		Tail =	Head = tmp;
@@ -263,14 +254,14 @@ bool MemoryList<TYPE>::Add( const TYPE& Val )
 	 * \param Val [in] the item to add
 	 * \return false if a new cell has not been allocated
 	 */
-template <typename TYPE>
-bool MemoryList<TYPE>::AddHead( const TYPE& Val )
+bool MemoryList::AddHead( size_t SizeOfBlock )
 {
-	SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
-	if ( tmp == NULL ) // Plus assez de memoire
+	struct SimpleMemoryElement * tmp = GetNewSimpleListElement(SizeOfBlock);
+	if ( tmp == NULL )
+	{
 		return false;
+	}
 
-	tmp->ElementContainer = Val;
 	if ( Head == NULL ) // La liste etait vide
 	{
 		Tail =	Head = tmp;
@@ -294,22 +285,19 @@ bool MemoryList<TYPE>::AddHead( const TYPE& Val )
 	 * \param Val [in] the item to add
 	 * \return false if a new cell has not been allocated
 	 */
-template <typename TYPE>
-bool MemoryList<TYPE>::AddTail( const TYPE& Val )
+bool MemoryList::AddTail( size_t SizeOfBlock )
 {
 	// just call the add function
-	return Add(Val);
+	return Add(SizeOfBlock);
 }
 
-template <typename TYPE>
-unsigned int MemoryList<TYPE>::GetNumberOfElements() const
+unsigned int MemoryList::GetNumberOfElements() const
 {
 	return NumberOfElements;
 }
 
 // Set position to the first element
-template <typename TYPE>
-void MemoryList<TYPE>::First()
+void MemoryList::First()
 {
 	PreviousElement = NULL;
 	CurrentElement = Head;
@@ -317,8 +305,7 @@ void MemoryList<TYPE>::First()
 }
 
 // Set position to the next element
-template <typename TYPE>
-bool MemoryList<TYPE>::Next()
+bool MemoryList::Next()
 {
 	// Ok, we do not have any other element
 	if ( CurrentElement == NULL ){
@@ -327,7 +314,8 @@ bool MemoryList<TYPE>::Next()
 	}
 
 	//seb
-	if(RemoveCurrentHasOccured){
+	if(RemoveCurrentHasOccured)
+	{
 		RemoveCurrentHasOccured = false;
 		// Previous and Current have already the good value
 		return true;
@@ -347,8 +335,7 @@ bool MemoryList<TYPE>::Next()
 }
 
 // Set position to the next element
-template <typename TYPE>
-bool MemoryList<TYPE>::AtEnd() const
+bool MemoryList::AtEnd() const
 {
 	// Ok, we do not have any other element
 	if ( CurrentElement == NULL )
@@ -358,8 +345,7 @@ bool MemoryList<TYPE>::AtEnd() const
 }
 
 // Set position to the next element
-template <typename TYPE>
-bool MemoryList<TYPE>::NotAtEnd() const
+bool MemoryList::NotAtEnd() const
 {
 	// Ok, we do not have any other element
 	if ( CurrentElement != NULL )
@@ -369,24 +355,22 @@ bool MemoryList<TYPE>::NotAtEnd() const
 }
 
 // Get the current element of the list
-template <typename TYPE>
-TYPE& MemoryList<TYPE>::GetCurrent() const
+struct SimpleMemoryElement * MemoryList::GetCurrent() const
 {
 	if ( RemoveCurrentHasOccured )
 		throw  "RemoveCurrentHasOccured";
 
-	return CurrentElement->ElementContainer;
+	return CurrentElement;
 }
 
 // Remove the current element
-template <typename TYPE>
-bool MemoryList<TYPE>::RemoveCurrent()
+bool MemoryList::RemoveCurrent()
 {
 	if(RemoveCurrentHasOccured)
 		throw  "RemoveCurrentHasOccured";
 
 	RemoveCurrentHasOccured = true;
-	SimpleListElement<TYPE> * tmp = CurrentElement;
+	struct SimpleMemoryElement * tmp = CurrentElement;
 
 	if ( tmp == NULL )
 	{
@@ -423,8 +407,8 @@ bool MemoryList<TYPE>::RemoveCurrent()
 		Tail = PreviousElement;
 	}
 
-	// Delete the old current element
-	 ReleaseSimpleListElement(tmp);
+	// free the old current element
+	ReleaseSimpleListElement(tmp);
 
 	// Change the element count
 	NumberOfElements--;
@@ -433,12 +417,13 @@ bool MemoryList<TYPE>::RemoveCurrent()
 }
 
 // Remove a specific element
-template <typename TYPE>
-bool MemoryList<TYPE>::Remove(const TYPE& Element)
+bool MemoryList::Remove(void * LegalPointer)
 {
+	char * Element = (char*)LegalPointer;
+ 
 	for( First(); NotAtEnd(); Next() )
 	{
-		if ( GetCurrent() == Element )
+		if ( GetCurrent()->Where == Element )
 		{
 			RemoveCurrent();
 			return true;
@@ -447,10 +432,32 @@ bool MemoryList<TYPE>::Remove(const TYPE& Element)
 	return false;
 }
 
-template <typename TYPE>
-void MemoryList<TYPE>::Empty()
+struct SimpleMemoryElement* MemoryList::GetNewSimpleListElement(size_t SizeOfBlock) const
 {
-	SimpleListElement<TYPE> * tmp;
+	// Allocate the asked size + the size of our structure
+	struct SimpleMemoryElement * tmp = (struct SimpleMemoryElement*)malloc(SizeOfBlock+sizeof(struct SimpleMemoryElement));
+	
+	if ( tmp != NULL )
+	{
+		tmp->Where = (((char*)tmp)+sizeof(struct SimpleMemoryElement));
+		tmp->Size = SizeOfBlock;
+		tmp->NextElement = NULL;
+	}
+
+	return tmp;
+}
+
+void MemoryList::ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const
+{
+	if ( elt )
+	{
+		free(elt);
+	}
+}
+
+void MemoryList::Empty()
+{
+	struct SimpleMemoryElement * tmp;
 	// On libere tous les elements de la liste
 	while( Head != NULL )
 	{
@@ -461,21 +468,18 @@ void MemoryList<TYPE>::Empty()
 	}
 }
 
-template <typename TYPE>
-bool MemoryList<TYPE>::IsEmpty() const
+bool MemoryList::IsEmpty() const
 { return Head == NULL; }
 
-template <typename TYPE>
-bool MemoryList<TYPE>::IsNotEmpty() const
+bool MemoryList::IsNotEmpty() const
 { return Head != NULL; }
 
-template <typename TYPE>
-TYPE MemoryList<TYPE>::ExtractFirst()
+struct SimpleMemoryElement * MemoryList::ExtractFirst()
 {
   if(IsEmpty())
-    throw SimpleListException("MemoryList<TYPE>::ExtractFirst : Forbidden when the list is empty");
+    throw "MemoryList::ExtractFirst : Forbidden when the list is empty";
 
-  SimpleListElement<TYPE>* elt = Head;
+  struct SimpleMemoryElement * elt = Head;
   if(Head == Tail)
     {
       Head = NULL; Tail = NULL;
@@ -484,55 +488,20 @@ TYPE MemoryList<TYPE>::ExtractFirst()
     }
   NumberOfElements--;
 
-  TYPE tmp = elt->ElementContainer;
-  ReleaseSimpleListElement(elt);
-  return tmp;
+  return elt;
 }
 
-template <typename TYPE>
-SimpleListElement<TYPE>*  MemoryList<TYPE>::GetNewSimpleListElement() const
-{ return new SimpleListElement<TYPE>; }
-
-template <typename TYPE>
-void MemoryList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
-{ delete elt; }
-
-
-void StartTrackingMemoryLeaks();
-void StopTrackingMemoryLeaks();
-
-void AddMemoryBlock(void* addr,  size_t asize,  const char *fname, int lnum);
+void AddMemoryBlock(size_t asize,void** addr);
 void RemoveMemoryBlock(void* addr);
 
-typedef enum TrackMemoryValues{
-	FileNameSize = 255,
+typedef enum TrackMemoryValues
+{
 	TemporaryBufferSize = 4*1024-1	// 4 Kb - 1 byte
 };
 
 void DumpUnfreed();
 
-static bool Tracking = false;
-
-class MemoryBlockInfos
-{
-public:
-	char	Filename[FileNameSize+1];
-	void*	Where;
-	size_t	Size;
-	int		Line;
-	MemoryBlockInfos * Next;
-
-	MemoryBlockInfos()
-	{
-		Filename[0] = '\0';
-		Where = NULL;
-		Size = 0;
-		Line = -1;
-		Next = NULL;
-	}
-};
-
-MemoryList<MemoryBlockInfos *> AllocList;
+MemoryList AllocList;
 
 static char WriteSizeBuffer[TemporaryBufferSize+1];
 
@@ -542,82 +511,62 @@ static char * PrintSize( unsigned int SizeOfData );
 
 using namespace Omiscid;
 
-void * operator new( size_t size, int line, const char *file ) throw ()
+void * operator new( size_t size ) throw ()
 {
-	void *ptr = (void *)malloc(size);
-	Omiscid::AddMemoryBlock(ptr, size, file, line);
+	void *ptr;
+	Omiscid::AddMemoryBlock(size, &ptr);
 	return(ptr);
 }
 
-void * operator new[]( size_t size, int line, const char *file ) throw ()
+void * operator new[]( size_t size ) throw ()
 {
-	void *ptr = (void *)malloc(size);
-	Omiscid::AddMemoryBlock(ptr, size, file, line);
+	void *ptr;
+	Omiscid::AddMemoryBlock(size, &ptr);
 	return(ptr);
 }
 
 void operator delete(void *p) throw ()
 {
 	Omiscid::RemoveMemoryBlock(p);
-	free(p);
 }
 
 void operator delete[](void *p) throw ()
 {
 	Omiscid::RemoveMemoryBlock(p);
-	free(p);
 }
 
-void Omiscid::StartTrackingMemoryLeaks()
+void Omiscid::AddMemoryBlock( size_t aSize, void** addr)
 {
-	Tracking = true;
-}
-
-void Omiscid::StopTrackingMemoryLeaks()
-{
-	Tracking = false;
-}
-
-void Omiscid::AddMemoryBlock(void* addr,  size_t aSize,  const char *fname, int lnum)
-{
-	MemoryBlockInfos *info;
-
-	if ( Tracking == false )
+	TrackingMemoryLocker.EnterMutex();
+	if ( NumberOfTrackingMemoryClient != 0 )
 	{
-		return;
+		// Add head
+		if ( AllocList.AddTail( aSize ) )
+		{
+			*addr = AllocList.Tail;
+		}
 	}
-
-	info = new MemoryBlockInfos;
-
-	if ( info == NULL )
+	else
 	{
-		// Could not allocate list, disable tracking
-		Tracking = false;
-		return;
-
+		*addr = malloc(aSize);
 	}
-
-	// Fill information
-	info->Where = addr;
-	strncpy( info->Filename, fname, FileNameSize-1 );
-	info->Filename[FileNameSize-1];
-	info->Line = lnum;
-	info->Size = aSize;
-	
-	// Add head
-	AllocList.AddTail( info );
+	TrackingMemoryLocker.LeaveMutex();
 }
 
 void Omiscid::RemoveMemoryBlock(void* addr)
 {
-	for( AllocList.First(); AllocList.NotAtEnd(); AllocList.Next() )
+	TrackingMemoryLocker.EnterMutex();
+	if ( NumberOfTrackingMemoryClient == 0 )
 	{
-		if( AllocList.GetCurrent()->Where == addr )
-		{
-			AllocList.RemoveCurrent();
-			break;
-		}
+		TrackingMemoryLocker.LeaveMutex();
+		return;
 	}
+
+	if ( AllocList.Remove(addr) == false )
+	{
+		free(addr);
+	}
+	TrackingMemoryLocker.LeaveMutex();
 }
 
 static char * Omiscid::PrintSize( unsigned int SizeOfData )
@@ -642,21 +591,24 @@ static char * Omiscid::PrintSize( unsigned int SizeOfData )
 	return WriteSizeBuffer;
 }
 
-void Omiscid::DumpUnfreed()
+void TrackMemoryLeaks::DumpUnfreed()
 {
 	unsigned int TotalSize = 0;
 	unsigned int NbBlocks = 0;
-	char buf[TemporaryBufferSize+1];	   
+	char buf[TemporaryBufferSize+1];
+
+	TrackingMemoryLocker.EnterMutex();
 
 	if ( AllocList.GetNumberOfElements() == 0 )
 	{
+		TrackingMemoryLocker.LeaveMutex();
 		return;
 	}
 
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );
 	OutputDebugString(buf);
 
-	MemoryBlockInfos * pTmp;
+	struct SimpleMemoryElement * pTmp;
 
 	for( AllocList.First(); AllocList.NotAtEnd(); AllocList.Next() )
 	{
@@ -665,17 +617,37 @@ void Omiscid::DumpUnfreed()
 		pTmp = AllocList.GetCurrent();
 
 		// Visual studio compliant output (you can click on it to see the rigth line
-		snprintf(buf, TemporaryBufferSize+1, "%s(%d) : %s unfreed memory at address %p\n", pTmp->Filename, pTmp->Line, PrintSize((unsigned int)pTmp->Size), pTmp->Where );
+		snprintf(buf, TemporaryBufferSize+1, "%s unfreed memory at address %p\n", PrintSize((unsigned int)pTmp->Size), pTmp->Where );
 		OutputDebugString(buf);
 
 		void * tmpv = pTmp->Where;
 		char * tmpc = (char*)tmpv;
 		int lSize = (int)pTmp->Size;
-		for( int j = 0; j < lSize && j < 20; j++)
+		int j;
+		for( j = 0; j < lSize && j < 20; j++)
 		{
-			snprintf(buf, TemporaryBufferSize+1, "%c", tmpc[j] );
+			snprintf(buf, TemporaryBufferSize+1, "%2.2X ", tmpc[j] & 0x000000ff );
 			OutputDebugString(buf);
 		}
+		for( ; j < 20; j++)
+		{
+			snprintf(buf, TemporaryBufferSize+1, "   " );
+			OutputDebugString(buf);
+		}
+
+		for( j = 0; j < lSize && j < 20; j++)
+		{
+			if ( tmpc[j] >= 32 && tmpc[j] <= 126 )
+			{
+				snprintf(buf, TemporaryBufferSize+1, "%c", tmpc[j] );
+			}
+			else
+			{
+				snprintf(buf, TemporaryBufferSize+1, "." );
+			}
+			OutputDebugString(buf);
+		}
+
 		snprintf(buf, TemporaryBufferSize+1, "\n" );
 		OutputDebugString(buf);
 
@@ -694,34 +666,11 @@ void Omiscid::DumpUnfreed()
 	// Free the memory
 	for( AllocList.First(); AllocList.NotAtEnd(); AllocList.Next() )
 	{
-		delete AllocList.GetCurrent();
+		AllocList.RemoveCurrent();
 	}
+
+	TrackingMemoryLocker.LeaveMutex();
 }
 
-namespace Omiscid {
-
-class UnfreedPrint
-{
-public:
-	~UnfreedPrint()
-	{
-		DumpUnfreed();
-	}
-};
-
-static UnfreedPrint PrintUnfreed;
-
-} // namespace Omiscid
-
-#else // #ifdef TRACKING_MEMORY_LEAKS
-
-void StartTrackingMemoryLeaks()
-{
-}
-
-void StopTrackingMemoryLeaks()
-{
-}
-
-#endif
+#endif	// defined TRACKING_MEMORY_LEAKS
 
