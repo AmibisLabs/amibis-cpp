@@ -34,7 +34,7 @@ sub WorkOnFile()
 			$NumLine++;
 			# if ( $CurrentLine =~ /char\s*\*/ || $CurrentLine =~ /char\s*\w+(\s)?\[/)
 			# if ( $CurrentLine =~ /TraceError/ && $CurrentLine =~ /\%s/ )
-			if ( $CurrentLine =~ /throw *\"/ )
+			if ( $CurrentLine =~ /$SearchFor/ )
 			{
 				$CurrentLine =~  s/[\r\n]+$//;
 				print "$FileName [$NumLine]: $CurrentLine\n";
@@ -91,6 +91,13 @@ foreach $fic ( @ExcludedFiles )
 		# print STDERR "$fic\n";
 	}
 }
+
+if ( !defined $ARGV[0] )
+{
+	die "Need a regexpr to search\n";
+}
+
+$SearchFor = $ARGV[0];
 
 &RecurseWork::RecurseWork( 'System', 0 );
 &RecurseWork::RecurseWork( 'Com', 0 );

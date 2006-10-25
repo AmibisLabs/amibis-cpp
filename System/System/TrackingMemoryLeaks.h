@@ -38,19 +38,8 @@ void StopTrackingMemoryLeaks();
 	#endif
 	
 	#define OMISCID_NEW new( __LINE__, __FILE__ )
+
 #else
-
-namespace Omiscid {
-
-	inline void StartTrackingMemoryLeaks()
-	{
-	}
-
-	inline void StopTrackingMemoryLeaks()
-	{
-	}
-
-} // namespace Omiscid
 
 	#define OMISCID_NEW new
 	

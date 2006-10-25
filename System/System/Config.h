@@ -195,7 +195,18 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-// #include <System/TrackingMemoryLeaks.h>
+#include <string.h>
+#include <iostream>
+
+#ifdef TRACKING_MEMORY_LEAKS
+	#ifdef WIN32
+		#ifndef DEBUG
+			#include <System/TrackingMemoryLeaks.h>
+		#endif
+	#else
+		#include <System/TrackingMemoryLeaks.h>
+	#endif
+#endif
 
 namespace Omiscid {
 

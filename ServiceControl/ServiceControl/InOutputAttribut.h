@@ -1,6 +1,5 @@
-/* @file InOutputAttribut.h
+/* @file ServiceControle/ServiceControl/InOutputAttribute.h
  * @ingroup ServiceControl
- * @ingroup UserFriendly
  * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2006
  */

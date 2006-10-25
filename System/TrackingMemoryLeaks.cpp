@@ -373,7 +373,7 @@ template <typename TYPE>
 TYPE& MemoryList<TYPE>::GetCurrent() const
 {
 	if ( RemoveCurrentHasOccured )
-		throw  SimpleException("RemoveCurrentHasOccured");
+		throw  "RemoveCurrentHasOccured";
 
 	return CurrentElement->ElementContainer;
 }
@@ -383,7 +383,7 @@ template <typename TYPE>
 bool MemoryList<TYPE>::RemoveCurrent()
 {
 	if(RemoveCurrentHasOccured)
-		throw  SimpleException("RemoveCurrentHasOccured");
+		throw  "RemoveCurrentHasOccured";
 
 	RemoveCurrentHasOccured = true;
 	SimpleListElement<TYPE> * tmp = CurrentElement;
@@ -542,27 +542,33 @@ static char * PrintSize( unsigned int SizeOfData );
 
 using namespace Omiscid;
 
-void * operator new( size_t size, int line, const char *file )
+void * operator new( size_t size, int line, const char *file ) throw ()
 {
+	int zz = DummyNumber+1;
+	zz++;
+
 	void *ptr = (void *)malloc(size);
 	Omiscid::AddMemoryBlock(ptr, size, file, line);
 	return(ptr);
 }
 
-void * operator new[]( size_t size, int line, const char *file )
+void * operator new[]( size_t size, int line, const char *file ) throw ()
 {
+	int zz = DummyNumber+1;
+	zz++;
+
 	void *ptr = (void *)malloc(size);
 	Omiscid::AddMemoryBlock(ptr, size, file, line);
 	return(ptr);
 }
 
-void operator delete(void *p)
+void operator delete(void *p) throw ()
 {
 	Omiscid::RemoveMemoryBlock(p);
 	free(p);
 }
 
-void operator delete[](void *p)
+void operator delete[](void *p) throw ()
 {
 	Omiscid::RemoveMemoryBlock(p);
 	free(p);
@@ -713,5 +719,15 @@ static UnfreedPrint PrintUnfreed;
 
 } // namespace Omiscid
 
-#endif // TRACKING_MEMORY_LEAKS
+#else // #ifdef TRACKING_MEMORY_LEAKS
+
+void StartTrackingMemoryLeaks()
+{
+}
+
+void StopTrackingMemoryLeaks()
+{
+}
+
+#endif
 
