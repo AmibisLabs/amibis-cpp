@@ -1,49 +1,49 @@
 
-#include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/VariableAttribute.h>
 #include <ServiceControl/XMLTreeParser.h>
 
 using namespace Omiscid;
 
 
 
-const SimpleString VariableAttribut::access_constant_str = "constant";
-const SimpleString VariableAttribut::access_read_str = "read";
-const SimpleString VariableAttribut::access_readwrite_str = "readWrite";
+const SimpleString VariableAttribute::access_constant_str = "constant";
+const SimpleString VariableAttribute::access_read_str = "read";
+const SimpleString VariableAttribute::access_readwrite_str = "readWrite";
 
-const SimpleString VariableAttribut::variable_str = "variable";
+const SimpleString VariableAttribute::variable_str = "variable";
 
-VariableAttribut::VariableAttribut()
+VariableAttribute::VariableAttribute()
 {
 	access = ReadAccess;
 	Initialised = false;
 }
 
-VariableAttribut::VariableAttribut(const SimpleString a_name)
-: Attribut(a_name)
+VariableAttribute::VariableAttribute(const SimpleString a_name)
+: Attribute(a_name)
 {
 	access = ReadAccess; 
 	Initialised = false;
 }
 
-const SimpleString& VariableAttribut::AccessToStr(VariableAccessType a)
+const SimpleString& VariableAttribute::AccessToStr(VariableAccessType a)
 {
 	if(a == ConstantAccess) return access_constant_str;
 	if(a == ReadAccess) return access_read_str;
 	return access_readwrite_str;
 }
 
-bool VariableAttribut::IsInitialised()
+bool VariableAttribute::IsInitialised()
 {
 	return Initialised;
 }
 
 
-void VariableAttribut::GenerateShortDescription(SimpleString& str)
+void VariableAttribute::GenerateShortDescription(SimpleString& str)
 {
 	GenerateHeaderDescription(variable_str, GetName(), str);
 }
 
-void VariableAttribut::GenerateLongDescription(SimpleString& str)
+void VariableAttribute::GenerateLongDescription(SimpleString& str)
 {
 	GenerateHeaderDescription(variable_str, GetName(), str, false);
 
@@ -64,7 +64,7 @@ void VariableAttribut::GenerateLongDescription(SimpleString& str)
 }
 
 /* 
-void VariableAttribut::GenerateValueMessage(SimpleString& str)
+void VariableAttribute::GenerateValueMessage(SimpleString& str)
 {
 	GenerateHeaderDescription(variable_str, GetName(), str, false);
 
@@ -76,7 +76,7 @@ void VariableAttribut::GenerateValueMessage(SimpleString& str)
 }
 */
 
-void VariableAttribut::Display()
+void VariableAttribute::Display()
 {
 	printf("Name : %s\n", GetName().GetStr() );
 	printf("Type : %s\n", type.GetStr());
@@ -86,18 +86,18 @@ void VariableAttribut::Display()
 }
 
 
-void VariableAttribut::SetValue(const SimpleString value_str)
+void VariableAttribute::SetValue(const SimpleString value_str)
 {
 	// ask to all listener if we can change the value
 	Listeners.Lock();
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
-		VariableAttributListener * pListener = Listeners.GetCurrent();
+		VariableAttributeListener * pListener = Listeners.GetCurrent();
 		if ( pListener->IsValid( this, value_str ) == false )
 		{
 			// someone disagree
 			Listeners.Unlock();
-			// OmiscidError( "VariableAttribut::SetValue: someone disagree on variable change\n");
+			// OmiscidError( "VariableAttribute::SetValue: someone disagree on variable change\n");
 			return;
 		}
 	}
@@ -117,7 +117,7 @@ void VariableAttribut::SetValue(const SimpleString value_str)
 	Listeners.Unlock();
 }
 
-void VariableAttribut::SetValueFromControl(const SimpleString value_str)
+void VariableAttribute::SetValueFromControl(const SimpleString value_str)
 {
 	// Ok, change my value
 	valueStr = value_str; 
@@ -135,7 +135,7 @@ void VariableAttribut::SetValueFromControl(const SimpleString value_str)
 	Listeners.Unlock();
 }
 
-void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
+void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
 {  
 
 	xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", node);
@@ -200,37 +200,37 @@ void VariableAttribut::ExtractDataFromXml(xmlNodePtr node)
 	SetValue(tmp_value);
 }
 
-void VariableAttribut::SetType(const SimpleString t)
+void VariableAttribute::SetType(const SimpleString t)
 {
 	type = t; 
 }
 
-void VariableAttribut::SetAccess(VariableAccessType a)
+void VariableAttribute::SetAccess(VariableAccessType a)
 {
 	access = a;
 }
 
-void VariableAttribut::SetAccessRead()
+void VariableAttribute::SetAccessRead()
 {
 	access = ReadAccess;
 }
 
-void VariableAttribut::SetAccessConstant()
+void VariableAttribute::SetAccessConstant()
 {
 	access = ConstantAccess;
 }
 
-void VariableAttribut::SetAccessReadWrite()
+void VariableAttribute::SetAccessReadWrite()
 {
 	access = ReadWriteAccess;
 }
 
-void VariableAttribut::SetDefaultValue(const SimpleString str)
+void VariableAttribute::SetDefaultValue(const SimpleString str)
 {
 	defaultValue = str;
 }
 
-SimpleString& VariableAttribut::GetValue()
+SimpleString& VariableAttribute::GetValue()
 {
 	if ( Initialised == false )
 	{
@@ -242,22 +242,22 @@ SimpleString& VariableAttribut::GetValue()
 	return valueStr; 
 }
 
-SimpleString& VariableAttribut::GetType()
+SimpleString& VariableAttribute::GetType()
 {
 	return type; 
 }
 
-VariableAccessType VariableAttribut::GetAccess() 
+VariableAccessType VariableAttribute::GetAccess() 
 {
 	return access; 
 }
 
-SimpleString& VariableAttribut::GetDefaultValue()
+SimpleString& VariableAttribute::GetDefaultValue()
 {
 	return defaultValue;
 }
 
-bool VariableAttribut::CanBeModifiedFromInside(ControlServerStatus status) const
+bool VariableAttribute::CanBeModifiedFromInside(ControlServerStatus status) const
 {
 	if ( access == ConstantAccess && status == STATUS_RUNNING )
 	{
@@ -266,7 +266,7 @@ bool VariableAttribut::CanBeModifiedFromInside(ControlServerStatus status) const
 	return true; 
 }
 
- bool VariableAttribut::CanBeModifiedFromOutside(ControlServerStatus status) const
+ bool VariableAttribute::CanBeModifiedFromOutside(ControlServerStatus status) const
 { 
 	return (access == ReadWriteAccess || (access == ConstantAccess && status != STATUS_RUNNING)); 
 }
@@ -274,7 +274,7 @@ bool VariableAttribut::CanBeModifiedFromInside(ControlServerStatus status) const
  /** \brief Add a listener to this variable.
    *
    */
-bool VariableAttribut::AddListener( VariableAttributListener * ListenerToAdd )
+bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
 {
 	if ( ListenerToAdd == NULL )
 	{
@@ -303,7 +303,7 @@ bool VariableAttribut::AddListener( VariableAttributListener * ListenerToAdd )
    /** \brief remove a listener to this variable.
    *
    */
-bool VariableAttribut::RemoveListener( VariableAttributListener *  ListenerToAdd )
+bool VariableAttribute::RemoveListener( VariableAttributeListener *  ListenerToAdd )
 {
 	bool ret;
 
@@ -320,7 +320,7 @@ bool VariableAttribut::RemoveListener( VariableAttributListener *  ListenerToAdd
 	return ret;
 }
 
-unsigned int VariableAttribut::GetNumberOfListeners()
+unsigned int VariableAttribute::GetNumberOfListeners()
 {
 	unsigned int ret;
 

@@ -8,7 +8,7 @@ LocalVariableListener::~LocalVariableListener()
 {
 }
 
-void LocalVariableListener::VariableChanged( VariableAttribut * ChangedVariable )
+void LocalVariableListener::VariableChanged( VariableAttribute * ChangedVariable )
 {
 	if ( GetUserData() == NULL )
 	{
@@ -22,7 +22,7 @@ void LocalVariableListener::VariableChanged( VariableAttribut * ChangedVariable 
 	VariableChanged(*CurrentService, ChangedVariable->GetName(), ChangedVariable->GetValue() );
 }
 
-bool LocalVariableListener::IsValid( VariableAttribut * ChangedVariable, SimpleString NewValue )
+bool LocalVariableListener::IsValid( VariableAttribute * ChangedVariable, SimpleString NewValue )
 {
 	if ( GetUserData() == NULL )
 	{

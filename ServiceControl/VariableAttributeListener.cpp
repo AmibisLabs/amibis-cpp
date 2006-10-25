@@ -1,24 +1,24 @@
 
-#include <ServiceControl/VariableAttributListener.h>
+#include <ServiceControl/VariableAttributeListener.h>
 
 using namespace Omiscid;
 
-VariableAttributListener::~VariableAttributListener()
+VariableAttributeListener::~VariableAttributeListener()
 {
 }
 
-VariableAttributListener::VariableAttributListener()
+VariableAttributeListener::VariableAttributeListener()
 {
 	UserData = NULL;
 }
 
 // Get and Set user data
-void VariableAttributListener::SetUserData( void * eUserData )
+void VariableAttributeListener::SetUserData( void * eUserData )
 {
 	UserData = eUserData;
 }
 
-void * VariableAttributListener::GetUserData() const
+void * VariableAttributeListener::GetUserData() const
 {
 	return UserData;
 }

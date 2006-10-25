@@ -11,8 +11,8 @@
 #include <ServiceControl/Config.h>
 
 #include <System/SimpleString.h>
-#include <ServiceControl/VariableAttribut.h>
-#include <ServiceControl/VariableAttributListener.h>
+#include <ServiceControl/VariableAttribute.h>
+#include <ServiceControl/VariableAttributeListener.h>
 
 namespace Omiscid {
 
@@ -25,7 +25,7 @@ class Service;
  *
  * @author Dominique Vaufreydaz
  */
-class LocalVariableListener : public VariableAttributListener
+class LocalVariableListener : public VariableAttributeListener
 {
 public:
 	// Virtual destructor always
@@ -52,8 +52,8 @@ public:
     virtual bool IsValid(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue) = 0;
 
 private:
-	void VariableChanged( VariableAttribut * ChangedVariable );
-	bool IsValid( VariableAttribut * ChangedVariable, SimpleString newValue );
+	void VariableChanged( VariableAttribute * ChangedVariable );
+	bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue );
 };
 
 

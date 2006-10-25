@@ -544,9 +544,6 @@ using namespace Omiscid;
 
 void * operator new( size_t size, int line, const char *file ) throw ()
 {
-	int zz = DummyNumber+1;
-	zz++;
-
 	void *ptr = (void *)malloc(size);
 	Omiscid::AddMemoryBlock(ptr, size, file, line);
 	return(ptr);
@@ -554,9 +551,6 @@ void * operator new( size_t size, int line, const char *file ) throw ()
 
 void * operator new[]( size_t size, int line, const char *file ) throw ()
 {
-	int zz = DummyNumber+1;
-	zz++;
-
 	void *ptr = (void *)malloc(size);
 	Omiscid::AddMemoryBlock(ptr, size, file, line);
 	return(ptr);

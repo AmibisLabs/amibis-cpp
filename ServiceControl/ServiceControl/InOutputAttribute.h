@@ -4,27 +4,27 @@
  * @date 2004-2006
  */
 
-#ifndef __IN_OUTPUT_ATTRIBUT_H__
-#define __IN_OUTPUT_ATTRIBUT_H__
+#ifndef __IN_OUTPUT_ATTRIBUTE_H__
+#define __IN_OUTPUT_ATTRIBUTE_H__
 
 #include <ServiceControl/Config.h>
 
 #include <System/SimpleList.h>
 #include <Com/ComTools.h>
-#include <ServiceControl/Attribut.h>
+#include <ServiceControl/Attribute.h>
 
 #include <libxml/parser.h>
 
 namespace Omiscid {
 
 /**
- * @class InOutputAttribut InOutputAttribut.h ServiceControl/InOutputAttribut.h
+ * @class InOutputAttribute InOutputAttribute.h ServiceControl/InOutputAttribute.h
  * @brief Class to manage the input or output of a service.
  *
  * Contains the description of the input, the port TCP, UDP ....
  * @author Sebastien Pesnel
  */
-class InOutputAttribut : public Attribut
+class InOutputAttribute : public Attribute
 {
  public:
   static const SimpleString input_str; /*!< String associated to the kind AnInput*/
@@ -36,24 +36,24 @@ class InOutputAttribut : public Attribut
   /** \name Constructors */
   //@{
   /** @brief Default Constructor */
-  InOutputAttribut();
+  InOutputAttribute();
 
   /** @brief Constructor 
    * @param a_name name for the input/output
    * @param com_tool Communication tool assciated to the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input);  
+  InOutputAttribute(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input);  
 
   /** @brief Constructor 
    * @param a_name name for the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribut(const SimpleString a_name, ConnectorKind kind_of_input);
+  InOutputAttribute(const SimpleString a_name, ConnectorKind kind_of_input);
   //@}
 
 	// Virtual destructor always
-	virtual ~InOutputAttribut();
+	virtual ~InOutputAttribute();
 
   /** \name Read Accessors */
   //@{
@@ -121,4 +121,4 @@ public:
 
 } // namespace Omiscid
 
-#endif // __IN_OUTPUT_ATTRIBUT_H__
+#endif // __IN_OUTPUT_ATTRIBUTE_H__

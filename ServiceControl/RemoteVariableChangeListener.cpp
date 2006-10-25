@@ -8,7 +8,7 @@ RemoteVariableChangeListener::~RemoteVariableChangeListener()
 {
 }
 
-void RemoteVariableChangeListener::VariableChanged( VariableAttribut * ChangedVariable )
+void RemoteVariableChangeListener::VariableChanged( VariableAttribute * ChangedVariable )
 {
 	if ( GetUserData() == NULL )
 	{
@@ -31,7 +31,7 @@ void RemoteVariableChangeListener::VariableChanged( VariableAttribut * ChangedVa
      * @param newValue the new requested value
      * @return true if the new value is accepted, false if rejected.
      */
-bool RemoteVariableChangeListener::IsValid( VariableAttribut * ChangedVariable, SimpleString newValue )
+bool RemoteVariableChangeListener::IsValid( VariableAttribute * ChangedVariable, SimpleString newValue )
 {
 	return true;
 }

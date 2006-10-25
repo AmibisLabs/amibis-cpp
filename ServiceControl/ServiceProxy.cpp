@@ -3,8 +3,8 @@
 #include <ServiceControl/ServiceProxy.h>
 
 #include <Com/Connector.h>
-#include <ServiceControl/InOutputAttribut.h>
-#include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/InOutputAttribute.h>
+#include <ServiceControl/VariableAttribute.h>
 
 using namespace Omiscid;
 
@@ -29,8 +29,8 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	: ControlClient(PeerId)
 {
 	SimpleString TmpString;
-	VariableAttribut * VarAtt;
-	InOutputAttribut * IOAtt;
+	VariableAttribute * VarAtt;
+	InOutputAttribute * IOAtt;
 	int Pos;
 	unsigned int Port;
 
@@ -82,7 +82,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Ok, something like c/...
-					VarAtt = new VariableAttribut( LocalProp.GetName() );
+					VarAtt = new VariableAttribute( LocalProp.GetName() );
 					if ( VarAtt == NULL )
 					{
 						FullDescription = false;
@@ -102,7 +102,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Ok, something like r/...
-					VarAtt = new VariableAttribut( LocalProp.GetName() );
+					VarAtt = new VariableAttribute( LocalProp.GetName() );
 					if ( VarAtt == NULL )
 					{
 						FullDescription = false;
@@ -121,7 +121,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Ok, something like w/...
-					VarAtt = new VariableAttribut( LocalProp.GetName() );
+					VarAtt = new VariableAttribute( LocalProp.GetName() );
 					if ( VarAtt == NULL )
 					{
 						FullDescription = false;
@@ -149,7 +149,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						continue;
 					}
 
-					IOAtt = new InOutputAttribut( LocalProp.GetName(), NULL, AnInput );
+					IOAtt = new InOutputAttribute( LocalProp.GetName(), NULL, AnInput );
 					if ( IOAtt == NULL )
 					{
 						FullDescription = false;
@@ -176,7 +176,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						continue;
 					}
 
-					IOAtt = new InOutputAttribut( LocalProp.GetName(), NULL, AnOutput );
+					IOAtt = new InOutputAttribute( LocalProp.GetName(), NULL, AnOutput );
 					if ( IOAtt == NULL )
 					{
 						FullDescription = false;
@@ -203,7 +203,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						continue;
 					}
 
-					IOAtt = new InOutputAttribut( LocalProp.GetName(), NULL, AnInOutput );
+					IOAtt = new InOutputAttribute( LocalProp.GetName(), NULL, AnInOutput );
 					if ( IOAtt == NULL )
 					{
 						FullDescription = false;
@@ -383,7 +383,7 @@ bool ServiceProxy::SetVariableValue(const SimpleString VarName, const SimpleStri
      */
 SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 {
-	VariableAttribut * pVar = FindVariable(VarName);
+	VariableAttribute * pVar = FindVariable(VarName);
 	if ( pVar == NULL )
 	{
 		throw  SimpleException("Unknown variable. Call HasVariableFirst.");
@@ -426,7 +426,7 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 bool ServiceProxy::AddRemoteVariableChangeListener(const SimpleString VarName, RemoteVariableChangeListener * Listener )
 {
 	// Serach the variable
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		// not found
@@ -477,7 +477,7 @@ bool ServiceProxy::RemoveRemoteVariableChangeListener(const SimpleString VarName
 	bool ret;
 
 	// Serach for the variable
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		// Not found	
@@ -529,7 +529,7 @@ bool ServiceProxy::HasVariable(const SimpleString VarName)
      */
 bool ServiceProxy::HasConnector( const SimpleString ConnectorName, ConnectorKind ItsKind /* UnkownConnectorKind */ )
 {
-	InOutputAttribut * pAtt = FindConnector(ConnectorName);
+	InOutputAttribute * pAtt = FindConnector(ConnectorName);
 	if ( pAtt == NULL )
 	{
 		return false;
@@ -584,7 +584,7 @@ SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 
 bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection )
 {
-	InOutputAttribut * pAtt = FindConnector( Connector );
+	InOutputAttribute * pAtt = FindConnector( Connector );
 	if ( pAtt == NULL )
 	{
 		OmiscidError( "Could not find connector nammed '%s'\n", Connector.GetStr() );
@@ -599,7 +599,7 @@ bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionI
 }
 
 // Utility functions
-VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
+VariableAttribute * ServiceProxy::FindVariable( SimpleString VarName )
 {
 	// Update description if needed
 	if ( FullDescription == false )
@@ -607,7 +607,7 @@ VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 		UpdateDescription();
 	}
 
-	VariableAttribut * pVar = ControlClient::FindVariable(VarName);
+	VariableAttribute * pVar = ControlClient::FindVariable(VarName);
 	// if ( pVar == NULL )
 	// {
 	// 	pVar = ControlClient::QueryVariableDescription( VarName );
@@ -636,9 +636,9 @@ VariableAttribut * ServiceProxy::FindVariable( SimpleString VarName )
 	return pVar;
 }
 
-InOutputAttribut * ServiceProxy::FindConnector( SimpleString ConnectortName )
+InOutputAttribute * ServiceProxy::FindConnector( SimpleString ConnectortName )
 {
-	InOutputAttribut * pAtt;
+	InOutputAttribute * pAtt;
 
 	// Update description if needed
 	if ( FullDescription == false )

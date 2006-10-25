@@ -1,11 +1,11 @@
-/* @file Attribut.h
+/* @file ServiceControl/ServiceControl/Attribute.h
  * @ingroup ServiceControl
  * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2006
  */
 
-#ifndef __ATTRIBUT_H__
-#define __ATTRIBUT_H__
+#ifndef __ATTRIBUTE_H__
+#define __ATTRIBUTE_H__
 
 #include <ServiceControl/Config.h>
 
@@ -14,7 +14,7 @@
 namespace Omiscid {
 
 /**
- * @class Attribut Attribut.h ServiceControl/Attribut.h
+ * @class Attribute Attribute.h ServiceControl/Attribute.h
  * \brief Abstract class using as base for the different kind of attribute of services.
  *
  * The Attribute have a name, a description to give comments, and a description of the used format.
@@ -26,20 +26,20 @@ namespace Omiscid {
  *
  * \author Sebastien Pesnel
  */
-class Attribut
+class Attribute
 {
  public:
   /** \name Constructors */
   //@{
-  Attribut(); /*!< \brief Default Constructor*/
+  Attribute(); /*!< \brief Default Constructor*/
 
   /** \brief Constructor 
    * \param a_name [in] name of the attribute */
-  Attribut(const SimpleString a_name);
+  Attribute(const SimpleString a_name);
   //@}
 
   /** \brief Destructor */
-  virtual ~Attribut();
+  virtual ~Attribute();
 
  public:
   /** \name Read Accessors */
@@ -116,4 +116,4 @@ class Attribut
 
 } // namespace Omiscid
 
-#endif // __ATTRIBUT_H__
+#endif // __ATTRIBUTE_H__

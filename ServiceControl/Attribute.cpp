@@ -1,18 +1,18 @@
-#include <ServiceControl/Attribut.h>
+#include <ServiceControl/Attribute.h>
 
 using namespace Omiscid;
 
-Attribut::Attribut()
+Attribute::Attribute()
 {}
 
-Attribut::Attribut(const SimpleString a_name)
+Attribute::Attribute(const SimpleString a_name)
   : name(a_name)
 {}
 
-Attribut::~Attribut()
+Attribute::~Attribute()
 {}
 
-void Attribut::AddTagDescriptionToStr(SimpleString& str)
+void Attribute::AddTagDescriptionToStr(SimpleString& str)
 {
   if(description !=  "")
     {
@@ -30,33 +30,33 @@ void Attribut::AddTagDescriptionToStr(SimpleString& str)
     }
 }
 
-void Attribut::PutAValueInCData(const SimpleString val, SimpleString& str){
+void Attribute::PutAValueInCData(const SimpleString val, SimpleString& str){
   str += "<![CDATA[";
   str += val;
   str += "]]>";
 }
 
-const SimpleString& Attribut::GetName() const
+const SimpleString& Attribute::GetName() const
 {
 	return name;
 }
 
-const SimpleString& Attribut::GetDescription() const
+const SimpleString& Attribute::GetDescription() const
 {
 	return description;
 }
 
-void Attribut::SetName(const SimpleString str)
+void Attribute::SetName(const SimpleString str)
 { 
 	name = str;
 }
 
-void Attribut::SetDescription(const SimpleString str)
+void Attribute::SetDescription(const SimpleString str)
 {
 	description = str;
 }
 
-void Attribut::GenerateHeaderDescription(const SimpleString& type,
+void Attribute::GenerateHeaderDescription(const SimpleString& type,
 						const SimpleString& name,
 						SimpleString& str,
 						bool end)
@@ -66,12 +66,12 @@ void Attribut::GenerateHeaderDescription(const SimpleString& type,
   else  str = str + "\">";
 }
 
-const SimpleString& Attribut::GetFormatDescription() const
+const SimpleString& Attribute::GetFormatDescription() const
 {
 	return formatDescription;
 }
 
-void Attribut::SetFormatDescription(const SimpleString str)
+void Attribute::SetFormatDescription(const SimpleString str)
 {
 	formatDescription = str;
 }

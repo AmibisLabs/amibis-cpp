@@ -156,8 +156,8 @@ private:
 	unsigned int ControlPort;
 
 	// Internal Utility function
-	VariableAttribut * FindVariable( SimpleString VarName );
-	InOutputAttribut * FindConnector( SimpleString InOutputName );
+	VariableAttribute * FindVariable( SimpleString VarName );
+	InOutputAttribute * FindConnector( SimpleString InOutputName );
 
 	// Do we have a full description ?
 	bool FullDescription;

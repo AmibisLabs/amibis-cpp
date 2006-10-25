@@ -1,16 +1,16 @@
-#include <ServiceControl/InOutputAttribut.h>
+#include <ServiceControl/InOutputAttribute.h>
 
 #include <System/Portage.h>
 #include <ServiceControl/XMLTreeParser.h>
 
 using namespace Omiscid;
 
-const SimpleString InOutputAttribut::input_str		= "input";
-const SimpleString InOutputAttribut::output_str		= "output";
-const SimpleString InOutputAttribut::inoutput_str	= "inoutput";
-const SimpleString InOutputAttribut::unknown_str	= "unknown type";
+const SimpleString InOutputAttribute::input_str		= "input";
+const SimpleString InOutputAttribute::output_str		= "output";
+const SimpleString InOutputAttribute::inoutput_str	= "inoutput";
+const SimpleString InOutputAttribute::unknown_str	= "unknown type";
 
-InOutputAttribut::InOutputAttribut()
+InOutputAttribute::InOutputAttribute()
 {
   comTool = NULL;
   kindOfInput = AnInput;
@@ -18,8 +18,8 @@ InOutputAttribut::InOutputAttribut()
   tcpPort = 0; udpPort = 0;
 }
 
-InOutputAttribut::InOutputAttribut(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input)
-		: Attribut(a_name)
+InOutputAttribute::InOutputAttribute(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input)
+		: Attribute(a_name)
 {  
   comTool = com_tool;
   kindOfInput = kind_of_input;
@@ -27,8 +27,8 @@ InOutputAttribut::InOutputAttribut(const SimpleString a_name, ComTools* com_tool
   tcpPort = 0; udpPort = 0;
 }
 
-InOutputAttribut::InOutputAttribut(const SimpleString a_name, ConnectorKind kind_of_input)
-  : Attribut(a_name)
+InOutputAttribute::InOutputAttribute(const SimpleString a_name, ConnectorKind kind_of_input)
+  : Attribute(a_name)
 {
   kindOfInput = kind_of_input;
   comTool = NULL;
@@ -36,11 +36,11 @@ InOutputAttribut::InOutputAttribut(const SimpleString a_name, ConnectorKind kind
   tcpPort = 0; udpPort = 0;
 }
 
-InOutputAttribut::~InOutputAttribut()
+InOutputAttribute::~InOutputAttribute()
 {
 }
 
-unsigned int InOutputAttribut::GetPeerId()
+unsigned int InOutputAttribute::GetPeerId()
 {
 	if ( comTool )
 	{
@@ -49,12 +49,12 @@ unsigned int InOutputAttribut::GetPeerId()
 	return peerId;
 }
 
-void InOutputAttribut::GenerateShortDescription(SimpleString& str)
+void InOutputAttribute::GenerateShortDescription(SimpleString& str)
 {
   GenerateHeaderDescription(KindToStr(), GetName(), str);
 }
 
-void InOutputAttribut::GenerateLongDescription(SimpleString& str)
+void InOutputAttribute::GenerateLongDescription(SimpleString& str)
 {
   TemporaryMemoryBuffer tmp(30);
 
@@ -95,9 +95,9 @@ void InOutputAttribut::GenerateLongDescription(SimpleString& str)
   listPeer.Empty();
 }
 
-void InOutputAttribut::GenerateRecordData(SimpleString& str)
+void InOutputAttribute::GenerateRecordData(SimpleString& str)
 {
-  // OmiscidTrace( "in InOutputAttribut::GenerateRecordData\n");
+  // OmiscidTrace( "in InOutputAttribute::GenerateRecordData\n");
   // OmiscidTrace( "str before : |%s| \n", str.GetStr());
   // OmiscidTrace( "Tcp port (%p) : %d %d \n", comTool, GetTcpPort() ,comTool->GetTcpPort());
   TemporaryMemoryBuffer tmp(30);
@@ -127,10 +127,10 @@ void InOutputAttribut::GenerateRecordData(SimpleString& str)
     }
 
   // OmiscidTrace( "str after : %s \n", str.GetStr());
-  // OmiscidTrace( "out InOutputAttribut::GenerateRecordData\n");
+  // OmiscidTrace( "out InOutputAttribute::GenerateRecordData\n");
 }
 
-const SimpleList<unsigned int>& InOutputAttribut::GetListPeerId()
+const SimpleList<unsigned int>& InOutputAttribute::GetListPeerId()
 { 
   if(comTool)
     {
@@ -140,7 +140,7 @@ const SimpleList<unsigned int>& InOutputAttribut::GetListPeerId()
   return listPeerId;
 }
 
-const SimpleString& InOutputAttribut::KindToStr() const
+const SimpleString& InOutputAttribute::KindToStr() const
 {
 	switch(kindOfInput)
 	{
@@ -160,7 +160,7 @@ const SimpleString& InOutputAttribut::KindToStr() const
 	return SimpleString::EmptyString;
 }
 
-void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
+void InOutputAttribute::ExtractDataFromXml(xmlNodePtr node)
 {
   //parcours attributs
   xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", node);
@@ -217,67 +217,67 @@ void InOutputAttribut::ExtractDataFromXml(xmlNodePtr node)
   }
 }
 
-bool InOutputAttribut::IsAnInput() const
+bool InOutputAttribute::IsAnInput() const
 {
 	return kindOfInput == AnInput; 
 }
 
-bool InOutputAttribut::IsAnOutput() const
+bool InOutputAttribute::IsAnOutput() const
 {
 	return kindOfInput == AnOutput; 
 }
 
-bool InOutputAttribut::IsAnInOutput() const
+bool InOutputAttribute::IsAnInOutput() const
 {
 	return kindOfInput == AnInOutput; 
 }
 
-ConnectorKind InOutputAttribut::GetType() const
+ConnectorKind InOutputAttribute::GetType() const
 {
 	return kindOfInput;
 }
 
-void InOutputAttribut::SetKindOfInput(ConnectorKind kind_of_input)
+void InOutputAttribute::SetKindOfInput(ConnectorKind kind_of_input)
 {
 	kindOfInput = kind_of_input; 
 }
 
-void InOutputAttribut::SetComTool(ComTools* com_tool)
+void InOutputAttribute::SetComTool(ComTools* com_tool)
 {
 	comTool = com_tool; 
 }
 
-ComTools * InOutputAttribut::GetComTool()
+ComTools * InOutputAttribute::GetComTool()
 {
 	return comTool; 
 }
 
-int InOutputAttribut::GetTcpPort()
+int InOutputAttribute::GetTcpPort()
 {
 	return comTool == NULL ? tcpPort : comTool->GetTcpPort(); 
 }
 
-int InOutputAttribut::GetUdpPort()
+int InOutputAttribute::GetUdpPort()
 {
 	return comTool == NULL ? udpPort : comTool->GetUdpPort(); 
 }
 
-void InOutputAttribut::GenerateConnectAnswer(SimpleString& str)
+void InOutputAttribute::GenerateConnectAnswer(SimpleString& str)
 {
 	GenerateLongDescription(str); 
 }
 
-void InOutputAttribut::SetTcpPort(unsigned short port)
+void InOutputAttribute::SetTcpPort(unsigned short port)
 {
 	tcpPort = port; 
 }
 
-void InOutputAttribut::SetUdpPort(unsigned short port)
+void InOutputAttribute::SetUdpPort(unsigned short port)
 {
 	udpPort = port; 
 }
 
-void InOutputAttribut::AddPeer(unsigned int peer_id)
+void InOutputAttribute::AddPeer(unsigned int peer_id)
 {
 	listPeerId.Add(peer_id); 
 }

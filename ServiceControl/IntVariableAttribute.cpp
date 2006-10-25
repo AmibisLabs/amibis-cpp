@@ -1,12 +1,12 @@
 
-#include <ServiceControl/IntVariableAttribut.h>
+#include <ServiceControl/IntVariableAttribute.h>
 
 #include <System/SimpleString.h>
-#include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/VariableAttribute.h>
 
 using namespace Omiscid;
 
-IntVariableAttribut::IntVariableAttribut(VariableAttribut* va, int value)
+IntVariableAttribute::IntVariableAttribute(VariableAttribute* va, int value)
 {
 	VariableAtt = va;
 	
@@ -14,11 +14,11 @@ IntVariableAttribut::IntVariableAttribut(VariableAttribut* va, int value)
 	SetValue(value, true);
 }
 
-IntVariableAttribut::~IntVariableAttribut()
+IntVariableAttribute::~IntVariableAttribute()
 {
 }
 
-void IntVariableAttribut::SetValue( int value, bool ForceChange )
+void IntVariableAttribute::SetValue( int value, bool ForceChange )
 {
   if ( ForceChange == true || IntegerValue != value )
   {
@@ -30,17 +30,17 @@ void IntVariableAttribut::SetValue( int value, bool ForceChange )
   }
 }
 
-int IntVariableAttribut::GetValue() const
+int IntVariableAttribute::GetValue() const
 {
 	return IntegerValue;
 }
 
-void IntVariableAttribut::Incr()
+void IntVariableAttribute::Incr()
 {
 	SetValue(IntegerValue + 1); 
 }
 
-void IntVariableAttribut::Decr()
+void IntVariableAttribute::Decr()
 {
 	SetValue(IntegerValue - 1);
 }

@@ -13,13 +13,13 @@
 #include <System/SimpleString.h>
 #include <Com/ComTools.h>
 #include <Com/TcpServer.h>
-#include <ServiceControl/InOutputAttribut.h>
-#include <ServiceControl/IntVariableAttribut.h>
+#include <ServiceControl/InOutputAttribute.h>
+#include <ServiceControl/IntVariableAttribute.h>
 #include <ServiceControl/ServicesTools.h>
-#include <ServiceControl/StringVariableAttribut.h>
-#include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/StringVariableAttribute.h>
+#include <ServiceControl/VariableAttribute.h>
 #include <ServiceControl/XMLTreeParser.h>
-#include <ServiceControl/VariableAttributListener.h>
+#include <ServiceControl/VariableAttributeListener.h>
 #include <ServiceControl/XsdValidator.h>
 
 
@@ -43,7 +43,7 @@ public:
    * @param v the variable for this group
    * @param listener_id an id of peer interest in the variable modification
    */
-  ValueListener(VariableAttribut* v, unsigned int listener_id);
+  ValueListener(VariableAttribute* v, unsigned int listener_id);
 
   /** @brief Destructor */
   virtual ~ValueListener();
@@ -65,11 +65,11 @@ public:
    */
   bool HasListener() const;
 
-  VariableAttribut* var; /*!< the variable for this group */
+  VariableAttribute* var; /*!< the variable for this group */
   SimpleList<unsigned int> listListener; /*!< the list of listener for this variable */
 };
 
-class VariableAttributListener;
+class VariableAttributeListener;
 
 /**
  * @class ControlServer ControlServer.h ServiceControl/ControlServer.h
@@ -83,7 +83,7 @@ class VariableAttributListener;
  *
  * @author Sebastien Pesnel
  */
-class ControlServer : public TcpServer, public XMLTreeParser, public VariableAttributListener		      
+class ControlServer : public TcpServer, public XMLTreeParser, public VariableAttributeListener		      
 {
  public:
   /** @brief Constructor
@@ -166,37 +166,37 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    * @param name [in]  name of input or  output to add.
    * @param com_tool object used for the communication (TcpServer, TcpClient, Connector)
    * @param kind_of_input [in] define if it is input or output or inoutput
-   * @return a new InOutputAttribut object (will be deleted by the controlServer)
+   * @return a new InOutputAttribute object (will be deleted by the controlServer)
    */
-  InOutputAttribut* AddInOutput(const SimpleString name, ComTools* com_tool, ConnectorKind kind_of_input);
+  InOutputAttribute* AddInOutput(const SimpleString name, ComTools* com_tool, ConnectorKind kind_of_input);
   
   /**
    * @brief Create a new variable to export.
    *
    * @param name [in] the name of the variable
-   * @return a new VariableAttribut object. It will be deleted by the controlServer.
+   * @return a new VariableAttribute object. It will be deleted by the controlServer.
    * use this pointer to complete the data about this variable.
    */
-  VariableAttribut* AddVariable(const SimpleString name);
+  VariableAttribute* AddVariable(const SimpleString name);
 
   /**
-   * @brief Retrieve an InOutputAttribut object with a particular name
+   * @brief Retrieve an InOutputAttribute object with a particular name
    *
-   * Find an InOutputAttribut object declared with AddInOutput,
+   * Find an InOutputAttribute object declared with AddInOutput,
    * and that has the name 'name'.
    * @param name [in] name of the input or output
-   * @return the InOutputAttribut object or NULL if not found
+   * @return the InOutputAttribute object or NULL if not found
    */
-  InOutputAttribut* FindInOutput(const SimpleString name);
+  InOutputAttribute* FindInOutput(const SimpleString name);
 
-  /** @brief Retrieve a VariableAttribut object with a particular name
+  /** @brief Retrieve a VariableAttribute object with a particular name
    *
-   * retrieve a VariableAttribut object declared with AddVariable, 
+   * retrieve a VariableAttribute object declared with AddVariable, 
    * and that has the name 'name'.
    * @param name [in] name of the variable
-   * @return the VariableAttribut object or NULL if not found
+   * @return the VariableAttribute object or NULL if not found
    */
-  VariableAttribut* FindVariable(const SimpleString name);
+  VariableAttribute* FindVariable(const SimpleString name);
 
   /**
    * @brief Access to the service status
@@ -237,7 +237,7 @@ protected:
    * @param host [in] host where do connection.
    * @param port [in] port to connect.
    */
-  virtual void Connect(const SimpleString host, int port, bool tcp, InOutputAttribut* ioa);
+  virtual void Connect(const SimpleString host, int port, bool tcp, InOutputAttribute* ioa);
 
   /**
    * @brief Called when a request of variable modification is done.
@@ -250,7 +250,7 @@ protected:
    * only during initialization.
    * @param va [in] contains the data about the variable.
    */
-  void VariableChange( VariableAttribut* va, SimpleString NewValue, ControlServerStatus status );
+  void VariableChange( VariableAttribute* va, SimpleString NewValue, ControlServerStatus status );
 
   /**
    * @brief Called when a request of variable modification is done.
@@ -263,11 +263,11 @@ protected:
    * only during initialization.
    * @param va [in] contains the data about the variable.
    */
-  // virtual void VariableHasChanged( VariableAttribut* va, SimpleString NewValue );
+  // virtual void VariableHasChanged( VariableAttribute* va, SimpleString NewValue );
 
-  void VariableChanged( VariableAttribut * ChangedVariable );
+  void VariableChanged( VariableAttribute * ChangedVariable );
 
-  virtual bool IsValid( VariableAttribut * ChangedVariable, SimpleString newValue );
+  virtual bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue );
 
   /**
    * @brief Function called on each message
@@ -308,7 +308,7 @@ protected:
    *
    * Callback given to the variable attribut object
    */
-  void NotifyValueChanged( VariableAttribut* var );
+  void NotifyValueChanged( VariableAttribute* var );
 
   void RefreshLock();
   
@@ -321,17 +321,17 @@ protected:
    * @param var the intersting variable for the peer
    * @param listener_id the peer id
    */
-  void AddListener(VariableAttribut* var, unsigned int listener_id);  
+  void AddListener(VariableAttribute* var, unsigned int listener_id);  
   /** @brief Remove a peer no more interested in variable modification
    * @param var the interesting variable for the peer
    * @param listener_id the peer id
    */
-  void RemoveListener(VariableAttribut* var, unsigned int listener_id);
+  void RemoveListener(VariableAttribute* var, unsigned int listener_id);
   /** @brief Find a group of listener asscoiated to a variable
    * @param var the variable searched
    * @return the group of listener associated to the variable, NULL if inexisting
    */
-  ValueListener* FindValueListener(VariableAttribut* var); 
+  ValueListener* FindValueListener(VariableAttribute* var); 
 
 protected:
 
@@ -348,15 +348,15 @@ protected:
   SimpleString serviceName; /*<! service name */
   ControlServerStatus Status; /*!< default variable structure for the variable status combined with the status value */
   
-  IntVariableAttribut* lockIntVariable; /*!< variable structure for integer to manage the lock state */
-  StringVariableAttribut* NameVariable; /*!< variable structure for exporting the name of this service */
-  StringVariableAttribut* OwnerVariable; /*!< variable structure for exporting the name of this service */
-  StringVariableAttribut* ClassVariable; /*!< variable structure for exporting the name of this service */
-  StringVariableAttribut* PeerIdVariable; /*!< variable structure for integer to export the peerid */
+  IntVariableAttribute* lockIntVariable; /*!< variable structure for integer to manage the lock state */
+  StringVariableAttribute* NameVariable; /*!< variable structure for exporting the name of this service */
+  StringVariableAttribute* OwnerVariable; /*!< variable structure for exporting the name of this service */
+  StringVariableAttribute* ClassVariable; /*!< variable structure for exporting the name of this service */
+  StringVariableAttribute* PeerIdVariable; /*!< variable structure for integer to export the peerid */
 
-  SimpleList<InOutputAttribut*> listInOutput; /*!< list of inputs and outputs */
+  SimpleList<InOutputAttribute*> listInOutput; /*!< list of inputs and outputs */
    
-  SimpleList<VariableAttribut*> listVariable; /*!<  list of variables */
+  SimpleList<VariableAttribute*> listVariable; /*!<  list of variables */
 
   RegisterOmiscidService* registerDnsSd; /*!< Object for registering the service to DNS-SD */
   

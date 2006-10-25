@@ -1,4 +1,4 @@
-/* @file
+/* @file ServiceControl/ServiceControl/VariableAttributeListener.h
  * @ingroup ServiceControl
  * @brief Defines a way to listen to local variable (internal version)
  * @author Dominique Vaufreydaz
@@ -6,28 +6,28 @@
  * @date    2004-2006
  */
 
-#ifndef __VARIABLE_ATTRIBUT_LISTENER_H__
-#define __VARIABLE_ATTRIBUT_LISTENER_H__
+#ifndef __VARIABLE_ATTRIBUTE_LISTENER_H__
+#define __VARIABLE_ATTRIBUTE_LISTENER_H__
 
 #include <ServiceControl/Config.h>
 
-#include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/VariableAttribute.h>
 
 namespace Omiscid {
 
-class VariableAttribut;
+class VariableAttribute;
 
-class VariableAttributListener
+class VariableAttributeListener
 {
 public:
-	VariableAttributListener();
+	VariableAttributeListener();
 
   /** @brief Destructor */
-	virtual ~VariableAttributListener();
+	virtual ~VariableAttributeListener();
 
 private:
 	// To prevent usuage of SetUSerData from the user side
-	friend class VariableAttribut;
+	friend class VariableAttribute;
 	friend class ControlServer;
 	friend class Service;
 	friend class ServiceProxy;
@@ -39,8 +39,8 @@ private:
 	void * GetUserData() const;
 
 protected:
-	virtual void VariableChanged( VariableAttribut * ChangedVariable ) = 0;
-	virtual bool IsValid( VariableAttribut * ChangedVariable, SimpleString newValue ) = 0;
+	virtual void VariableChanged( VariableAttribute * ChangedVariable ) = 0;
+	virtual bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue ) = 0;
 
 private:
 	void * UserData;
@@ -48,4 +48,4 @@ private:
 
 } // namespace Omiscid
 
-#endif	// __VARIABLE_ATTRIBUT_LISTENER_H__
+#endif	// __VARIABLE_ATTRIBUTE_LISTENER_H__

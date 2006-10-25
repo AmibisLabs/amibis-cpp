@@ -1,11 +1,11 @@
-/* @file IntVariableAttribut.h
+/* @file ServiceControl/ServiceControl/IntVariableAttribute.h
  * @ingroup ServiceControl
  * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2006
  */
 
-#ifndef __INT_VARIABLE_ATTRIBUT_H__
-#define __INT_VARIABLE_ATTRIBUT_H__
+#ifndef __INT_VARIABLE_ATTRIBUTE_H__
+#define __INT_VARIABLE_ATTRIBUTE_H__
 
 #include <ServiceControl/Config.h>
 
@@ -14,10 +14,10 @@
 
 namespace Omiscid {
 
-class VariableAttribut;
+class VariableAttribute;
 
 /**
- * @class IntVariableAttribut IntVariableAttribut.h ServiceControl/IntVariableAttribut.h
+ * @class IntVariableAttribute IntVariableAttribute.h ServiceControl/IntVariableAttribute.h
  * @brief Group an integer with its representation in the service description
  *
  * The methods enable to manipulate the integer value, and to modify the
@@ -25,17 +25,17 @@ class VariableAttribut;
  *
  * @author Sebastien Pesnel
  */
-class IntVariableAttribut
+class IntVariableAttribute
 {
  public:
   /** @brief Constructor
    * @param va the description object
    * @param value the initial value for the integer
    */
-  IntVariableAttribut(VariableAttribut* va, int value);
+  IntVariableAttribute(VariableAttribute* va, int value);
 
 	// Virtual destructor always
-	virtual ~IntVariableAttribut();
+	virtual ~IntVariableAttribute();
 
   /** @brief Read access to the integer value
    * @return the integer value */
@@ -59,7 +59,7 @@ class IntVariableAttribut
 
  private:
   /** the integer description */
-  VariableAttribut* VariableAtt;
+  VariableAttribute* VariableAtt;
   /** @brief the integer value */
   int IntegerValue;
 };

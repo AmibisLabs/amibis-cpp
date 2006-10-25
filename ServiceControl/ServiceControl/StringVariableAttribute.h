@@ -1,11 +1,11 @@
-/* @file IntVariableAttribut.h
+/* @file ServiceControl/ServiceControl/IntVariableAttribute.h
  * @ingroup ServiceControl
  * @brief Header of the string manupulation abstraction for variables
  * @date 2004-2006
  */
 
-#ifndef __STRING_VARIABLE_ATTRIBUT_H__
-#define __STRING_VARIABLE_ATTRIBUT_H__
+#ifndef __STRING_VARIABLE_ATTRIBUTE_H__
+#define __STRING_VARIABLE_ATTRIBUTE_H__
 
 #include <ServiceControl/Config.h>
 
@@ -15,10 +15,10 @@
 
 namespace Omiscid {
 
-class VariableAttribut;
+class VariableAttribute;
 
 /**
- * @class StringVariableAttribut IntVariableAttribut.h ServiceControl/IntVariableAttribut.h
+ * @class StringVariableAttribute IntVariableAttribute.h ServiceControl/IntVariableAttribute.h
  * @brief Group an integer with its representation in the service description
  *
  * The methods enable to manipulate the integer value, and to modify the
@@ -26,16 +26,17 @@ class VariableAttribut;
  *
  * @author Vaufreydaz Dominique
  */
-class StringVariableAttribut{
- public:
+class StringVariableAttribute
+{
+public:
   /** @brief Constructor
    * @param va the description object
    * @param value the initial value for the integer
    */
-  StringVariableAttribut(VariableAttribut* va, SimpleString value);
+  StringVariableAttribute(VariableAttribute* va, SimpleString value);
 
 	// Virtual destructor always
-	virtual ~StringVariableAttribut();
+	virtual ~StringVariableAttribute();
 
   /** @brief Read access to the integer value
    * @return the integer value */
@@ -48,13 +49,13 @@ class StringVariableAttribut{
    */
   void SetValue( SimpleString value );
   
- private:
+private:
   /** the integer description */
-  VariableAttribut* VariableAtt;
+  VariableAttribute* VariableAtt;
   /** @brief the integer value */
   SimpleString StringValue;
 };
 
 } // namespace Omiscid
 
-#endif // __STRING_VARIABLE_ATTRIBUT_H__
+#endif // __STRING_VARIABLE_ATTRIBUTE_H__

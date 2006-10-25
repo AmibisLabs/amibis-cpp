@@ -1,27 +1,27 @@
-/* @file VariableAttribut.h
+/* @file ServiceControl/ServiceControl/VariableAttribute.h
  * @ingroup ServiceControl
  * @brief Header of the internal variable attribut classes
  * @date 2004-2006
  */
 
-#ifndef __VARIABLE_ATTRIBUT_H__
-#define __VARIABLE_ATTRIBUT_H__ 
+#ifndef __VARIABLE_ATTRIBUTE_H__
+#define __VARIABLE_ATTRIBUTE_H__ 
 
 #include <ServiceControl/Config.h>
 
 #include <System/SimpleList.h>
-#include <ServiceControl/Attribut.h>
-#include <ServiceControl/VariableAttributListener.h>
+#include <ServiceControl/Attribute.h>
+#include <ServiceControl/VariableAttributeListener.h>
 
 #include <libxml/parser.h>
 
 namespace Omiscid {
 
 // For cyclic include problems
-class VariableAttributListener;
+class VariableAttributeListener;
 
 /**
- * @class VariableAttribut VariableAttribut.h ServiceControl/VariableAttribut.h
+ * @class VariableAttribute VariableAttribute.h ServiceControl/VariableAttribute.h
  * @brief Class to manage the variable of a service.
  *
  * Contains the description of the variable, the value as a string representation,
@@ -31,7 +31,7 @@ class VariableAttributListener;
  * When the value change, a callback can be called : 
  * used by ControlServer to enable users to subscribe to variable modification.
  */
-class VariableAttribut : public Attribut
+class VariableAttribute : public Attribute
 {
 	friend class ControlServer;
 	friend class ControlClient;
@@ -41,17 +41,17 @@ private:
   /** @name Constructor */
   //@{
   /** @brief Default Constructor */
-  VariableAttribut();
+  VariableAttribute();
 
   /** @brief Constructor
    * @param a_name [in] the name for the variable */
-  VariableAttribut(const SimpleString a_name);
+  VariableAttribute(const SimpleString a_name);
   //@}
 
 public:
 
   /** @brief Destructor */
-	virtual ~VariableAttribut() {};
+	virtual ~VariableAttribute() {};
 
   /** @name Read Accessors */
   //@{
@@ -85,13 +85,13 @@ public:
 
 public:
   /** @brief define if a variable can be modified according to its kid of access.
-   * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.
+   * @param status [in] the current status of the ControlServer who manage the VariableAttribute object.
    * @return true if access is 'read-write' or 'read-write only before init' and the status is different of STATUS_RUNNING (: 2).
    */
   bool CanBeModifiedFromInside(ControlServerStatus status) const;
 
   /** @brief define if a variable can be modified according to its kid of access.
-   * @param status [in] the current status of the ControlServer who manage the VariableAttribut object.
+   * @param status [in] the current status of the ControlServer who manage the VariableAttribute object.
    * @return true if access is 'read-write' or 'read-write only before init' and the status is different of STATUS_RUNNING (: 2).
    */
   bool CanBeModifiedFromOutside(ControlServerStatus status) const;
@@ -148,12 +148,12 @@ public:
   /** \brief Add a listener to this variable.
    *
    */
-  bool AddListener( VariableAttributListener *  ListenerToAdd );
+  bool AddListener( VariableAttributeListener *  ListenerToAdd );
 
    /** \brief remove a listener to this variable.
    *
    */
-  bool RemoveListener( VariableAttributListener *  ListenerToAdd );
+  bool RemoveListener( VariableAttributeListener *  ListenerToAdd );
 
   /** \brief remove a listener to this variable.
    *
@@ -163,7 +163,7 @@ public:
  /** \brief Extract data from a XML node.
    *
    * Extract attribute 'name', and child node.
-   * \param node A node of service description with the tag VariableAttribut::variable_str
+   * \param node A node of service description with the tag VariableAttribute::variable_str
    */
   void ExtractDataFromXml(xmlNodePtr node);
 
@@ -182,10 +182,10 @@ protected:
   static const SimpleString access_readwrite_str; /*<! SimpleString representation for 'read-write' access (used in XML description)*/
 
 private:
-  MutexedSimpleList<VariableAttributListener*> Listeners;
+  MutexedSimpleList<VariableAttributeListener*> Listeners;
   bool Initialised;
 };
 
 } // namespace Omiscid
 
-#endif // __VARIABLE_ATTRIBUT_H__
+#endif // __VARIABLE_ATTRIBUTE_H__

@@ -1,27 +1,27 @@
 
-#include <ServiceControl/StringVariableAttribut.h>
+#include <ServiceControl/StringVariableAttribute.h>
 
-#include <ServiceControl/VariableAttribut.h>
+#include <ServiceControl/VariableAttribute.h>
 
 using namespace Omiscid;
 
-StringVariableAttribut::~StringVariableAttribut()
+StringVariableAttribute::~StringVariableAttribute()
 {
 }
 
-StringVariableAttribut::StringVariableAttribut(VariableAttribut* va, SimpleString value)
+StringVariableAttribute::StringVariableAttribute(VariableAttribute* va, SimpleString value)
 {
   VariableAtt = va;
   SetValue(value);
 }
 
-void StringVariableAttribut::SetValue( SimpleString value )
+void StringVariableAttribute::SetValue( SimpleString value )
 {
 	StringValue = value;
     VariableAtt->SetValueFromControl( StringValue ); 
 }
 
-SimpleString StringVariableAttribut::GetValue() const
+SimpleString StringVariableAttribute::GetValue() const
 {
 	return StringValue;
 }

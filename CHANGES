@@ -8,7 +8,7 @@ In this files, you will find changes between OMiSCID versions.
 	- Add a global include file for the User Friendly Interface
 	and change examples to use this include.
 	- change all "Attribut" (in French) to "Attribute" in English
-	either in file or class names
+	either in file, function or class names
 
 1.0.2
 	- Change to be compliant with Bonjour version 107.6 (changes

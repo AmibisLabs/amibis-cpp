@@ -12,7 +12,7 @@
 
 #include <System/SimpleString.h>
 #include <ServiceControl/ServiceProxy.h>
-#include <ServiceControl/VariableAttributListener.h>
+#include <ServiceControl/VariableAttributeListener.h>
 
 namespace Omiscid {
 
@@ -25,7 +25,7 @@ class ServiceProxy;
  *
  * @author Dominique Vaufreydaz
  */
-class RemoteVariableChangeListener : public VariableAttributListener
+class RemoteVariableChangeListener : public VariableAttributeListener
 {
 	friend class ServiceProxy;
 
@@ -53,7 +53,7 @@ private:
      * @param newValue the new requested value
      * @return true if the new value is accepted, false if rejected.
      */
-    bool IsValid( VariableAttribut * ChangedVariable, SimpleString newValue );
+    bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue );
 
 	/**
     * This method is called when the value has change is request on a variable. This method must
@@ -64,7 +64,7 @@ private:
      * @param newValue the new requested value
      * @return true if the new value is accepted, false if rejected.
      */
-	void VariableChanged( VariableAttribut * ChangedVariable );
+	void VariableChanged( VariableAttribute * ChangedVariable );
 };
 
 } // namespace Omiscid

@@ -40,42 +40,42 @@ void ControlServer::InitInstance()
 	ControlAnswerValidator.CreateSchemaFromString( ControlAnswerXsdSchema );
 #endif
 
-	// Give a pointer to myself on my VariableAttributListener side
-	VariableAttributListener::SetUserData( this );
+	// Give a pointer to myself on my VariableAttributeListener side
+	VariableAttributeListener::SetUserData( this );
 
 	SetStatus( STATUS_INIT );
 
-	VariableAttribut* va = NULL;
+	VariableAttribute* va = NULL;
 
 	va = AddVariable(LockString);
 	va->SetType("integer");
 	va->SetAccess(ReadWriteAccess);
 	va->SetDescription("Use for locking access");
-	lockIntVariable = new IntVariableAttribut(va, 0);
+	lockIntVariable = new IntVariableAttribute(va, 0);
 
 	va = AddVariable(NameString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Registered name of this service");
-	NameVariable = new StringVariableAttribut( va, serviceName );
+	NameVariable = new StringVariableAttribute( va, serviceName );
 
 	va = AddVariable(OwnerString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Login which launches this service");
-	OwnerVariable = new StringVariableAttribut( va, "none" );
+	OwnerVariable = new StringVariableAttribute( va, "none" );
 
 	va = AddVariable(ClassString);
 	va->SetType("class");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of this service");
-	ClassVariable = new StringVariableAttribut( va, DefaultServiceClassName );
+	ClassVariable = new StringVariableAttribute( va, DefaultServiceClassName );
 
 	va = AddVariable(PeerIdString);
 	va->SetType("hexadecimal");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("PeerId of this service");
-	PeerIdVariable = new StringVariableAttribut( va, serviceId );
+	PeerIdVariable = new StringVariableAttribute( va, serviceId );
 
 	registerDnsSd = NULL;
 }
@@ -369,7 +369,7 @@ void ControlServer::GenerateGlobalShortDescription(SimpleString& str)
 	}
 }
 
-InOutputAttribut* ControlServer::FindInOutput(const SimpleString InOutputName)
+InOutputAttribute* ControlServer::FindInOutput(const SimpleString InOutputName)
 {
 	for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
 	{
@@ -379,7 +379,7 @@ InOutputAttribut* ControlServer::FindInOutput(const SimpleString InOutputName)
 	return NULL;
 }
 
-VariableAttribut* ControlServer::FindVariable(const SimpleString VarName)
+VariableAttribute* ControlServer::FindVariable(const SimpleString VarName)
 { 
 	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
 	{
@@ -426,14 +426,14 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			{
 				SimpleString name = (const char*)(cur_node->name);
 				//std::cerr << "tag name="<<(*it)->name <<"\n";
-				if( name == InOutputAttribut::input_str.GetStr() ||
-					name == InOutputAttribut::output_str.GetStr() || 
-					name == InOutputAttribut::inoutput_str.GetStr() )
+				if( name == InOutputAttribute::input_str.GetStr() ||
+					name == InOutputAttribute::output_str.GetStr() || 
+					name == InOutputAttribute::inoutput_str.GetStr() )
 				{
 					// OmiscidTrace( " process io : %s \n", (*it)->name.GetStr());
 					ProcessInOutputQuery(cur_node, str);
 				}
-				else if( name == VariableAttribut::variable_str.GetStr() )
+				else if( name == VariableAttribute::variable_str.GetStr() )
 				{
 					ProcessVariableQuery(cur_node, msg->pid,  str);		 
 				}
@@ -519,7 +519,7 @@ void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answ
 		if(found)
 		{
 			SimpleString name((const char*)attr->children->content);
-			InOutputAttribut* ioa = FindInOutput(name);
+			InOutputAttribute* ioa = FindInOutput(name);
 			if(ioa)
 			{
 				ioa->GenerateLongDescription(str_answer);
@@ -541,7 +541,7 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 	if ( found )
 	{
 		SimpleString name((const char*)attr->children->content);
-		VariableAttribut* va = FindVariable(name);    
+		VariableAttribute* va = FindVariable(name);    
 
 		// OmiscidTrace( "Query on name '%s' in %8.8x\n", name.GetStr(), GetServiceId() ); 
 
@@ -563,7 +563,7 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 						if(va->GetType() == "xml")
 						{ 
 							// SimpleString val_modif((const char*)val_node->children->content);
-							// VariableAttribut::ModifXmlInStrRevert(val_modif);
+							// VariableAttribute::ModifXmlInStrRevert(val_modif);
 							VariableChange( va, (const char*)val_node->children->content, GetStatus() );
 						}
 						else
@@ -590,7 +590,7 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 	if( found ) 
 	{
 		SimpleString name((const char*)attr->children->content);
-		InOutputAttribut* ioa = FindInOutput(name);     
+		InOutputAttribute* ioa = FindInOutput(name);     
 		if(ioa)
 		{
 			bool found_host = false;
@@ -646,7 +646,7 @@ void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, boo
 	else
 	{
 		SimpleString name((const char*)attr->children->content);
-		VariableAttribut* va = FindVariable(name);     
+		VariableAttribute* va = FindVariable(name);     
 		if( va )
 		{
 			if (subscribe)
@@ -724,7 +724,7 @@ void ControlServer::RefreshLock(){
 	}    
 }
 
-void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutputAttribut* ioa)
+void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutputAttribute* ioa)
 {
 #ifdef DEBUG
 	fprintf(stderr, "in ControlServer::Connect (%s:%d", host.GetStr(), port);
@@ -733,7 +733,7 @@ void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutpu
 #endif
 }
 
-void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue, ControlServerStatus status )
+void ControlServer::VariableChange( VariableAttribute* va, SimpleString NewValue, ControlServerStatus status )
 {
 	OmiscidTrace( "ControlServer::VariableChange '%s' New Value='%s'\n", va->GetName().GetStr(), NewValue.GetStr());
 	// Do what we must do...
@@ -743,13 +743,13 @@ void ControlServer::VariableChange( VariableAttribut* va, SimpleString NewValue,
 	va->SetValue( NewValue );
 }
 
-bool ControlServer::IsValid( VariableAttribut * ChangedVariable, SimpleString newValue )
+bool ControlServer::IsValid( VariableAttribute * ChangedVariable, SimpleString newValue )
 {
 	// OIutside check is done when receiving external modification is asked
 	return ChangedVariable->CanBeModifiedFromInside(GetStatus());
 }
 
-void ControlServer::VariableChanged( VariableAttribut * ChangedVariable )
+void ControlServer::VariableChanged( VariableAttribute * ChangedVariable )
 {
 	if ( Status == STATUS_RUNNING )
 	{
@@ -757,7 +757,7 @@ void ControlServer::VariableChanged( VariableAttribut * ChangedVariable )
 	}
 }
 
-VariableAttribut* ControlServer::AddVariable(const SimpleString VarName)
+VariableAttribute* ControlServer::AddVariable(const SimpleString VarName)
 {
 	if ( GetStatus() == STATUS_RUNNING || VarName.IsEmpty() )
 	{
@@ -780,7 +780,7 @@ VariableAttribut* ControlServer::AddVariable(const SimpleString VarName)
 		return NULL;
 	}
 
-	VariableAttribut* va = new VariableAttribut(VarName);
+	VariableAttribute* va = new VariableAttribute(VarName);
 	listVariable.Add(va);
 
 	// I am the first listener
@@ -789,7 +789,7 @@ VariableAttribut* ControlServer::AddVariable(const SimpleString VarName)
 	return va;
 }
 
-InOutputAttribut* ControlServer::AddInOutput(const SimpleString InOutputName, ComTools* com_tool, ConnectorKind kind_of_input)
+InOutputAttribute* ControlServer::AddInOutput(const SimpleString InOutputName, ComTools* com_tool, ConnectorKind kind_of_input)
 {
 	if ( GetStatus() == STATUS_RUNNING || InOutputName.IsEmpty() )
 	{
@@ -815,7 +815,7 @@ InOutputAttribut* ControlServer::AddInOutput(const SimpleString InOutputName, Co
 	// Add the connector
 	unsigned int ConnectorId;
 
-	InOutputAttribut* ioa = new InOutputAttribut(InOutputName, com_tool, kind_of_input);
+	InOutputAttribute* ioa = new InOutputAttribute(InOutputName, com_tool, kind_of_input);
 	if ( com_tool )
 	{
 		// Incr number for the Connector
@@ -837,7 +837,7 @@ InOutputAttribut* ControlServer::AddInOutput(const SimpleString InOutputName, Co
 
 ////////////// LISTENER ////////////////////////
 
-void ControlServer::NotifyValueChanged(VariableAttribut* var)
+void ControlServer::NotifyValueChanged(VariableAttribute* var)
 {	
 	listValueListener.Lock();
 	ValueListener* vl = FindValueListener(var);
@@ -883,7 +883,7 @@ void ControlServer::NotifyValueChanged(VariableAttribut* var)
 }
 
 
-void ControlServer::AddListener(VariableAttribut* var, unsigned listener_id)
+void ControlServer::AddListener(VariableAttribute* var, unsigned listener_id)
 {
 	listValueListener.Lock();
 	ValueListener* vl = FindValueListener(var);
@@ -895,7 +895,7 @@ void ControlServer::AddListener(VariableAttribut* var, unsigned listener_id)
 	listValueListener.Unlock();
 }
 
-void ControlServer::RemoveListener(VariableAttribut* var, unsigned int pid)
+void ControlServer::RemoveListener(VariableAttribute* var, unsigned int pid)
 {
 	listValueListener.Lock();
 	if(var)
@@ -912,7 +912,7 @@ void ControlServer::RemoveListener(VariableAttribut* var, unsigned int pid)
 	listValueListener.Unlock();
 }
 
-ValueListener* ControlServer::FindValueListener(VariableAttribut* var)
+ValueListener* ControlServer::FindValueListener(VariableAttribute* var)
 {
 	ValueListener* vl = NULL;	
 
@@ -926,7 +926,7 @@ ValueListener* ControlServer::FindValueListener(VariableAttribut* var)
 }
 
 //////////////: VALUE LISTENER //////////////
-ValueListener::ValueListener(VariableAttribut* v, unsigned int pid)
+ValueListener::ValueListener(VariableAttribute* v, unsigned int pid)
 {
 	var = v;
 	AddListener(pid);

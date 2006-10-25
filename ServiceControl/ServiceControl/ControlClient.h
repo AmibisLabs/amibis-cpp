@@ -17,8 +17,8 @@
 
 namespace Omiscid {
 
-class VariableAttribut;
-class InOutputAttribut;
+class VariableAttribute;
+class InOutputAttribute;
 class AnswersManager;
 
 class AnswerWaiter
@@ -131,7 +131,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    * @param var_name name of the variable
    * @return NULL if query failed, else a pointer on a structure with data about the variable 
    */
-  VariableAttribut* QueryVariableDescription(const SimpleString var_name);  
+  VariableAttribute* QueryVariableDescription(const SimpleString var_name);  
 
   /** @brief Ask for a variable modification
    * @param var_name name of the variable
@@ -139,25 +139,25 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    * @return NULL if query failed, else a pointer on a structure with data about the variable.
    * If the query has bee accepted GetValue give value_str
    */
-  VariableAttribut* QueryVariableModif(const SimpleString var_name, const SimpleString value_str);
+  VariableAttribute* QueryVariableModif(const SimpleString var_name, const SimpleString value_str);
   
   /** @brief Ask for a input description
    * @param input_name name of the input
    * @return NULL if query failed, else a pointer on a structure with data about the input
    */
-  InOutputAttribut* QueryInputDescription(const SimpleString input_name);
+  InOutputAttribute* QueryInputDescription(const SimpleString input_name);
   
   /** @brief Ask for a output description
    * @param output_name name of the output
    * @return NULL if query failed, else a pointer on a structure with data about the output
    */
-  InOutputAttribut* QueryOutputDescription(const SimpleString output_name);
+  InOutputAttribute* QueryOutputDescription(const SimpleString output_name);
 
   /** @brief Ask for a input description
    * @param in_output_name name of the inoutput
    * @return NULL if query failed, else a pointer on a structure with data about the inoutput
    */
-  InOutputAttribut* QueryInOutputDescription(const SimpleString in_output_name);
+  InOutputAttribute* QueryInOutputDescription(const SimpleString in_output_name);
 
     /** @brief Ask for a precise description of everything in the ControlServer 
    * @return false if query failed, true otherwise
@@ -183,22 +183,22 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    * @param name [in] the variable name 
    * @return NULL if the variable is not found, else a pointer on a structure with the data about the variable
    */
-  VariableAttribut* FindVariable(const SimpleString name);
+  VariableAttribute* FindVariable(const SimpleString name);
   /** @brief Access to data about an input
    * @param name [in] the input name 
    * @return NULL if the input is not found, else a pointer on a structure with the data about the input
    */
-  InOutputAttribut* FindInput(const SimpleString name);
+  InOutputAttribute* FindInput(const SimpleString name);
   /** @brief Access to data about an output
    * @param name [in] the output name 
    * @return NULL if the output is not found, else a pointer on a structure with the data about the output
    */
-  InOutputAttribut* FindOutput(const SimpleString name);
+  InOutputAttribute* FindOutput(const SimpleString name);
   /** @brief Access to data about an inoutput
    * @param name [in] the inoutput name 
    * @return NULL if the inoutput is not found, else a pointer on a structure with the data about the inoutput
    */
-  InOutputAttribut* FindInOutput(const SimpleString name);
+  InOutputAttribute* FindInOutput(const SimpleString name);
   //@}
 
   /** @name Display Name of known attributes */
@@ -218,28 +218,28 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   /** \brief Access to the list of variable name */
   SimpleList<SimpleString>& GetVariableNameList();
   /** \brief Access to the list of variable object */
-  SimpleList<VariableAttribut*>& GetVariableList();
+  SimpleList<VariableAttribute*>& GetVariableList();
 
   /** \brief Access to the list of input name */
   SimpleList<SimpleString>& GetInputNameList();
   /** \brief Access to the list of input object */
-  SimpleList<InOutputAttribut*>& GetInputList();
+  SimpleList<InOutputAttribute*>& GetInputList();
 
   /** \brief Access to the list of output name */
   SimpleList<SimpleString>& GetOutputNameList();
   /** \brief Access to the list of output object */
-  SimpleList<InOutputAttribut*>& GetOutputList();
+  SimpleList<InOutputAttribute*>& GetOutputList();
 
   /** \brief Access to the list of inoutput name */
   SimpleList<SimpleString>& GetInOutputNameList();
   /** \brief Access to the list of inoutput object */
-  SimpleList<InOutputAttribut*>& GetInOutputList();
+  SimpleList<InOutputAttribute*>& GetInOutputList();
   //@}
 
   
   /** \brief Process Control Event
    *
-   * For the event about value modification, the value contained in the VariableAttribut
+   * For the event about value modification, the value contained in the VariableAttribute
    * object is set to the new value.
    * <br> Can be used with in user callback
    * \param msg the message containing the ControlEvent
@@ -299,31 +299,31 @@ private:
    * \return a structure with the data. It is var_attr if var_attr is non null, 
    * else return a pointer to a new allocated struture
    */
-  VariableAttribut* ProcessVariableDescription(xmlNodePtr node, VariableAttribut* var_attr);
+  VariableAttribute* ProcessVariableDescription(xmlNodePtr node, VariableAttribute* var_attr);
   /** \brief Extract input description from a message   
    * \param node part of message where extract data
    * \param input_attr structure where store data. Can be null
    * \return a structure with the data. It is input_attr if input_attr is non null, 
    * else return a pointer to a new allocated struture
    */
-  InOutputAttribut* ProcessInputDescription(xmlNodePtr node, InOutputAttribut* input_attr);
+  InOutputAttribute* ProcessInputDescription(xmlNodePtr node, InOutputAttribute* input_attr);
   /** \brief Extract output description from a message   
    * \param node part of message where extract data
    * \param output_attr structure where store data. Can be null
    * \return a structure with the data. It is output_attr if output_attr is non null, 
    * else return a pointer to a new allocated struture
    */
-  InOutputAttribut* ProcessOutputDescription(xmlNodePtr node, InOutputAttribut* output_attr);
+  InOutputAttribute* ProcessOutputDescription(xmlNodePtr node, InOutputAttribute* output_attr);
   /** \brief Extract inoutput description from a message   
    * \param node part of message where extract data
    * \param in_output_attr structure where store data. Can be null
    * \return a structure with the data. It is in_output_attr if in_output_attr is non null, 
    * else return a pointer to a new allocated struture
    */
-  InOutputAttribut* ProcessInOutputDescription(xmlNodePtr node, InOutputAttribut* in_output_attr);
+  InOutputAttribute* ProcessInOutputDescription(xmlNodePtr node, InOutputAttribute* in_output_attr);
 
   /** \brief Extract input/output/inoutput description from a message*/
-  // void ProcessInOutputDescription(xmlNodePtr node, InOutputAttribut* io_attr);
+  // void ProcessInOutputDescription(xmlNodePtr node, InOutputAttribute* io_attr);
   //@}
 
   /** \brief Display the names from a list on the standard output
@@ -355,10 +355,10 @@ protected:
 
   /** \name List of attributes*/
   //@{
-  SimpleList<VariableAttribut*> listVariableAttr; /*!< list of variable attribute*/
-  SimpleList<InOutputAttribut*> listInputAttr; /*!< list of input attribute*/
-  SimpleList<InOutputAttribut*> listOutputAttr; /*!< list of output attribute*/ 
-  SimpleList<InOutputAttribut*> listInOutputAttr; /*!< list of inoutput attribute*/
+  SimpleList<VariableAttribute*> listVariableAttr; /*!< list of variable attribute*/
+  SimpleList<InOutputAttribute*> listInputAttr; /*!< list of input attribute*/
+  SimpleList<InOutputAttribute*> listOutputAttr; /*!< list of output attribute*/ 
+  SimpleList<InOutputAttribute*> listInOutputAttr; /*!< list of inoutput attribute*/
   //@}
 
  /** @brief Init this object
@@ -367,7 +367,7 @@ protected:
 
   /** @brief Empty the given list
    */
-  void EmptyInOutputAttributList(SimpleList<InOutputAttribut*>& List);
+  void EmptyInOutputAttributeList(SimpleList<InOutputAttribute*>& List);
 
 private:
   CtrlEventListener callback; /*!< callback for event processing */

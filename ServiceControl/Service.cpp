@@ -136,7 +136,7 @@ void Service::Start()
 	*/
 bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind ConnectorKind)
 {
-	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt != NULL )
 	{
 		OmiscidError( "A connector named '%s' is already defined.\n", ConnectorName.GetStr() );
@@ -171,7 +171,7 @@ bool Service::SendToAllClients(SimpleString ConnectorName, char * Buffer, int Bu
 		OmiscidError( "Could not send (null) buffer\n" );
 		return false;
 	}
-	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
 		OmiscidError( "Could not find connector '%s'.\n", ConnectorName.GetStr() );
@@ -209,7 +209,7 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 		OmiscidError( "Could not send (null) buffer\n" );
 		return false;
 	}
-	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
 		OmiscidError( "Could not find connector '%s'.\n", ConnectorName.GetStr() );
@@ -263,7 +263,7 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 	*/
 bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString VarDescription, VariableAccessType AccessType)
 {
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar != NULL )
 	{
 		OmiscidError( "A variable named '%s' is already defined.\n", VarName.GetStr() );
@@ -292,7 +292,7 @@ bool Service::AddVariable(SimpleString VarName, SimpleString Type, SimpleString 
 	*/
 bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescription)
 {
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
@@ -313,7 +313,7 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 {
 	SimpleString Empty(SimpleString::EmptyString);
 
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
@@ -331,7 +331,7 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 	 */
 bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 {
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
@@ -352,7 +352,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 {
 	SimpleString Empty(SimpleString::EmptyString);
 
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
@@ -370,14 +370,14 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	 */
 SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 {
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
 		return SimpleString::EmptyString;
 	}
 
-	return VariableAttribut::AccessToStr(pVar->GetAccess());
+	return VariableAttribute::AccessToStr(pVar->GetAccess());
 }
 
 	/**
@@ -401,7 +401,7 @@ SimpleString Service::GetVariableType(SimpleString VarName)
 	 */
 bool Service::AddLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		return false;
@@ -421,7 +421,7 @@ bool Service::AddLocalVariableListener(SimpleString VarName, LocalVariableListen
 	 */
 bool Service::RemoveLocalVariableListener(SimpleString VarName, LocalVariableListener * Listener)
 {
-	VariableAttribut * pVar = FindVariable( VarName );
+	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
 		return false;
@@ -440,7 +440,7 @@ bool Service::RemoveLocalVariableListener(SimpleString VarName, LocalVariableLis
      */
 bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy& ServProxy, SimpleString RemoteConnector)
 {
-	InOutputAttribut * pAtt = FindInOutput( LocalConnector );
+	InOutputAttribute * pAtt = FindInOutput( LocalConnector );
 	if ( pAtt == NULL )
 	{
 		OmiscidError( "Could not find local connector '%s'.\n", LocalConnector.GetStr() );
@@ -518,7 +518,7 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, Si
 	 */
 bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener)
 {
-	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
 		OmiscidError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
@@ -546,7 +546,7 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener
 	 */
 bool Service::RemoveConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener)
 {
-	InOutputAttribut * pAtt = FindInOutput( ConnectorName );
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == NULL )
 	{
 		OmiscidError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );

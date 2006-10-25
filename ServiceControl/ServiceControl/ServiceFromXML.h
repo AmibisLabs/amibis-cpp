@@ -24,8 +24,8 @@ class ServiceFromXML : public ControlServer
 
  private:
   void InitServiceFromXml(xmlNodePtr root_node);
-  void ProcessVariableAttribut(xmlNodePtr node);
-  void ProcessInOutputAttribut(xmlNodePtr node);
+  void ProcessVariableAttribute(xmlNodePtr node);
+  void ProcessInOutputAttribute(xmlNodePtr node);
 };
 
 } // namespace Omiscid
