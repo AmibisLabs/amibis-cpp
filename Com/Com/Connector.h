@@ -4,8 +4,8 @@
  * @brief Definition of Connector class, ClientConnection class
  */
 
-#ifndef __TCP_UDP_CLIENT_SERVER_H__
-#define __TCP_UDP_CLIENT_SERVER_H__
+#ifndef __CONNECTOR_H__
+#define __CONNECTOR_H__
 
 #include <Com/Config.h>
 
@@ -235,4 +235,4 @@ private:
 
 } // namespace Omiscid
 
-#endif // __TCP_UDP_CLIENT_SERVER_H__
+#endif // __CONNECTOR_H__

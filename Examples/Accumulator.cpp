@@ -12,11 +12,7 @@
  */
 
 // Standard includes
-#include <System/Mutex.h>
-#include <ServiceControl/ConnectorListener.h>
-#include <ServiceControl/Factory.h>
-#include <ServiceControl/Service.h>
-#include <ServiceControl/ServiceProxy.h>
+#include <ServiceControl/UserFriendlyAPI.h>
 
 #include <iostream>
 using namespace std;
@@ -69,8 +65,7 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 	bool IsWrong = true;	// by default, the command is wrong
 	SimpleString ErrorMessage = "Bad command.";
 
-	// Which operand ? 3 will be read by the integer and 3.5 will be read by the float
-	int dRightOperand   = 0;
+	// Used to read operand ?
 	float fRightOperand = 0.0f;
 
 	// A pointer to the command line and to the begining of the usufull data

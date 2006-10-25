@@ -32,10 +32,12 @@ Thread::Thread(bool autostart)
 	
 	// Event event;
 #else
-	ThreadIsRunning = false;	
-	StopWasAsked = false;
+	m_thread = NULL;
 #endif
 	
+	ThreadIsRunning = false;	
+	StopWasAsked = false;
+
 	if (autostart)
 		StartThread();
 }
@@ -51,8 +53,10 @@ Thread::~Thread()
 bool Thread::StartThread()
 {
 	// do nothing if already running
-	if (IsRunning())
+	if ( IsRunning() )
+	{
 		return false;
+	}
 
 	ThreadIsRunning = false;	
 	StopWasAsked = false;
@@ -77,6 +81,12 @@ bool Thread::StopThread(int wait_ms)
 
 	if (IsRunning())
 	{
+#ifndef WIN32
+		// On non Windows system, set the thread as detach in order to free
+		// its resourses after its end...
+		pthread_detach( m_thread );
+#endif
+
 		// Notify thread !
 		StopWasAsked = true;			// Notification for pseudo active waiting
 		StopWasAskedEvent.Signal();		// other notification
@@ -86,8 +96,15 @@ bool Thread::StopThread(int wait_ms)
 		{
 			// Timeout !!!
 			OmiscidError( "Thread::StopThread: Thread do not stop before timeout (%d).\n", wait_ms );
+
+			// Destroy the thread...
 #ifdef WIN32
-			// TerminateThread( ThreadHandle, 0 );
+			TerminateThread( ThreadHandle, 0 );
+			ThreadID = 0;
+			ThreadHandle  = NULL;
+#else
+		    pthread_cancel(pthread_t thread);
+			m_thread = NULL;
 #endif
 		}
 	}

@@ -66,4 +66,4 @@ class IntVariableAttribute
 
 } // namespace Omiscid
 
-#endif // __INT_VARIABLE_ATTRIBUT_H__
+#endif // __INT_VARIABLE_ATTRIBUTE_H__

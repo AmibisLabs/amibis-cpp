@@ -9,13 +9,9 @@
  */
 
 // Standard includes
-#include <System/ElapsedTime.h>
-#include <System/SimpleList.h>
-#include <ServiceControl/Factory.h>
-#include <ServiceControl/Service.h>
-#include <ServiceControl/ServiceProxy.h>
+#include <ServiceControl/UserFriendlyAPI.h>
 
-#include <iostream>
+
 using namespace std;
 
 using namespace Omiscid;
@@ -233,7 +229,7 @@ int main(int argc, char*argv[] )
 	for(;;)
 	{
 		// Wait for all create thread to register their service
-		if ( RegisterThread::NbRegistered == EffectiveNumberOfRegisteredServices )
+		if ( (unsigned int)RegisterThread::NbRegistered == EffectiveNumberOfRegisteredServices )
 		{
 			break;
 		}

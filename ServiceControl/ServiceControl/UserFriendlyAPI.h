@@ -7,9 +7,28 @@
 #ifndef __USER_FRIENDLY_API_H__
 #define __USER_FRIENDLY_API_H__
 
+// To be compliant with usual OMiSCID include schema
+#include <ServiceControl/Config.h>
+
 // System classes used in User Friendly API (layer 0)
+// In this contexte, let's say that everything is used...
+#include <System/AtomicCounter.h>
+#include <System/AtomicReentrantCounter.h>
+#include <System/ElapsedTime.h>
+#include <System/Event.h>
+#include <System/MultipleReferencedData.h>
+#include <System/Mutex.h>
+#include <System/Portage.h>
+#include <System/RecycleSimpleList.h>
+#include <System/ReentrantMutex.h>
+#include <System/SimpleException.h>
 #include <System/SimpleList.h>
+#include <System/SimpleListException.h>
 #include <System/SimpleString.h>
+#include <System/Socket.h>
+#include <System/SocketException.h>
+#include <System/Thread.h>
+#include <System/TrackingMemoryLeaks.h>
 
 // Com classes used in User Friendly API (layer 1)
 #include <Com/Message.h>

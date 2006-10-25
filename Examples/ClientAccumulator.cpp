@@ -7,13 +7,8 @@
  */
 
 // Standard includes
-#include <System/Mutex.h>
-#include <ServiceControl/ConnectorListener.h>
-#include <ServiceControl/Factory.h>
-#include <ServiceControl/Service.h>
-#include <ServiceControl/ServiceProxy.h>
+#include <ServiceControl/UserFriendlyAPI.h>
 
-#include <iostream>
 using namespace std;
 
 using namespace Omiscid;
