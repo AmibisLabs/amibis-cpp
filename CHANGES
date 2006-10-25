@@ -10,7 +10,7 @@ In this files, you will find changes between OMiSCID versions.
 	- change all "Attribut" (in French) to "Attribute" in English
 	either in file, function or class names
 
-1.0.2
+1.0.2   2006-10-02
 	- Change to be compliant with Bonjour version 107.6 (changes
 	made by Apple in API, 2006-09-18) and at the same time with
 	previous versions.

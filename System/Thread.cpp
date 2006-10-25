@@ -62,7 +62,7 @@ bool Thread::StartThread()
 #else
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
-	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	int rc = pthread_create(&m_thread, &attr, CallRun, this);
 	pthread_attr_destroy(&attr);
 	return (rc == 0);
@@ -75,12 +75,6 @@ bool Thread::StopThread(int wait_ms)
 
 	if (IsRunning())
 	{
-#ifndef WIN32
-		// On non Windows system, set the thread as detach in order to free
-		// its resourses after its end...
-		pthread_detach( m_thread );
-#endif
-
 		// Notify thread !
 		StopWasAsked = true;			// Notification for pseudo active waiting
 		StopWasAskedEvent.Signal();		// other notification
@@ -93,11 +87,11 @@ bool Thread::StopThread(int wait_ms)
 
 			// Destroy the thread...
 #ifdef WIN32
-			TerminateThread( ThreadHandle, 0 );
+			// TerminateThread( ThreadHandle, 0 );
 			ThreadID = 0;
 			ThreadHandle  = NULL;
 #else
-		    pthread_cancel(m_thread);
+		    // pthread_cancel(m_thread);
 #endif
 		}
 	}
