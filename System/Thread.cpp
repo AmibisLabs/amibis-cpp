@@ -103,8 +103,7 @@ bool Thread::StopThread(int wait_ms)
 			ThreadID = 0;
 			ThreadHandle  = NULL;
 #else
-		    pthread_cancel(pthread_t thread);
-			m_thread = NULL;
+		    pthread_cancel(m_thread);
 #endif
 		}
 	}
