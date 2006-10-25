@@ -525,12 +525,12 @@ void * operator new[]( size_t size ) throw (std::bad_alloc)
 	return(ptr);
 }
 
-void operator delete(void *p) throw (std::bad_alloc)
+void operator delete(void *p) throw ()
 {
 	Omiscid::RemoveMemoryBlock(p);
 }
 
-void operator delete[](void *p) throw (std::bad_alloc)
+void operator delete[](void *p) throw ()
 {
 	Omiscid::RemoveMemoryBlock(p);
 }
