@@ -511,26 +511,26 @@ static char * PrintSize( unsigned int SizeOfData );
 
 using namespace Omiscid;
 
-void * operator new( size_t size ) throw ()
+void * operator new( size_t size ) throw (std::bad_alloc)
 {
 	void *ptr;
 	Omiscid::AddMemoryBlock(size, &ptr);
 	return(ptr);
 }
 
-void * operator new[]( size_t size ) throw ()
+void * operator new[]( size_t size ) throw (std::bad_alloc)
 {
 	void *ptr;
 	Omiscid::AddMemoryBlock(size, &ptr);
 	return(ptr);
 }
 
-void operator delete(void *p) throw ()
+void operator delete(void *p) throw (std::bad_alloc)
 {
 	Omiscid::RemoveMemoryBlock(p);
 }
 
-void operator delete[](void *p) throw ()
+void operator delete[](void *p) throw (std::bad_alloc)
 {
 	Omiscid::RemoveMemoryBlock(p);
 }

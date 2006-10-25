@@ -20,12 +20,13 @@
 
 	#ifdef WIN32
 		#pragma warning(disable : 4291)
+		#pragma warning(disable : 4290)	// warning about throw specification in new/delete declaration...
 	#endif
 
-	void * operator new( size_t size ) throw ();
-	void * operator new[]( size_t size ) throw ();
-	void operator delete( void *p ) throw ();
-	void operator delete[]( void *p ) throw ();
+	void * operator new( size_t size ) throw (std::bad_alloc);
+	void * operator new[]( size_t size ) throw (std::bad_alloc);
+	void operator delete( void *p ) throw (std::bad_alloc);
+	void operator delete[]( void *p ) throw (std::bad_alloc);
 
 namespace Omiscid {
 
