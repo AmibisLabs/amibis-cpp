@@ -52,7 +52,19 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
    Exit()
    
+ ChMemMode = False
+ if 'trace' in arguments :
+  if arguments['chmem'] in ['1','yes','true'] :
+   ChMemMode = True
+  elif arguments['chmem'] not in ['0','no','false'] :
+   OmiscidMessage("Bad value for chmem flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
+   Exit()   
+   
  # Do what we ask   
+ if DebugMode == True :   
+  OmiscidMessage('compiling using memory leak detection mode')
+  env.AppendUnique(CXXFLAGS = ['-DTRACKING_MEMORY_LEAKS'])
+ 
  if DebugMode == True :   
   OmiscidMessage('compiling in debug mode (with trace mode)')
   env.AppendUnique(CXXFLAGS = ['-DDEBUG','-DOMISCID_TRACE_ENABLE'])
