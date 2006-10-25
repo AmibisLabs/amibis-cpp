@@ -19,7 +19,6 @@
 #include <memory>
 
 	#ifdef WIN32
-		#pragma warning(disable : 4291)
 		#pragma warning(disable : 4290)	// warning about throw specification in new/delete declaration...
 	#endif
 
