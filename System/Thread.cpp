@@ -27,12 +27,6 @@ Thread::Thread(bool autostart)
 #ifdef WIN32
 	ThreadID = 0;
 	ThreadHandle  = NULL;
-	ThreadIsRunning = false;	
-	StopWasAsked = false;
-	
-	// Event event;
-#else
-	m_thread = NULL;
 #endif
 	
 	ThreadIsRunning = false;	
