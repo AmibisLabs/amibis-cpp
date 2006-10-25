@@ -543,7 +543,7 @@ void Omiscid::AddMemoryBlock( size_t aSize, void** addr)
 		// Add head
 		if ( AllocList.AddTail( aSize ) )
 		{
-			*addr = AllocList.Tail;
+			*addr = AllocList.Tail->Where;
 		}
 	}
 	else
