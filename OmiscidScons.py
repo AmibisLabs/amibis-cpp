@@ -53,7 +53,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    Exit()
    
  ChMemMode = False
- if 'trace' in arguments :
+ if 'chmem' in arguments :
   if arguments['chmem'] in ['1','yes','true'] :
    ChMemMode = True
   elif arguments['chmem'] not in ['0','no','false'] :
@@ -61,7 +61,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    Exit()   
    
  # Do what we ask   
- if DebugMode == True :   
+ if ChMemMode == True :   
   OmiscidMessage('compiling using memory leak detection mode')
   env.AppendUnique(CXXFLAGS = ['-DTRACKING_MEMORY_LEAKS'])
  
