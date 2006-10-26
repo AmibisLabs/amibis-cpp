@@ -4,9 +4,11 @@
 
 In this files, you will find changes between OMiSCID versions.
 
-1.0.3
+1.0.3	2006-10-26
 	- Add a global include file for the User Friendly Interface
-	and change examples to use this include.
+	and change examples to use this include. The new include
+	file can be use with this statement:
+		#include <ServiceControl/UserFriendlyAPI.h>
 	- change all "Attribut" (in French) to "Attribute" in English
 	either in file, function or class names
 	- correct a little memory leak problem (problem in reference

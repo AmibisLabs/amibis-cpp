@@ -657,7 +657,7 @@ void TrackMemoryLeaks::DumpUnfreed()
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );
 	OutputDebugString(buf);
 	
-	snprintf(buf, TemporaryBufferSize+1, "Total memory unfreed %s (%u allocated blocks).\n", PrintSize(TotalSize), NbBlocks );
+	snprintf(buf, TemporaryBufferSize+1, "Total memory unfreed %s (%u allocated block%s).\n", PrintSize(TotalSize), NbBlocks, NbBlocks == 1 ? "" : "s" );
 	OutputDebugString(buf);
 
 	snprintf(buf, TemporaryBufferSize+1, "-+-+-+-+-+-+-+-+\n" );

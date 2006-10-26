@@ -28,7 +28,6 @@
 #include <System/Socket.h>
 #include <System/SocketException.h>
 #include <System/Thread.h>
-#include <System/TrackingMemoryLeaks.h>
 
 // Com classes used in User Friendly API (layer 1)
 #include <Com/Message.h>
