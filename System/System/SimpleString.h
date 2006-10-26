@@ -267,6 +267,11 @@ private:
 	 */
 	void DestroyStringData();
 
+	/** \brief Set a StringData object. Do not incr the references
+	 *
+	 */
+	void SetStringData(StringData* to_set);
+
 	void CopyStringData(StringData* to_copy);
 
 	StringData* stringData; /*!< pointer on the object containing the characters*/

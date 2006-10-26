@@ -514,6 +514,25 @@ void SimpleString::DestroyStringData()
 	stringData = NULL;
 }
 
+ /** \brief Set a StringData object. Do not incr the references
+  *
+  */
+void SimpleString::SetStringData(StringData* to_set)
+{
+	if ( to_set == NULL )
+	{
+		// Set me as empty
+		*this = EmptyString;
+		return;
+	}
+
+	// First, destroy My data if any
+	DestroyStringData();
+
+	// and then just set the string data with incr reference count
+	stringData = to_set;
+}
+
 const SimpleString& SimpleString::operator= (const SimpleString& str)
 {
 	DestroyStringData();
@@ -675,7 +694,16 @@ SimpleString SimpleString::SubString(int begin, int end) const
 	}
 
 	StringData* sd = new StringData(GetStr(), begin, lend);
-	return SimpleString(sd);
+	if ( sd == NULL )
+	{
+		return EmptyString;
+	}
+	else
+	{
+		SimpleString TmpS;
+		TmpS.SetStringData(sd);
+		return TmpS;
+	}
 }
 
 const SimpleString Omiscid::operator+(const SimpleString& str1, const SimpleString& str2)

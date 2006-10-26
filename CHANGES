@@ -9,6 +9,8 @@ In this files, you will find changes between OMiSCID versions.
 	and change examples to use this include.
 	- change all "Attribut" (in French) to "Attribute" in English
 	either in file, function or class names
+	- correct a little memory leak problem (problem in reference
+	count) when using SubString.
 
 1.0.2   2006-10-02
 	- Change to be compliant with Bonjour version 107.6 (changes
