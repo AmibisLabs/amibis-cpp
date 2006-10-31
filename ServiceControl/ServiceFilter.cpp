@@ -219,7 +219,7 @@ bool CascadeServiceFilters::IsAGoodService(ServiceProxy& SP)
 ServiceFilter * CascadeServiceFilters::Duplicate()
 {
 	// Create a copy
-	CascadeServiceFilters * Copy = new CascadeServiceFilters();
+	CascadeServiceFilters * Copy = new OMISCID_TLM CascadeServiceFilters();
 	if ( Copy == NULL )
 	{
 		return NULL;
@@ -284,7 +284,7 @@ bool ServiceNameIs::IsAGoodService(ServiceProxy& SP)
 
 ServiceFilter * ServiceNameIs::Duplicate()
 {
-	return new ServiceNameIs( Name, CaseInsensitive, OnlyPrefix );
+	return new OMISCID_TLM ServiceNameIs( Name, CaseInsensitive, OnlyPrefix );
 }
 
 ServiceOwnerIs::ServiceOwnerIs(SimpleString& Owner, bool CaseInsensitive)
@@ -315,7 +315,7 @@ bool ServiceOwnerIs::IsAGoodService(ServiceProxy& SP)
 
 ServiceFilter * ServiceOwnerIs::Duplicate()
 {
-	return new ServiceOwnerIs( Owner, CaseInsensitive );
+	return new OMISCID_TLM ServiceOwnerIs( Owner, CaseInsensitive );
 }
 
 ServiceHostIs::ServiceHostIs(SimpleString& Hostname)
@@ -336,7 +336,7 @@ bool ServiceHostIs::IsAGoodService(ServiceProxy& SP)
 
 ServiceFilter * ServiceHostIs::Duplicate()
 {
-	return new ServiceHostIs( Hostname );
+	return new OMISCID_TLM ServiceHostIs( Hostname );
 }
 
 ServiceHasVariable::ServiceHasVariable(SimpleString& VariableName)
@@ -377,7 +377,7 @@ bool ServiceHasVariable::IsAGoodService(ServiceProxy& SP)
 
 ServiceFilter * ServiceHasVariable::Duplicate()
 {
-	return new ServiceHasVariable( VariableName, VariableValue );
+	return new OMISCID_TLM ServiceHasVariable( VariableName, VariableValue );
 }
 
 ServiceHasConnector::ServiceHasConnector(SimpleString& ConnectorName, ConnectorKind ConnectorType )
@@ -401,7 +401,7 @@ bool ServiceHasConnector::IsAGoodService(ServiceProxy& SP)
 
 ServiceFilter * ServiceHasConnector::Duplicate()
 {
-	return new ServiceHasConnector( ConnectorName, ConnectorType );
+	return new OMISCID_TLM ServiceHasConnector( ConnectorName, ConnectorType );
 }
 
 
@@ -415,13 +415,13 @@ ServiceFilter * ServiceHasConnector::Duplicate()
 ServiceFilter * Omiscid::NameIs(SimpleString Name, bool CaseInsensitive)
 {
 	// Ask to find the full name of the service
-	return new ServiceNameIs(Name, CaseInsensitive, false );
+	return new OMISCID_TLM ServiceNameIs(Name, CaseInsensitive, false );
 }
 
 ServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensitive)
 {
 	// Ask to find the full name of the service
-	return new ServiceNameIs(Name, CaseInsensitive, true );
+	return new OMISCID_TLM ServiceNameIs(Name, CaseInsensitive, true );
 }
 
 /**
@@ -440,7 +440,7 @@ ServiceFilter * Omiscid::PeerIdIs(unsigned int PeerId)
 	snprintf( Buffer, 30, "%8.8x", PeerId & ComTools::SERVICE_PEERID );
 	VarValue = (char*)Buffer;
 
-	return new ServiceHasVariable( VarName, VarValue );
+	return new OMISCID_TLM ServiceHasVariable( VarName, VarValue );
 }
 
 /**
@@ -464,7 +464,7 @@ ServiceFilter * Omiscid::ClassIs( const SimpleString ClassName )
 		LocalClassName = ClassName;
 	}
 
-	return new ServiceHasVariable( VarName, LocalClassName );
+	return new OMISCID_TLM ServiceHasVariable( VarName, LocalClassName );
 }
 
 /**
@@ -475,7 +475,7 @@ ServiceFilter * Omiscid::ClassIs( const SimpleString ClassName )
 */
 ServiceFilter * Omiscid::OwnerIs(SimpleString Name, bool CaseInsensitive)
 {
-	return new ServiceOwnerIs(Name, CaseInsensitive);
+	return new OMISCID_TLM ServiceOwnerIs(Name, CaseInsensitive);
 }
 
 /**
@@ -486,7 +486,7 @@ ServiceFilter * Omiscid::OwnerIs(SimpleString Name, bool CaseInsensitive)
 */
 ServiceFilter * Omiscid::HostPrefixIs(SimpleString Hostname)
 {
-	return new ServiceHostIs(Hostname);
+	return new OMISCID_TLM ServiceHostIs(Hostname);
 }
 
 /**
@@ -497,7 +497,7 @@ ServiceFilter * Omiscid::HostPrefixIs(SimpleString Hostname)
 */
 ServiceFilter * Omiscid::HasVariable(SimpleString VarName)
 {
-	return new ServiceHasVariable( VarName );
+	return new OMISCID_TLM ServiceHasVariable( VarName );
 }
 
 /**
@@ -509,7 +509,7 @@ ServiceFilter * Omiscid::HasVariable(SimpleString VarName)
 */
 ServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString Value)
 {
-	return new ServiceHasVariable( VarName, Value );
+	return new OMISCID_TLM ServiceHasVariable( VarName, Value );
 }
 
 /**
@@ -521,7 +521,7 @@ ServiceFilter * Omiscid::HasVariable(SimpleString VarName, SimpleString Value)
 */
 ServiceFilter * Omiscid::HasConnector(SimpleString ConnectorName, ConnectorKind KindOfConnector )
 {
-	return new ServiceHasConnector( ConnectorName, KindOfConnector );
+	return new OMISCID_TLM ServiceHasConnector( ConnectorName, KindOfConnector );
 }
 
 /**
@@ -534,7 +534,7 @@ ServiceFilter * Omiscid::And( ServiceFilter * First, ServiceFilter * Second,
 						    ServiceFilter * Third, ServiceFilter * Fourth,
 							ServiceFilter * Fifth )
 {
-	CascadeServiceFilters * pFilter = new CascadeServiceFilters( CascadeServiceFilters::IsAND );
+	CascadeServiceFilters * pFilter = new OMISCID_TLM CascadeServiceFilters( CascadeServiceFilters::IsAND );
 	if ( pFilter == NULL )
 	{
 		return NULL;
@@ -571,7 +571,7 @@ ServiceFilter * Omiscid::Or( ServiceFilter * First, ServiceFilter * Second,
 						   ServiceFilter * Third, ServiceFilter * Fourth,
 						   ServiceFilter * Fifth )
 {
-	CascadeServiceFilters * pFilter = new CascadeServiceFilters( CascadeServiceFilters::IsOR );
+	CascadeServiceFilters * pFilter = new OMISCID_TLM CascadeServiceFilters( CascadeServiceFilters::IsOR );
 	if ( pFilter == NULL )
 	{
 		return NULL;
@@ -609,7 +609,7 @@ bool ServiceAlwaysAnswerYes::IsAGoodService(ServiceProxy& SP)
 
 ServiceFilter * ServiceAlwaysAnswerYes::Duplicate()
 {
-	return new ServiceAlwaysAnswerYes();
+	return new OMISCID_TLM ServiceAlwaysAnswerYes();
 }
 
 /**
@@ -620,7 +620,7 @@ ServiceFilter * ServiceAlwaysAnswerYes::Duplicate()
 */
 ServiceFilter * Omiscid::Yes()
 {
-	return new ServiceAlwaysAnswerYes();
+	return new OMISCID_TLM ServiceAlwaysAnswerYes();
 }
 
 ServiceBooleanNot::ServiceBooleanNot( ServiceFilter * SF )
@@ -640,7 +640,7 @@ bool ServiceBooleanNot::IsAGoodService(ServiceProxy& SP)
 
 ServiceFilter * ServiceBooleanNot::Duplicate()
 {
-	return new ServiceBooleanNot( ApplyNotOn->Duplicate() );
+	return new OMISCID_TLM ServiceBooleanNot( ApplyNotOn->Duplicate() );
 }
 
 /**
@@ -650,7 +650,7 @@ ServiceFilter * ServiceBooleanNot::Duplicate()
 */
 ServiceFilter * Omiscid::Not(ServiceFilter * SF)
 {
-	return new ServiceBooleanNot( SF );
+	return new OMISCID_TLM ServiceBooleanNot( SF );
 }
 
 /**
@@ -660,7 +660,7 @@ ServiceFilter * Omiscid::Not(ServiceFilter * SF)
 */
 ServiceFilter * Omiscid::Not(ServiceProxy * SP)
 {
-	return new ServiceBooleanNot( PeerIdIs(SP->GetPeerId()) );
+	return new OMISCID_TLM ServiceBooleanNot( PeerIdIs(SP->GetPeerId()) );
 }
 
 /**
@@ -670,6 +670,6 @@ ServiceFilter * Omiscid::Not(ServiceProxy * SP)
 */
 ServiceFilter * Omiscid::Not(ServiceProxy& SP)
 {
-	return new ServiceBooleanNot( PeerIdIs(SP.GetPeerId()) );
+	return new OMISCID_TLM ServiceBooleanNot( PeerIdIs(SP.GetPeerId()) );
 }
 

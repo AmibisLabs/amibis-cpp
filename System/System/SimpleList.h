@@ -474,11 +474,15 @@ TYPE SimpleList<TYPE>::ExtractFirst()
 
 template <typename TYPE>
 SimpleListElement<TYPE>*  SimpleList<TYPE>::GetNewSimpleListElement() const
-{ return new SimpleListElement<TYPE>; }
+{
+	return new OMISCID_TLM SimpleListElement<TYPE>;
+}
 
 template <typename TYPE>
 void SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
-{ delete elt; }
+{
+	delete elt;
+}
 
 
 /**

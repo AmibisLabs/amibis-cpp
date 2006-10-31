@@ -72,7 +72,7 @@ DnsSdProxy::DnsSdProxy()
 		// Reset Event (in case we were over 1 instance, under 1 and them over 1 again
 		Changes.Reset();
 
-		ServiceBroswer = new BrowseForDNSSDService( CommonServiceValues::OmiscidServiceDnsSdType, BrowseCollect, (void *)this, true);
+		ServiceBroswer = new OMISCID_TLM BrowseForDNSSDService( CommonServiceValues::OmiscidServiceDnsSdType, BrowseCollect, (void *)this, true);
 		if ( ServiceBroswer == NULL )
 		{
 			OmiscidError( "Launch DnsSdProxy instance => failed\n" );
@@ -157,7 +157,7 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, DNS
 	{
 		// A new service appears
 		// Copy each members of this list into the new list
-		pServiceInfo = new DnsSdServiceInstanceManager( NewService );
+		pServiceInfo = new OMISCID_TLM DnsSdServiceInstanceManager( NewService );
 		if ( pServiceInfo != NULL )
 		{
 			ServicesList.AddTail( pServiceInfo );
@@ -215,7 +215,7 @@ DnsSdServicesList * DnsSdProxy::GetCurrentServicesList()
 	// Shall we cleanup the services list
 	CleanupServicesList();
 
-	DnsSdServicesList * pList = new DnsSdServicesList;
+	DnsSdServicesList * pList = new OMISCID_TLM DnsSdServicesList;
 	if ( pList == NULL )
 	{
 		Locker.LeaveMutex();

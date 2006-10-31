@@ -175,7 +175,7 @@ void XMLTreeParser::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& c
 	xmlDocPtr doc = ParseMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
 	if( doc )
 	{
-		XMLMessage* msg = new XMLMessage();
+		XMLMessage* msg = new OMISCID_TLM XMLMessage();
 		msg->doc = doc;
 		msg->origine = cd.Msg.GetOrigine();
 		msg->pid = cd.Msg.GetPeerId();
@@ -209,7 +209,7 @@ int XMLTreeParser::ProcessMessages()
 		{
 			OmiscidTrace( "'%s' occurs when processing XML message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
 		}
-		delete msg;
+		delete OMISCID_TLM msg;
 		listXMLMsg.RemoveCurrent();
 		nb++;
 	}

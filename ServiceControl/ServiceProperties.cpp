@@ -238,7 +238,7 @@ ServiceProperties::ServiceProperties( int InitialSize )
 	// Round size value to the next upper multiple of 2
 	i = (InitialSize+1)&~1;
 
-	Properties = new ServicePropertyNotify[i];
+	Properties = new OMISCID_TLM ServicePropertyNotify[i];
 
 	if ( Properties == NULL )
 	{
@@ -299,7 +299,7 @@ ServiceProperty& ServiceProperties::operator[]( const SimpleString Name )
 		// Ok, we will have Twice the current number of Properties
 		int i =  MaxProperties * 2;
 		
-		ServicePropertyNotify * tmpProperties = new ServicePropertyNotify[i];
+		ServicePropertyNotify * tmpProperties = new OMISCID_TLM ServicePropertyNotify[i];
 
 		if ( tmpProperties == NULL )
 		{

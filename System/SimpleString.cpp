@@ -33,7 +33,7 @@ int SimpleString::StringData::AddReference()
 	
 	if ( nbReferences == NULL )
 	{
-		nbReferences = new AtomicReentrantCounter(1);
+		nbReferences = new OMISCID_TLM AtomicReentrantCounter(1);
 		res = 1;
 	}
 	else
@@ -98,7 +98,7 @@ SimpleString::StringData::StringData(const StringData& base, int begin, int end)
 	nbReferences = NULL;
 
 	length = end-begin;
-	data = new OMISCID_NEW char[length + 1];
+	data = new OMISCID_TLM char[length + 1];
 	memcpy(data, TheOther.GetDataPtr()+begin, length);
 	*(data+length) = '\0';
 
@@ -119,7 +119,7 @@ SimpleString::StringData::StringData(const char* str1, const char* str2)
 	int l1 = (int)strlen(str1);
 	int l2 = (int)strlen(str2);
 	length = l1+l2;
-	data = new char[length + 1];
+	data = new OMISCID_TLM char[length + 1];
 	memcpy(data, str1, l1);
 	memcpy(data+l1, str2, l2);
 	*(data+length) = '\0';
@@ -135,7 +135,7 @@ SimpleString::StringData::~StringData()
 
 	if (data)
 	{
-		delete data;
+		delete [] data;
 	}
 	data = NULL;
 
@@ -154,14 +154,14 @@ void SimpleString::StringData::SetData(const char* str)
 
 	if ( data )
 	{
-		delete data;
+		delete [] data;
 	}
 	
 	if ( str )
 	{
 		// data = strdup(str);
 		length = (unsigned int)strlen(str);
-		data = new char[length+1];
+		data = new OMISCID_TLM char[length+1];
 		memcpy( data, str, length+1 ); // +1 for the '\0'
 	}
 	else
@@ -376,7 +376,7 @@ bool SimpleString::StringData::NotEqualsCaseInsensitive(const StringData& sd)
 //			{
 //				delete data;
 //			}
-//			data = new char[length+1];
+//			data = new OMISCID_TLM char[length+1];
 //			if ( data == NULL )
 //			{
 //				length = 0;
@@ -405,7 +405,7 @@ void SimpleString::CopyStringData(StringData* to_copy)
 	// Nothing to copy, set an empty string...
 	if ( to_copy == NULL )
 	{
-		stringData = new StringData( "" );
+		stringData = new OMISCID_TLM StringData( "" );
 	}
 	else
 	{
@@ -425,7 +425,7 @@ SimpleString::SimpleString(const char* str)
 	stringData = NULL;
 	if ( str && str[0] != '\0' )
 	{
-		stringData = new StringData(str);
+		stringData = new OMISCID_TLM StringData(str);
 	}
 	else
 	{
@@ -439,7 +439,7 @@ SimpleString::SimpleString(const char* str1, const char* str2)
 	if(str1 == (const char*)NULL && str2 == (const char*)NULL)
 		CopyStringData( SimpleString::EmptyString.stringData );
 	else
-		stringData = new StringData(str1, str2);
+		stringData = new OMISCID_TLM StringData(str1, str2);
 }
 
 SimpleString::SimpleString(const SimpleString& to_copy)
@@ -549,7 +549,7 @@ const SimpleString& SimpleString::operator= (const char* str)
 	}
 	else
 	{
-		stringData = new StringData(str);
+		stringData = new OMISCID_TLM StringData(str);
 	}
 	return *this;
 }
@@ -588,7 +588,7 @@ void SimpleString::Append(const char* str)
 {
 	if(str != NULL)
 	{
-		StringData* tmp = new StringData(GetStr(), str);
+		StringData* tmp = new OMISCID_TLM StringData(GetStr(), str);
 		DestroyStringData();
 		stringData = tmp;
 	}
@@ -612,7 +612,7 @@ char& SimpleString::operator[](int i)
 {
 	if(stringData->GetNbReference() != 1)
 	{
-		StringData* tmp = new StringData(stringData->GetDataPtr());
+		StringData* tmp = new OMISCID_TLM StringData(stringData->GetDataPtr());
 		DestroyStringData();
 		stringData = tmp;
 	}
@@ -693,7 +693,7 @@ SimpleString SimpleString::SubString(int begin, int end) const
 		return SimpleString::EmptyString;
 	}
 
-	StringData* sd = new StringData(GetStr(), begin, lend);
+	StringData* sd = new OMISCID_TLM StringData(GetStr(), begin, lend);
 	if ( sd == NULL )
 	{
 		return EmptyString;

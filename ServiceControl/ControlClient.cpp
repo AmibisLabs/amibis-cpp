@@ -163,7 +163,7 @@ AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 	if ( pWaiterInfo == NULL )
 	{
 		// Create a new waiter element for this waiter
-		pWaiterInfo = new AnswerWaiter;
+		pWaiterInfo = new OMISCID_TLM AnswerWaiter;
 		if ( pWaiterInfo == NULL )  
 		{
 			OmiscidError( "AnswersManager::WaitAndGetAnswer: no more memory.\n" );
@@ -217,7 +217,7 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 		{
 			// We've got a waiter info for this waiter...
 			// Copy the message for the waiter
-			pWaiter->AnswerMessage = new XMLMessage(*Msg);
+			pWaiter->AnswerMessage = new OMISCID_TLM XMLMessage(*Msg);
 			pWaiter->ObjectMutex.LeaveMutex();
 
 			pWaiter->Waiter.Signal();
@@ -743,7 +743,7 @@ VariableAttribute* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 	}
 	else
 	{
-		vattr = new VariableAttribute();
+		vattr = new OMISCID_TLM VariableAttribute();
 	}
 
 	vattr->ExtractDataFromXml(node);
@@ -758,7 +758,7 @@ InOutputAttribute* ControlClient::ProcessInputDescription(xmlNodePtr node, InOut
 		return NULL;
 	InOutputAttribute* inattr = NULL;
 	if(input_attr) inattr = input_attr;
-	else inattr = new InOutputAttribute("", AnInput);
+	else inattr = new OMISCID_TLM InOutputAttribute("", AnInput);
 
 	inattr->ExtractDataFromXml(node);
 
@@ -776,7 +776,7 @@ InOutputAttribute* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOu
 	}
 	else
 	{
-		outattr = new InOutputAttribute(SimpleString::EmptyString, AnOutput);
+		outattr = new OMISCID_TLM InOutputAttribute(SimpleString::EmptyString, AnOutput);
 	}
 	outattr->ExtractDataFromXml(node);
 
@@ -789,7 +789,7 @@ InOutputAttribute* ControlClient::ProcessInOutputDescription(xmlNodePtr node, In
 		return NULL;
 	InOutputAttribute* in_outattr = NULL;
 	if(in_output_attr) in_outattr = in_output_attr;
-	else in_outattr = new InOutputAttribute("", AnInOutput);
+	else in_outattr = new OMISCID_TLM InOutputAttribute("", AnInOutput);
 
 	in_outattr->ExtractDataFromXml(node);
 

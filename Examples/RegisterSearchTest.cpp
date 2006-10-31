@@ -179,7 +179,7 @@ int main(int argc, char*argv[] )
 		{
 			if ( ProxyActivited == false )
 			{
-				MyProxy = new DnsSdProxy;
+				MyProxy = new OMISCID_TLM DnsSdProxy;
 				ProxyActivited = true;
 			}
 			continue;
@@ -212,7 +212,7 @@ int main(int argc, char*argv[] )
 	for( i = 1; i <= NumberOfServicesToRegister; i++ )
 	{
 		// Create a new register service called
-		pRegThread = new RegisterThread(i);
+		pRegThread = new OMISCID_TLM RegisterThread(i);
 		// if ok
 		if ( pRegThread )
 		{

@@ -200,7 +200,7 @@ Socket* Socket::Accept()
 	if ( nReady > 0 )
 	{
 		new_fd = accept(descriptor, (struct sockaddr*)&the_addr, (socklen_t*)&size);
-		Socket* s = new Socket();
+		Socket* s = new OMISCID_TLM Socket();
 		if ( s )
 		{
 			s->SetDescriptor(new_fd);

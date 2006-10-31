@@ -535,6 +535,30 @@ void operator delete[](void *p) throw ()
 	Omiscid::RemoveMemoryBlock(p);
 }
 
+void * operator new( size_t size, int Line, char * File ) throw (std::bad_alloc)
+{
+	void *ptr;
+	Omiscid::AddMemoryBlock(size, &ptr);
+	return(ptr);
+}
+
+void * operator new[]( size_t size, int Line, char * File ) throw (std::bad_alloc)
+{
+	void *ptr;
+	Omiscid::AddMemoryBlock(size, &ptr);
+	return(ptr);
+}
+
+void operator delete( void *p, int Line, char * File ) throw ()
+{
+	Omiscid::RemoveMemoryBlock(p);
+}
+
+void operator delete[]( void *p, int Line, char * File ) throw ()
+{
+	Omiscid::RemoveMemoryBlock(p);
+}
+
 void Omiscid::AddMemoryBlock( size_t aSize, void** addr)
 {
 	TrackingMemoryLocker.EnterMutex();

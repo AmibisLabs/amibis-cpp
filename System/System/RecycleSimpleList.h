@@ -112,7 +112,7 @@ SimpleListElement<TYPE>* SimpleRecycleList<TYPE>::GetNewSimpleListElement() cons
   SimpleListElement<TYPE>* elt = ExtractAvailableCells();
   if(elt == NULL)
     {
-      elt = new SimpleListElement<TYPE>;
+      elt = new OMISCID_TLM SimpleListElement<TYPE>;
     }
   return elt;
 }

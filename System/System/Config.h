@@ -202,11 +202,11 @@
 	// include redefinition of new/delete operator
 	#include <System/TrackingMemoryLeaks.h>
 
-	#define OMISCID_TML (__LINE__,__FILE__)
+	#define OMISCID_TLM (__LINE__,__FILE__)
 
 #else 
 
-	#define OMISCID_TML
+	#define OMISCID_TLM
 
 #endif
 

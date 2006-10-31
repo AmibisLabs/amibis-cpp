@@ -327,7 +327,7 @@ bool SearchService::StartSearch( const SimpleString eName, const SimpleString eR
 int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleString eRegType, IsServiceValidForMe eCallBack, void * eUserData )
 {
 	int PosOfNewSearchService;
-	SearchService * pNewSearchService = new SearchService;
+	SearchService * pNewSearchService = new OMISCID_TLM SearchService;
 
 	ThreadSafeSection.EnterMutex();
 

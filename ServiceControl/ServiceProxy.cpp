@@ -82,7 +82,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Ok, something like c/...
-					VarAtt = new VariableAttribute( LocalProp.GetName() );
+					VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
 					if ( VarAtt == NULL )
 					{
 						FullDescription = false;
@@ -102,7 +102,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Ok, something like r/...
-					VarAtt = new VariableAttribute( LocalProp.GetName() );
+					VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
 					if ( VarAtt == NULL )
 					{
 						FullDescription = false;
@@ -121,7 +121,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 					}
 
 					// Ok, something like w/...
-					VarAtt = new VariableAttribute( LocalProp.GetName() );
+					VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
 					if ( VarAtt == NULL )
 					{
 						FullDescription = false;
@@ -149,7 +149,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						continue;
 					}
 
-					IOAtt = new InOutputAttribute( LocalProp.GetName(), NULL, AnInput );
+					IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnInput );
 					if ( IOAtt == NULL )
 					{
 						FullDescription = false;
@@ -176,7 +176,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						continue;
 					}
 
-					IOAtt = new InOutputAttribute( LocalProp.GetName(), NULL, AnOutput );
+					IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnOutput );
 					if ( IOAtt == NULL )
 					{
 						FullDescription = false;
@@ -203,7 +203,7 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 						continue;
 					}
 
-					IOAtt = new InOutputAttribute( LocalProp.GetName(), NULL, AnInOutput );
+					IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnInOutput );
 					if ( IOAtt == NULL )
 					{
 						FullDescription = false;

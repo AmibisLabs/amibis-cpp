@@ -51,31 +51,31 @@ void ControlServer::InitInstance()
 	va->SetType("integer");
 	va->SetAccess(ReadWriteAccess);
 	va->SetDescription("Use for locking access");
-	lockIntVariable = new IntVariableAttribute(va, 0);
+	lockIntVariable = new OMISCID_TLM IntVariableAttribute(va, 0);
 
 	va = AddVariable(NameString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Registered name of this service");
-	NameVariable = new StringVariableAttribute( va, serviceName );
+	NameVariable = new OMISCID_TLM StringVariableAttribute( va, serviceName );
 
 	va = AddVariable(OwnerString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Login which launches this service");
-	OwnerVariable = new StringVariableAttribute( va, "none" );
+	OwnerVariable = new OMISCID_TLM StringVariableAttribute( va, "none" );
 
 	va = AddVariable(ClassString);
 	va->SetType("class");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of this service");
-	ClassVariable = new StringVariableAttribute( va, DefaultServiceClassName );
+	ClassVariable = new OMISCID_TLM StringVariableAttribute( va, DefaultServiceClassName );
 
 	va = AddVariable(PeerIdString);
 	va->SetType("hexadecimal");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("PeerId of this service");
-	PeerIdVariable = new StringVariableAttribute( va, serviceId );
+	PeerIdVariable = new OMISCID_TLM StringVariableAttribute( va, serviceId );
 
 	registerDnsSd = NULL;
 }
@@ -177,7 +177,7 @@ bool ControlServer::StartServer()
 			PeerIdVariable->SetValue( (char*)tmp_peerid );
 
 			// Create an object to register the service
-			registerDnsSd = new RegisterOmiscidService( PeerIdVariable->GetValue(), "local.", (unsigned short)port, false);
+			registerDnsSd = new OMISCID_TLM RegisterOmiscidService( PeerIdVariable->GetValue(), "local.", (unsigned short)port, false);
 
 			// Add Constant variable
 			// The desctiption if full by default
@@ -780,7 +780,7 @@ VariableAttribute* ControlServer::AddVariable(const SimpleString VarName)
 		return NULL;
 	}
 
-	VariableAttribute* va = new VariableAttribute(VarName);
+	VariableAttribute* va = new OMISCID_TLM VariableAttribute(VarName);
 	listVariable.Add(va);
 
 	// I am the first listener
@@ -815,7 +815,7 @@ InOutputAttribute* ControlServer::AddInOutput(const SimpleString InOutputName, C
 	// Add the connector
 	unsigned int ConnectorId;
 
-	InOutputAttribute* ioa = new InOutputAttribute(InOutputName, com_tool, kind_of_input);
+	InOutputAttribute* ioa = new OMISCID_TLM InOutputAttribute(InOutputName, com_tool, kind_of_input);
 	if ( com_tool )
 	{
 		// Incr number for the Connector

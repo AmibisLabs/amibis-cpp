@@ -27,7 +27,7 @@ Service * Factory::Create( const SimpleString ServiceName, const SimpleString Cl
 	}
 
 	// construct the service
-	Service * NewOmiscidService = new Service(ServiceName, ClassName);
+	Service * NewOmiscidService = new OMISCID_TLM Service(ServiceName, ClassName);
 
 	// Return the service
 	return NewOmiscidService;

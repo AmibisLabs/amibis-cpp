@@ -27,6 +27,12 @@
 	void operator delete( void *p ) throw ();
 	void operator delete[]( void *p ) throw ();
 
+	void * operator new( size_t size, int Line, char * File ) throw (std::bad_alloc);
+	void * operator new[]( size_t size, int Line, char * File ) throw (std::bad_alloc);
+	void operator delete( void *p, int Line, char * File ) throw ();
+	void operator delete[]( void *p, int Line, char * File ) throw ();
+
+
 namespace Omiscid {
 
 	class TrackMemoryLeaks

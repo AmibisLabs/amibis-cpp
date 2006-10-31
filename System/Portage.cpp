@@ -52,7 +52,7 @@ SimpleString MemoryBufferException::GetExceptionType() const
 // class for Allocate/Unallocation memory buffer
 TemporaryMemoryBuffer::TemporaryMemoryBuffer( size_t SizeOfBuffer )
 {
-	Buffer = new char[SizeOfBuffer];
+	Buffer = new OMISCID_TLM char[SizeOfBuffer];
 	if ( Buffer == NULL )
 	{
 		BufferSize = 0;

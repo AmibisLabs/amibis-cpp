@@ -58,7 +58,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	PropertiesForProxy[PeerIdString] = NewId;
 
 	// To say if the service is the one we are looking for...
-	ServiceProxy * SP = new ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
+	ServiceProxy * SP = new OMISCID_TLM ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId
 	if ( SP == NULL )
 	{
 		// printf( "%u;\n", GetTickCount() );
@@ -143,7 +143,7 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 		return false;
 	}
 
-	Connector * pConnector = new Connector();
+	Connector * pConnector = new OMISCID_TLM Connector();
 	if ( pConnector == NULL )
 	{
 		OmiscidError( "Could not allocate a new connector\n" );
@@ -574,7 +574,7 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter, unsigned int WaitTim
 
 	// We want to be sure that we destroy data in the rigth order
 	// Let's do it by ourself
-	WaitForOmiscidServices * WFOS = new WaitForOmiscidServices;
+	WaitForOmiscidServices * WFOS = new OMISCID_TLM WaitForOmiscidServices;
 	if ( WFOS == NULL )
 	{
 		return NULL;
@@ -618,7 +618,7 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 
 	// We want to be sure that we destroy data in the rigth order
 	// Let's do it by ourself
-	WaitForOmiscidServices *    WFOS = new WaitForOmiscidServices;
+	WaitForOmiscidServices *    WFOS = new OMISCID_TLM WaitForOmiscidServices;
 	OmiscidServiceSearchData  * MyData;
 
 	if ( WFOS == NULL )
@@ -628,7 +628,7 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 
 	for( Filters.First(); Filters.NotAtEnd(); Filters.Next() )
 	{
-		MyData = new OmiscidServiceSearchData;
+		MyData = new OMISCID_TLM OmiscidServiceSearchData;
 		if ( MyData == NULL )
 		{
 			// delete WaitForOmiscidServices object
@@ -655,7 +655,7 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 	// Stop the thread
 	WFOS->StopThread();
 
-	if ( ret == true && (ResultServicesProxy = new ServiceProxyList) != NULL )
+	if ( ret == true && (ResultServicesProxy = new OMISCID_TLM ServiceProxyList) != NULL )
 	{
 		// We found what we need and we manadge to construct a list
 		// Add the resulting proxy to the list
