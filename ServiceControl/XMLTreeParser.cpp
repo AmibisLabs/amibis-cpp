@@ -209,7 +209,7 @@ int XMLTreeParser::ProcessMessages()
 		{
 			OmiscidTrace( "'%s' occurs when processing XML message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
 		}
-		delete OMISCID_TLM msg;
+		delete msg;
 		listXMLMsg.RemoveCurrent();
 		nb++;
 	}
