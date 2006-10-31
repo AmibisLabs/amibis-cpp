@@ -198,8 +198,16 @@
 #include <stdarg.h>
 
 #ifdef TRACKING_MEMORY_LEAKS
+
 	// include redefinition of new/delete operator
 	#include <System/TrackingMemoryLeaks.h>
+
+	#define OMISCID_TML (__LINE__,__FILE__)
+
+#else 
+
+	#define OMISCID_TML
+
 #endif
 
 namespace Omiscid {

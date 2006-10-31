@@ -98,7 +98,7 @@ SimpleString::StringData::StringData(const StringData& base, int begin, int end)
 	nbReferences = NULL;
 
 	length = end-begin;
-	data = new char[length + 1];
+	data = new OMISCID_NEW char[length + 1];
 	memcpy(data, TheOther.GetDataPtr()+begin, length);
 	*(data+length) = '\0';
 

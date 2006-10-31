@@ -92,6 +92,8 @@ foreach $fic ( @ExcludedFiles )
 	}
 }
 
+
+
 if ( !defined $ARGV[0] )
 {
 	die "Need a regexpr to search\n";
