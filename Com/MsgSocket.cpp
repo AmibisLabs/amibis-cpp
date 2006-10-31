@@ -102,10 +102,10 @@ peer_pid(0),
 receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
 {
-	buffer = new unsigned char[bufferSize];
-	SendBuffer = new unsigned char[TCP_BUFFER_SIZE];
+	buffer = new OMISCID_TLM unsigned char[bufferSize];
+	SendBuffer = new OMISCID_TLM unsigned char[TCP_BUFFER_SIZE];
 
-	start_tag = new char[tag_size+1];
+	start_tag = new OMISCID_TLM char[tag_size+1];
 	SetMaxMessageSizeForTCP(TCP_BUFFER_SIZE-1);
 }
 
@@ -129,7 +129,7 @@ peer_pid(0),
 receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
 {
-	socket = new Socket(type);
+	socket = new OMISCID_TLM Socket(type);
 	SetMaxMessageSizeForTCP(TCP_BUFFER_SIZE-1);
 }
 
@@ -149,17 +149,17 @@ MsgSocket::~MsgSocket()
 
 	if( buffer )
 	{
-		delete[] buffer;
+		delete [] buffer;
 		buffer = NULL;
 	}
 	if( buffer_udp_send )
 	{
-		delete[] buffer_udp_send;
+		delete [] buffer_udp_send;
 		buffer_udp_send = NULL;
 	}
 	if( start_tag ) 
 	{
-		delete[] start_tag;
+		delete [] start_tag;
 		start_tag = NULL;
 	}
 	if ( SendBuffer )
@@ -358,17 +358,17 @@ void MsgSocket::InitForTcpClient(const SimpleString addr, int port)
 {
 	socket->Connect(addr, port);
 	bufferSize = TCP_BUFFER_SIZE;
-	buffer = new unsigned char[bufferSize];
+	buffer = new OMISCID_TLM unsigned char[bufferSize];
 	if ( buffer == NULL )
 	{
 		throw MsgSocketException( "Not enougth memory" );
 	}
-	SendBuffer = new unsigned char[TCP_BUFFER_SIZE];
+	SendBuffer = new OMISCID_TLM unsigned char[TCP_BUFFER_SIZE];
 	if ( SendBuffer == NULL )
 	{
 		throw MsgSocketException( "Not enougth memory" );
 	}
-	start_tag = new char[tag_size+1];
+	start_tag = new OMISCID_TLM char[tag_size+1];
 	if ( start_tag == NULL )
 	{
 		throw MsgSocketException( "Not enougth memory" );
@@ -397,8 +397,8 @@ void MsgSocket::InitForUdpExchange(int port)
 {
 	socket->Bind(SimpleString::EmptyString, port);    
 	bufferSize = TCP_BUFFER_SIZE;
-	buffer = new unsigned char[bufferSize];
-	buffer_udp_send = new char[UDP_MAX_MSG_SIZE];
+	buffer = new OMISCID_TLM unsigned char[bufferSize];
+	buffer_udp_send = new OMISCID_TLM char[UDP_MAX_MSG_SIZE];
 	kind = UDP_EXCHANGE_KIND;
 	connected = true;
 	occupiedSize = 0;
@@ -770,13 +770,13 @@ void MsgSocket::Receive()
 							OmiscidTrace( "buffer too small : new buffer allocation\n");
 							//allocation new buffer
 							bufferSize = (total+1023)&~1023; // bufferSize = total arrondi au kilo d'octet superieur
-							unsigned char* tmp_buffer = new unsigned char[bufferSize];
+							unsigned char* tmp_buffer = new OMISCID_TLM unsigned char[bufferSize];
 							if(tmp_buffer)
 							{
 								memcpy(tmp_buffer, buffer+offset, size*sizeof(unsigned char));
 								offset = 0;
 								occupiedSize = size;
-								delete[] buffer;
+								delete [] buffer;
 								buffer = tmp_buffer;
 							}			 
 						}
@@ -1119,7 +1119,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 	protectSend.EnterMutex();
 	if ( buffer_udp_send == NULL )
 	{
-		buffer_udp_send = new char[2048];
+		buffer_udp_send = new OMISCID_TLM char[2048];
 		if ( buffer_udp_send == NULL )
 		{
 			protectSend.LeaveMutex();

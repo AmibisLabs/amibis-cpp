@@ -127,7 +127,7 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
 
     if(!udp_found && msg_empty)
     {
-        udp_found = new UdpConnection(udp_connect);
+        udp_found = new OMISCID_TLM UdpConnection(udp_connect);
         listUdpConnections.Add(udp_found);      
     }
     else if (!msg_empty)

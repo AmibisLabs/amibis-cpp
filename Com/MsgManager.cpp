@@ -97,7 +97,7 @@ void MsgManager::ProcessAMessage(Message* msg)
 
 void MsgManager::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 {
-    Message* msg = new Message(cd.Msg.len + 1);
+    Message* msg = new OMISCID_TLM Message(cd.Msg.len + 1);
     msg->len = cd.Msg.len;
     memcpy(msg->buffer, cd.Msg.buffer, cd.Msg.len + 1);
     msg->origine = cd.Msg.GetOrigine();

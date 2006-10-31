@@ -7,13 +7,13 @@ using namespace Omiscid;
 TcpServer::TcpServer()
 : MsgSocket(Socket::TCP), TcpNoDelayMode(false)
 {
-	BufferForMultipleClients = new char[TCP_BUFFER_SIZE];
+	BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
 }
 
 TcpServer::TcpServer(int port, int pid)
 : MsgSocket(Socket::TCP), TcpNoDelayMode(false)
 {
-	BufferForMultipleClients = new char[TCP_BUFFER_SIZE];
+	BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
 	SetServiceId(pid);
 	Create(port);
 }

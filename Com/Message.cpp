@@ -14,7 +14,7 @@ Message::Message(int size)
 
   if ( OriginalSize > 0 )
   {
-	realBuffer = new char[size+1];
+	realBuffer = new OMISCID_TLM char[size+1];
 	buffer = realBuffer+1;
 
   }

@@ -13,7 +13,10 @@ ClientConnection::ClientConnection(TcpClient* tcp_client, UdpConnection* udp_con
 ClientConnection::~ClientConnection()
 { 
 	delete tcpClient;
-	if (udpConnection) delete udpConnection;
+	if ( udpConnection )
+	{
+		delete udpConnection;
+	}
 }
 
 Connector::Connector(int a_pid)
@@ -115,7 +118,7 @@ void FUNCTION_CALL_TYPE Connector::ProcessLyncSyncMsg( MsgSocketCallBackData * M
 
 unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , int port_udp)
 {
-	TcpClient* tcpclient = new TcpClient();
+	TcpClient* tcpclient = new OMISCID_TLM TcpClient();
 
 	if ( tcpclient == NULL )
 	{
@@ -142,7 +145,7 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 	tcpclient->SetSyncLinkData( TcpServer::GetSyncLinkData() );
 
 	// the UDP connection will be filled later
-	ClientConnection * pConnection = new ClientConnection( tcpclient, NULL );
+	ClientConnection * pConnection = new OMISCID_TLM ClientConnection( tcpclient, NULL );
 
 	// add the client to my list of connected Socket
 	ListClients.Lock();
@@ -423,7 +426,7 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 			// We must fill the updConnection
 			if ( ClientCon->udpConnection == NULL )
 			{
-				ClientCon->udpConnection = new UdpConnection(udp_connect);
+				ClientCon->udpConnection = new OMISCID_TLM UdpConnection(udp_connect);
 			}
 			else
 			{
@@ -469,7 +472,7 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 				else
 				{
 					// OmiscidTrace("Creation connection udp associe TcpServer\n");
-					udp_found = new UdpConnection(udp_connect);
+					udp_found = new OMISCID_TLM UdpConnection(udp_connect);
 					if ( udp_found )
 					{
 						UdpExchange::listUdpConnections.Add(udp_found);
