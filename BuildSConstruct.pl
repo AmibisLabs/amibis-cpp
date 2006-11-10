@@ -48,13 +48,43 @@ sub PrintHeaders()
 	}
 }
 
+sub CreateInitTables()
+{
+	my $Folder = shift @_;
+
+	print $SconsInit "${Folder}Headers=[";
+	&PrintHeaders( $Folder );
+	print $SconsInit ']';
+
+	print $SconsInit "${Folder}Sources=[";
+	&PrintSources( $Folder );
+	print $SconsInit ']';
+	
+	
+}
+
+if ( open( $SconsInit, '>OmiscidScons.init' ) == 0 )
+{
+	die "Unable to open 'OmiscidScons.init' to produce output\n" ;
+}
 
 if ( open( $SConstruct, '>SConstruct' ) == 0 )
 {
+	close( $SconsInit );
+	unlink( 'OmiscidScons.init' );
 	die "Unable to open 'SConstruct' to produce output\n" ;
 }
 
+print $SconsInit "import os\n";
+
+&CreateInitTables('System'):
+&CreateInitTables('Com'):
+&CreateInitTables('ServiceControl'):
+
+close( $SconsInit );
+
 print $SConstruct 'import os
+from OmiscidScons.init import *
 from OmiscidScons import *
 env = Environment()
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[\'xml2\'])

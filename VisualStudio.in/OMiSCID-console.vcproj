@@ -145,162 +145,162 @@
 					Name="0 Layer System"
 					Filter="">
 					<File
-						RelativePath="..\OMiSCID\System\AtomicCounter.cpp">
+						RelativePath="..\OMiSCID-dev\System\AtomicCounter.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\AtomicReentrantCounter.cpp">
+						RelativePath="..\OMiSCID-dev\System\AtomicReentrantCounter.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\Event.cpp">
+						RelativePath="..\OMiSCID-dev\System\Event.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\MultipleReferencedData.cpp">
+						RelativePath="..\OMiSCID-dev\System\MultipleReferencedData.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\Mutex.cpp">
+						RelativePath="..\OMiSCID-dev\System\Mutex.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\Portage.cpp">
+						RelativePath="..\OMiSCID-dev\System\Portage.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\RecycleSimpleList.cpp">
+						RelativePath="..\OMiSCID-dev\System\RecycleSimpleList.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\ReentrantMutex.cpp">
+						RelativePath="..\OMiSCID-dev\System\ReentrantMutex.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\SimpleException.cpp">
+						RelativePath="..\OMiSCID-dev\System\SimpleException.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\SimpleList.cpp">
+						RelativePath="..\OMiSCID-dev\System\SimpleList.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\SimpleListException.cpp">
+						RelativePath="..\OMiSCID-dev\System\SimpleListException.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\SimpleString.cpp">
+						RelativePath="..\OMiSCID-dev\System\SimpleString.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\Socket.cpp">
+						RelativePath="..\OMiSCID-dev\System\Socket.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\SocketException.cpp">
+						RelativePath="..\OMiSCID-dev\System\SocketException.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\Thread.cpp">
+						RelativePath="..\OMiSCID-dev\System\Thread.cpp">
 					</File>
 				</Filter>
 				<Filter
 					Name="1 Layer Com"
 					Filter="">
 					<File
-						RelativePath="..\OMiSCID\Com\ComTools.cpp">
+						RelativePath="..\OMiSCID-dev\Com\ComTools.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Config.cpp">
+						RelativePath="..\OMiSCID-dev\Com\Config.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Message.cpp">
+						RelativePath="..\OMiSCID-dev\Com\Message.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\MsgManager.cpp">
+						RelativePath="..\OMiSCID-dev\Com\MsgManager.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\MsgSocket.cpp">
+						RelativePath="..\OMiSCID-dev\Com\MsgSocket.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\MsgSocketException.cpp">
+						RelativePath="..\OMiSCID-dev\Com\MsgSocketException.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\TcpClient.cpp">
+						RelativePath="..\OMiSCID-dev\Com\TcpClient.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\TcpServer.cpp">
+						RelativePath="..\OMiSCID-dev\Com\TcpServer.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\TcpUdpClientServer.cpp">
+						RelativePath="..\OMiSCID-dev\Com\TcpUdpClientServer.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\UdpExchange.cpp">
+						RelativePath="..\OMiSCID-dev\Com\UdpExchange.cpp">
 					</File>
 				</Filter>
 				<Filter
 					Name="2 Layer Service Control"
 					Filter="">
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\Attribut.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\Attribut.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\BrowseForDnsSdService.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\BrowseForDnsSdService.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ConnectorListener.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ConnectorListener.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ControlClient.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ControlClient.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ControlServer.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ControlServer.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ControlUtils.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ControlUtils.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\DnsSdService.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\DnsSdService.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\Factory.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\Factory.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\InOutputAttribut.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\InOutputAttribut.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\IntVariableAttribut.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\IntVariableAttribut.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\LocalVariableListener.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\LocalVariableListener.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\RemoteVariableChangeListener.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\RemoteVariableChangeListener.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\Service.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\Service.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceFilter.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceFilter.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceFromXML.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceFromXML.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceProperties.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceProperties.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceProxy.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceProxy.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceProxyList.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceProxyList.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServicesCommon.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServicesCommon.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServicesTools.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServicesTools.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\StringVariableAttribut.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\StringVariableAttribut.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\VariableAttribut.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\VariableAttribut.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\VariableAttributListener.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\VariableAttributListener.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\WaitForDnsSdServices.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\WaitForDnsSdServices.cpp">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\XMLTreeParser.cpp">
+						RelativePath="..\OMiSCID-dev\ServiceControl\XMLTreeParser.cpp">
 					</File>
 				</Filter>
 			</Filter>
@@ -316,168 +316,168 @@
 					Name="0 Layer System"
 					Filter="">
 					<File
-						RelativePath="..\OMiSCID\System\System\AtomicCounter.h">
+						RelativePath="..\OMiSCID-dev\System\System\AtomicCounter.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\AtomicReentrantCounter.h">
+						RelativePath="..\OMiSCID-dev\System\System\AtomicReentrantCounter.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\Config.h">
+						RelativePath="..\OMiSCID-dev\System\System\Config.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\Event.h">
+						RelativePath="..\OMiSCID-dev\System\System\Event.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\MultipleReferencedData.h">
+						RelativePath="..\OMiSCID-dev\System\System\MultipleReferencedData.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\Mutex.h">
+						RelativePath="..\OMiSCID-dev\System\System\Mutex.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\Portage.h">
+						RelativePath="..\OMiSCID-dev\System\System\Portage.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\RecycleSimpleList.h">
+						RelativePath="..\OMiSCID-dev\System\System\RecycleSimpleList.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\ReentrantMutex.h">
+						RelativePath="..\OMiSCID-dev\System\System\ReentrantMutex.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\SimpleException.h">
+						RelativePath="..\OMiSCID-dev\System\System\SimpleException.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\SimpleList.h">
+						RelativePath="..\OMiSCID-dev\System\System\SimpleList.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\SimpleListException.h">
+						RelativePath="..\OMiSCID-dev\System\System\SimpleListException.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\SimpleString.h">
+						RelativePath="..\OMiSCID-dev\System\System\SimpleString.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\Socket.h">
+						RelativePath="..\OMiSCID-dev\System\System\Socket.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\SocketException.h">
+						RelativePath="..\OMiSCID-dev\System\System\SocketException.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\System\System\Thread.h">
+						RelativePath="..\OMiSCID-dev\System\System\Thread.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="1 Layer Com"
 					Filter="">
 					<File
-						RelativePath="..\OMiSCID\Com\Com\ComTools.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\ComTools.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\Config.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\Config.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\Message.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\Message.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\MsgManager.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\MsgManager.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\MsgSocket.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\MsgSocket.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\MsgSocketException.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\MsgSocketException.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\TcpClient.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\TcpClient.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\TcpServer.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\TcpServer.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\TcpUdpClientServer.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\TcpUdpClientServer.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\Com\Com\UdpExchange.h">
+						RelativePath="..\OMiSCID-dev\Com\Com\UdpExchange.h">
 					</File>
 				</Filter>
 				<Filter
 					Name="2 Layer ServiceControl"
 					Filter="">
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\Attribut.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\Attribut.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\BrowseForDnsSdService.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\BrowseForDnsSdService.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\Config.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\Config.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ConnectorListener.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ConnectorListener.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ControlClient.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ControlClient.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ControlServer.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ControlServer.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ControlUtils.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ControlUtils.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\DnsSdService.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\DnsSdService.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\Factory.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\Factory.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\InOutputAttribut.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\InOutputAttribut.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\IntVariableAttribut.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\IntVariableAttribut.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\LocalVariableListener.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\LocalVariableListener.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\RemoteVariableChangeListener.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\RemoteVariableChangeListener.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\Service.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\Service.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ServiceFilter.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ServiceFilter.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ServiceFromXML.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ServiceFromXML.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ServiceProperties.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ServiceProperties.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ServiceProxy.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ServiceProxy.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ServiceProxyList.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ServiceProxyList.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ServicesCommon.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ServicesCommon.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\ServicesTools.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\ServicesTools.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\StringVariableAttribut.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\StringVariableAttribut.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\VariableAttribut.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\VariableAttribut.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\VariableAttributListener.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\VariableAttributListener.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\WaitForDnsSdServices.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\WaitForDnsSdServices.h">
 					</File>
 					<File
-						RelativePath="..\OMiSCID\ServiceControl\ServiceControl\XMLTreeParser.h">
+						RelativePath="..\OMiSCID-dev\ServiceControl\ServiceControl\XMLTreeParser.h">
 					</File>
 				</Filter>
 			</Filter>

@@ -512,7 +512,7 @@ bool Socket::SetTcpNoDelay(bool Set)
 #else
 	struct protoent *p;
 	p = getprotobyname("tcp");
-	if( p && setsockopt(descriptor, p->p_proto, TCP_NODELAY, &OptVal, sizeof(OptVal)) < 0)
+	if ( p && setsockopt(descriptor, p->p_proto, TCP_NODELAY, &OptVal, sizeof(OptVal)) < 0)
 	{
 		OmiscidError("setsockopt: could not set TCP nodelay\n");
 		return false;
