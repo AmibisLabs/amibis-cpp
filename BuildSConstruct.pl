@@ -65,7 +65,7 @@ sub CreateInitTables()
 }
 
 $OmiscidInitfileShortName = "OmiscidInit";
-$OmiscidInitfile = $OmiscidInitfileShortName . 'py';
+$OmiscidInitfile = $OmiscidInitfileShortName . '.py';
 
 if ( open( $SconsInit, ">$OmiscidInitfile" ) == 0 )
 {
