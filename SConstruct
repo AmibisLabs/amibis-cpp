@@ -18,7 +18,7 @@ env_system = env.Copy()
 env_system.Append(CPPPATH='System')
 target_system = env_system.SharedLibrary(
     target='OmiscidSystem',
-    source=[]
+    source=SystemSources
 )
 libToInstall += target_system
 
@@ -28,7 +28,7 @@ env_com.Append(LIBPATH=['.'])
 env_com.Append(LIBS = ['OmiscidSystem'])
 target_com = env_com.SharedLibrary(
     target='OmiscidCom',
-    source=[]
+    source=ComSources
 )
 
 libToInstall += target_com
@@ -39,7 +39,7 @@ env_control.Append(LIBPATH=['.'])
 env_control.Append(LIBS = ['OmiscidCom', 'OmiscidSystem'])
 target_control = env_control.SharedLibrary(
     target='OmiscidControl',
-    source=[]
+    source=ServiceControlSources
 )
 libToInstall += target_control
 
@@ -49,11 +49,9 @@ env.Depends(target_control, target_com)
 
 
 hToInstall = []
-hToInstall += []
-
-hToInstall += []
-
-hToInstall += []
+hToInstall += SystemHeaders
+hToInstall += ComHeaders
+hToInstall += ServiceControlHeaders
 
 binToInstall += OmiscidDotInFileTarget(env, 'Com/OmiscidCom-config', OmiscidMapping())
 binToInstall += OmiscidDotInFileTarget(env, 'System/OmiscidSystem-config', OmiscidMapping())

@@ -52,7 +52,7 @@ sub CreateInitTables()
 {
 	my $Folder = shift @_;
 
-	print $SconsInit "Layer $Folder\n";
+	print $SconsInit "# Layer $Folder\n";
 	print $SconsInit "${Folder}Headers=[";
 	&PrintHeaders( $Folder );
 	print $SconsInit "]\n";
@@ -108,11 +108,7 @@ env_system = env.Copy()
 env_system.Append(CPPPATH=\'System\')
 target_system = env_system.SharedLibrary(
     target=\'OmiscidSystem\',
-    source=['				; # end of the previous print line
-
-&PrintSources( 'System' );
-
-print $SConstruct ']
+    source=SystemSources
 )
 libToInstall += target_system
 
@@ -122,11 +118,7 @@ env_com.Append(LIBPATH=[\'.\'])
 env_com.Append(LIBS = [\'OmiscidSystem\'])
 target_com = env_com.SharedLibrary(
     target=\'OmiscidCom\',
-    source=['				; # end of the previous print line
-
-&PrintSources( 'Com' );
-
-print $SConstruct ']
+    source=ComSources
 )
 
 libToInstall += target_com
@@ -137,11 +129,7 @@ env_control.Append(LIBPATH=[\'.\'])
 env_control.Append(LIBS = [\'OmiscidCom\', \'OmiscidSystem\'])
 target_control = env_control.SharedLibrary(
     target=\'OmiscidControl\',
-    source=['				; # end of the previous print line
-    
-&PrintSources( 'ServiceControl' );
-    
-print $SConstruct ']
+    source=ServiceControlSources
 )
 libToInstall += target_control
 
@@ -151,23 +139,9 @@ env.Depends(target_control, target_com)
 
 
 hToInstall = []
-hToInstall += ['			; # end of the previous print line
-
-&PrintHeaders( 'System' );
-
-print $SConstruct ']
-
-hToInstall += ['			; # end of the previous print line
-
-&PrintHeaders( 'Com' );
-
-print $SConstruct ']
-
-hToInstall += ['			; # end of the previous print line
-
-&PrintHeaders( 'ServiceControl' );
-
-print $SConstruct ']
+hToInstall += SystemHeaders
+hToInstall += ComHeaders
+hToInstall += ServiceControlHeaders
 
 binToInstall += OmiscidDotInFileTarget(env, \'Com/OmiscidCom-config\', OmiscidMapping())
 binToInstall += OmiscidDotInFileTarget(env, \'System/OmiscidSystem-config\', OmiscidMapping())
