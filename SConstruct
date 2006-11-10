@@ -1,5 +1,5 @@
 import os
-from OmiscidInit.py import *
+from OmiscidInit import *
 from OmiscidScons import *
 env = Environment()
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,['xml2'])

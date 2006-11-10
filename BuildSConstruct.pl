@@ -64,7 +64,8 @@ sub CreateInitTables()
 	
 }
 
-$OmiscidInitfile = "OmiscidInit.py";
+$OmiscidInitfileShortName = "OmiscidInit";
+$OmiscidInitfile = $OmiscidInitfileShortName . 'py';
 
 if ( open( $SconsInit, ">$OmiscidInitfile" ) == 0 )
 {
@@ -88,7 +89,7 @@ print $SconsInit "import os\n\n";
 close( $SconsInit );
 
 print $SConstruct "import os\n";
-print $SConstruct "from $OmiscidInitfile import *\n";
+print $SConstruct "from $OmiscidInitfileShortName import *\n";
 print $SConstruct 'from OmiscidScons import *
 env = Environment()
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[\'xml2\'])
