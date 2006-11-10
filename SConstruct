@@ -1,4 +1,5 @@
 import os
+from OmiscidInit.py import *
 from OmiscidScons import *
 env = Environment()
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,['xml2'])
@@ -17,7 +18,7 @@ env_system = env.Copy()
 env_system.Append(CPPPATH='System')
 target_system = env_system.SharedLibrary(
     target='OmiscidSystem',
-    source=['System/AtomicCounter.cpp','System/AtomicReentrantCounter.cpp','System/ElapsedTime.cpp','System/Event.cpp','System/MultipleReferencedData.cpp','System/Mutex.cpp','System/Portage.cpp','System/RecycleSimpleList.cpp','System/ReentrantMutex.cpp','System/SimpleException.cpp','System/SimpleList.cpp','System/SimpleListException.cpp','System/SimpleString.cpp','System/Socket.cpp','System/SocketException.cpp','System/Thread.cpp','System/TrackingMemoryLeaks.cpp']
+    source=[]
 )
 libToInstall += target_system
 
@@ -27,7 +28,7 @@ env_com.Append(LIBPATH=['.'])
 env_com.Append(LIBS = ['OmiscidSystem'])
 target_com = env_com.SharedLibrary(
     target='OmiscidCom',
-    source=['Com/ComTools.cpp','Com/Config.cpp','Com/Connector.cpp','Com/Message.cpp','Com/MsgManager.cpp','Com/MsgSocket.cpp','Com/MsgSocketException.cpp','Com/TcpClient.cpp','Com/TcpServer.cpp','Com/UdpExchange.cpp']
+    source=[]
 )
 
 libToInstall += target_com
@@ -38,7 +39,7 @@ env_control.Append(LIBPATH=['.'])
 env_control.Append(LIBS = ['OmiscidCom', 'OmiscidSystem'])
 target_control = env_control.SharedLibrary(
     target='OmiscidControl',
-    source=['ServiceControl/Attribute.cpp','ServiceControl/BrowseForDnsSdService.cpp','ServiceControl/Config.cpp','ServiceControl/ConnectorListener.cpp','ServiceControl/ControlClient.cpp','ServiceControl/ControlServer.cpp','ServiceControl/ControlUtils.cpp','ServiceControl/DnsSdProxy.cpp','ServiceControl/DnsSdService.cpp','ServiceControl/Factory.cpp','ServiceControl/InOutputAttribute.cpp','ServiceControl/IntVariableAttribute.cpp','ServiceControl/LocalVariableListener.cpp','ServiceControl/RemoteVariableChangeListener.cpp','ServiceControl/Service.cpp','ServiceControl/ServiceFilter.cpp','ServiceControl/ServiceFromXML.cpp','ServiceControl/ServiceProperties.cpp','ServiceControl/ServiceProxy.cpp','ServiceControl/ServiceProxyList.cpp','ServiceControl/ServicesCommon.cpp','ServiceControl/ServicesTools.cpp','ServiceControl/StringVariableAttribute.cpp','ServiceControl/VariableAttribute.cpp','ServiceControl/VariableAttributeListener.cpp','ServiceControl/WaitForDnsSdServices.cpp','ServiceControl/XMLTreeParser.cpp','ServiceControl/XsdSchema.cpp','ServiceControl/XsdValidator.cpp']
+    source=[]
 )
 libToInstall += target_control
 
@@ -48,11 +49,11 @@ env.Depends(target_control, target_com)
 
 
 hToInstall = []
-hToInstall += [['System/System/AtomicCounter.h','System'],['System/System/AtomicReentrantCounter.h','System'],['System/System/Config.h','System'],['System/System/ElapsedTime.h','System'],['System/System/Event.h','System'],['System/System/MultipleReferencedData.h','System'],['System/System/Mutex.h','System'],['System/System/Portage.h','System'],['System/System/RecycleSimpleList.h','System'],['System/System/ReentrantMutex.h','System'],['System/System/SimpleException.h','System'],['System/System/SimpleList.h','System'],['System/System/SimpleListException.h','System'],['System/System/SimpleString.h','System'],['System/System/Socket.h','System'],['System/System/SocketException.h','System'],['System/System/Thread.h','System'],['System/System/TrackingMemoryLeaks.h','System']]
+hToInstall += []
 
-hToInstall += [['Com/Com/ComTools.h','Com'],['Com/Com/Config.h','Com'],['Com/Com/Connector.h','Com'],['Com/Com/Message.h','Com'],['Com/Com/MsgManager.h','Com'],['Com/Com/MsgSocket.h','Com'],['Com/Com/MsgSocketException.h','Com'],['Com/Com/TcpClient.h','Com'],['Com/Com/TcpServer.h','Com'],['Com/Com/UdpExchange.h','Com']]
+hToInstall += []
 
-hToInstall += [['ServiceControl/ServiceControl/Attribute.h','ServiceControl'],['ServiceControl/ServiceControl/BrowseForDnsSdService.h','ServiceControl'],['ServiceControl/ServiceControl/Config.h','ServiceControl'],['ServiceControl/ServiceControl/ConnectorListener.h','ServiceControl'],['ServiceControl/ServiceControl/ControlClient.h','ServiceControl'],['ServiceControl/ServiceControl/ControlServer.h','ServiceControl'],['ServiceControl/ServiceControl/ControlUtils.h','ServiceControl'],['ServiceControl/ServiceControl/DnsSdProxy.h','ServiceControl'],['ServiceControl/ServiceControl/DnsSdService.h','ServiceControl'],['ServiceControl/ServiceControl/Factory.h','ServiceControl'],['ServiceControl/ServiceControl/InOutputAttribute.h','ServiceControl'],['ServiceControl/ServiceControl/IntVariableAttribute.h','ServiceControl'],['ServiceControl/ServiceControl/LocalVariableListener.h','ServiceControl'],['ServiceControl/ServiceControl/RemoteVariableChangeListener.h','ServiceControl'],['ServiceControl/ServiceControl/Service.h','ServiceControl'],['ServiceControl/ServiceControl/ServiceFilter.h','ServiceControl'],['ServiceControl/ServiceControl/ServiceFromXML.h','ServiceControl'],['ServiceControl/ServiceControl/ServiceProperties.h','ServiceControl'],['ServiceControl/ServiceControl/ServiceProxy.h','ServiceControl'],['ServiceControl/ServiceControl/ServiceProxyList.h','ServiceControl'],['ServiceControl/ServiceControl/ServicesCommon.h','ServiceControl'],['ServiceControl/ServiceControl/ServicesTools.h','ServiceControl'],['ServiceControl/ServiceControl/StringVariableAttribute.h','ServiceControl'],['ServiceControl/ServiceControl/UserFriendlyAPI.h','ServiceControl'],['ServiceControl/ServiceControl/VariableAttribute.h','ServiceControl'],['ServiceControl/ServiceControl/VariableAttributeListener.h','ServiceControl'],['ServiceControl/ServiceControl/WaitForDnsSdServices.h','ServiceControl'],['ServiceControl/ServiceControl/XMLTreeParser.h','ServiceControl'],['ServiceControl/ServiceControl/XsdSchema.h','ServiceControl'],['ServiceControl/ServiceControl/XsdValidator.h','ServiceControl']]
+hToInstall += []
 
 binToInstall += OmiscidDotInFileTarget(env, 'Com/OmiscidCom-config', OmiscidMapping())
 binToInstall += OmiscidDotInFileTarget(env, 'System/OmiscidSystem-config', OmiscidMapping())

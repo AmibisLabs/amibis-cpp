@@ -14,11 +14,11 @@ sub PrintSources()
 		if ( $First )
 		{
 			$First = 0;
-			print $SConstruct "'$File'";
+			print $SconsInit "'$File'";
 		}
 		else
 		{
-			print $SConstruct ",'$File'";		
+			print $SconsInit ",'$File'";		
 		}
 	}
 }
@@ -39,11 +39,11 @@ sub PrintHeaders()
 		if ( $First )
 		{
 			$First = 0;
-			print $SConstruct "['$File','$Folder']";
+			print $SconsInit "['$File','$Folder']";
 		}
 		else
 		{
-			print $SConstruct ",['$File','$Folder']";	
+			print $SconsInit ",['$File','$Folder']";	
 		}
 	}
 }
@@ -52,40 +52,44 @@ sub CreateInitTables()
 {
 	my $Folder = shift @_;
 
+	print $SconsInit "Layer $Folder\n";
 	print $SconsInit "${Folder}Headers=[";
 	&PrintHeaders( $Folder );
-	print $SconsInit ']';
+	print $SconsInit "]\n";
 
 	print $SconsInit "${Folder}Sources=[";
 	&PrintSources( $Folder );
-	print $SconsInit ']';
+	print $SconsInit "]\n\n";
 	
 	
 }
 
-if ( open( $SconsInit, '>OmiscidScons.init' ) == 0 )
+$OmiscidInitfile = "OmiscidInit.py";
+
+if ( open( $SconsInit, ">$OmiscidInitfile" ) == 0 )
 {
-	die "Unable to open 'OmiscidScons.init' to produce output\n" ;
+	die "Unable to open '$OmiscidInitfile' to produce output\n" ;
 }
 
 if ( open( $SConstruct, '>SConstruct' ) == 0 )
 {
 	close( $SconsInit );
-	unlink( 'OmiscidScons.init' );
+	unlink( $OmiscidInitfile );
 	die "Unable to open 'SConstruct' to produce output\n" ;
 }
 
-print $SconsInit "import os\n";
+print $SconsInit "# Tables of layers files\n\n";
+print $SconsInit "import os\n\n";
 
-&CreateInitTables('System'):
-&CreateInitTables('Com'):
-&CreateInitTables('ServiceControl'):
+&CreateInitTables('System');
+&CreateInitTables('Com');
+&CreateInitTables('ServiceControl');
 
 close( $SconsInit );
 
-print $SConstruct 'import os
-from OmiscidScons.init import *
-from OmiscidScons import *
+print $SConstruct "import os\n";
+print $SConstruct "from $OmiscidInitfile import *\n";
+print $SConstruct 'from OmiscidScons import *
 env = Environment()
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,[\'xml2\'])
 
