@@ -940,7 +940,7 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 			int HeaderSend	= 0;
 			int TailerSend	= 0;
 
-			OmiscidTrace( "Message too big for one TCP frame size=%d,  sizemax=%d\n", Sendlen, maxMessageSizeForTCP);
+			OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", Sendlen, maxMessageSizeForTCP);
 			TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, Sendlen, true );
 			if ( TotalLen == -1 )
 			{
@@ -1098,7 +1098,7 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 
 	if(len > maxMessageSizeForTCP)
 	{
-		OmiscidError( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
+		OmiscidError( "Message too big for TCP (size=%d, sizemax=%d) so not sended.\n", len, maxMessageSizeForTCP);
 		throw MsgSocketException("Message too big for TCP");
 	}
 
