@@ -86,6 +86,8 @@ All you need in order to compile your project using OMiSCID is to follow these s
 	for iconv if necessary)
 - say to the linker to link with the dns_sd.lib (Bonjour), libxml2.lib (libxml) and
 	Ws2_32.lib (Winsock2) and maybe add the iconv.lib
+- say in C++/Lnaguage that you want the dynamic information about types (/GR) in order
+	to support dynamic cast.
 	
 Everything should be fine now to compile your code. You can try to compile the
 examples in the 'Examples' folders to check that everything is fine.

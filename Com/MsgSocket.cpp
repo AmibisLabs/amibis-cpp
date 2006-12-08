@@ -265,9 +265,18 @@ SimpleString MsgSocket::GetPeerSyncLinkData()
 	return ReturnValue;
 }
 
-int MsgSocket::PrepareBufferForBip(char * buf, const char * data, int datalen)
+int MsgSocket::PrepareBufferForBip(char * buf, const char * data, int datalen, bool OnlyHeader /*= false */)
 {
 	char * Where;
+
+	if ( OnlyHeader == true )
+	{
+		// write the len of the buffer
+		sprintf( buf, tag_prepared_hdr, datalen );
+
+		return (tag_size);
+	}
+	// else
 
 	if ( buf == NULL || datalen > (TCP_BUFFER_SIZE -1 -tag_size -tag_end_size) )
 	{
@@ -874,7 +883,7 @@ void MsgSocket::Receive()
 				}
 			}
 			occupiedSize = size;
-			if ( occupiedSize != 0 )
+			if ( occupiedSize != 0 && offset != 0 )
 			{
 				memmove(buffer, buffer+offset, occupiedSize);
 			}
@@ -919,20 +928,56 @@ bool MsgSocket::AcceptConnection(MsgSocket* ms)
 	return false;
 }
 
-int MsgSocket::Send(int len, const char* buf)
+int MsgSocket::Send(int Sendlen, const char* buf)
 {
-	int TotalLen;
-
-	if(len > maxMessageSizeForTCP)
-	{
-		OmiscidTrace( "Message too big for TCP size=%d,  sizemax=%d\n", len, maxMessageSizeForTCP);
-		throw MsgSocketException("Message too big for TCP");
-	}
+	int TotalLen = 0;
 
 	protectSend.EnterMutex();
 	try
 	{
-		TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, len );
+		if ( Sendlen > maxMessageSizeForTCP )
+		{
+			int HeaderSend	= 0;
+			int TailerSend	= 0;
+
+			OmiscidTrace( "Message too big for one TCP frame size=%d,  sizemax=%d\n", Sendlen, maxMessageSizeForTCP);
+			TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, Sendlen, true );
+			if ( TotalLen == -1 )
+			{
+				protectSend.LeaveMutex();
+				return -1;
+			}
+
+			// We complete the header
+			WriteHeaderForBip( (char*)SendBuffer, service_id, message_id );
+
+			// Increase the number for the next message
+			message_id++;
+
+			// Send header
+			HeaderSend = socket->Send(TotalLen, (char*)SendBuffer);
+
+			if ( HeaderSend != TotalLen )
+			{
+				return -1;
+			}
+
+			TotalLen = socket->Send( Sendlen, buf );
+			if ( TotalLen == -1 )
+			{
+				return -1;
+			}
+	
+			TailerSend = socket->Send( tag_end_size, tag_end );
+			if ( TailerSend == -1 )
+			{
+				return -1;
+			}
+
+			return TotalLen + HeaderSend + TailerSend;
+		}
+
+		TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, Sendlen );
 		if ( TotalLen == -1 )
 		{
 			protectSend.LeaveMutex();
@@ -945,10 +990,11 @@ int MsgSocket::Send(int len, const char* buf)
 		// Increase the number for the next message
 		message_id++;
 
-		if ( (TotalLen = socket->Send(TotalLen, (char*)SendBuffer)) == -1)
-		{
-			TotalLen = -1;
-		}
+		// if ( (TotalLen = socket->Send(TotalLen, (char*)SendBuffer)) == -1)
+		// {
+		//	TotalLen = -1;
+		//}
+		TotalLen = socket->Send(TotalLen, (char*)SendBuffer);
 
 #ifdef DEBUG
 		if ( Debug & DBG_SEND )
