@@ -938,7 +938,9 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 		if ( Sendlen > maxMessageSizeForTCP )
 		{
 			int HeaderSend	= 0;
+			// int BodySend	= 0;
 			int TailerSend	= 0;
+			int ResSend		= 0;
 
 			OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", Sendlen, maxMessageSizeForTCP);
 			TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, Sendlen, true );
@@ -962,19 +964,32 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 				return -1;
 			}
 
-			TotalLen = socket->Send( Sendlen, buf );
-			if ( TotalLen == -1 )
+			// Let's send data... For linux, we can not send it as a single call to
+			// send, so let's do it the other way... Naggle will do the rest...
+			for( TotalLen=0; TotalLen < Sendlen; TotalLen += ResSend )
 			{
-				return -1;
+				if ( (Sendlen-TotalLen) >= 60*1024 )	// 60 Ko
+				{
+					ResSend = socket->Send( 60*1024, (char*)(buf+TotalLen) );
+				}
+				else
+				{
+					ResSend = socket->Send( Sendlen-TotalLen, (char*)(buf+TotalLen) );
+				}
+
+				if ( ResSend == -1 )
+				{
+					return -1;
+				}
 			}
-	
+
 			TailerSend = socket->Send( tag_end_size, tag_end );
 			if ( TailerSend == -1 )
 			{
 				return -1;
 			}
 
-			return TotalLen + HeaderSend + TailerSend;
+			return HeaderSend + TotalLen + TailerSend;
 		}
 
 		TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, Sendlen );
