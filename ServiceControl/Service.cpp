@@ -223,7 +223,8 @@ bool Service::SendToOneClient(SimpleString ConnectorName, char * Buffer, int Buf
 
 	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
 
-	if ( pConnector->GetMaxMessageSizeForTCP() <= BufferLen )
+	// What is it ?
+	// if ( pConnector->GetMaxMessageSizeForTCP() <= BufferLen )
 
 	// if ReliableSend == true, we should send over udp so the last parameter (udp send)
 	// must be true
