@@ -497,8 +497,8 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 					OmiscidError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
 				}
 			}
+			TcpServer::listConnections.Unlock();
 		}
-		TcpServer::listConnections.Unlock();
 	}
 	else
 	{
