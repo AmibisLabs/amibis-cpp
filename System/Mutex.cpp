@@ -21,24 +21,8 @@ Mutex::Mutex()
 		OwnerId = 0;
 	#endif
 #else
-	int err = pthread_mutex_destroy(&mutex);
-	switch( err )
-	{
-		case 0:	// no error
-			break;
-	
-		case EINVAL:
-			throw SimpleException("Error Mutex Destroy (EINVAL)", err );
-			break;
-
-		case EBUSY:
-			throw SimpleException("Error Mutex Destroy (EBUSY)", err );
-			break;
-
-		default:
-			throw SimpleException("Error Mutex Destroy (unkown error)", err );
-			break;
-	}
+	if(pthread_mutex_init(&mutex, NULL) != 0)
+		throw  SimpleException("Error Mutex Init");
 #endif	
 }
 
