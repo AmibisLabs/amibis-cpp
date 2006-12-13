@@ -198,7 +198,7 @@ int XMLTreeParser::ProcessMessages()
 	listXMLMsg.Lock();
 	int nb = 0;
 	XMLMessage* msg = NULL;
-	for(listXMLMsg.First(); listXMLMsg.NotAtEnd(); listXMLMsg.Next())
+	while( listXMLMsg.IsNotEmpty() )
 	{
 		msg = listXMLMsg.ExtractFirst();
 		try

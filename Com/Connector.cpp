@@ -228,8 +228,9 @@ void Connector::SendToAll(int len, const char* buf, bool fastsend)
 	{
 		TcpServer::listConnections.Lock();
 		UdpExchange::listUdpConnections.Lock();
-
-		for(TcpServer::listConnections.First();  TcpServer::listConnections.NotAtEnd(); 
+                try
+                {
+                for(TcpServer::listConnections.First();  TcpServer::listConnections.NotAtEnd(); 
 			TcpServer::listConnections.Next())
 		{
 			unsigned int tcp_pid = (TcpServer::listConnections.GetCurrent())->GetPeerPid();
@@ -254,9 +255,11 @@ void Connector::SendToAll(int len, const char* buf, bool fastsend)
 				}
 			}
 		}       
+                } catch(...) {
+                }
 
-		TcpServer::listConnections.Unlock();
 		UdpExchange::listUdpConnections.Unlock();
+		TcpServer::listConnections.Unlock();
 	}
 
 	// send to all server where it is connected
@@ -447,6 +450,8 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 
 	//std::cout << "recherche dans server connexion\n";
 	TcpServer::listConnections.Lock();
+        try
+        {
 
 	for(TcpServer::listConnections.First(); (tcp_found == NULL) && TcpServer::listConnections.NotAtEnd();
 		TcpServer::listConnections.Next())
@@ -488,6 +493,9 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 			delete tcp_found;
 		}
 	}
+        } catch(...) {
+        }
+
 	TcpServer::listConnections.Unlock();
 
 	if( udp_found == NULL )
