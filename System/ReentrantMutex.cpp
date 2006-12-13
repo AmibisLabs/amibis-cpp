@@ -38,24 +38,7 @@ ReentrantMutex::~ReentrantMutex()
 		CloseHandle( mutex );
 	}
 #else
-	int err = pthread_mutex_destroy(&mutex);
-	switch( err )
-	{
-		case 0:	// no error
-			break;
-	
-		case EINVAL:
-			throw SimpleException("Error ReentrantMutex Destroy (EINVAL)", err );
-			break;
-
-		case EBUSY:
-			throw SimpleException("Error ReentrantMutex Destroy (EBUSY)", err );
-			break;
-
-		default:
-			throw SimpleException("Error ReentrantMutex Destroy (unkown error)", err );
-			break;
-	}
+	pthread_mutex_destroy(&mutex);
 #endif
 }
 
