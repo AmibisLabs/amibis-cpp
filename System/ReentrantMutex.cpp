@@ -45,15 +45,15 @@ ReentrantMutex::~ReentrantMutex()
 			break;
 	
 		case EINVAL:
-			thow SimpleException("Error ReentrantMutex Destroy (EINVAL)", err );
+			throw SimpleException("Error ReentrantMutex Destroy (EINVAL)", err );
 			break;
 
 		case EBUSY:
-			thow SimpleException("Error ReentrantMutex Destroy (EBUSY)", err );
+			throw SimpleException("Error ReentrantMutex Destroy (EBUSY)", err );
 			break;
 
 		default:
-			thow SimpleException("Error ReentrantMutex Destroy (unkown error)", err );
+			throw SimpleException("Error ReentrantMutex Destroy (unkown error)", err );
 			break;
 	}
 #endif

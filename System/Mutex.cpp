@@ -28,15 +28,15 @@ Mutex::Mutex()
 			break;
 	
 		case EINVAL:
-			thow SimpleException("Error Mutex Destroy (EINVAL)", err );
+			throw SimpleException("Error Mutex Destroy (EINVAL)", err );
 			break;
 
 		case EBUSY:
-			thow SimpleException("Error Mutex Destroy (EBUSY)", err );
+			throw SimpleException("Error Mutex Destroy (EBUSY)", err );
 			break;
 
 		default:
-			thow SimpleException("Error Mutex Destroy (unkown error)", err );
+			throw SimpleException("Error Mutex Destroy (unkown error)", err );
 			break;
 	}
 #endif	
