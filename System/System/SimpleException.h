@@ -11,6 +11,10 @@
 
 #include <System/SimpleString.h>
 
+#ifndef WIN32
+	#include <errno.h>
+#endif
+
 namespace Omiscid {
 
 /**
