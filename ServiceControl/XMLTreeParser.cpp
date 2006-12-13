@@ -200,7 +200,7 @@ int XMLTreeParser::ProcessMessages()
 	XMLMessage* msg = NULL;
 	for(listXMLMsg.First(); listXMLMsg.NotAtEnd(); listXMLMsg.Next())
 	{
-		msg = listXMLMsg.GetCurrent();
+		msg = listXMLMsg.ExtractFirst();
 		try
 		{
 			ProcessAMessage(msg);
@@ -210,7 +210,7 @@ int XMLTreeParser::ProcessMessages()
 			OmiscidTrace( "'%s' occurs when processing XML message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
 		}
 		delete msg;
-		listXMLMsg.RemoveCurrent();
+		// listXMLMsg.RemoveCurrent();
 		nb++;
 	}
 	listXMLMsg.Unlock();
