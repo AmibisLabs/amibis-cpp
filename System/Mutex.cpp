@@ -21,8 +21,24 @@ Mutex::Mutex()
 		OwnerId = 0;
 	#endif
 #else
-	if(pthread_mutex_init(&mutex, NULL) != 0)
-		throw  SimpleException("Error Mutex Init");
+	int err = pthread_mutex_destroy(&mutex);
+	switch( err )
+	{
+		case 0:	// no error
+			break;
+	
+		case EINVAL:
+			thow SimpleException("Error Mutex Destroy (EINVAL)", err );
+			break;
+
+		case EBUSY:
+			thow SimpleException("Error Mutex Destroy (EBUSY)", err );
+			break;
+
+		default:
+			thow SimpleException("Error Mutex Destroy (unkown error)", err );
+			break;
+	}
 #endif	
 }
 
@@ -34,8 +50,24 @@ Mutex::~Mutex()
 		CloseHandle( mutex );
 	}
 #else
-	if(pthread_mutex_destroy(&mutex) != 0)
-		throw SimpleException("Error Mutex Destroy");
+	int err = pthread_mutex_destroy(&mutex);
+	switch( err )
+	{
+		case 0:	// no error
+			break;
+	
+		case EINVAL:
+			thow SimpleException("Error Mutex Destroy (EINVAL)", err );
+			break;
+
+		case EBUSY:
+			thow SimpleException("Error Mutex Destroy (EBUSY)", err );
+			break;
+
+		default:
+			thow SimpleException("Error Mutex Destroy (unkown error)", err );
+			break;
+	}
 #endif
 }
 
