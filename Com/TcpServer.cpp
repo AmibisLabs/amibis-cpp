@@ -324,9 +324,9 @@ bool TcpServer::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	return true;
 }
 
-  /** \brief Remove all callback objects for notification
-   *
-   */
+/** \brief Remove all callback objects for notification
+*
+*/
 void TcpServer::RemoveAllCallbackObjects()
 {
 	MsgSocket::RemoveAllCallbackObjects();
@@ -464,7 +464,7 @@ bool TcpServer::DisconnectPeerId(unsigned int PeerId)
 	MsgSocket * ms;
 	bool ret = false;
 	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
-		
+
 	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();

@@ -638,7 +638,7 @@ void MsgSocket::Stop()
 		CallbackObjects.Unlock();
 		connected = false;
 	}
-	Thread::StopThread();
+	Thread::StopThread(0);
 }
 
 void MsgSocket::Receive()
@@ -680,7 +680,7 @@ void MsgSocket::Receive()
 
 			int offset = 0;
 			int size = occupiedSize;
-			while(!stop)
+			while ( connected == true && stop == false )
 			{
 				length_msg = pid = mid = 0;
 				if((length_header = GoodBeginning(buffer+offset, size, length_msg, pid, mid)) != 0)
@@ -886,6 +886,7 @@ void MsgSocket::Receive()
 			if ( occupiedSize != 0 && offset != 0 )
 			{
 				memmove(buffer, buffer+offset, occupiedSize);
+				// offset is local. It will be set to 0 again.
 			}
 		}
 	}
