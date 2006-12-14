@@ -16,7 +16,7 @@ Mutex::Mutex()
 {
 #ifdef WIN32
 	// mutex = CreateMutex( NULL, false, NULL );
-	mutex = CreateSemaphore(NULL, 1, 2^32-1, NULL );
+	mutex = CreateSemaphore(NULL, 1, (LONG)0xffffffff, NULL );
 	#ifdef DEBUG
 		OwnerId = 0;
 	#endif
