@@ -943,8 +943,8 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 			int TailerSend	= 0;
 			int ResSend		= 0;
 
-			OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", Sendlen, maxMessageSizeForTCP);
-			TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, Sendlen, true );
+			// OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", Sendlen, maxMessageSizeForTCP);
+			TotalLen = PrepareBufferForBip( (char*)SendBuffer, NULL, Sendlen, true );
 			if ( TotalLen == -1 )
 			{
 				protectSend.LeaveMutex();
@@ -1049,11 +1049,86 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 
 int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 {
+	int i;
+	int SendLen;
 	int TotalLen;
+
+	// Compute the len of all buffers
+	for( SendLen = 0, i = 0; i < nb_buf; i ++ )
+	{
+		SendLen += tab_length[i];
+	}
 
 	protectSend.EnterMutex();
 	try
 	{
+		if ( SendLen > maxMessageSizeForTCP )
+		{
+			int HeaderSend	= 0;
+			int BodySend	= 0;
+			int TailerSend	= 0;
+			int ResSend		= 0;
+
+			OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", SendLen, maxMessageSizeForTCP);
+			
+			// prepare buffer
+			TotalLen = PrepareBufferForBip( (char*)SendBuffer, NULL, SendLen, true );
+			if ( TotalLen == -1 )
+			{
+				protectSend.LeaveMutex();
+				return -1;
+			}
+
+			// We complete the header
+			WriteHeaderForBip( (char*)SendBuffer, service_id, message_id );
+
+			// Increase the number for the next message
+			message_id++;
+
+			// Send header
+			HeaderSend = socket->Send(TotalLen, (char*)SendBuffer);
+
+			if ( HeaderSend != TotalLen )
+			{
+				return -1;
+			}
+
+			// Send all parts of the message in maximum 60 ko frame
+			for( i = 0; i < nb_buf; i ++ )
+			{
+				// Let's send data... For linux, we can not send it as a single call to
+				// send, so let's do it the other way... Naggle will do the rest...
+				for( TotalLen=0; TotalLen < tab_length[i]; TotalLen += ResSend )
+				{
+					if ( (tab_length[i]-TotalLen) >= 60*1024 )	// 60 Ko
+					{
+						ResSend = socket->Send( 60*1024, (char*)(tab_buf[i]+TotalLen) );
+					}
+					else
+					{
+						ResSend = socket->Send( tab_length[i]-TotalLen, (char*)(tab_buf[i]+TotalLen) );
+					}
+
+					if ( ResSend == -1 )
+					{
+						return -1;
+					}
+
+					BodySend += ResSend;
+				}
+			}
+
+			// Send end of the message
+			TailerSend = socket->Send( tag_end_size, tag_end );
+			if ( TailerSend == -1 )
+			{
+				return -1;
+			}
+
+			return HeaderSend + BodySend + TailerSend;
+		}
+
+
 		TotalLen = PrepareBufferForBipFromCuttedMsg( (char*)SendBuffer, tab_length, tab_buf, nb_buf);
 		if ( TotalLen == -1 )
 		{
