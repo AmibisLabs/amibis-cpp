@@ -1113,9 +1113,8 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 					{
 						return -1;
 					}
-
-					BodySend += ResSend;
 				}
+				BodySend += TotalLen;
 			}
 
 			// Send end of the message
