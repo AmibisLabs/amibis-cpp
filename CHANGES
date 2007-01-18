@@ -5,9 +5,10 @@
 In this files, you will find changes between OMiSCID versions.
 
 1.0.4	2007-01-09
-	- correct some dead lock problem
+	- correct some dead lock problems
 	- correct send huge TCP messages under linux (worked fine
 	under windows).
+	- correct some bugs
 
 1.0.3	2006-10-26
 	- Add a global include file for the User Friendly Interface
