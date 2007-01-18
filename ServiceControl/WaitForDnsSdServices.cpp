@@ -513,7 +513,7 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 
 			if ( Done == true || CountWaitedTime.Get() >= DelayMax )
 			{
-				return true;
+				return Done;
 			}
 
 			Sleep( 10 );
