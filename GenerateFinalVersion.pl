@@ -26,9 +26,9 @@ sub WorkOnFile()
 @UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile' );
 $Version = "1.0.0";
 
-if ( -e 'LastVersion.info' )
+if ( -e '../LastVersion.info' )
 {
-	open( $fd, '<LastVersion.info' ) or die "Unable to open 'LastVersion.info'\n";
+	open( $fd, '<../LastVersion.info' ) or die "Unable to open '../LastVersion.info'\n";
 	$line = <$fd>;
 	if ( $line =~ /^(\d+)\.(\d+)\.(\d+)[\s\r\n]+$/ )
 	{
@@ -37,17 +37,17 @@ if ( -e 'LastVersion.info' )
 	}
 	else
 	{
-		die "unable to parse 'LastVersion.info'\n";
+		die "unable to parse '../LastVersion.info'\n";
 	}
 }
 
 print "=> $Version\n";
 
 $VersionFile = "Omiscid-$Version.zip";
-if ( -e $VersionFile )
+if ( -e "../$VersionFile" )
 {
 	print "Remove $VersionFile\n";
-	`rm -rf $VersionFile`;
+	unlink "../$VersionFile";
 }
 
 if ( -e 'Doc' && -d 'Doc' )
@@ -83,4 +83,37 @@ chdir('..');
 system( $command );
 chdir('OMiSCID');
 
-`echo $Version > LastVersion.info`;
+$TestComputer = 'astree';
+
+# copy Archive to the test computer
+`scp ../$VersionFile $TestComputer:/tmp/`;
+
+# set that it is not tested successfully
+$Tested = 0;
+
+open($ExecCommand, "ssh $TestComputer \"cd /tmp;rm -rf OMiSCID;unzip $VersionFile;cd OMiSCID;scons debug=1 trace=1\" |");
+while( $ligne = <$ExecCommand> )
+{
+	print $ligne;
+	if ( $ligne =~ /^scons: done building targets./ )
+	{
+		# test is ok
+		$Tested = 1;
+	}
+}
+close( $ExecCommand );
+
+# cleaning up
+`ssh $TestComputer "cd /tmp;rm -rf OMiSCID;rm -f $VersionFile"`;
+
+if ( $Tested == 1 )
+{
+	print "\n\n\t=> $VersionFile successfully generated.\n";
+	`echo $Version > ../LastVersion.info`;
+}
+else
+{
+	print "Could not generate and test on $TestComputer $VersionFile.\n";
+	# clean up
+	`rm ../$VersionFile`;
+}
