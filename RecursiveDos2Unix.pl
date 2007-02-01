@@ -34,7 +34,7 @@ sub WorkOnFile()
 		&Reformat($FileName);
 	}
 
-	if ( $FileName =~ /^SConstruct|OmiscidScons.py|OmiscidInit.py|LICENCE|README|CHANGES|Doxyfile$/ )
+	if ( $FileName =~ /^SConstruct|LICENCE|README|CHANGES|Doxyfile$/ )
 	{
 		&Reformat($FileName);
 	}
@@ -45,7 +45,7 @@ sub EnterDirectory()
  	my $DirName = shift @_;
 	my $UserData = shift @_;
 	
-	if ( $DirName =~ /\.svn/ || $DirName =~ /VisualStudio.in|WorkingForOMiSCID|Spec/ )
+	if ( $DirName =~ /\.svn/ || $DirName =~ /VisualStudio.in|WorkingForOMiSCID|Spec|Xsd/ )
 	{
 		return 0;
 	}
