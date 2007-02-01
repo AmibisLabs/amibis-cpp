@@ -23,7 +23,7 @@ sub WorkOnFile()
 	$FilesToAdd{$FileName} = 1;
 }
 
-@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile' );
+@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile' );
 $Version = "1.0.0";
 
 if ( -e 'LastVersion.info' )

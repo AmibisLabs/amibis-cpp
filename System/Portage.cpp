@@ -114,6 +114,12 @@ int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 	return 0;
 }
 
+#endif // WIN32
+
+#if defined WIN32 || defined __APPLE__
+
+// Add libc extension from gnu to Windows/Mac OSX
+
 void * Omiscid::memrchr( const void * Buf, int c, size_t size )
 {
 	char *	TmpChar;
@@ -138,7 +144,7 @@ void * Omiscid::memrchr( const void * Buf, int c, size_t size )
 	return NULL;
 }
 
-#endif // WIN32
+#endif // defined WIN32 || defined __APPLE__
 
 #ifndef __APPLE__
 
@@ -177,9 +183,9 @@ void Omiscid::RandomInit()
 		gettimeofday(&t, NULL);
 
 #ifdef WIN32
-		srand(t.tv_sec ^ t.tv_usec ^ GetCurrentThreadId());
+		srand(t.tv_sec ^ t.tv_usec ^ (long int)GetCurrentThreadId());
 #else	// WIN32
-		srandom(t.tv_sec ^ t.tv_usec ^ pthread_self() );
+		srandom(t.tv_sec ^ t.tv_usec ^ (long int)pthread_self() );
 #endif	// WIN32
 }
 

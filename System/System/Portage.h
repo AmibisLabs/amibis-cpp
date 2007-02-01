@@ -17,12 +17,18 @@ namespace Omiscid {
 
 	// Time function port under Windows
 	int gettimeofday(struct timeval*tv,struct timezone*tz ); // tz is ignored on windows plateforms
-	void * memrchr( const void * Buf, int c, size_t size );
 
 	// random port
 	int random();
 
 #endif	// ifdef WIN32
+
+#if defined WIN32 || defined __APPLE__
+
+	// Add libc extension from gnu to Windows/Mac OSX
+	void * memrchr( const void * Buf, int c, size_t size );
+#endif
+
 
 #ifndef __APPLE__
 	// Port of the apple function
