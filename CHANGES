@@ -4,6 +4,11 @@
 
 In this files, you will find changes between OMiSCID versions.
 
+1.0.5	2007-02-01
+	- correct some portability problem with Mac OSX
+	- change tabs into 4 spaces
+	- minor corrections
+
 1.0.4	2007-01-09
 	- correct some dead lock problems
 	- correct send huge TCP messages under linux (worked fine
