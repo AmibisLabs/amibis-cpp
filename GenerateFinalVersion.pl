@@ -59,6 +59,8 @@ if ( -e 'Doc' && -d 'Doc' )
 print "Generate Doc\n";
 `doxygen`;
 
+`perl RecursiveDos2Unix.pl`;
+
 &RecurseWork::RecurseWork("System/");
 &RecurseWork::RecurseWork("Com/");
 &RecurseWork::RecurseWork("ServiceControl/");
