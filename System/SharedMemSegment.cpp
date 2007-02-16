@@ -25,6 +25,30 @@ SharedMemSegment::~SharedMemSegment()
 	Close();
 }
 
+#ifndef WIN32 // for linux and OS X
+bool SharedMemSegment::RemoveSharedMemSegment( unsigned int SegtKey )
+{
+	struct shmid_ds SharedMemInfos;
+	int iSharedMem;
+
+	// Check if we get information about it
+	iSharedMem = shmget( SegtKey, 0, 0 );
+	if ( iSharedMem == -1 || shmctl( iSharedMem, IPC_STAT, &SharedMemInfos ) == -1 )
+	{
+		return false;
+	}
+
+	// Is it freeable ?
+	if ( SharedMemInfos.shm_nattch == 0 )
+	{
+		// Try to remove it
+		return (shmctl( iSharedMem, IPC_RMID, (struct shmid_ds*)NULL ) != -1 );
+	}
+
+	return false;
+}
+#endif
+
 void SharedMemSegment::SetName( unsigned int SegKey )
 {
 	TemporaryMemoryBuffer Tmpc(32);
@@ -126,12 +150,17 @@ bool SharedMemSegment::CreateAndOpen( unsigned int SegKey, int SegmentSize, bool
 		return false;
 	}
 #else
+	OmiscidTrace( "%d\n", Name );
 	// Create new segment or fail
-	iSegMem = shmget( Name, TotalSize, IPC_CREAT | IPC_EXCL );
+	iSegMem = shmget( Name, TotalSize, IPC_CREAT | IPC_EXCL | 0666 );
 	if ( iSegMem == -1 )
 	{
-		OmiscidTrace( "Could not open segment %8.8x\n", SegKey );
-		return false;
+		// Try to remove it
+		if ( RemoveSharedMemSegment( Name ) == false || (iSegMem = shmget( Name, TotalSize, IPC_CREAT | IPC_EXCL | 0666 )) == -1 )
+		{
+			OmiscidTrace( "Could not open segment %8.8x\n", SegKey );
+			return false;
+		}
 	}
 	// Get address of the segment
 	SegAddress = (void *)shmat( iSegMem, 0, 0 );
@@ -141,6 +170,7 @@ bool SharedMemSegment::CreateAndOpen( unsigned int SegKey, int SegmentSize, bool
 		Close();
 		return false;
 	}
+
 #endif // WIN32
 
 	// Here we have the Segment, so prepare it
@@ -193,7 +223,7 @@ bool SharedMemSegment::Open( unsigned int SegKey, bool ReadAndWriteAccess /* = f
 	// Do we want also a write access
 	if ( ReadAndWriteAccess == false )
 	{
-		DesiredAccess |= SHM_RDONLY;
+		DesiredAccess = SHM_RDONLY;
 	}
 	else
 	{
@@ -227,13 +257,22 @@ void SharedMemSegment::Close()
 		CloseHandle( hSegMemFile );
 	}
 #else
-	shmdt( SegAddress );
+	// Say to the system that this share can be destroy
+	// if no one is using it
+	if ( iSegMem != -1 )
+	{
+		shmctl(iSegMem, IPC_RMID, NULL );
+	}
+	if ( SegAddress != NULL )
+	{
+		shmdt( SegAddress );
+	}
 #endif // WIN32
 
 	// Unset members
 	SegmentKey	= 0;
 	SegAddress	= NULL;
-	AccessFlags = NULL;
+	AccessFlags	= NULL;
 	UserAddress	= NULL;
 
 #ifdef WIN32

@@ -38,6 +38,10 @@ public:
 protected:
 	void SetName( unsigned int SegtKey );
 
+#ifndef WIN32 // for linux and OS X
+	static bool RemoveSharedMemSegment( unsigned int SegtKey );
+#endif
+
 
 	// Segment Management
 	void * SegAddress;
