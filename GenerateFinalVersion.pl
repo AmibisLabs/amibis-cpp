@@ -83,28 +83,57 @@ chdir('..');
 system( $command );
 chdir('OMiSCID');
 
-$TestComputer = 'astree';
+$Computers{'astree'} = '00:0e:0c:5e:45:86';
+$Computers{'metis'}  = '00:0d:93:6f:c3:8c';
+$Computers{'desdemona'}  = '00:0b:cd:62:4f:a9';
+$NumComputer = 0;
 
-# copy Archive to the test computer
-`scp ../$VersionFile $TestComputer:/tmp/`;
-
-# set that it is not tested successfully
-$Tested = 0;
-
-open($ExecCommand, "ssh $TestComputer \"cd /tmp;rm -rf OMiSCID;unzip $VersionFile;cd OMiSCID;scons debug=1 trace=1\" |");
-while( $ligne = <$ExecCommand> )
+foreach $TestComputer ( keys %Computers )
 {
-	print $ligne;
-	if ( $ligne =~ /^scons: done building targets./ )
+	# Check if computer if available
+	print STDERR "Trying to connect to $TestComputer.\n";
+	$NbTry = 10;
+	while( $NbTry > 0 )
 	{
-		# test is ok
-		$Tested = 1;
+		$res = `ssh $TestComputer "echo 'ssh is not ok.'"`;
+		if ( $res =~ /^ssh is not ok\./ )
+		{
+			last;
+		}
+		print STDERR "Send an etherwake command to $TestComputer.\n";
+		$MacAddress = $Computers{$TestComputer};
+		$MacAddress =~ s/://g;
+		`wol $MacAddress`;
+		sleep( 10 );
+		$NbTry--;
 	}
-}
-close( $ExecCommand );
+	if ( $NbTry == 0 )
+	{
+		$Tested = 0;
+		last;
+	}
 
-# cleaning up
-`ssh $TestComputer "cd /tmp;rm -rf OMiSCID;rm -f $VersionFile"`;
+	# copy Archive to the test computer
+	`scp ../$VersionFile $TestComputer:/tmp/`;
+	
+	# set that it is not tested successfully
+	$Tested = 0;
+	
+	open($ExecCommand, "ssh $TestComputer \"cd /tmp;rm -rf OMiSCID;unzip $VersionFile;cd OMiSCID;scons debug=1 trace=1\" |");
+	while( $ligne = <$ExecCommand> )
+	{
+		print $ligne;
+		if ( $ligne =~ /^scons: done building targets./ )
+		{
+			# test is ok
+			$Tested = 1;
+		}
+	}
+	close( $ExecCommand );
+	
+	# cleaning up
+	`ssh $TestComputer "cd /tmp;rm -rf OMiSCID;rm -f $VersionFile"`;
+}
 
 if ( $Tested == 1 )
 {
