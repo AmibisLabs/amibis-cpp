@@ -182,7 +182,7 @@ bool SharedMemSegment::Open( unsigned int SegKey, bool ReadAndWriteAccess /* = f
 	}
 #else
 	// open a previously created shared segment or fail
-	iSegMem = shmget( Name, TotalSize, 0 );
+	iSegMem = shmget( Name, 0, 0 );
 	if ( iSegMem == -1 )
 	{
 		OmiscidTrace( "Could not open segment %8.8x\n", SegKey );
@@ -227,7 +227,7 @@ void SharedMemSegment::Close()
 		CloseHandle( hSegMemFile );
 	}
 #else
-	shmdt( iSegMem );
+	shmdt( SegAddress );
 #endif // WIN32
 
 	// Unset members
