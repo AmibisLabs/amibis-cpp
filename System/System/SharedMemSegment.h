@@ -65,8 +65,10 @@ protected:
 	HANDLE hSegMemFile;
 #else
 	key_t Name;
+	int iSegMem;
 #endif // WIN32
-	int SegmentKey;
+
+	int SegmentKey; // Kay given by the call to CreateAndOpen or Open
 };
 
 

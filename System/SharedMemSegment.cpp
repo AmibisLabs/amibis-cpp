@@ -15,7 +15,8 @@ SharedMemSegment::SharedMemSegment()
 	Name.Empty();
 	hSegMemFile = NULL;
 #else
-	Name = (key_t)NULL;
+	Name	= (key_t)0;
+	iSegMem = -1;
 #endif
 }
 
@@ -125,6 +126,21 @@ bool SharedMemSegment::CreateAndOpen( unsigned int SegKey, int SegmentSize, bool
 		return false;
 	}
 #else
+	// Create new segment or fail
+	iSegMem = shmget( Name, TotalSize, IPC_CREAT | IPC_EXCL );
+	if ( iSegMem == -1 )
+	{
+		OmiscidTrace( "Could not open segment %8.8x\n", SegKey );
+		return false;
+	}
+	// Get address of the segment
+	SegAddress = (void *)shmat( iSegMem, 0, 0 );
+	if ( SegAddress == NULL )
+	{
+		OmiscidTrace( "Could not open segment %8.8x (no access)\n", SegKey );
+		Close();
+		return false;
+	}
 #endif // WIN32
 
 	// Here we have the Segment, so prepare it
@@ -165,12 +181,37 @@ bool SharedMemSegment::Open( unsigned int SegKey, bool ReadAndWriteAccess /* = f
 		return false;
 	}
 #else
+	// open a previously created shared segment or fail
+	iSegMem = shmget( Name, TotalSize, 0 );
+	if ( iSegMem == -1 )
+	{
+		OmiscidTrace( "Could not open segment %8.8x\n", SegKey );
+		return false;
+	}
+
+	int DesiredAccess;
+	// Do we want also a write access
+	if ( ReadAndWriteAccess == false )
+	{
+		DesiredAccess |= SHM_RDONLY;
+	}
+	else
+	{
+		DesiredAccess = 0;
+	}
+
+	// Get address of the segment
+	SegAddress = (void *)shmat( iSegMem, 0, DesiredAccess );
+	if ( SegAddress == NULL )
+	{
+		OmiscidTrace( "Could not open segment %8.8x (no access)\n", SegKey );
+		Close();
+		return false;
+	}
 #endif // WIN32
 
 	// Here we have the Segment, so prepare it
-	GetSharedMemSegmentAccess( ReadAndWriteAccess );
-
-	return true;
+	return GetSharedMemSegmentAccess( ReadAndWriteAccess );
 }
 
 void SharedMemSegment::Close()
@@ -186,7 +227,7 @@ void SharedMemSegment::Close()
 		CloseHandle( hSegMemFile );
 	}
 #else
-
+	shmdt( iSegMem );
 #endif // WIN32
 
 	// Unset members
@@ -199,6 +240,7 @@ void SharedMemSegment::Close()
 	Name.Empty();
 	hSegMemFile = NULL;
 #else
-	Name = (key_t)NULL;
+	Name	= (key_t)0;
+	iSegMem = -1;
 #endif
 }
