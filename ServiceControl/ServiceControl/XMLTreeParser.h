@@ -38,12 +38,6 @@ class XMLMessage
   /** @brief Constructor */
   XMLMessage();
  
-  /** @brief Destructor 
-   *
-   * free the XML tree, if the doc attribute is not NULL.
-   */
-  ~XMLMessage(); 
-
   /** @brief Copy Constructor 
    *
    * The message as XML tree is not copied.
@@ -53,7 +47,18 @@ class XMLMessage
    * @param msg [in] the message to copy
    */
   XMLMessage(const XMLMessage& msg);
-  
+
+  /** @brief Constructor from a message
+   *
+   */
+  XMLMessage(const Message& MesgFromPeer);
+
+  /** @brief Destructor 
+   *
+   * free the XML tree, if the doc attribute is not NULL.
+   */
+  ~XMLMessage();
+
   xmlDocPtr doc; /*!< pointer on the XML tree created with the XML message received*/
   MessageOrigine origine; /*!< pointer on the source of the message (MsgSocket or UdpConnection object)*/
   unsigned int pid; /*!< peer identifier*/
@@ -125,7 +130,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    * @param buffer [in] array containing the byte of the message
    * @return NULL if parsing failed, else return a pointer on a structure containing the built tree.
    */
-  xmlDocPtr ParseMessage(int length, unsigned char* buffer);
+  static xmlDocPtr ParseMessage(int length, unsigned char* buffer);
   
   /** @brief Add a new parsed message to the list
    *
@@ -197,7 +202,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    * @param filename [in] file to parse
    * @return the tree structure, NULL if parsing failed
    */
-  xmlDocPtr ParseFile(const SimpleString filename);
+  static xmlDocPtr ParseFile(const SimpleString filename);
   
  private:
 

@@ -34,6 +34,17 @@ XMLMessage::XMLMessage()
 	doc = NULL;
 }
 
+  /** @brief Constructor from a message
+   *
+   */
+XMLMessage::XMLMessage(const Message& MesgFromPeer)
+{
+	doc		= XMLTreeParser::ParseMessage(MesgFromPeer.GetLength(), (unsigned char*)MesgFromPeer.GetBuffer());;
+	origine = MesgFromPeer.GetOrigine();
+	pid		= MesgFromPeer.GetPeerId();
+	mid		= MesgFromPeer.GetMsgId();
+}
+
 XMLMessage::~XMLMessage()
 {
 	if ( doc != NULL )
@@ -172,15 +183,17 @@ xmlDocPtr XMLTreeParser::ParseMessage(int length, unsigned char* buffer)
 
 void XMLTreeParser::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 {
-	xmlDocPtr doc = ParseMessage(cd.Msg.GetLength(), (unsigned char*)cd.Msg.GetBuffer());
-	if( doc )
+	XMLMessage * msg = new OMISCID_TLM XMLMessage(cd.Msg);
+	if ( msg && msg->doc != NULL )
 	{
-		XMLMessage* msg = new OMISCID_TLM XMLMessage();
-		msg->doc = doc;
-		msg->origine = cd.Msg.GetOrigine();
-		msg->pid = cd.Msg.GetPeerId();
-		msg->mid = cd.Msg.GetMsgId();
 		PushMessage(msg);
+	}
+	else
+	{
+		if ( msg != NULL )
+		{
+			delete msg;
+		}
 	}
 }
 
