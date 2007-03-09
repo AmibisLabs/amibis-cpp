@@ -119,10 +119,12 @@ def OmiscidMapping():
         "@libdir@": os.path.join(ARGUMENTS.get("prefix"), "lib")}
 
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
-  ReplaceList += { '@zeroconfflag@' : '-D' + WhichZeroConfLibrary, '@zeroconflib@' : '-ldns_s' }
+  ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
+  ReplaceList['@zeroconflib@'] = ' -lavahi ' }
  else :
   if WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
-   ReplaceList += { '@zeroconfflag@' : '-D' + WhichZeroConfLibrary, '@zeroconflib@' : '-ldns_s' }
+   ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
+   ReplaceList['@zeroconflib@'] = ' -ldns_sd ' }
   else :
    OmiscidMessage("Bad value for zeroconf flags (internal).")
    Exit()
