@@ -110,7 +110,6 @@ def OmiscidMapping():
  global WhichZeroConfLibrary
 
  ReplaceList = {}
- ReplaceList["dummy"] = "dummy"	
 	
  if "prefix" in ARGUMENTS:
   ReplaceList = {
@@ -129,6 +128,8 @@ def OmiscidMapping():
   else :
    OmiscidMessage("Bad value for zeroconf flags (internal).")
    Exit()
+   
+ return ReplaceList
 
 
 ##############################################
