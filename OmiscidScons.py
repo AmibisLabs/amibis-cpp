@@ -18,6 +18,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  COMMAND_LINE_TARGETS=commandLineTargets
  global ARGUMENTS
  ARGUMENTS=arguments
+ global WhichZeroConfLibrary
  
  if 'xml2' in options:
   env.ParseConfig('xml2-config --cflags')
@@ -106,6 +107,7 @@ def OmiscidDotInFileTarget(env, target, mapping):
 ### Command to map file ###
 ##############################################
 def OmiscidMapping():
+ global WhichZeroConfLibrary
 
  ReplaceList = {}	
 	
@@ -116,7 +118,7 @@ def OmiscidMapping():
         "@bindir@": os.path.join(ARGUMENTS.get("prefix"), "bin"),
         "@libdir@": os.path.join(ARGUMENTS.get("prefix"), "lib")}
 
- if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI'
+ if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   ReplaceList += { '@zeroconfflag@' : '-D' + WhichZeroConfLibrary, '@zeroconflib@' : '-ldns_s' }
  else :
   if WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
