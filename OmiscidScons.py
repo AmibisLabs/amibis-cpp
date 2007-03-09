@@ -190,6 +190,9 @@ def OmiscidCheckLibs(conf,libs=[]):
     if not conf.CheckCXXHeader("dns_sd.h") or \
        not conf.CheckLib([None, "dns_sd"], "DNSServiceRegister"):
      missing += ["dns_sd"]
+   elif "avahi" == lib :
+    if not conf.CheckLibWithHeader("avahi","avahi-common/cdecl.h","CXX"):
+     missing += ["xml2"]    
    elif "xml2" == lib:
     if not conf.CheckLibWithHeader("xml2","libxml/tree.h","CXX"):
      missing += ["xml2"]
