@@ -129,7 +129,7 @@ def OmiscidMapping():
 
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
-  ReplaceList['@zeroconflib@'] = ' -lavahi '
+  ReplaceList['@zeroconflib@'] = ' -lavahi-client '
  else :
   if WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
    ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
