@@ -109,7 +109,7 @@ def OmiscidDotInFileTarget(env, target, mapping):
 def OmiscidMapping():
  global WhichZeroConfLibrary
 
- ReplaceList = {}	
+ ReplaceList["dummy"] = "dummy"	
 	
  if "prefix" in ARGUMENTS:
   ReplaceList = {
@@ -120,11 +120,11 @@ def OmiscidMapping():
 
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
-  ReplaceList['@zeroconflib@'] = ' -lavahi ' }
+  ReplaceList['@zeroconflib@'] = ' -lavahi '
  else :
   if WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
    ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
-   ReplaceList['@zeroconflib@'] = ' -ldns_sd ' }
+   ReplaceList['@zeroconflib@'] = ' -ldns_sd '
   else :
    OmiscidMessage("Bad value for zeroconf flags (internal).")
    Exit()
