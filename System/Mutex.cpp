@@ -16,8 +16,13 @@ Mutex::Mutex()
 {
 #ifdef WIN32
 	// mutex = CreateMutex( NULL, false, NULL );
-	mutex = CreateSemaphore(NULL, 1, (LONG)0xffffffff, NULL );
+	mutex = CreateSemaphore(NULL, 1, (LONG)0xffff, NULL );
 	#ifdef DEBUG
+		if ( mutex == NULL )
+		{
+			int err = GetLastError();
+			int zz = 0;
+		}
 		OwnerId = 0;
 	#endif
 #else

@@ -310,7 +310,7 @@ const SimpleString operator+(const SimpleString& str1, const char* str2);
 std::istream& operator>>( std::istream &is , SimpleString &str );
 
 /*
- * @brief A serialisation input operator
+ * @brief A serialisation output operator
  * @param [in] is, an input stream
  * @param [in] str2, a char * buffer (ended by '0')
  * @return Returns the input stream

@@ -5,7 +5,7 @@ env = Environment()
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,['xml2'])
 
 conf = Configure(env)
-OmiscidCheckLibs(conf,['xml2','dns_sd','pthread']);
+OmiscidCheckLibs(conf,['xml2','pthread']);
 env = conf.Finish()
 
 # common environment settings

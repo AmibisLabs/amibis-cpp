@@ -29,7 +29,16 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
   WhichZeroConfLibrary = 'OMISCID_USE_AVAHI'
  else :
   WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
- 
+  
+ if 'zeroconf' in arguments :
+  if arguments['zeroconf'] in ['avahi','Avahi'] :
+   WhichZeroConfLibrary = 'OMISCID_USE_AVAHI'
+  elif arguments['zeroconf'] in ['mdns','mDNS','MDNS','dns_sd'] :
+   WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
+  else :
+   OmiscidMessage("Bad value for zeroconf flag. Must be 'avahi' or 'Avahi' for avahi usage or 'mdns', 'mDNS', 'MDNS' or 'dns_sd' for DNS-SD usage")
+   Exit()
+   
  # check debug et trace parameter
  DebugMode = False
  if 'debug' in arguments :
@@ -163,7 +172,14 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
 ### Command to check some libs ###
 ##################################
 def OmiscidCheckLibs(conf,libs=[]):
+ global WhichZeroConfLibrary
  missing = []
+ 
+ if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
+  libs.append('avahi')
+ else :
+  libs.append('dns_sd') 	
+ 
  # Fix a strange behaviour: first check (of svideo in the tests) fails but the following are passing as expected
  if not conf.CheckLib():
   OmiscidMessage(":".join(conf.env.Dictionary().get("LIBPATH")))

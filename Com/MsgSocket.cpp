@@ -1476,7 +1476,7 @@ void MsgSocket::ReceiveUdpExchange()
 				}
 			}
 			occupiedSize = size;
-			if ( occupiedSize != 0 )
+			if ( occupiedSize != 0 && offset != 0 )
 			{
 				memmove(buffer, buffer+offset, occupiedSize);
 			}

@@ -39,43 +39,43 @@ case "$1" in
 	;;
     --cflags)
 	echo "-I@includedir@"
-	exit 0
+#	exit 0
 	;;
     --cflags-only-I)
 	echo "-I@includedir@"
-	exit 0
+#	exit 0
 	;;
     --libs)
 	echo "-L@libdir@ -lOmiscidSystem"
-	exit 0
+#	exit 0
 	;;
     --libs-only-L)
 	echo "-L@libdir@"
-	exit 0
+#	exit 0
 	;;
     --libs-only-l)
 	echo "-lOmiscidSystem"
-	exit 0
+#	exit 0
 	;;
     --libdir)
 	echo "@libdir@"
-	exit 0
+#	exit 0
 	;;
     --includedir)
 	echo "@includedir@"
-	exit 0
+#	exit 0
 	;;
     --prefix)
 	echo "$prefix"
-	exit 0
+#	exit 0
 	;;
     --doc)
 	echo "@DOCDIR_SYSTEM@"
-	exit 0
+#	exit 0
 	;;
     --doc-tag)
 	echo "@DOCDIR_SYSTEM@/doc_system.tag=@DOCDIR_SYSTEM@"
-	exit 0
+#	exit 0
 	;;
     --all)
 	echo "-I@includedir@ -L@libdir@ -lOmiscidSystem"

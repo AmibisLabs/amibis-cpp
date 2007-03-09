@@ -39,46 +39,46 @@ case "$1" in
 	;;
     --cflags)
 	echo "`OmiscidSystem-config --cflags`"
-	exit 0
+#	exit 0
 	;;
     --cflags-only-I)
 	echo "`OmiscidSystem-config --cflags-only-I`"
-	exit 0
+#	exit 0
 	;;
     --libs)
 	echo "-L@libdir@ -lOmiscidCom"
-	exit 0
+#	exit 0
 	;;
     --libs-only-L)
 	echo "-L@libdir@"
-	exit 0
+#	exit 0
 	;;
     --libs-only-l)
 	echo "-lOmiscidCom"
-	exit 0
+#	exit 0
 	;;
     --libdir)
 	echo "@libdir@"
-	exit 0
+#	exit 0
 	;;
     --includedir)
 	echo "@includedir@"
-	exit 0
+#	exit 0
 	;;
     --prefix)
 	echo "$prefix"
-	exit 0
+#	exit 0
 	;;
     --doc)
 	echo "@DOCDIR_COM@"
-	exit 0
+#	exit 0
 	;;
     --doc-tag)
 	echo "@DOCDIR_COM@/doc_com.tag=@DOCDIR_COM@"
-	exit 0
+#	exit 0
 	;;
     --all)
-	echo "`OmiscidSystem-config --cflags` -L@libdir@ -lOmiscidCom"
+	echo "`OmiscidSystem-config --all` -L@libdir@ -lOmiscidCom -lOmiscidSystem"
 	;;
 
 	   
