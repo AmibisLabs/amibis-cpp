@@ -19,19 +19,15 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  global ARGUMENTS
  ARGUMENTS=arguments
  
- if 'omiscid' in options:
-  env.ParseConfig('xml2-config --cflags')
-  env.ParseConfig('xml2-config --libs')
-  env.ParseConfig('Omiscidcontrol-config --cflags')
-  env.ParseConfig('Omiscidcontrol-config --libs')
-  env.ParseConfig('Omiscidcom-config --cflags')
-  env.ParseConfig('Omiscidcom-config --libs')
-  env.ParseConfig('Omiscidsystem-config --cflags')
-  env.ParseConfig('Omiscidsystem-config --libs')
-  
  if 'xml2' in options:
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
+  
+ # default values
+ if os.name == 'posix' :
+  WhichZeroConfLibrary = 'OMISCID_USE_AVAHI'
+ else :
+  WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
  
  # check debug et trace parameter
  DebugMode = False
@@ -110,14 +106,25 @@ def OmiscidDotInFileTarget(env, target, mapping):
 ### Command to map file ###
 ##############################################
 def OmiscidMapping():
+
+ ReplaceList = {}	
+	
  if "prefix" in ARGUMENTS:
-  return {
+  ReplaceList = {
         "@prefix@": ARGUMENTS.get("prefix"),
         "@includedir@": os.path.join(ARGUMENTS.get("prefix"), "include", "Omiscid"),
         "@bindir@": os.path.join(ARGUMENTS.get("prefix"), "bin"),
         "@libdir@": os.path.join(ARGUMENTS.get("prefix"), "lib")}
- else:
-  return {}
+
+ if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI'
+  ReplaceList += { '@zeroconfflag@' : '-D' + WhichZeroConfLibrary, '@zeroconflib@' : '-ldns_s' }
+ else :
+  if WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
+   ReplaceList += { '@zeroconfflag@' : '-D' + WhichZeroConfLibrary, '@zeroconflib@' : '-ldns_s' }
+  else :
+   OmiscidMessage("Bad value for zeroconf flags (internal).")
+   Exit()
+
 
 ##############################################
 ### Command to generate the install target ###
