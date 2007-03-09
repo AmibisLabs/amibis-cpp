@@ -37,7 +37,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
   else :
    OmiscidMessage("Bad value for zeroconf flag. Must be 'avahi' or 'Avahi' for avahi usage or 'mdns', 'mDNS', 'MDNS' or 'dns_sd' for DNS-SD usage")
-   Exit()
+   sys.exit(1)
    
  # check debug et trace parameter
  DebugMode = False
@@ -48,7 +48,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    DebugMode = False
   else :
    OmiscidMessage("Bad value for debug flag. Must be '1', 'yes', 'true' for debuging mode or '0', 'no', 'false' for non debugging mode")
-   Exit()
+   sys.exit(1)
 
  TraceMode = False
  if 'trace' in arguments :
@@ -56,7 +56,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    TraceMode = True
   elif arguments['trace'] not in ['0','no','false'] :
    OmiscidMessage("Bad value for trace flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
-   Exit()
+   sys.exit(1)
    
  ChMemMode = False
  if 'chmem' in arguments :
@@ -64,7 +64,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    ChMemMode = True
   elif arguments['chmem'] not in ['0','no','false'] :
    OmiscidMessage("Bad value for chmem flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
-   Exit()   
+   sys.exit(1)   
    
  # Do what we ask   
  if ChMemMode == True :   
@@ -136,7 +136,7 @@ def OmiscidMapping():
    ReplaceList['@zeroconflib@'] = ' -ldns_sd '
   else :
    OmiscidMessage("Bad value for zeroconf flags (internal).")
-   Exit()
+   sys.exit(1)
    
  return ReplaceList
 
