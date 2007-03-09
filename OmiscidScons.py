@@ -66,7 +66,14 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    OmiscidMessage("Bad value for chmem flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
    sys.exit(1)   
    
- # Do what we ask   
+ # Do what we ask
+ if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
+  OmiscidMessage('compiling using avahi')
+  env.AppendUnique(CXXFLAGS = ['-DOMISCID_USE_AVAHI'])
+ elif WhichZeroConfLibrary = 'OMISCID_USE_MDNS' :
+  OmiscidMessage('compiling sing mdns (DNS-SD, Zeroconf, Bonjour, rendez-vous...)')
+  env.AppendUnique(CXXFLAGS = ['-DOMISCID_USE_MDNS'])
+  
  if ChMemMode == True :   
   OmiscidMessage('compiling using memory leak detection mode')
   env.AppendUnique(CXXFLAGS = ['-DTRACKING_MEMORY_LEAKS'])
@@ -177,9 +184,12 @@ def OmiscidCheckLibs(conf,libs=[]):
  
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   libs.append('avahi-client')
- else :
+ elif WhichZeroConfLibrary = 'OMISCID_USE_MDNS' :
   libs.append('dns_sd') 	
- 
+ else :
+  OmiscidMessage("Bad value for zeroconf flag.")
+  sys.exit(1)
+
  # Fix a strange behaviour: first check (of svideo in the tests) fails but the following are passing as expected
  if not conf.CheckLib():
   OmiscidMessage(":".join(conf.env.Dictionary().get("LIBPATH")))
