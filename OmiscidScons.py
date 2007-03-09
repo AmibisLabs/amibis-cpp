@@ -109,6 +109,7 @@ def OmiscidDotInFileTarget(env, target, mapping):
 def OmiscidMapping():
  global WhichZeroConfLibrary
 
+ ReplaceList = {}
  ReplaceList["dummy"] = "dummy"	
 	
  if "prefix" in ARGUMENTS:
