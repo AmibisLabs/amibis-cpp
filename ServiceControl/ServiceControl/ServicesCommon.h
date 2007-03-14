@@ -27,6 +27,9 @@
 	#include <avahi-common/simple-watch.h>
 	#include <avahi-common/malloc.h>
 	#include <avahi-common/error.h>
+
+	#define kDNSServiceMaxDomainName 1005
+
 #endif
 #endif
 
@@ -102,6 +105,11 @@ public:
 
 		static const SimpleString DefaultServiceClassName;
 };
+
+#ifdef OMISCID_USE_AVAHI
+	#undef kDNSServiceMaxDomainName
+#endif
+
 
 } // namespace Omiscid
 
