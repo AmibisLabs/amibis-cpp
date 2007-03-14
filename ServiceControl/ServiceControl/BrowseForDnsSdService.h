@@ -24,7 +24,7 @@ namespace Omiscid {
 typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( DnsSdService& NewService, DNSServiceFlags flags, void * UserData );
 #else
 #ifdef OMISCID_USE_AVAHI
-
+typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( DnsSdService& NewService, int flags, void * UserData );
 #endif
 #endif
 
