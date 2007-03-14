@@ -91,7 +91,7 @@ private:
 	static void FUNCTION_CALL_TYPE DnsRegisterReply( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context ); // DNS-SD callback function
 #else
 #ifdef OMISCID_USE_AVAHI
-	AvahiSimplePoll * AvahiSimplePoll;
+	AvahiSimplePoll * AvahiPoll;
 	AvahiClient * AvahiConnection;
 	AvahiEntryGroup * AvahiGroup;
 
