@@ -17,7 +17,14 @@
 #include <System/SimpleString.h>
 #include <ServiceControl/DnsSdService.h>
 
-#include <dns_sd.h>
+#ifdef OMISCID_USE_MDNS
+	#include <dns_sd.h>
+#else
+#ifdef OMISCID_USE_AVAHI
+
+#endif
+#endif
+
 
 namespace Omiscid {
 

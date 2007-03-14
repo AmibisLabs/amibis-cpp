@@ -386,7 +386,11 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 	VariableAttribute * pVar = FindVariable(VarName);
 	if ( pVar == NULL )
 	{
-		throw  SimpleException("Unknown variable. Call HasVariableFirst.");
+		SimpleString ErrMesg;
+		ErrMesg = "Unknown variable '";
+		ErrMesg += VarName;
+		ErrMesg += "'. Call HasVariableFirst.";
+		throw  SimpleException( ErrMesg );
 	}
 
 	// If the variable is initialised

@@ -70,7 +70,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   OmiscidMessage('compiling using avahi')
   env.AppendUnique(CXXFLAGS = ['-DOMISCID_USE_AVAHI'])
- elif WhichZeroConfLibrary = 'OMISCID_USE_MDNS' :
+ elif WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
   OmiscidMessage('compiling sing mdns (DNS-SD, Zeroconf, Bonjour, rendez-vous...)')
   env.AppendUnique(CXXFLAGS = ['-DOMISCID_USE_MDNS'])
   
@@ -184,7 +184,7 @@ def OmiscidCheckLibs(conf,libs=[]):
  
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   libs.append('avahi-client')
- elif WhichZeroConfLibrary = 'OMISCID_USE_MDNS' :
+ elif WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
   libs.append('dns_sd') 	
  else :
   OmiscidMessage("Bad value for zeroconf flag.")

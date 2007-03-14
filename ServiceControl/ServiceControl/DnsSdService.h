@@ -71,9 +71,9 @@ public:
 class RegisterService : public DnsSdService
 {
 public:
-	RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
-	RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
-	RegisterService( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
+	RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false, bool AutoRename = false );
+	RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false, bool AutoRename = false );
+	RegisterService( const SimpleString ServiceName, const SimpleString Protocol, CommonServiceValues::TransportProtocol Transport, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false, bool AutoRename = false );
 
 	virtual ~RegisterService();
 
@@ -82,11 +82,25 @@ public:
 	bool IsRegistered();
 
 private:
-	DNSServiceRef DnsSdConnection;
-	bool ConnectionOk;
-	bool Registered;								// DNS can register us ?
+	void Init();	// Only one init function for all constructors
 
-	static void FUNCTION_CALL_TYPE DnsRegisterReply( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context );
+#ifdef OMISCID_USE_MDNS
+	DNSServiceRef DnsSdConnection;
+	bool ConnectionOk;	// Do we manage connection
+
+	static void FUNCTION_CALL_TYPE DnsRegisterReply( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context ); // DNS-SD callback function
+#else
+#ifdef OMISCID_USE_AVAHI
+	AvahiSimplePoll * AvahiSimplePoll;
+	AvahiClient * AvahiConnection;
+	AvahiEntryGroup * AvahiGroup;
+
+	static void FUNCTION_CALL_TYPE DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata);	// Avahi callback function
+#endif
+#endif
+
+	bool Registered;								// DNS can register us ?
+	bool AutoRenameWasAsk;							// Shall we try to do automatique renaming
 };
 
 } // namespace Omiscid

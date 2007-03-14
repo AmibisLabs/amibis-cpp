@@ -283,52 +283,74 @@ SimpleString DnsSdService::ToString()
 	return Generate;
 }
 
+void RegisterService::Init()
+{
+	Registered = false;
+	AutoRenameWasAsk = false;
 
-RegisterService::RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister )
+#ifdef OMISCID_USE_MDNS
+	DnsSdConnection = NULL;
+	ConnectionOk = false;
+#else
+#ifdef OMISCID_USE_AVAHI
+	AvahiSimplePoll = (AvahiSimplePoll *)NULL;
+	AvahiConnection = (AvahiClient *)NULL;
+	AvahiGroup = (AvahiEntryGroup *)NULL;
+#endif
+#endif
+}
+
+RegisterService::RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister, bool AutoRename )
 	: DnsSdService( FullName, ePort )
 {
-	Registered = false;
-	ConnectionOk = false;
+	// Call init of all members
+	Init();
 
 	if ( AutoRegister )
 	{
-		Register();
+		Register(AutoRename);
 	}
 }
 
-RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister )
+RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString RegType, const SimpleString Domain, uint16_t ePort, bool AutoRegister, bool AutoRename )
 	: DnsSdService( ServiceName, RegType, Domain, ePort )
 {
-	Registered = false;
-	ConnectionOk = false;
+	// Call init of all members
+	Init();
 
 	if ( AutoRegister )
 	{
-		Register();
+		Register(AutoRename);
 	}
 }
 
-RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString Protocol, TransportProtocol Transport, const SimpleString Domain,  uint16_t ePort, bool AutoRegister  )
+RegisterService::RegisterService( const SimpleString ServiceName, const SimpleString Protocol, TransportProtocol Transport, const SimpleString Domain,  uint16_t ePort, bool AutoRegister, bool AutoRename )
 	: DnsSdService( ServiceName, Protocol, Transport, Domain, ePort )
 {
-	Registered = false;
-	ConnectionOk = false;
-	DnsSdConnection = NULL;
+	// Call init of all members
+	Init();
 
 	if ( AutoRegister )
 	{
-		Register();
+		Register(AutoRename);
 	}
 }
 
 RegisterService::~RegisterService()
 {
+#ifdef OMISCID_USE_MDNS
 	if ( ConnectionOk )
 	{
 		DNSServiceRefDeallocate(DnsSdConnection);
 	}
+#else
+#ifdef OMISCID_USE_AVAHI
+
+#endif
+#endif
 }
 
+#ifdef OMISCID_USE_MDNS
 void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context )
 {
 	RegisterService * Mythis = (RegisterService*)context;
@@ -347,6 +369,50 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 		Mythis->Registered = false;
 	}
 }
+#else
+#ifdef OMISCID_USE_AVAHI
+void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata)
+{
+	RegisterService * Mythis = (RegisterService*)context;
+
+	switch (state)
+	{
+		case AVAHI_ENTRY_GROUP_ESTABLISHED :
+			/* The entry group has been established successfully */
+			fprintf(stderr, "Service '%s' successfully established.\n", name);
+			break;
+
+		case AVAHI_ENTRY_GROUP_COLLISION :
+			{
+			char *n;
+
+			/* A service name collision happened. Let's pick a new name */
+			n = avahi_alternative_service_name(name);
+			avahi_free(name);
+			name = n;
+
+			fprintf(stderr, "Service name collision, renaming service to '%s'\n", name);
+
+			/* And recreate the services */
+			create_services(avahi_entry_group_get_client(g));
+			break;
+										   }
+
+		case AVAHI_ENTRY_GROUP_FAILURE :
+
+			fprintf(stderr, "Entry group failure: %s\n", avahi_strerror(avahi_client_errno(avahi_entry_group_get_client(g))));
+
+			/* Some kind of failure happened while we were registering our services */
+			avahi_simple_poll_quit(simple_poll);
+			break;
+
+		case AVAHI_ENTRY_GROUP_UNCOMMITED:
+		case AVAHI_ENTRY_GROUP_REGISTERING:
+			;
+	}
+}
+#endif
+#endif
 
 bool RegisterService::IsRegistered()
 {
@@ -361,21 +427,29 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 		return false;
 	}
 
-	int err = kDNSServiceErr_Unknown;
-	SimpleString ProtocolAndTransport;		// <Name> . "_tcp" or <Name> . "_udp"
+	// Set autorename flag
+	AutoRenameWasAsk = AutoRename;
 
+	// Compute _x._proto...
+	SimpleString ProtocolAndTransport;		// <Name> . "_tcp" or <Name> . "_udp"
 	ProtocolAndTransport  = Protocol;
 	ProtocolAndTransport += ".";
 	ProtocolAndTransport += Transport;
 
-	err = DNSServiceRegister( &DnsSdConnection,  kDNSServiceFlagsNoAutoRename, 0 /* all network */,
+
+#ifdef OMISCID_USE_MDNS
+	DNSServiceFlags RenamingFlags = (DNSServiceFlags)0; // auto rename
+	if ( AutoRenameWasAsk == false )
+	{
+		RenamingFlags = kDNSServiceFlagsNoAutoRename;
+	}
+
+	int err = kDNSServiceErr_Unknown;
+
+	err = DNSServiceRegister( &DnsSdConnection,  RenamingFlags, 0 /* all network */,
 		(char*)Name.GetStr(), (char*)ProtocolAndTransport.GetStr(),
 		(char*)Domain.GetStr(), NULL, (uint16_t)htons(Port), (uint16_t)Properties.GetTXTRecordLength(),
 		(char*)Properties.ExportTXTRecord(), DnsRegisterReply, (void*)this );
-
-	 //err = DNSServiceRegister( &DnsSdConnection, kDNSServiceFlagsNoAutoRename, 0,
-		//	"Yop", "_bip._tcp", "local.", NULL, (uint16_t)htons(Port),
-		//0, "", DnsRegisterReply, (void*)this );
 
 	if ( err == kDNSServiceErr_NoError )
 	{
@@ -394,6 +468,45 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 		DNSServiceRefDeallocate(DnsSdConnection);
 		DnsSdConnection = NULL;
 	}
+#else
+#ifdef OMISCID_USE_AVAHI
+	AvahiSimplePoll = avahi_simple_poll_new();
+	if ( AvahiSimplePoll == (AvahiSimplePoll *)NULL )
+	{
+		return false;
+	}
+
+	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiSimplePoll), 0, NULL, NULL, &error );
+	if ( AvahiConnection == (AvahiClient *)NULL )
+	{
+		avahi_simple_poll_free(AvahiSimplePoll);
+		AvahiSimplePoll = (AvahiSimplePoll *)NULL;
+		return false;
+	}
+
+	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, NULL );
+    if ( AvahiGroup == (AvahiEntryGroup *)NULL )
+	{
+		avahi_client_free(AvahiConnection);
+		AvahiConnection = (AvahiClient *)NULL;
+		avahi_simple_poll_free(AvahiSimplePoll);
+		AvahiSimplePoll = (AvahiSimplePoll *)NULL;
+        return false;
+    }
+
+	// We are connected, add the service
+	/* Add the service for IPP */
+	if ((ret = avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, 0, (char*)Name.GetStr(),
+		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL)) < 0)
+	{
+		fprintf(stderr, "Failed to add _ipp._tcp service: %s\n", avahi_strerror(ret));
+		return false;
+	}
+
+	avahi_simple_poll_loop(AvahiSimplePoll);
+
+#endif
+#endif
 
 	return Registered;
 }

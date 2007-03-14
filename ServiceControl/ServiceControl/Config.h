@@ -18,6 +18,20 @@
 
 namespace Omiscid {
 
+#ifdef WIN32
+
+// Check if we plan to use AVAHI under Windows
+#ifdef OMISCID_USE_AVAHI
+#error "Could not use Avahi under Windows\n"
+#endif
+
+// If not already defined, defines OMISCID_USE_MDNS
+#ifndef OMISCID_USE_MDNS
+#define OMISCID_USE_MDNS
+#endif
+
+#endif
+
 typedef enum ControlServerStatus { STATUS_INIT = 1, STATUS_RUNNING = 2 };
 typedef enum VariableAccessType { ReadAccess = 0, ConstantAccess = 1, ReadWriteAccess = 2 };
 

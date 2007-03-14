@@ -16,7 +16,19 @@
 #include <System/Socket.h>
 #include <System/SimpleString.h>
 
-#include <dns_sd.h>
+#ifdef OMISCID_USE_MDNS
+	#include <dns_sd.h>
+#else
+#ifdef OMISCID_USE_AVAHI
+	#include <avahi-client/client.h>
+	#include <avahi-client/publish.h>
+
+	#include <avahi-common/alternative.h>
+	#include <avahi-common/simple-watch.h>
+	#include <avahi-common/malloc.h>
+	#include <avahi-common/error.h>
+#endif
+#endif
 
 
 #include <System/SimpleException.h>
