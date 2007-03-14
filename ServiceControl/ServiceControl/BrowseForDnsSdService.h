@@ -17,14 +17,6 @@
 #include <System/SimpleString.h>
 #include <ServiceControl/DnsSdService.h>
 
-#ifdef OMISCID_USE_MDNS
-	// #include <dns_sd.h>
-#else
-#ifdef OMISCID_USE_AVAHI
-
-#endif
-#endif
-
 
 namespace Omiscid {
 
@@ -50,8 +42,15 @@ protected:
 
 	void CallbackClient( DnsSdService& DnsSdService, const DNSServiceFlags flags );
 
+
+#ifdef OMISCID_USE_MDNS
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context );
+#else
+#ifdef OMISCID_USE_AVAHI
+
+#endif
+#endif
 };
 
 } // namespace Omiscid

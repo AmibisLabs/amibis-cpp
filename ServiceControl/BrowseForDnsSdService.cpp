@@ -53,6 +53,7 @@ BrowseForDNSSDService::~BrowseForDNSSDService()
 	StopThread();
 }
 
+#ifdef OMISCID_USE_MDNS
 void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags,
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
 	uint16_t txtLen, const unsigned char *txtRecord, void *context )
@@ -99,9 +100,16 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 		MyThis->CallbackClient( ServiceInfo, flags );
 	}
 }
+#else
+#ifdef OMISCID_USE_AVAHI
+
+#endif
+#endif
 
 void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 {
+#ifdef OMISCID_USE_MDNS
+
 	::timeval timeout;
 	fd_set fds;
 	int nReady;
@@ -143,6 +151,11 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 	}
 
 	DNSServiceRefDeallocate( Ref );	
+#else
+#ifdef OMISCID_USE_AVAHI
+
+#endif
+#endif
 }
 
 void BrowseForDNSSDService::Start()
