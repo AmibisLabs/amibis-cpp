@@ -166,7 +166,13 @@ void BrowseForDNSSDService::Start()
 	}
 }
 
+#ifdef OMISCID_USE_MDNS
 void BrowseForDNSSDService::CallbackClient(DnsSdService& DnsSdService, const DNSServiceFlags flags )
+#else
+#ifdef OMISCID_USE_AVAHI
+void BrowseForDNSSDService::CallbackClient(DnsSdService& DnsSdService, const int flags )
+#endif
+#endif
 {
 	CallBack( DnsSdService, flags, UserData );
 }
