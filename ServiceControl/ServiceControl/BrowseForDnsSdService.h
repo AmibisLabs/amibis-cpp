@@ -18,7 +18,7 @@
 #include <ServiceControl/DnsSdService.h>
 
 #ifdef OMISCID_USE_MDNS
-	#include <dns_sd.h>
+	// #include <dns_sd.h>
 #else
 #ifdef OMISCID_USE_AVAHI
 

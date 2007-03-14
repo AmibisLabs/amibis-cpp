@@ -293,7 +293,7 @@ void RegisterService::Init()
 	ConnectionOk = false;
 #else
 #ifdef OMISCID_USE_AVAHI
-	AvahiSimplePoll = (AvahiSimplePoll *)NULL;
+	AvahiPoll = (AvahiSimplePoll *)NULL;
 	AvahiConnection = (AvahiClient *)NULL;
 	AvahiGroup = (AvahiEntryGroup *)NULL;
 #endif
@@ -470,17 +470,17 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	}
 #else
 #ifdef OMISCID_USE_AVAHI
-	AvahiSimplePoll = avahi_simple_poll_new();
-	if ( AvahiSimplePoll == (AvahiSimplePoll *)NULL )
+	AvahiPoll = avahi_simple_poll_new();
+	if ( AvahiPoll == (AvahiSimplePoll *)NULL )
 	{
 		return false;
 	}
 
-	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiSimplePoll), 0, NULL, NULL, &error );
+	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), 0, NULL, NULL, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
-		avahi_simple_poll_free(AvahiSimplePoll);
-		AvahiSimplePoll = (AvahiSimplePoll *)NULL;
+		avahi_simple_poll_free(AvahiPoll);
+		AvahiPoll = (AvahiSimplePoll *)NULL;
 		return false;
 	}
 
@@ -489,8 +489,8 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	{
 		avahi_client_free(AvahiConnection);
 		AvahiConnection = (AvahiClient *)NULL;
-		avahi_simple_poll_free(AvahiSimplePoll);
-		AvahiSimplePoll = (AvahiSimplePoll *)NULL;
+		avahi_simple_poll_free(AvahiPoll);
+		AvahiPoll = (AvahiSimplePoll *)NULL;
         return false;
     }
 
@@ -503,7 +503,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 		return false;
 	}
 
-	avahi_simple_poll_loop(AvahiSimplePoll);
+	avahi_simple_poll_loop(AvahiPoll);
 
 #endif
 #endif
