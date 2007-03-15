@@ -82,6 +82,7 @@ public:
 	bool IsRegistered();
 
 private:
+	SimpleString ProtocolAndTransport;
 	void Init();	// Only one init function for all constructors
 
 #ifdef OMISCID_USE_MDNS
@@ -96,6 +97,8 @@ private:
 	AvahiEntryGroup * AvahiGroup;
 
 	static void FUNCTION_CALL_TYPE DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata);	// Avahi callback function
+
+	LaunchRegisterProcess();							// Specific Avahi function
 #endif
 #endif
 

@@ -287,15 +287,32 @@ void RegisterService::Init()
 {
 	Registered = false;
 	AutoRenameWasAsk = false;
+	ProtocolAndTransport.Empty();
 
 #ifdef OMISCID_USE_MDNS
 	DnsSdConnection = NULL;
 	ConnectionOk = false;
 #else
 #ifdef OMISCID_USE_AVAHI
-	AvahiPoll = (AvahiSimplePoll *)NULL;
-	AvahiConnection = (AvahiClient *)NULL;
+
+	if ( AvahiGroup != (AvahiEntryGroup *)NULL )
+	{
+		avahi_entry_group_free(AvahiGroup);
+	}
 	AvahiGroup = (AvahiEntryGroup *)NULL;
+
+	if ( AvahiConnection != (AvahiClient *) )
+	{
+		avahi_client_free(AvahiConnection);
+	}
+	AvahiConnection = (AvahiClient *)NULL;
+
+	if ( AvahiPoll != (AvahiSimplePoll *) )
+	{
+		avahi_simple_poll_free(AvahiPoll);
+	}
+	AvahiPoll = (AvahiSimplePoll *)NULL;
+
 #endif
 #endif
 }
@@ -346,6 +363,24 @@ RegisterService::~RegisterService()
 #else
 #ifdef OMISCID_USE_AVAHI
 
+	if ( AvahiGroup != (AvahiEntryGroup *)NULL )
+	{
+		avahi_entry_group_free(AvahiGroup);
+	}
+	AvahiGroup = (AvahiEntryGroup *)NULL;
+
+	if ( AvahiConnection != (AvahiClient *) )
+	{
+		avahi_client_free(AvahiConnection);
+	}
+	AvahiConnection = (AvahiClient *)NULL;
+
+	if ( AvahiPoll != (AvahiSimplePoll *) )
+	{
+		avahi_simple_poll_free(AvahiPoll);
+	}
+	AvahiPoll = (AvahiSimplePoll *)NULL;
+
 #endif
 #endif
 }
@@ -371,44 +406,46 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 }
 #else
 #ifdef OMISCID_USE_AVAHI
-void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata)
+
+void RegisterService::LaunchRegisterProcess()
 {
+
+}
+
+void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata)
+{
+	char * tmpc = NULL;
 	RegisterService * Mythis = (RegisterService*)context;
 
 	switch (state)
 	{
 		case AVAHI_ENTRY_GROUP_ESTABLISHED :
-			/* The entry group has been established successfully */
+			// The entry group has been established successfully
 			fprintf(stderr, "Service '%s' successfully established.\n", name);
+			Mythis->Registered = true;
+			avahi_simple_poll_quit(simple_poll);
 			break;
 
 		case AVAHI_ENTRY_GROUP_COLLISION :
-			{
-			char *n;
-
-			/* A service name collision happened. Let's pick a new name */
-			n = avahi_alternative_service_name(name);
-			avahi_free(name);
-			name = n;
+			// A service name collision happened. Let's pick a new name
+			tmpc = avahi_alternative_service_name(Mythis->Name.GetStr());
+			Mythis->Name.GetStr() = n;
 
 			fprintf(stderr, "Service name collision, renaming service to '%s'\n", name);
 
-			/* And recreate the services */
+			// And recreate the services
 			create_services(avahi_entry_group_get_client(g));
 			break;
 										   }
 
 		case AVAHI_ENTRY_GROUP_FAILURE :
-
-			fprintf(stderr, "Entry group failure: %s\n", avahi_strerror(avahi_client_errno(avahi_entry_group_get_client(g))));
-
-			/* Some kind of failure happened while we were registering our services */
+			// Some kind of failure happened while we were registering our services
 			avahi_simple_poll_quit(simple_poll);
 			break;
 
-		case AVAHI_ENTRY_GROUP_UNCOMMITED:
-		case AVAHI_ENTRY_GROUP_REGISTERING:
-			;
+		default:
+			// The other stuff
+			break;
 	}
 }
 #endif
@@ -431,7 +468,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	AutoRenameWasAsk = AutoRename;
 
 	// Compute _x._proto...
-	SimpleString ProtocolAndTransport;		// <Name> . "_tcp" or <Name> . "_udp"
+	// <Name> . "_tcp" or <Name> . "_udp"
 	ProtocolAndTransport  = Protocol;
 	ProtocolAndTransport += ".";
 	ProtocolAndTransport += Transport;
@@ -479,30 +516,26 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), 0, NULL, NULL, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
-		avahi_simple_poll_free(AvahiPoll);
-		AvahiPoll = (AvahiSimplePoll *)NULL;
+		Init();
 		return false;
 	}
 
 	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, NULL );
     if ( AvahiGroup == (AvahiEntryGroup *)NULL )
 	{
-		avahi_client_free(AvahiConnection);
-		AvahiConnection = (AvahiClient *)NULL;
-		avahi_simple_poll_free(AvahiPoll);
-		AvahiPoll = (AvahiSimplePoll *)NULL;
+		Init();
         return false;
     }
 
 	// We are connected, add the service
-	/* Add the service for IPP */
-	if ((ret = avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, 0, (char*)Name.GetStr(),
-		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL)) < 0)
+	if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, 0, (char*)Name.GetStr(),
+		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
 	{
-		fprintf(stderr, "Failed to add _ipp._tcp service: %s\n", avahi_strerror(ret));
+		Init();
 		return false;
 	}
 
+	// Wait for my callback to stop me
 	avahi_simple_poll_loop(AvahiPoll);
 
 #endif

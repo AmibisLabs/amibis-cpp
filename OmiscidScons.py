@@ -71,7 +71,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
   OmiscidMessage('compiling using avahi')
   env.AppendUnique(CXXFLAGS = ['-DOMISCID_USE_AVAHI'])
  elif WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
-  OmiscidMessage('compiling sing mdns (DNS-SD, Zeroconf, Bonjour, rendez-vous...)')
+  OmiscidMessage('compiling using mdns (DNS-SD, Zeroconf, Bonjour, rendez-vous...)')
   env.AppendUnique(CXXFLAGS = ['-DOMISCID_USE_MDNS'])
   
  if ChMemMode == True :   
