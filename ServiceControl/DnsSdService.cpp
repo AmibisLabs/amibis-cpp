@@ -416,6 +416,13 @@ void RegisterService::LaunchRegisterProcess()
 		return;
 	}
 
+	// Tell the server to register the service
+	if ( avahi_entry_group_commit(group)) < 0 )
+	{ 
+		Init();
+		return;
+	} 
+
 	// Wait for my callback to stop me
 	avahi_simple_poll_loop(AvahiPoll);
 }
@@ -423,7 +430,7 @@ void RegisterService::LaunchRegisterProcess()
 void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata)
 {
 	char * tmpc = NULL;
-	RegisterService * Mythis = (RegisterService*)context;
+	RegisterService * Mythis = (RegisterService*)userdata;
 
 	switch (state)
 	{
@@ -444,14 +451,14 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			// And recreate the services
 			Mythis->LaunchRegisterProcess();
 			break;
-										   }
-
+										   
 		case AVAHI_ENTRY_GROUP_FAILURE :
 			// Some kind of failure happened while we were registering our services
 			avahi_simple_poll_quit(simple_poll);
 			break;
 
-		default:
+		case AVAHI_ENTRY_GROUP_UNCOMMITED:
+		case AVAHI_ENTRY_GROUP_REGISTERING:
 			// The other (good ???) stuff
 			break;
 	}
