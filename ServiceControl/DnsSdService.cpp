@@ -409,7 +409,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 
 void RegisterService::LaunchRegisterProcess()
 {
-	if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, 0, (char*)Name.GetStr(),
+	if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, (AvahiPublishFlags)0, (char*)Name.GetStr(),
 		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
 	{
 		Init();
@@ -530,7 +530,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 
 	int error;
 
-	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), 0, NULL, NULL, &error );
+	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiPublishFlags)0, NULL, NULL, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		Init();
