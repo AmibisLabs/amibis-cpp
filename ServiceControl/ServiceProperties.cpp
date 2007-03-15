@@ -478,6 +478,7 @@ void ServiceProperties::Empty()
 
 bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char * Record )
 {
+#ifdef OMISCID_USE_MDNS
 	int i;
 	int NbKeys;
 	char KeyName[256];
@@ -488,7 +489,6 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 	
 	Empty();
 	
-#ifdef OMISCID_USE_MDNS
 	NbKeys = TXTRecordGetCount( (uint16_t)RecordLength, Record );
 
 	for( i = 0; i < NbKeys; i++ )

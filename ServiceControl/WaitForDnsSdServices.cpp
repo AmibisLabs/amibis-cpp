@@ -29,18 +29,31 @@ SearchService::SearchService()
 	IsResolved = false;
 	Regtype[0] = '\0';
 	DNSSDConnection = false;
-	DNSSocket = (SOCKET)SOCKET_ERROR;
 	CallBack = NULL;
 	UserData = NULL;
+#ifdef OMISCID_USE_MDNS
+	DNSSocket = (SOCKET)SOCKET_ERROR;
 	Ref = NULL;
+#else
+#ifdef OMISCID_USE_AVAHI
+	// nothing for the moment
+#endif
+#endif
 }
 
 SearchService::~SearchService()
 {
+#ifdef OMISCID_USE_MDNS
 	if ( Ref != NULL )
 	{
 		DNSServiceRefDeallocate( Ref );
+		Ref = NULL;
 	}
+#else
+#ifdef OMISCID_USE_AVAHI
+	// nothing for the moment
+#endif
+#endif
 }
 
 WaitForDnsSdServices::WaitForDnsSdServices()
