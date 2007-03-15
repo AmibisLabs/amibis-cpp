@@ -31,7 +31,7 @@
 	#include <avahi-common/malloc.h>
 	#include <avahi-common/error.h>
 
-	#define DNSServiceMaxDomainName	1005
+	#define OmiscidServiceMaxDomainName		1005
 	#define OmiscidDNSServiceFlagsAdd		0x2
 
 #endif
