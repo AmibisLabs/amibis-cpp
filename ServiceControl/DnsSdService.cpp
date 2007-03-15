@@ -417,7 +417,7 @@ void RegisterService::LaunchRegisterProcess()
 	}
 
 	// Tell the server to register the service
-	if ( avahi_entry_group_commit(AvahiGroup)) < 0 )
+	if ( avahi_entry_group_commit(AvahiGroup) < 0 )
 	{ 
 		Init();
 		return;
@@ -430,26 +430,26 @@ void RegisterService::LaunchRegisterProcess()
 void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata)
 {
 	char * tmpc = NULL;
-	RegisterService * Mythis = (RegisterService*)userdata;
+	RegisterService * MyThis = (RegisterService*)userdata;
 
 	switch (state)
 	{
 		case AVAHI_ENTRY_GROUP_ESTABLISHED :
 			// The entry group has been established successfully
-			fprintf(stderr, "Service '%s' successfully established.\n", name);
-			Mythis->Registered = true;
+			fprintf(stderr, "Service '%s' successfully established.\n", Name.GetStr() );
+			MyThis->Registered = true;
 			avahi_simple_poll_quit(MyThis->AvahiPoll);
 			break;
 
 		case AVAHI_ENTRY_GROUP_COLLISION :
 			// A service name collision happened. Let's pick a new name
-			tmpc = avahi_alternative_service_name(Mythis->Name.GetStr());
-			Mythis->Name.GetStr() = tmpc;
+			tmpc = avahi_alternative_service_name(MyThis->Name.GetStr());
+			MyThis->Name = tmpc;
 
 			fprintf(stderr, "Service name collision, renaming service to '%s'\n", tmpc );
 
 			// And recreate the services
-			Mythis->LaunchRegisterProcess();
+			MyThis->LaunchRegisterProcess();
 			break;
 										   
 		case AVAHI_ENTRY_GROUP_FAILURE:
@@ -528,7 +528,9 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 		return false;
 	}
 
-	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), 0, NULL, NULL, NULL );
+	int error;
+
+	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), 0, NULL, NULL, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		Init();
