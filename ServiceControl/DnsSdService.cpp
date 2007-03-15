@@ -301,13 +301,13 @@ void RegisterService::Init()
 	}
 	AvahiGroup = (AvahiEntryGroup *)NULL;
 
-	if ( AvahiConnection != (AvahiClient *) )
+	if ( AvahiConnection != (AvahiClient *)NULL )
 	{
 		avahi_client_free(AvahiConnection);
 	}
 	AvahiConnection = (AvahiClient *)NULL;
 
-	if ( AvahiPoll != (AvahiSimplePoll *) )
+	if ( AvahiPoll != (AvahiSimplePoll *)NULL )
 	{
 		avahi_simple_poll_free(AvahiPoll);
 	}
@@ -369,13 +369,13 @@ RegisterService::~RegisterService()
 	}
 	AvahiGroup = (AvahiEntryGroup *)NULL;
 
-	if ( AvahiConnection != (AvahiClient *) )
+	if ( AvahiConnection != (AvahiClient *)NULL )
 	{
 		avahi_client_free(AvahiConnection);
 	}
 	AvahiConnection = (AvahiClient *)NULL;
 
-	if ( AvahiPoll != (AvahiSimplePoll *) )
+	if ( AvahiPoll != (AvahiSimplePoll *)NULL )
 	{
 		avahi_simple_poll_free(AvahiPoll);
 	}
