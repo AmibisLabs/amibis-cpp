@@ -37,7 +37,7 @@ public:
 	DnsSdProxyClient();
 	virtual ~DnsSdProxyClient();
 
-	virtual void DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const DnsSdService& Service ) = 0;
+	virtual void DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service ) = 0;
 };
 
 class DnsSdProxy
@@ -91,7 +91,7 @@ private:
 	// Browsing of Services
 	static Event Changes;
 	static BrowseForDNSSDService * ServiceBroswer;	// protected by a mutex
-	static void FUNCTION_CALL_TYPE BrowseCollect( DnsSdService& NewService, DNSServiceFlags flags, void * UserData );
+	static void FUNCTION_CALL_TYPE BrowseCollect( DnsSdService& NewService, unsigned int flags, void * UserData );
 	
 	// To manadge client list Not supported yet
 	static SimpleList<DnsSdProxyClient*> ClientsList;

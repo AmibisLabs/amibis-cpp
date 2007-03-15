@@ -139,7 +139,7 @@ bool DnsSdProxy::IsEnabled()
 	return ret;
 }
 
-void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, DNSServiceFlags flags, void * UserData )
+void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, unsigned int flags, void * UserData )
 {
 	DnsSdServiceInstanceManager * pServiceInfo;
 

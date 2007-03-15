@@ -220,7 +220,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 	}
 }
 
-void SearchService::DnsSdProxyServiceBrowseReply( DNSServiceFlags flags, const DnsSdService& CurrentService )
+void SearchService::DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& CurrentService )
 {
 	// printf( "%u;", GetTickCount() );
 	if ( flags & kDNSServiceFlagsAdd )

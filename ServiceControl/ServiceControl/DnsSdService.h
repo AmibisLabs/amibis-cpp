@@ -88,7 +88,7 @@ private:
 	DNSServiceRef DnsSdConnection;
 	bool ConnectionOk;	// Do we manage connection
 
-	static void FUNCTION_CALL_TYPE DnsRegisterReply( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context ); // DNS-SD callback function
+	static void FUNCTION_CALL_TYPE DnsRegisterReply( DNSServiceRef sdRef, unsigned int flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context ); // DNS-SD callback function
 #else
 #ifdef OMISCID_USE_AVAHI
 	AvahiSimplePoll * AvahiPoll;

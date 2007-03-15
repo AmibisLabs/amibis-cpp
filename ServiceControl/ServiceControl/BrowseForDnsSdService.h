@@ -20,13 +20,7 @@
 
 namespace Omiscid {
 
-#ifdef OMISCID_USE_MDNS
-typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( DnsSdService& NewService, DNSServiceFlags flags, void * UserData );
-#else
-#ifdef OMISCID_USE_AVAHI
-typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( DnsSdService& NewService, int flags, void * UserData );
-#endif
-#endif
+typedef void (FUNCTION_CALL_TYPE *BrowseCallBack) ( DnsSdService& NewService, unsigned int flags, void * UserData );
 
 class BrowseForDNSSDService : public Thread
 {
@@ -46,13 +40,14 @@ protected:
 
 	SimpleString RegType;
 
+	void CallbackClient( DnsSdService& DnsSdService, const unsigned int flags );
+
 #ifdef OMISCID_USE_MDNS
-	void CallbackClient( DnsSdService& DnsSdService, const DNSServiceFlags flags );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context );
 #else
 #ifdef OMISCID_USE_AVAHI
-	void CallbackClient( DnsSdService& DnsSdService, const int flags );
+	// Nothing for the moment
 #endif
 #endif
 };
