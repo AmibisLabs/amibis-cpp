@@ -55,7 +55,7 @@ public:
 	SimpleString Protocol;					// type of service (63 bytes + '\0')
 	SimpleString Transport;					// transport protocol ("tcp" or "_udp")
 	TransportProtocol nTransport;					// numerical value for transport protocol
-	SimpleString Domain;					//[kDNSServiceMaxDomainName];			// DNS domain name
+	SimpleString Domain;					//[DNSServiceMaxDomainName];			// DNS domain name
 
 	uint16_t Port;									// On which port the service is running
 	SimpleString HostName;					// On which host the service is running

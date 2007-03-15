@@ -18,6 +18,10 @@
 
 #ifdef OMISCID_USE_MDNS
 	#include <dns_sd.h>
+
+	#define OmiscidServiceMaxDomainName		kDNSServiceMaxDomainName
+	#define OmiscidDNSServiceFlagsAdd		kDNSServiceFlagsAdd
+
 #else
 #ifdef OMISCID_USE_AVAHI
 	#include <avahi-client/client.h>
@@ -27,7 +31,8 @@
 	#include <avahi-common/malloc.h>
 	#include <avahi-common/error.h>
 
-	#define kDNSServiceMaxDomainName 1005
+	#define DNSServiceMaxDomainName	1005
+	#define OmiscidDNSServiceFlagsAdd		0x2
 
 #endif
 #endif
@@ -95,7 +100,7 @@ public:
 		enum SizeOfBuffers {
 			ServiceField = 64,	/*!< the service name length */
 			ProtocolAndTransportField = ServiceField + sizeof("_tcp"), /*!< the protocol and transport size */
-			ServiceNameLength = (3*ServiceField + sizeof("_tcp") + kDNSServiceMaxDomainName + 4), /*!< the complete unique name length of a service like "Doms._printer._tcp.local." */
+			ServiceNameLength = (3*ServiceField + sizeof("_tcp") + OmiscidServiceMaxDomainName + 4), /*!< the complete unique name length of a service like "Doms._printer._tcp.local." */
 			RegtypeLength = ServiceField + sizeof("_tcp")/*!< the length of the protocol and the transport protocol for a service, i.e "_printer._tcp" */
 		};
 
@@ -104,11 +109,6 @@ public:
 
 		static const SimpleString DefaultServiceClassName;
 };
-
-#ifdef OMISCID_USE_AVAHI
-	#undef kDNSServiceMaxDomainName
-#endif
-
 
 } // namespace Omiscid
 
