@@ -98,7 +98,7 @@ private:
 
 	static void FUNCTION_CALL_TYPE DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata);	// Avahi callback function
 
-	LaunchRegisterProcess();							// Specific Avahi function
+	void LaunchRegisterProcess();							// Specific Avahi function
 #endif
 #endif
 

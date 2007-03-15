@@ -409,7 +409,15 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 
 void RegisterService::LaunchRegisterProcess()
 {
+	if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, 0, (char*)Name.GetStr(),
+		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
+	{
+		Init();
+		return;
+	}
 
+	// Wait for my callback to stop me
+	avahi_simple_poll_loop(AvahiPoll);
 }
 
 void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata)
@@ -434,7 +442,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			fprintf(stderr, "Service name collision, renaming service to '%s'\n", name);
 
 			// And recreate the services
-			create_services(avahi_entry_group_get_client(g));
+			Mythis->LaunchRegisterProcess();
 			break;
 										   }
 
@@ -444,7 +452,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			break;
 
 		default:
-			// The other stuff
+			// The other (good ???) stuff
 			break;
 	}
 }
@@ -528,15 +536,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
     }
 
 	// We are connected, add the service
-	if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, 0, (char*)Name.GetStr(),
-		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
-	{
-		Init();
-		return false;
-	}
-
-	// Wait for my callback to stop me
-	avahi_simple_poll_loop(AvahiPoll);
+	LaunchRegisterProcess();
 
 #endif
 #endif
