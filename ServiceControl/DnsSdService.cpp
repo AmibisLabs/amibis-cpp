@@ -436,7 +436,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 	{
 		case AVAHI_ENTRY_GROUP_ESTABLISHED :
 			// The entry group has been established successfully
-			fprintf(stderr, "Service '%s' successfully established.\n", Name.GetStr() );
+			fprintf(stderr, "Service '%s' successfully established.\n", MyThis->Name.GetStr() );
 			MyThis->Registered = true;
 			avahi_simple_poll_quit(MyThis->AvahiPoll);
 			break;
