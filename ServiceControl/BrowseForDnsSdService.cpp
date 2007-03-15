@@ -70,7 +70,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 
 	DnsSdService ServiceInfo( FullName, ntohs(port), hosttarget );
 	ServiceInfo.Properties.ImportTXTRecord( txtLen, txtRecord );
-	MyThis->CallbackClient( ServiceInfo, flags | kDNSServiceFlagsAdd );
+	MyThis->CallbackClient( ServiceInfo, flags | OmiscidDNSServiceFlagsAdd );
 }
 
 
@@ -83,7 +83,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	
 	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)context;
 
-	if ( flags & kDNSServiceFlagsAdd )
+	if ( flags & OmiscidDNSServiceFlagsAdd )
 	{
 		// A new service in the list, resolve it to see if it is the searched one...
 		DNSServiceRef Ref;

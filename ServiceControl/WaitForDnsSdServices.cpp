@@ -178,7 +178,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 	SimpleString FullName = serviceName;
 	FullName.ReplaceAll( "\\032", " " );
 
-	if ( flags & kDNSServiceFlagsAdd )
+	if ( flags & OmiscidDNSServiceFlagsAdd )
 	{
 		if ( MyThis->IsResolved )
 		{
@@ -231,7 +231,7 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 void SearchService::DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& CurrentService )
 {
 	// printf( "%u;", GetTickCount() );
-	if ( flags & kDNSServiceFlagsAdd )
+	if ( flags & OmiscidDNSServiceFlagsAdd )
 	{
 		if ( IsResolved )
 		{
@@ -422,7 +422,7 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 							// Go out of the 2 for at the same time.
 							goto AllFound;
 						}
-						SearchServices.GetCurrent()->DnsSdProxyServiceBrowseReply( kDNSServiceFlagsAdd, *(pList->GetCurrent()) );
+						SearchServices.GetCurrent()->DnsSdProxyServiceBrowseReply( OmiscidDNSServiceFlagsAdd, *(pList->GetCurrent()) );
 					}
 				}
 			AllFound:

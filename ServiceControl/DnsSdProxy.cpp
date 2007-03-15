@@ -153,7 +153,7 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, uns
 		return;
 	}
 
-	if ( flags & kDNSServiceFlagsAdd )
+	if ( flags & OmiscidDNSServiceFlagsAdd )
 	{
 		// A new service appears
 		// Copy each members of this list into the new list
