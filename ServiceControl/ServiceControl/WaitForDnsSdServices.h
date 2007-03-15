@@ -53,8 +53,6 @@ private:
 	SimpleString SearchName;
 	int SearchNameLength;
 	char Regtype[RegtypeLength];
-	DNSServiceRef Ref;
-	SOCKET DNSSocket;
 	WaitForDnsSdServices * Parent;
 	bool DNSSDConnection;
 	bool IsResolved;
@@ -64,9 +62,18 @@ private:
 	// To memorise that a service is not suitable for us
 	ServiceProperties ServicesNotSuitable;
 
+#ifdef OMISCID_USE_MDNS
+	DNSServiceRef Ref;
+	SOCKET DNSSocket;
+	
 	// Search call back when using DnsSd directly
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
 	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context );
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Nothing for the moment
+#endif
+#endif
 
 	// Search call back when using DnsSdProxy
 	void DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& CurrentService );

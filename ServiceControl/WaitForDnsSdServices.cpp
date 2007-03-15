@@ -116,6 +116,7 @@ void WaitForDnsSdServices::UnlockService( const SimpleString ServiceName )
 	return;
 }
 
+#ifdef OMISCID_USE_MDNS
 
 void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags,
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
@@ -220,6 +221,13 @@ void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSS
 	}
 }
 
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Nothing for the moment
+#endif
+#endif
+
+
 void SearchService::DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& CurrentService )
 {
 	// printf( "%u;", GetTickCount() );
@@ -303,22 +311,36 @@ bool SearchService::StartSearch( const SimpleString eName, const SimpleString eR
 	}
 
 	Parent = eParent;
-	DNSSocket = (SOCKET)SOCKET_ERROR;
 	DNSSDConnection = false;
 
 
 	CallBack = eCallBack;
 	UserData = eUserData;
 
+#ifdef OMISCID_USE_MDNS
+	DNSSocket = (SOCKET)SOCKET_ERROR;
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Nothing for the moment
+#endif
+#endif
+
 	// If no proxy is running, launch DnsSdConnection
 	if ( DnsSdProxy::IsEnabled() == false )
 	{
+#ifdef OMISCID_USE_MDNS
 		if ( DNSServiceBrowse(&Ref,0,0,eRegType.GetStr(),"",SearchCallBackDNSServiceBrowseReply,this) == kDNSServiceErr_NoError )
 		{
 			DNSSocket = DNSServiceRefSockFD( Ref );
 			DNSSDConnection = true;
 			return true;
 		}
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Nothing for the moment
+#endif
+#endif
+
 		// here we do not get an answer
 		return false;
 	}
@@ -419,6 +441,7 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 		// Work using connxions to DnsSd
 		while(  !StopPending()  )
 		{
+#ifdef OMISCID_USE_MDNS
 			ThreadSafeSection.EnterMutex();
 
 			NumberOfSearchServices = SearchServices.GetNumberOfElements();
@@ -473,6 +496,12 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 
 			ThreadSafeSection.LeaveMutex();
 		}
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Nothing for the moment
+	Sleep(100);
+#endif
+#endif
 	}
 }
 
