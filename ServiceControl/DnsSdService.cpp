@@ -530,7 +530,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 
 	int error;
 
-	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiPublishFlags)0, NULL, NULL, &error );
+	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, NULL, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		Init();

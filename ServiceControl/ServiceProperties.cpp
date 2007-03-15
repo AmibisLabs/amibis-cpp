@@ -488,6 +488,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 	
 	Empty();
 	
+#ifdef OMISCID_USE_MDNS
 	NbKeys = TXTRecordGetCount( (uint16_t)RecordLength, Record );
 
 	for( i = 0; i < NbKeys; i++ )
@@ -510,6 +511,11 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 	}
 
 	return true;
+#else
+#ifdef OMISCID_USE_AVAHI
+	return false;
+#endif
+#endif
 }
 
 ServiceProperties::operator char*()
