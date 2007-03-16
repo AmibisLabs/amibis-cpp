@@ -21,6 +21,16 @@
 #pragma warning(disable : 4127) // Disable warning when using FD_SET
 #endif
 
+#ifdef OMISCID_USE_AVAHI
+	// include specific stuff fro browsing
+	#include <avahi-client/client.h>
+	#include <avahi-client/lookup.h>
+
+	#include <avahi-common/simple-watch.h>
+	#include <avahi-common/malloc.h>
+	#include <avahi-common/error.h>
+#endif
+
 using namespace Omiscid;
 
 BrowseForDNSSDService::BrowseForDNSSDService()
