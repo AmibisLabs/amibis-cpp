@@ -177,14 +177,12 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 			FullName += ".";
 			FullName += type;
 			FullName += ".";
-			FullName += host_name;
-			FullName += ".";
-			FullName += domain;
+			FullName += host_name;	// empirically host_name contains .local. in case of local domain
 			if ( strcmp( domain, "local" ) == 0 )
 			{
 				FullName += ".";
 			}
-			// OmiscidTrace( "Find %s\n", FullName.GetStr() );
+			OmiscidTrace( "Find %s\n", FullName.GetStr() );
 			DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
 			// Add Txt record data
 			MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
