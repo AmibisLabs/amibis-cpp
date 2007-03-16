@@ -283,7 +283,7 @@ SimpleString DnsSdService::ToString()
 	return Generate;
 }
 
-void RegisterService::Init()
+void RegisterService::Init( bool FromConstructor )
 {
 	Registered = false;
 	AutoRenameWasAsk = false;
@@ -294,31 +294,7 @@ void RegisterService::Init()
 	ConnectionOk = false;
 #else
 #ifdef OMISCID_USE_AVAHI
-
-	if ( AvahiTxtRecord != (AvahiStringList *)NULL )
-	{
-		avahi_string_list_free( AvahiTxtRecord );
-	}
-	AvahiTxtRecord = (AvahiStringList *)NULL;
-
-	if ( AvahiGroup != (AvahiEntryGroup *)NULL )
-	{
-		avahi_entry_group_free(AvahiGroup);
-	}
-	AvahiGroup = (AvahiEntryGroup *)NULL;
-
-	if ( AvahiConnection != (AvahiClient *)NULL )
-	{
-		avahi_client_free(AvahiConnection);
-	}
-	AvahiConnection = (AvahiClient *)NULL;
-
-	if ( AvahiPoll != (AvahiSimplePoll *)NULL )
-	{
-		avahi_simple_poll_free(AvahiPoll);
-	}
-	AvahiPoll = (AvahiSimplePoll *)NULL;
-
+	InitAvahi( FromConstructor );
 #endif
 #endif
 }
@@ -327,7 +303,7 @@ RegisterService::RegisterService( const SimpleString FullName, uint16_t ePort, b
 	: DnsSdService( FullName, ePort )
 {
 	// Call init of all members
-	Init();
+	Init(true);
 
 	if ( AutoRegister )
 	{
@@ -339,7 +315,7 @@ RegisterService::RegisterService( const SimpleString ServiceName, const SimpleSt
 	: DnsSdService( ServiceName, RegType, Domain, ePort )
 {
 	// Call init of all members
-	Init();
+	Init(true);
 
 	if ( AutoRegister )
 	{
@@ -351,13 +327,52 @@ RegisterService::RegisterService( const SimpleString ServiceName, const SimpleSt
 	: DnsSdService( ServiceName, Protocol, Transport, Domain, ePort )
 {
 	// Call init of all members
-	Init();
+	Init(true);
 
 	if ( AutoRegister )
 	{
 		Register(AutoRename);
 	}
 }
+
+#ifdef OMISCID_USE_MDNS
+#else
+#ifdef OMISCID_USE_AVAHI
+// function to reset avahi stuff
+void RegisterService::InitAvahi( bool FromConstructor )
+{
+	if ( FromConstructor == false )
+	{
+		// Free Avahi stuff in inverse order of allocation
+		if ( AvahiTxtRecord != (AvahiStringList *)NULL )
+		{
+			avahi_string_list_free( AvahiTxtRecord );
+		}
+
+		if ( AvahiGroup != (AvahiEntryGroup *)NULL )
+		{
+			avahi_entry_group_free(AvahiGroup);
+		}
+
+		if ( AvahiConnection != (AvahiClient *)NULL )
+		{
+			avahi_client_free(AvahiConnection);
+		}
+
+		if ( AvahiPoll != (AvahiSimplePoll *)NULL )
+		{
+			avahi_simple_poll_free(AvahiPoll);
+		}
+	}
+
+	// Set pointer to NULL
+	AvahiTxtRecord = (AvahiStringList *)NULL;
+	AvahiConnection = (AvahiClient *)NULL;
+	AvahiGroup = (AvahiEntryGroup *)NULL;
+	AvahiPoll = (AvahiSimplePoll *)NULL;
+}
+#endif
+#endif
 
 RegisterService::~RegisterService()
 {
@@ -368,31 +383,7 @@ RegisterService::~RegisterService()
 	}
 #else
 #ifdef OMISCID_USE_AVAHI
-
-	if ( AvahiTxtRecord != (AvahiStringList *)NULL )
-	{
-		avahi_string_list_free( AvahiTxtRecord );
-	}
-	AvahiTxtRecord = (AvahiStringList *)NULL;
-
-	if ( AvahiGroup != (AvahiEntryGroup *)NULL )
-	{
-		avahi_entry_group_free(AvahiGroup);
-	}
-	AvahiGroup = (AvahiEntryGroup *)NULL;
-
-	if ( AvahiConnection != (AvahiClient *)NULL )
-	{
-		avahi_client_free(AvahiConnection);
-	}
-	AvahiConnection = (AvahiClient *)NULL;
-
-	if ( AvahiPoll != (AvahiSimplePoll *)NULL )
-	{
-		avahi_simple_poll_free(AvahiPoll);
-	}
-	AvahiPoll = (AvahiSimplePoll *)NULL;
-
+	InitAvahi(false);
 #endif
 #endif
 }
@@ -426,7 +417,7 @@ void RegisterService::LaunchRegisterProcess()
 		if ( avahi_entry_group_add_service_strlst(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, (AvahiPublishFlags)0, (char*)Name.GetStr(),
 			(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, AvahiTxtRecord) < 0 )
 		{
-			Init();
+			Init(false);
 			OmiscidError( "Could not add service group (with TXTRecord)\n" );
 			return;
 		}
@@ -436,7 +427,7 @@ void RegisterService::LaunchRegisterProcess()
 		if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, (AvahiPublishFlags)0, (char*)Name.GetStr(),
 			(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
 		{
-			Init();
+			Init(false);
 			OmiscidError( "Could not add service group\n" );
 			return;
 		}
@@ -445,7 +436,7 @@ void RegisterService::LaunchRegisterProcess()
 	// Tell the server to register the service
 	if ( avahi_entry_group_commit(AvahiGroup) < 0 )
 	{ 
-		Init();
+		Init(false);
 		OmiscidError( "Could not commit service group\n" );
 		return;
 	} 
@@ -578,7 +569,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, (void*)this, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
-		Init();
+		InitAvahi(false);
 		OmiscidError( "Could not create client %s\n", avahi_strerror(error) );
 		return false;
 	}
@@ -586,7 +577,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, (void*)this );
     if ( AvahiGroup == (AvahiEntryGroup *)NULL )
 	{
-		Init();
+		InitAvahi(false);
 		OmiscidError( "Could not create group\n" );
         return false;
     }

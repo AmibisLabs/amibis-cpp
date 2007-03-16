@@ -83,7 +83,7 @@ public:
 
 private:
 	SimpleString ProtocolAndTransport;
-	void Init();	// Only one init function for all constructors
+	void Init( bool FromConstructor );	// Only one init function for all constructors
 
 #ifdef OMISCID_USE_MDNS
 	DNSServiceRef DnsSdConnection;
@@ -96,6 +96,8 @@ private:
 	AvahiClient * AvahiConnection;
 	AvahiEntryGroup * AvahiGroup;
 	AvahiStringList * AvahiTxtRecord;
+
+	void InitAvahi( bool FromConstructor );	// function to reset avahi stuff
 
 	// FUNCTION_CALL_TYPE is empty under linux, so when using avahi. It is just add in order
 	// to have consistent writing rules.

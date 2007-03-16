@@ -21,17 +21,39 @@
 #pragma warning(disable : 4127) // Disable warning when using FD_SET
 #endif
 
-#ifdef OMISCID_USE_AVAHI
-	// include specific stuff fro browsing
-	#include <avahi-client/client.h>
-	#include <avahi-client/lookup.h>
-
-	#include <avahi-common/simple-watch.h>
-	#include <avahi-common/malloc.h>
-	#include <avahi-common/error.h>
-#endif
-
 using namespace Omiscid;
+
+#ifdef OMISCID_USE_MDNS
+	// Nothing to do
+#else
+#ifdef OMISCID_USE_AVAHI
+void BrowseForDNSSDService::InitAvahi( bool FromConstructor )
+{
+	if ( FromConstructor == false )
+	{
+		// Free everything active in inverse order of allocation
+		if ( AvahiBrowser != (AvahiServiceBrowser *)NULL )
+		{
+			avahi_service_browser_free( AvahiBrowser );
+		}
+
+		if ( AvahiConnection != (AvahiClient *)NULL )
+		{
+			avahi_client_free(AvahiConnection);
+		}
+
+		if ( AvahiPoll != (AvahiSimplePoll *)NULL )
+		{
+			avahi_simple_poll_free(AvahiPoll);
+		}
+	}
+
+	AvahiPoll = (AvahiSimplePoll *)NULL;
+	AvahiConnection = (AvahiClient *)NULL;
+	AvahiBrowser = (AvahiServiceBrowser *)NULL;
+}
+#endif
+#endif
 
 BrowseForDNSSDService::BrowseForDNSSDService()
 #ifdef DEBUG_THREAD
@@ -41,6 +63,14 @@ BrowseForDNSSDService::BrowseForDNSSDService()
 	RegType[0] = '\0';
 	CallBack = NULL;
 	UserData = 0;
+
+#ifdef OMISCID_USE_MDNS
+	// Nothing
+#else
+#ifdef OMISCID_USE_AVAHI
+		InitAvahi( true );
+#endif
+#endif
 }
 
 BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, BrowseCallBack eCallBack, void * eUserData, bool AutoStart /* = false */)
@@ -51,6 +81,14 @@ BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, Browse
 	RegType  = eRegtype;
 	CallBack = eCallBack;
 	UserData = eUserData;
+
+#ifdef OMISCID_USE_MDNS
+	// Nothing
+#else
+#ifdef OMISCID_USE_AVAHI
+		InitAvahi( true );
+#endif
+#endif
 
 	if ( AutoStart )
 	{
@@ -245,7 +283,41 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 	DNSServiceRefDeallocate( Ref );	
 #else
 #ifdef OMISCID_USE_AVAHI
+	AvahiPoll = avahi_simple_poll_new();
+	if ( AvahiPoll == (AvahiSimplePoll *)NULL )
+	{
+		OmiscidError( "Could not create poll\n" );
+		return;
+	}
 
+	int error;
+
+	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, (void*)this, &error );
+	if ( AvahiConnection == (AvahiClient *)NULL )
+	{
+		InitAvahi( false );
+		OmiscidError( "Could not create client %s\n", avahi_strerror(error) );
+		return;
+	}
+
+	// Create the service browser 
+	AvahiBrowser = avahi_service_browser_new(client, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, CommonServiceValues::OmiscidServiceDnsSdType.GetStr(), NULL, 0, SearchCallBackDNSServiceBrowseReply, (void*)this);
+	if ( AvahiBrowser == (AvahiServiceBrowser *)NULL )
+	{
+		InitAvahi( false );
+		OmiscidError( "Failed to create service browser: %s\n", avahi_strerror(avahi_client_errno(AvahiConnection)));
+		return;
+	}
+
+	while(!StopPending())
+	{
+		// Call everything for avahi and go out every 10 ms
+		if ( avahi_simple_poll_iterate( AvahiPoll, 10 ) != 0 )
+		{
+			// Ok, problem or quit asked, exit thread
+			break;
+		}
+	}
 #endif
 #endif
 }
@@ -260,5 +332,8 @@ void BrowseForDNSSDService::Start()
 
 void BrowseForDNSSDService::CallbackClient(DnsSdService& DnsSdService, const unsigned int flags )
 {
-	CallBack( DnsSdService, flags, UserData );
+	if ( CallBack != NULL )
+	{
+		CallBack( DnsSdService, flags, UserData );
+	}
 }
