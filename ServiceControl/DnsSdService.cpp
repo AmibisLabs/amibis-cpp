@@ -429,7 +429,7 @@ void RegisterService::LaunchRegisterProcess()
 	avahi_simple_poll_loop(AvahiPoll);
 }
 
-void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, void *userdata)
+void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata)
 {
 	char * tmpc = NULL;
 	RegisterService * MyThis = (RegisterService*)userdata;
@@ -534,7 +534,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 
 	int error;
 
-	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, NULL, &error );
+	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, (void*)this, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		Init();
