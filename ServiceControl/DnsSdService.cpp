@@ -421,12 +421,25 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 
 void RegisterService::LaunchRegisterProcess()
 {
-	if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, (AvahiPublishFlags)0, (char*)Name.GetStr(),
-		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
+	if ( AvahiTxtRecord != (AvahiStringList *)NULL )
 	{
-		Init();
-		OmiscidError( "Could not add service group\n" );
-		return;
+		if ( avahi_entry_group_add_service_strlst(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, (AvahiPublishFlags)0, (char*)Name.GetStr(),
+			(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, AvahiTxtRecord) < 0 )
+		{
+			Init();
+			OmiscidError( "Could not add service group\n" );
+			return;
+		}
+	}
+	else
+	{
+		if ( avahi_entry_group_add_service(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, (AvahiPublishFlags)0, (char*)Name.GetStr(),
+			(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
+		{
+			Init();
+			OmiscidError( "Could not add service group\n" );
+			return;
+		}
 	}
 
 	// Tell the server to register the service
@@ -564,6 +577,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 
 	// Construct TXTRecord
 	int PosProperty;
+	AvahiTxtRecord = (AvahiStringList *)NULL;
 	for( PosProperty = 0; PosProperty < Properties.GetNumberOfProperties(); PosProperty++ )
 	{
 		ServiceProperty& CurrentProperty = Properties.GetProperty(PosProperty);
