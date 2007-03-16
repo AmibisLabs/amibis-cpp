@@ -538,7 +538,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		Init();
-		OmiscidError( "Could not create client\n" );
+		OmiscidError( "Could not create client %s\n", avahi_strerror(error) );
 		return false;
 	}
 
