@@ -394,10 +394,17 @@ int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleStr
 
 void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 {
+#ifdef OMISCID_USE_MDNS
 	fd_set fds;
 	int nReady;
 	timeval timeout;
 	int MaxDesc = 0;	// Maximal descriptor for the select function
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Nothing for the moment
+#endif
+#endif
+
 	int NumberOfSearchServices = 0;
 
 	if ( DnsSdProxy::IsEnabled() )
