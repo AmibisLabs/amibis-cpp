@@ -542,7 +542,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 		return false;
 	}
 
-	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, NULL );
+	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, (void*)this );
     if ( AvahiGroup == (AvahiEntryGroup *)NULL )
 	{
 		Init();
