@@ -185,6 +185,9 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 			OmiscidTrace( "Find %s\n", FullName.GetStr() );
 			DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
 			// Add Txt record data
+
+			Not donne !!!
+
 			MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
 			break;
 	}
