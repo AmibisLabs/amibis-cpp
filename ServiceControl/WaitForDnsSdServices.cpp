@@ -508,13 +508,13 @@ void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
 			}
 
 			ThreadSafeSection.LeaveMutex();
-		}
 #else
 #ifdef OMISCID_USE_AVAHI
 	// Nothing for the moment
 	Sleep(100);
 #endif
 #endif
+		}
 	}
 }
 
