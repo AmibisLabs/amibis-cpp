@@ -400,20 +400,20 @@ RegisterService::~RegisterService()
 #ifdef OMISCID_USE_MDNS
 void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context )
 {
-	RegisterService * Mythis = (RegisterService*)context;
+	RegisterService * MyThis = (RegisterService*)context;
 
 	if ( errorCode == kDNSServiceErr_NoError )
 	{
-		Mythis->Registered = true;
-		Mythis->RegisteredName = name;
-		Mythis->CompleteServiceName = name;
-		Mythis->CompleteServiceName += ".";
-		Mythis->CompleteServiceName += regtype;
-		Mythis->CompleteServiceName += domain;
+		MyThis->Registered = true;
+		MyThis->RegisteredName = name;
+		MyThis->CompleteServiceName = name;
+		MyThis->CompleteServiceName += ".";
+		MyThis->CompleteServiceName += regtype;
+		MyThis->CompleteServiceName += domain;
 	}
 	else
 	{
-		Mythis->Registered = false;
+		MyThis->Registered = false;
 	}
 }
 #else
