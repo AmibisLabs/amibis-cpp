@@ -307,7 +307,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 	}
 
 	// Create the service browser 
-	AvahiBrowser = avahi_service_browser_new(AvahiConnection, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, CommonServiceValues::OmiscidServiceDnsSdType.GetStr(), NULL, (AvahiLookupFlags)0, SearchCallBackDNSServiceBrowseReply, (void*)this);
+	AvahiBrowser = avahi_service_browser_new(AvahiConnection, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, RegType.GetStr(), NULL, (AvahiLookupFlags)0, SearchCallBackDNSServiceBrowseReply, (void*)this);
 	if ( AvahiBrowser == (AvahiServiceBrowser *)NULL )
 	{
 		InitAvahi( false );
