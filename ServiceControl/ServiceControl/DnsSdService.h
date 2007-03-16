@@ -64,7 +64,7 @@ public:
 };
 
 /**
- * @class RegisterService DnsSdService.h ServiceControl/DnsSdService.h
+ * @class RegisterService DnsSdService.cpp ServiceControl/DnsSdService.h
  * @brief To Comment
  * @author Dominique Vaufreydaz
  */

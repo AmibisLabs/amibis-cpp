@@ -413,6 +413,7 @@ void RegisterService::LaunchRegisterProcess()
 		(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
 	{
 		Init();
+		OmiscidError( "Could not add service group\n" );
 		return;
 	}
 
@@ -420,6 +421,7 @@ void RegisterService::LaunchRegisterProcess()
 	if ( avahi_entry_group_commit(AvahiGroup) < 0 )
 	{ 
 		Init();
+		OmiscidError( "Could not commit service group\n" );
 		return;
 	} 
 
@@ -436,7 +438,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 	{
 		case AVAHI_ENTRY_GROUP_ESTABLISHED :
 			// The entry group has been established successfully
-			fprintf(stderr, "Service '%s' successfully established.\n", MyThis->Name.GetStr() );
+			OmiscidTrace( "Service '%s' successfully established.\n", MyThis->Name.GetStr() );
 			MyThis->Registered = true;
 			avahi_simple_poll_quit(MyThis->AvahiPoll);
 			break;
@@ -446,7 +448,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			tmpc = avahi_alternative_service_name(MyThis->Name.GetStr());
 			MyThis->Name = tmpc;
 
-			fprintf(stderr, "Service name collision, renaming service to '%s'\n", tmpc );
+			OmiscidTrace( "Service name collision, renaming service to '%s'\n", tmpc );
 
 			// And recreate the services
 			MyThis->LaunchRegisterProcess();
@@ -454,6 +456,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 										   
 		case AVAHI_ENTRY_GROUP_FAILURE:
 			// Some kind of failure happened while we were registering our services
+			OmiscidError( "Entry group failure\n" );
 			avahi_simple_poll_quit(MyThis->AvahiPoll);
 			break;
 
@@ -525,6 +528,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	AvahiPoll = avahi_simple_poll_new();
 	if ( AvahiPoll == (AvahiSimplePoll *)NULL )
 	{
+		OmiscidError( "Could not create poll\n" );
 		return false;
 	}
 
@@ -534,6 +538,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		Init();
+		OmiscidError( "Could not create client\n" );
 		return false;
 	}
 
@@ -541,6 +546,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
     if ( AvahiGroup == (AvahiEntryGroup *)NULL )
 	{
 		Init();
+		OmiscidError( "Could not create group\n" );
         return false;
     }
 
