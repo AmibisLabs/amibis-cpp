@@ -295,6 +295,12 @@ void RegisterService::Init()
 #else
 #ifdef OMISCID_USE_AVAHI
 
+	if ( AvahiTxtRecord != (AvahiStringList *)NULL )
+	{
+		avahi_string_list_free( AvahiTxtRecord );
+	}
+	AvahiTxtRecord = (AvahiStringList *)NULL;
+
 	if ( AvahiGroup != (AvahiEntryGroup *)NULL )
 	{
 		avahi_entry_group_free(AvahiGroup);
@@ -362,6 +368,12 @@ RegisterService::~RegisterService()
 	}
 #else
 #ifdef OMISCID_USE_AVAHI
+
+	if ( AvahiTxtRecord != (AvahiStringList *)NULL )
+	{
+		avahi_string_list_free( AvahiTxtRecord );
+	}
+	AvahiTxtRecord = (AvahiStringList *)NULL;
 
 	if ( AvahiGroup != (AvahiEntryGroup *)NULL )
 	{
@@ -549,6 +561,15 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 		OmiscidError( "Could not create group\n" );
         return false;
     }
+
+	// Construct TXTRecord
+	int PosProperty;
+	ServiceProperty& CurrentProperty;
+	for( PosProperty = 0; PosProperty < Properties.GetNumberOfProperties(); PosProperty++ )
+	{
+		CurrentProperty = Properties.GetProperty(PosProperty);
+		avahi_string_list_add_pair( AvahiTxtRecord, CurrentProperty.GetName().GetStr(), CurrentProperty.GetValue().GetStr() );
+	}
 
 	// We are connected, add the service
 	LaunchRegisterProcess();

@@ -95,6 +95,7 @@ private:
 	AvahiSimplePoll * AvahiPoll;
 	AvahiClient * AvahiConnection;
 	AvahiEntryGroup * AvahiGroup;
+	AvahiStringList * AvahiTxtRecord;
 
 	static void FUNCTION_CALL_TYPE DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata);	// Avahi callback function
 
