@@ -204,7 +204,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	{
 	    case AVAHI_BROWSER_FAILURE:
 	        OmiscidError( "AvahiBrowser %s\n", avahi_strerror(avahi_client_errno(avahi_service_browser_get_client(b))));
-	        avahi_simple_poll_quit(simple_poll);
+	        avahi_simple_poll_quit(MyThis->AvahiPoll);
 	        return;
 	
 	    case AVAHI_BROWSER_NEW:
@@ -213,9 +213,9 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	           the callback function is called the server will free
 	           the resolver for us. */
 	
-	        if ( avahi_service_resolver_new(MyThis->AvahiClient, interface, protocol, name, type, domain, AVAHI_PROTO_UNSPEC, 0, resolve_callback, (void*)MyThis) == NULL )
+	        if ( avahi_service_resolver_new(MyThis->AvahiConnection, interface, protocol, name, type, domain, AVAHI_PROTO_UNSPEC, 0, SearchCallBackDNSServiceResolveReply, (void*)MyThis) == NULL )
 			{
-				OmiscidError( "AvahiBrowser ailed to resolve service '%s': %s\n", name, avahi_strerror(avahi_client_errno(MyThis->AvahiClient)));
+				OmiscidError( "AvahiBrowser ailed to resolve service '%s': %s\n", name, avahi_strerror(avahi_client_errno(MyThis->AvahiConnection)));
 				avahi_simple_poll_quit(simple_poll);
 			}
 	        break;
@@ -301,7 +301,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 	}
 
 	// Create the service browser 
-	AvahiBrowser = avahi_service_browser_new(client, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, CommonServiceValues::OmiscidServiceDnsSdType.GetStr(), NULL, 0, SearchCallBackDNSServiceBrowseReply, (void*)this);
+	AvahiBrowser = avahi_service_browser_new(AvahiConnection, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, CommonServiceValues::OmiscidServiceDnsSdType.GetStr(), NULL, 0, SearchCallBackDNSServiceBrowseReply, (void*)this);
 	if ( AvahiBrowser == (AvahiServiceBrowser *)NULL )
 	{
 		InitAvahi( false );
