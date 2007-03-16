@@ -516,6 +516,8 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	ProtocolAndTransport += ".";
 	ProtocolAndTransport += Transport;
 
+	OmiscidTrace( "Trying to register %s\n", Name.GetStr() );
+
 
 #ifdef OMISCID_USE_MDNS
 	DNSServiceFlags RenamingFlags = (DNSServiceFlags)0; // auto rename
