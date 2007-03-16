@@ -581,7 +581,8 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	for( PosProperty = 0; PosProperty < Properties.GetNumberOfProperties(); PosProperty++ )
 	{
 		ServiceProperty& CurrentProperty = Properties.GetProperty(PosProperty);
-		avahi_string_list_add_pair( AvahiTxtRecord, CurrentProperty.GetName().GetStr(), CurrentProperty.GetValue().GetStr() );
+		AvahiTxtRecord = avahi_string_list_add_pair( AvahiTxtRecord, CurrentProperty.GetName().GetStr(),
+			CurrentProperty.GetValue().GetStr() );
 	}
 
 	// We are connected, add the service
