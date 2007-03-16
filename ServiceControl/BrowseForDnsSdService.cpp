@@ -174,9 +174,9 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 	    case AVAHI_RESOLVER_FOUND:
 			FullName = name;
 			FullName.ReplaceAll( "\\032", " " );
-			FullName += '.';
+			FullName += ".";
 			FullName += type;
-			FullName += '.';
+			FullName += ".";
 			FullName += domain;
 			OmiscidTrace( "Find %s\n", FullName.GetStr() );
 			DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
