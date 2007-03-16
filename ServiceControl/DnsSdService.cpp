@@ -466,10 +466,10 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			// OmiscidTrace( "Service '%s' successfully established.\n", MyThis->Name.GetStr() );
 			MyThis->Registered = true;
 			MyThis->RegisteredName = MyThis->Name;
-			Mythis->CompleteServiceName = MyThis->Name;
-			Mythis->CompleteServiceName += ".";
-			Mythis->CompleteServiceName += MyThis->ProtocolAndTransport;
-			Mythis->CompleteServiceName += Domain;
+			MyThis->CompleteServiceName = MyThis->Name;
+			MyThis->CompleteServiceName += ".";
+			MyThis->CompleteServiceName += MyThis->ProtocolAndTransport;
+			MyThis->CompleteServiceName += MyThis->Domain;
 			avahi_simple_poll_quit(MyThis->AvahiPoll);
 			break;
 
@@ -478,7 +478,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			{
 				// A service name collision happened. Let's pick a new name
 				tmpc = avahi_alternative_service_name(MyThis->Name.GetStr());
-				MyThis->Name = tmpc
+				MyThis->Name = tmpc;
 				avahi_free(tmpc);
 
 				OmiscidTrace( "Service name collision, renaming service to '%s'\n", tmpc );
