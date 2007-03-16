@@ -427,7 +427,7 @@ void RegisterService::LaunchRegisterProcess()
 			(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, AvahiTxtRecord) < 0 )
 		{
 			Init();
-			OmiscidError( "Could not add service group\n" );
+			OmiscidError( "Could not add service group (with TXTRecord)\n" );
 			return;
 		}
 	}
@@ -463,20 +463,34 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 	{
 		case AVAHI_ENTRY_GROUP_ESTABLISHED :
 			// The entry group has been established successfully
-			OmiscidTrace( "Service '%s' successfully established.\n", MyThis->Name.GetStr() );
+			// OmiscidTrace( "Service '%s' successfully established.\n", MyThis->Name.GetStr() );
 			MyThis->Registered = true;
+			MyThis->RegisteredName = MyThis->Name;
+			Mythis->CompleteServiceName = MyThis->Name;
+			Mythis->CompleteServiceName += ".";
+			Mythis->CompleteServiceName += MyThis->ProtocolAndTransport;
+			Mythis->CompleteServiceName += Domain;
 			avahi_simple_poll_quit(MyThis->AvahiPoll);
 			break;
 
 		case AVAHI_ENTRY_GROUP_COLLISION :
-			// A service name collision happened. Let's pick a new name
-			tmpc = avahi_alternative_service_name(MyThis->Name.GetStr());
-			MyThis->Name = tmpc;
+			if ( MyThis->AutoRenameWasAsk == true )
+			{
+				// A service name collision happened. Let's pick a new name
+				tmpc = avahi_alternative_service_name(MyThis->Name.GetStr());
+				MyThis->Name = tmpc
+				avahi_free(tmpc);
 
-			OmiscidTrace( "Service name collision, renaming service to '%s'\n", tmpc );
+				OmiscidTrace( "Service name collision, renaming service to '%s'\n", tmpc );
 
-			// And recreate the services
-			MyThis->LaunchRegisterProcess();
+				// And recreate the services
+				MyThis->LaunchRegisterProcess();
+			}
+			else
+			{
+				// We do not try to solve name conflict
+				avahi_simple_poll_quit(MyThis->AvahiPoll);
+			}
 			break;
 										   
 		case AVAHI_ENTRY_GROUP_FAILURE:
