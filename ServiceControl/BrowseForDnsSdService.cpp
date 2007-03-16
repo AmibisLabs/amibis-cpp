@@ -58,11 +58,10 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
 	uint16_t txtLen, const unsigned char *txtRecord, void *context )
 {
-	SimpleString FullName;
-
 	if ( errorCode != kDNSServiceErr_NoError )
 		return;
 
+	SimpleString FullName;
 	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)context;
 
 	FullName = fullname;
@@ -79,7 +78,9 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	const char *replyDomain, void *context )
 {
 	if ( errorCode != kDNSServiceErr_NoError )
+	{
 		return;
+	}
 	
 	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)context;
 
@@ -102,6 +103,87 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 }
 #else
 #ifdef OMISCID_USE_AVAHI
+void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveReply( AvahiServiceResolver *r,
+	AVAHI_GCC_UNUSED AvahiIfIndex interface, AVAHI_GCC_UNUSED AvahiProtocol protocol, AvahiResolverEvent event,
+	const char *name, const char *type, const char *domain, const char *host_name, const AvahiAddress *address,
+	uint16_t port, AvahiStringList *txt, AvahiLookupResultFlags flags, AVAHI_GCC_UNUSED void* userdata)
+{
+	if ( r == (AvahiServiceResolver *)NULL )
+	{
+		return;
+	}
+
+	SimpleString FullName;
+	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)userdata;
+
+	/* Called whenever a service has been resolved successfully or timed out */
+	switch (event)
+	{
+	    case AVAHI_RESOLVER_FAILURE:
+	        OmiscidError( "AvahiResolver Failed to resolve service '%s' of type '%s' in domain '%s': %s\n", name, type, domain, avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(r))));
+	        break;
+	
+	    case AVAHI_RESOLVER_FOUND:
+			FullName = name;
+			FullName.ReplaceAll( "\\032", " " );
+			FullName += '.';
+			FullName += type;
+			FullName += '.';
+			FullName += domain;
+			DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
+			// Add Txt record data
+			MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
+			break;
+	}
+	
+	// Free the resolver
+	avahi_service_resolver_free(r);
+}
+
+void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseReply( AvahiServiceBrowser *b,
+	AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char *name, const char *type,
+	const char *domain, AVAHI_GCC_UNUSED AvahiLookupResultFlags flags, void* userdata)
+{
+	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)userdata;
+
+	if ( b == (AvahiServiceBrowser *)NULL )
+	{
+		return;
+	}
+
+	/* Called whenever a new services becomes available on the LAN or is removed from the LAN */
+	switch (event)
+	{
+	    case AVAHI_BROWSER_FAILURE:
+	        OmiscidError( "AvahiBrowser %s\n", avahi_strerror(avahi_client_errno(avahi_service_browser_get_client(b))));
+	        avahi_simple_poll_quit(simple_poll);
+	        return;
+	
+	    case AVAHI_BROWSER_NEW:
+	        /* We ignore the returned resolver object. In the callback
+	           function we free it. If the server is terminated before
+	           the callback function is called the server will free
+	           the resolver for us. */
+	
+	        if ( avahi_service_resolver_new(MyThis->AvahiClient, interface, protocol, name, type, domain, AVAHI_PROTO_UNSPEC, 0, resolve_callback, (void*)MyThis) == NULL )
+			{
+				OmiscidError( "AvahiBrowser ailed to resolve service '%s': %s\n", name, avahi_strerror(avahi_client_errno(MyThis->AvahiClient)));
+				avahi_simple_poll_quit(simple_poll);
+			}
+	        break;
+	
+	    case AVAHI_BROWSER_REMOVE:
+			{
+				DnsSdService ServiceInfo( name, type, domain, 1 );
+				MyThis->CallbackClient( ServiceInfo, 0 );
+			}
+	        break;
+	
+	    case AVAHI_BROWSER_ALL_FOR_NOW:
+		case AVAHI_BROWSER_CACHE_EXHAUSTED:
+	        break;
+	}
+}
 
 #endif
 #endif

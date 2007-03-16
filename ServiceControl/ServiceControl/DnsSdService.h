@@ -97,6 +97,8 @@ private:
 	AvahiEntryGroup * AvahiGroup;
 	AvahiStringList * AvahiTxtRecord;
 
+	// FUNCTION_CALL_TYPE is empty under linux, so when using avahi. It is just add in order
+	// to have consistent writing rules.
 	static void FUNCTION_CALL_TYPE DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata);	// Avahi callback function
 
 	void LaunchRegisterProcess();							// Specific Avahi function
