@@ -37,7 +37,7 @@ public:
 	DnsSdProxyClient();
 	virtual ~DnsSdProxyClient();
 
-	virtual void DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service ) = 0;
+	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service ) = 0;
 };
 
 class DnsSdProxy

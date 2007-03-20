@@ -181,7 +181,15 @@ public:
 protected:
 	// according to the DNS-SD specifications, can be up to 8000 bytes
 	// but not on multicast usage
+#ifdef OMISCID_USE_MDNS
 	enum SizeOfBuffers { MaxTxtRecordSize = 1024 }; 
+#else
+#ifdef OMISCID_USE_AVAHI
+	// For avahi, there is a cookie set in TXT record, so let's say that
+	// we have 200 characters less
+	enum SizeOfBuffers { MaxTxtRecordSize = 824 }; 
+#endif
+#endif
 
 	virtual int Find( const SimpleString Name, bool ReadOnly = true );
 

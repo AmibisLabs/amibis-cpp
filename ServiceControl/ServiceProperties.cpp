@@ -430,7 +430,7 @@ const unsigned char * ServiceProperties::ExportTXTRecord() const
 
 	if ( TXTRecordLength == 0 )
 	{
-		return NULL;
+		return (unsigned char *)NULL;
 	}
 
 	if ( TxtRecordIsFull() )
@@ -478,6 +478,7 @@ void ServiceProperties::Empty()
 
 bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char * Record )
 {
+
 #ifdef OMISCID_USE_MDNS
 	int i;
 	int NbKeys;
@@ -513,7 +514,47 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 	return true;
 #else
 #ifdef OMISCID_USE_AVAHI
-	return false;
+	char * KeyName = (char*)NULL;
+	char * KeyValue = (char*)NULL;
+
+	AvahiStringList * TxtRecordStringList = (AvahiStringList *)NULL;
+	AvahiStringList * PosIntoTxtRecord;
+
+	// Empty properties
+	Empty();
+
+	// parse file to construct avahi string list
+	if ( avahi_string_list_parse( (const void*)Record, (size_t)RecordLength, &TxtRecordStringList ) < 0 )
+	{
+		// Could not parse string
+		return false;
+	}
+
+	for( PosIntoTxtRecord = TxtRecordStringList; PosIntoTxtRecord != (AvahiStringList *)NULL; PosIntoTxtRecord = avahi_string_list_get_next(PosIntoTxtRecord) )
+	{
+		// Get pair
+		if ( avahi_string_list_get_pair(PosIntoTxtRecord, &KeyName, &KeyValue, (size_t*)NULL) < 0 )
+		{
+			continue;
+		}
+
+		// Set this properties
+		(*this)[KeyName] = KeyValue;
+
+		// Free KeyName
+		avahi_free( KeyName );
+		KeyName = (char*)NULL;
+
+		// Free KeyValue if any
+		if ( KeyValue != (char*)NULL )
+		{
+			avahi_free( KeyValue );
+			KeyValue = (char*)NULL;
+		}
+	}
+
+	// Free list
+	avahi_string_list_free( TxtRecordStringList );
 #endif
 #endif
 }

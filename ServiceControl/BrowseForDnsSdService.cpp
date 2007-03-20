@@ -99,6 +99,15 @@ BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, Browse
 BrowseForDNSSDService::~BrowseForDNSSDService()
 {
 	StopThread();
+
+#ifdef OMISCID_USE_MDNS
+	// Nothing
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Free avahi stuff
+	InitAvahi( false );
+#endif
+#endif
 }
 
 #ifdef OMISCID_USE_MDNS
@@ -182,7 +191,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 			{
 				FullName += ".";
 			}
-			OmiscidTrace( "Find %s\n", FullName.GetStr() );
+			// OmiscidTrace( "Find %s\n", FullName.GetStr() );
 			DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
 			// Add Txt record data
 
