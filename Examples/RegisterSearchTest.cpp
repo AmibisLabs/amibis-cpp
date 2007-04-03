@@ -234,7 +234,7 @@ int main(int argc, char*argv[] )
 			break;
 		}
 
-		// If not done, wait 100 ms macimum for a new service registration
+		// If not done, wait 100 ms maximum for a new service registration
 		RegisterThread::NewServiceIsRegistered.Wait(100);
 	}
 
@@ -379,6 +379,11 @@ int main(int argc, char*argv[] )
 	{
 		delete MyProxy;
 	}
+
+#ifdef WIN32
+	Event Forever;
+	Forever.Wait();
+#endif
 
 	// exit
 	return 0;

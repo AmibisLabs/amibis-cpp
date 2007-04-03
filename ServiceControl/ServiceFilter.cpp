@@ -300,7 +300,7 @@ ServiceOwnerIs::~ServiceOwnerIs()
 bool ServiceOwnerIs::IsAGoodService(ServiceProxy& SP)
 {
 	SimpleString ServiceOwner;
-	ServiceOwner = SP.GetVariableValue( OwnerString );
+	ServiceOwner = SP.GetVariableValue( CommonServiceValues::GetNameForOwnerString() );
 	if ( ServiceOwner.IsEmpty() )
 	{
 		return false;
@@ -432,7 +432,7 @@ ServiceFilter * Omiscid::NamePrefixIs(SimpleString Name, bool CaseInsensitive)
 */
 ServiceFilter * Omiscid::PeerIdIs(unsigned int PeerId)
 {
-	SimpleString VarName( PeerIdString );
+	SimpleString VarName( CommonServiceValues::GetNameForPeerIdString() );
 	SimpleString VarValue;
 	
 	// generate PeerId string
@@ -451,13 +451,13 @@ ServiceFilter * Omiscid::PeerIdIs(unsigned int PeerId)
 */
 ServiceFilter * Omiscid::ClassIs( const SimpleString ClassName )
 {
-	SimpleString VarName( ClassString );
+	SimpleString VarName( CommonServiceValues::GetNameForClassString() );
 	SimpleString LocalClassName;
 
 	// If no class given, use the default class
 	if ( ClassName.IsEmpty() )
 	{
-		LocalClassName = ControlServer::DefaultServiceClassName;
+		LocalClassName = CommonServiceValues::GetDefaultServiceClassName();
 	}
 	else
 	{

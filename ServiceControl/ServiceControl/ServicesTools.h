@@ -44,13 +44,13 @@ public:
 
 	int NeedService( const SimpleString eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
 	{
-		return WaitForDnsSdServices::NeedService( eName, OmiscidServiceDnsSdType, eCallBack, eUserData );
+		return WaitForDnsSdServices::NeedService( eName, GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
 	}
 
 	// If we do not plan to filter with the name, ask for all services
 	int NeedService( IsServiceValidForMe eCallBack, void * eUserData = NULL )
 	{
-		return WaitForDnsSdServices::NeedService( SimpleString::EmptyString, OmiscidServiceDnsSdType, eCallBack, eUserData );
+		return WaitForDnsSdServices::NeedService( SimpleString::EmptyString, GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
 	}
 };
 

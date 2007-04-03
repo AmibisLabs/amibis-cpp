@@ -24,70 +24,17 @@
 
 using namespace Omiscid;
 
-#ifdef OMISCID_USE_MDNS
-	// Nothing to do
-#else
-#ifdef OMISCID_USE_AVAHI
-void SearchService::InitAvahi( bool FromConstructor )
-{
-	if ( FromConstructor == false )
-	{
-		// Free everything active in inverse order of allocation
-		if ( AvahiBrowser != (AvahiServiceBrowser *)NULL )
-		{
-			avahi_service_browser_free( AvahiBrowser );
-		}
-
-		if ( AvahiConnection != (AvahiClient *)NULL )
-		{
-			avahi_client_free(AvahiConnection);
-		}
-
-		if ( AvahiPoll != (AvahiSimplePoll *)NULL )
-		{
-			avahi_simple_poll_free(AvahiPoll);
-		}
-	}
-
-	AvahiPoll = (AvahiSimplePoll *)NULL;
-	AvahiConnection = (AvahiClient *)NULL;
-	AvahiBrowser = (AvahiServiceBrowser *)NULL;
-}
-#endif
-#endif
 
 SearchService::SearchService()
 {
 	IsResolved = false;
 	Regtype[0] = '\0';
-	DNSSDConnection = false;
 	CallBack = NULL;
 	UserData = NULL;
-#ifdef OMISCID_USE_MDNS
-	DNSSocket = (SOCKET)SOCKET_ERROR;
-	Ref = NULL;
-#else
-#ifdef OMISCID_USE_AVAHI
-	// Init avahi stuff
-	InitAvahi( true );
-#endif
-#endif
 }
 
 SearchService::~SearchService()
 {
-#ifdef OMISCID_USE_MDNS
-	if ( Ref != NULL )
-	{
-		DNSServiceRefDeallocate( Ref );
-		Ref = NULL;
-	}
-#else
-#ifdef OMISCID_USE_AVAHI
-	// Free avahi stuff
-	InitAvahi( false );
-#endif
-#endif
 }
 
 WaitForDnsSdServices::WaitForDnsSdServices()
@@ -96,13 +43,10 @@ WaitForDnsSdServices::WaitForDnsSdServices()
 #endif
 {
 	NbServicesReady = 0;
-
-	StartThread();
 }
 
 WaitForDnsSdServices::~WaitForDnsSdServices()
 {
-	StopThread(); 
 }
 
 bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
@@ -111,9 +55,11 @@ bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
 	{
 		return false;
 	}
+
+	SimpleString ShortName = DnsSdService::GetDNSSDServiceNameFromFullName( ServiceName );
 		
 	mutexServicesUsed.EnterMutex();
-	if ( ServicesUsed.IsDefined( ServiceName ) )
+	if ( ServicesUsed.IsDefined( ShortName ) )
 	{
 		mutexServicesUsed.LeaveMutex();
 		// OmiscidTrace( "     '%s' is locked.\n", ServiceName.GetStr() );
@@ -131,9 +77,11 @@ bool WaitForDnsSdServices::LockService( const SimpleString ServiceName )
 	{
 		return false;
 	}
+
+	SimpleString ShortName = DnsSdService::GetDNSSDServiceNameFromFullName( ServiceName );
 		
 	mutexServicesUsed.EnterMutex();
-	if ( ServicesUsed.IsDefined( ServiceName ) )
+	if ( ServicesUsed.IsDefined( ShortName ) )
 	{
 		mutexServicesUsed.LeaveMutex();
 		// OmiscidTrace( "Lock '%s' is already set.\n", ServiceName.GetStr() );
@@ -154,223 +102,23 @@ void WaitForDnsSdServices::UnlockService( const SimpleString ServiceName )
 	{
 		return;
 	}
+
+	SimpleString ShortName = DnsSdService::GetDNSSDServiceNameFromFullName( ServiceName );
 		
 	mutexServicesUsed.EnterMutex();
-	ServicesUsed.Undefine( ServiceName );
+	ServicesUsed.Undefine( ShortName );
 	mutexServicesUsed.LeaveMutex();
 
 	// OmiscidTrace( "Lock '%s' removed.\n", ServiceName.GetStr() );
 	return;
 }
 
-#ifdef OMISCID_USE_MDNS
-
-void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags,
-	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port,
-	uint16_t txtLen, const unsigned char *txtRecord, void *context )
-{
-	SearchService * MyThis = (SearchService *)context;
-
-	// Some error occurs or a service is removed...
-	if ( errorCode != kDNSServiceErr_NoError )
-		return;
-
-	SimpleString FullName = fullname;
-	FullName.ReplaceAll( "\\032", " " );
-
-	// Do we already consider this service ?
-	if ( MyThis->Parent->IsServiceLocked(FullName) )
-	{
-		// yes, so exit
-		return;
-	}
-
-	// Call the callback
-	if ( MyThis->CallBack )
-	{
-		if ( MyThis->CallBack( FullName.GetStr(), hosttarget, ntohs(port), txtLen, (const char*)txtRecord, MyThis->UserData) == false )
-		{
-			return;
-		}
-	}
-		
-	// We lock the full service Name to prevent multiple use of the same instance
-	// of a service...
-	if ( MyThis->Parent->LockService( FullName ) == false )
-	{
-		// already used...
-		return;
-	}
-
-	// Fill the service informations
-	MyThis->CompleteServiceName = FullName;
-	MyThis->HostName = hosttarget;
-	MyThis->Port = ntohs( port );
-	MyThis->Properties.ImportTXTRecord( txtLen, txtRecord );
-	MyThis->IsResolved = true;
-
-	++MyThis->Parent->NbServicesReady;
-}
-
-
-void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags,
-	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType,
-	const char *replyDomain, void *context )
-{
-	if ( errorCode != kDNSServiceErr_NoError )
-		return;
-	
-	SearchService * MyThis = (SearchService *)context;
-
-	SimpleString FullName = serviceName;
-	FullName.ReplaceAll( "\\032", " " );
-
-	if ( flags & OmiscidDNSServiceFlagsAdd )
-	{
-		if ( MyThis->IsResolved )
-		{
-			// Not me, I am already resolved...
-			return;
-		}
-
-		// If the search name == 0, we do check for every service, in all other case, we compare
-		// The search name with the current service
-		if ( MyThis->SearchName.IsEmpty() || strncasecmp( (char*)MyThis->SearchName.GetStr(), (char*)FullName.GetStr(), MyThis->SearchName.GetLength() ) == 0 )
-		{
-			// A new service in the list, resolve it to see if it is the searched one...
-			DNSServiceRef Ref;
-
-			if ( DNSServiceResolve( &Ref, 0, interfaceIndex, serviceName, replyType, replyDomain, (DNSServiceResolveReply)SearchCallBackDNSServiceResolveReply, context ) == kDNSServiceErr_NoError )
-			{
-				DNSServiceProcessResult( Ref );
-				DNSServiceRefDeallocate( Ref );
-			}
-		}
-	}
-	else
-	{
-		// We need to say that the service is no longer present
-		// Am I this service ? a service name is unique !!!
-		if ( MyThis->Name == serviceName ) 
-		{
-			// Doms: I am not sure, we can not have a "remove" before an "add" operation, just to prevent
-			// problems
-			if ( MyThis->IsResolved )
-			{
-                // Ok, I am not here anymore...
-				MyThis->IsResolved = false;
-				// For my parent, there is one service
-				--MyThis->Parent->NbServicesReady;
-				// Unlock the service to be completed...
-				MyThis->Parent->UnlockService( FullName );
-			}
-		}
-	}
-}
-
-#else
-#ifdef OMISCID_USE_AVAHI
-void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceResolveReply( AvahiServiceResolver *r,
-	AVAHI_GCC_UNUSED AvahiIfIndex interface, AVAHI_GCC_UNUSED AvahiProtocol protocol, AvahiResolverEvent event,
-	const char *name, const char *type, const char *domain, const char *host_name, const AvahiAddress *address,
-	uint16_t port, AvahiStringList *txt, AvahiLookupResultFlags flags, AVAHI_GCC_UNUSED void* userdata)
-{
-	if ( r == (AvahiServiceResolver *)NULL )
-	{
-		return;
-	}
-
-	SimpleString FullName;
-	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)userdata;
-
-	/* Called whenever a service has been resolved successfully or timed out */
-	switch (event)
-	{
-	    case AVAHI_RESOLVER_FAILURE:
-	        OmiscidError( "AvahiResolver Failed to resolve service '%s' of type '%s' in domain '%s': %s\n", name, type, domain, avahi_strerror(avahi_client_errno(avahi_service_resolver_get_client(r))));
-	        break;
-	
-	    case AVAHI_RESOLVER_FOUND:
-			FullName = name;
-			FullName.ReplaceAll( "\\032", " " );
-			FullName += ".";
-			FullName += type;
-			FullName += ".";
-			FullName += host_name;	// empirically host_name contains .local. in case of local domain
-			if ( strcmp( domain, "local" ) == 0 )
-			{
-				FullName += ".";
-			}
-			// OmiscidTrace( "Find %s\n", FullName.GetStr() );
-			DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
-			// Add Txt record data
-
-			Not donne !!!
-
-			MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
-			break;
-	}
-	
-	// Free the resolver
-	avahi_service_resolver_free(r);
-}
-
-void FUNCTION_CALL_TYPE SearchService::SearchCallBackDNSServiceBrowseReply( AvahiServiceBrowser *b,
-	AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char *name, const char *type,
-	const char *domain, AVAHI_GCC_UNUSED AvahiLookupResultFlags flags, void* userdata)
-{
-	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)userdata;
-
-	if ( b == (AvahiServiceBrowser *)NULL )
-	{
-		return;
-	}
-
-	/* Called whenever a new services becomes available on the LAN or is removed from the LAN */
-	switch (event)
-	{
-	    case AVAHI_BROWSER_FAILURE:
-	        OmiscidError( "AvahiBrowser %s\n", avahi_strerror(avahi_client_errno(avahi_service_browser_get_client(b))));
-	        avahi_simple_poll_quit(MyThis->AvahiPoll);
-	        return;
-	
-	    case AVAHI_BROWSER_NEW:
-	        /* We ignore the returned resolver object. In the callback
-	           function we free it. If the server is terminated before
-	           the callback function is called the server will free
-	           the resolver for us. */
-	
-	        if ( avahi_service_resolver_new(MyThis->AvahiConnection, interface, protocol, name, type, domain, AVAHI_PROTO_UNSPEC, (AvahiLookupFlags)0,
-						SearchCallBackDNSServiceResolveReply, (void*)MyThis) == NULL )
-			{
-				OmiscidError( "AvahiBrowser ailed to resolve service '%s': %s\n", name, avahi_strerror(avahi_client_errno(MyThis->AvahiConnection)));
-				avahi_simple_poll_quit(MyThis->AvahiPoll);
-			}
-	        break;
-	
-	    case AVAHI_BROWSER_REMOVE:
-			{
-				DnsSdService ServiceInfo( name, type, domain, 1 );
-				MyThis->CallbackClient( ServiceInfo, 0 );
-			}
-	        break;
-	
-	    case AVAHI_BROWSER_ALL_FOR_NOW:
-		case AVAHI_BROWSER_CACHE_EXHAUSTED:
-	        break;
-	}
-}
-
-#endif
-#endif
-
-
 void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& CurrentService )
 {
 	// printf( "%u;", GetTickCount() );
 	if ( flags & OmiscidDNSServiceFlagsAdd )
 	{
-		if ( IsResolved )
+		if ( IsResolved == true )
 		{
 			// Not me, I am already resolved...
 			return;
@@ -410,9 +158,7 @@ void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned in
 			}
 
 			// Fill the service informations
-			CompleteServiceName = FullName;
-			HostName = CurrentService.HostName;
-			Port = CurrentService.Port;
+			Init( FullName, CurrentService.Port, CurrentService.HostName );
 			Properties = CurrentService.Properties;
 			IsResolved = true;
 
@@ -421,13 +167,26 @@ void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned in
 	}
 	else
 	{
-		// remove
+		// remove a service
+		if ( IsResolved == true )
+		{
+			// Maybe me, I am already resolved...
+			if ( CurrentService.Name == Name )
+			{
+				// Empty my DnsSdService part
+				Empty();
+
+				// Let's say I am not resolve anymore
+				IsResolved = true;
+				--Parent->NbServicesReady;
+			}
+		}
 	}
 }
 
 bool SearchService::StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack, void * eUserData )
 {
-	if ( DNSSDConnection == true || (!eName.IsEmpty() && DnsSdService::CheckName( eName ) == false) )
+	if ( eParent == (WaitForDnsSdServices *)NULL || (!eName.IsEmpty() && DnsSdService::CheckName( eName ) == false) )
 	{
 		return false;
 	}
@@ -447,40 +206,12 @@ bool SearchService::StartSearch( const SimpleString eName, const SimpleString eR
 		return false;
 	}
 
+	// Set internal members
 	Parent = eParent;
-	DNSSDConnection = false;
-
-
 	CallBack = eCallBack;
 	UserData = eUserData;
 
-#ifdef OMISCID_USE_MDNS
-	DNSSocket = (SOCKET)SOCKET_ERROR;
-#else
-#ifdef OMISCID_USE_AVAHI
-	// Nothing for the moment
-#endif
-#endif
-
-	// If no proxy is running, launch DnsSdConnection
-	if ( DnsSdProxy::IsEnabled() == false )
-	{
-#ifdef OMISCID_USE_MDNS
-		if ( DNSServiceBrowse(&Ref,0,0,eRegType.GetStr(),"",SearchCallBackDNSServiceBrowseReply,this) == kDNSServiceErr_NoError )
-		{
-			DNSSocket = DNSServiceRefSockFD( Ref );
-			DNSSDConnection = true;
-			return true;
-		}
-#else
-#ifdef OMISCID_USE_AVAHI
-	// Nothing for the moment
-#endif
-#endif
-
-		// here we do not get an answer
-		return false;
-	}
+	// Everything is ready, return true
 	return true;
 }
 
@@ -516,140 +247,6 @@ int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleStr
 	return PosOfNewSearchService; // Information about the service pos in the table
 }
 
-void FUNCTION_CALL_TYPE WaitForDnsSdServices::Run()
-{
-#ifdef OMISCID_USE_MDNS
-	fd_set fds;
-	int nReady;
-	timeval timeout;
-	int MaxDesc = 0;	// Maximal descriptor for the select function
-#else
-#ifdef OMISCID_USE_AVAHI
-	// Nothing for the moment
-#endif
-#endif
-
-	int NumberOfSearchServices = 0;
-
-	if ( DnsSdProxy::IsEnabled() )
-	{
-		DnsSdServicesList * pList;	// List Of Services comming from the DnsSdProxy
-
-		// We work until the end using a Dns proxy
-		while(  !StopPending()  )
-		{
-			ThreadSafeSection.EnterMutex();
-
-			NumberOfSearchServices = SearchServices.GetNumberOfElements();
-			if ( NumberOfSearchServices == 0 || NbServicesReady == NumberOfSearchServices )
-			{
-				ThreadSafeSection.LeaveMutex();
-				Sleep(10);
-				continue;
-			}
-
-			pList = DnsSdProxy::GetCurrentServicesList();
-			if ( pList != NULL )
-			{
-				// Find the readable sockets, first version, must be improve
-				// printf( "%u;", GetTickCount() );
-				for( SearchServices.First(); SearchServices.NotAtEnd(); SearchServices.Next() )
-				{
-					if ( SearchServices.GetCurrent()->IsResolved )
-					{
-						continue;
-					}
-					for( pList->First(); pList->NotAtEnd(); pList->Next() )
-					{
-						if ( StopPending() || NbServicesReady == NumberOfSearchServices )
-						{
-							// Go out of the 2 for at the same time.
-							goto AllFound;
-						}
-						SearchServices.GetCurrent()->DnsSdProxyServiceBrowseReply( OmiscidDNSServiceFlagsAdd, *(pList->GetCurrent()) );
-					}
-				}
-			AllFound:
-
-				// delete the list
-				delete pList;
-			}
-			ThreadSafeSection.LeaveMutex();
-
-			// Wait for DnsSd Changes
-			DnsSdProxy::WaitForChanges(30);
-		}
-	}
-	else
-	{
-		// Work using connxions to DnsSd
-		while(  !StopPending()  )
-		{
-#ifdef OMISCID_USE_MDNS
-			ThreadSafeSection.EnterMutex();
-
-			NumberOfSearchServices = SearchServices.GetNumberOfElements();
-			if ( NumberOfSearchServices == 0 || NbServicesReady == NumberOfSearchServices )
-			{
-				ThreadSafeSection.LeaveMutex();
-				Sleep(10);	// 30 ms
-				continue;
-			}
-
-			FD_ZERO(&fds);
-
-			MaxDesc = 0;
-
-			// Initiate DNS SD Connection
-			timeout.tv_sec = 0;
-			timeout.tv_usec = 30000;	// 10ms
-
-			for( SearchServices.First(); SearchServices.NotAtEnd(); SearchServices.Next() )
-			{
-				FD_SET( SearchServices.GetCurrent()->DNSSocket, &fds );
-#ifndef WIN32
-				// On unix we must give the max fd value + one
-				if ( SearchServices.GetCurrent()->DNSSocket > MaxDesc )
-				{
-					MaxDesc = SearchServices.GetCurrent()->DNSSocket;
-				}
-#endif
-			}
-
-#ifndef WIN32
-			MaxDesc = MaxDesc+1;
-#else
-			// On WIN32 plateform, the value is unused and remain 0
-#endif
-
-    		nReady = select(MaxDesc, &fds, NULL, NULL, &timeout);
-
-			// if at least 1 socket is readable...
-			if ( nReady > 0 )
-			{
-				// Find the readable sockets
-				for( SearchServices.First(); !StopPending() && SearchServices.NotAtEnd(); SearchServices.Next() )
-				{
-					if ( FD_ISSET( SearchServices.GetCurrent()->DNSSocket, &fds ) )
-					{
-						// Process the result
-						DNSServiceProcessResult(SearchServices.GetCurrent()->Ref);
-					}
-				}
-			}
-
-			ThreadSafeSection.LeaveMutex();
-#else
-#ifdef OMISCID_USE_AVAHI
-	// Nothing for the moment
-	Sleep(100);
-#endif
-#endif
-		}
-	}
-}
-
-
 bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 {
 	bool Done;
@@ -671,7 +268,7 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 			}
 
 			// Wait
-			Sleep( 10 );
+			Thread::Sleep( 10 );
 		}
 	}
 	else
@@ -690,7 +287,7 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 				return Done;
 			}
 
-			Sleep( 10 );
+			Thread::Sleep( 10 );
 		}
 	}
 	// never here

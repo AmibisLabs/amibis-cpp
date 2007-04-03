@@ -510,8 +510,6 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 			(*this)[KeyName] = KeyValue;
 		}
 	}
-
-	return true;
 #else
 #ifdef OMISCID_USE_AVAHI
 	char * KeyName = (char*)NULL;
@@ -557,6 +555,9 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 	avahi_string_list_free( TxtRecordStringList );
 #endif
 #endif
+
+	// Here everything goes fine
+	return true;
 }
 
 ServiceProperties::operator char*()

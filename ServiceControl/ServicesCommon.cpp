@@ -13,53 +13,6 @@
 
 using namespace Omiscid;
 
-const SimpleString CommonServiceValues::DefaultDomain = "_bip._tcp";
-SimpleString CommonServiceValues::OmiscidServiceDnsSdType(""); // help for debug or defining subdomain
-
-namespace Omiscid {
-
-// We need to initialise OmiscidServiceDnsSdType from environment variable
-class OmiscidDnsSdTypeInitClass : CommonServiceValues
-{
-public:
-	OmiscidDnsSdTypeInitClass()
-	{
-		char * Option = getenv( "OMISCID_WORKING_DOMAIN" );
-		if ( Option == NULL || strcmp( Option, DefaultDomain.GetStr() ) == 0 )
-		{
-			OmiscidServiceDnsSdType = DefaultDomain;
-			OmiscidTrace( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
-			return;
-		}
-
-		// Copy the environment variable
-		size_t size = strlen( Option );
-		TemporaryMemoryBuffer tmpdomain(128);
-
-		if ( size >= RegtypeLength )
-		{
-			OmiscidServiceDnsSdType = CommonServiceValues::DefaultDomain;
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long (%d max). Use '%s' instead.\n", RegtypeLength-1, DefaultDomain.GetStr() );
-			return;
-		}
-
-		if ( sscanf( Option, "_bip_%[^.]._tcp", (char*)tmpdomain) != 1 )
-		{
-			OmiscidServiceDnsSdType = DefaultDomain;
-			OmiscidError( "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain.GetStr() );
-			return;
-		}
-
-		CommonServiceValues::OmiscidServiceDnsSdType = Option;
-
-		OmiscidTrace( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
-	};
-};
-
-static OmiscidDnsSdTypeInitClass OmiscidServiceDnsSdTypeInitClassInitialisationObject;
-
-} // namespace Omiscid
-
 ServiceException::ServiceException( const SimpleString Message, int Err )
   : SimpleException(Message, Err)
 {}
@@ -77,3 +30,92 @@ SimpleString ServiceException::GetExceptionType() const
 {
 	return SimpleString("ServiceException");
 }
+
+const SimpleString CommonServiceValues::GetOmiscidServiceDnsSdType()
+{
+	static SimpleString OmiscidServiceDnsSdType;
+
+	if ( OmiscidServiceDnsSdType.IsEmpty() )
+	{
+		SimpleString DefaultDomain = "_bip._tcp";
+
+		char * Option = getenv( "OMISCID_WORKING_DOMAIN" );
+		if ( Option == NULL || DefaultDomain == Option )
+		{
+			OmiscidServiceDnsSdType = DefaultDomain;
+			OmiscidTrace( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
+			return OmiscidServiceDnsSdType;
+		}
+
+		// Copy the environment variable
+		size_t size = strlen( Option );
+		TemporaryMemoryBuffer tmpdomain(128);
+
+		if ( size >= RegtypeLength )
+		{
+			OmiscidServiceDnsSdType = DefaultDomain;
+			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long (%d max). Use '%s' instead.\n", RegtypeLength-1, DefaultDomain.GetStr() );
+			return OmiscidServiceDnsSdType;
+		}
+
+		if ( sscanf( Option, "_bip_%[^.]._tcp", (char*)tmpdomain) != 1 )
+		{
+			OmiscidServiceDnsSdType = DefaultDomain;
+			OmiscidError( "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain.GetStr() );
+			return OmiscidServiceDnsSdType;
+		}
+
+		OmiscidServiceDnsSdType = Option;
+		OmiscidTrace( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
+	}
+
+	return OmiscidServiceDnsSdType;
+}
+
+const SimpleString CommonServiceValues::GetDefaultServiceClassName()
+{
+	static SimpleString DefaultServiceClassName("Service");
+
+	return DefaultServiceClassName;
+}
+
+// Constant string values for service registration
+const SimpleString CommonServiceValues::GetNameForLockString()
+{
+	static SimpleString LockString( "lock" );
+
+	return LockString;
+}
+
+const SimpleString CommonServiceValues::GetNameForNameString()
+{
+	static SimpleString NameString( "name" );
+
+	return NameString;
+}
+
+const SimpleString CommonServiceValues::GetNameForOwnerString()
+{
+	static SimpleString OwnerString( "owner" );
+
+	return OwnerString;
+}
+
+const SimpleString CommonServiceValues::GetNameForClassString()
+{
+	static SimpleString ClassString( "class" );
+
+	return ClassString;
+}
+
+const SimpleString CommonServiceValues::GetNameForPeerIdString()
+{
+	static SimpleString PeerIdString( "peerId" );
+
+	return PeerIdString;
+}
+
+void CommonServiceValues::InitFromLayer()
+{
+}
+

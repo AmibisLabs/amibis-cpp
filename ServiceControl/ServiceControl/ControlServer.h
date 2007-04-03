@@ -222,11 +222,6 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    */
   const SimpleString GetClass();
 
-  /**\name Constant string used in services declaration */
-  //@{
-  static const SimpleString DefaultServiceClassName;
-  //@}
-
 protected:
   /** 
    * @brief Called when a request of connection is done. 

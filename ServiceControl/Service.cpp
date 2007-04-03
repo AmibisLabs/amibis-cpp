@@ -26,6 +26,7 @@ public:
 bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullname, const SimpleString hosttarget, uint16_t port, uint16_t txtLen, const SimpleString txtRecord, void * UserData)
 {
 	OmiscidServiceSearchData * MyData = (OmiscidServiceSearchData *)UserData;
+	SimpleString PeerIdString = CommonServiceValues::GetNameForPeerIdString();
 
 	// printf( "%u;", GetTickCount() );
 
@@ -44,7 +45,7 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 
 	// Create search pattern
 	SimpleString TmpString(".");
-	TmpString += CommonServiceValues::OmiscidServiceDnsSdType; // for example, "." + "_bip._tcp";
+	TmpString += CommonServiceValues::GetOmiscidServiceDnsSdType(); // for example, "." + "_bip._tcp";
 
 	// Search it
 	int Protocol = fullname.Find( TmpString.GetStr() );
@@ -97,7 +98,7 @@ Service::Service(const SimpleString ServiceName, const SimpleString ClassName)
 {
 	if ( ClassName.IsEmpty() )
 	{
-		SetClass( DefaultServiceClassName );
+		SetClass( CommonServiceValues::GetDefaultServiceClassName() );
 	}
 	else
 	{
@@ -654,9 +655,6 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 
 	// Let's serach for the services
 	bool ret = WFOS->WaitAll(WaitTime);
-
-	// Stop the thread
-	WFOS->StopThread();
 
 	if ( ret == true && (ResultServicesProxy = new OMISCID_TLM ServiceProxyList) != NULL )
 	{

@@ -105,6 +105,34 @@ void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const Sim
 	}
 }
 
+// Static fonction to process data from DNS-SD
+SimpleString DnsSdService::GetDNSSDServiceNameFromFullName( const SimpleString Name )
+{
+	int LastFind;
+
+	if ( Name.IsEmpty() )
+	{
+		return SimpleString::EmptyString;
+	}
+
+	if ( (LastFind=Name.Find("._tcp.")) >= 0 )
+	{
+		// TCP DnsSdService
+		return Name.SubString( 0, LastFind-1 );
+	}
+	else
+	{
+		if ( (LastFind=Name.Find("._udp.")) >= 0 )
+		{
+			// UDP DnsSdService
+			return Name.SubString( 0, LastFind-1 );
+		}
+	}
+
+	// Return the full name because it seems to be the DNSSDName
+	return Name;
+}
+
 void DnsSdService::Empty()
 {
 	CompleteServiceName.Empty();
@@ -283,20 +311,31 @@ SimpleString DnsSdService::ToString()
 	return Generate;
 }
 
+#ifdef OMISCID_USE_MDNS
+	// As express in doc, should use one connection for every register using mDNS
+	// Nothing in static here
+#else
+#ifdef OMISCID_USE_AVAHI
+	// Init avahi statics
+	// Set pointer to NULL
+	AvahiClient *	  RegisterService::AvahiConnection = (AvahiClient *)NULL;
+	AvahiSimplePoll * RegisterService::AvahiPoll = (AvahiSimplePoll *)NULL;
+
+	// Init instance counter to 0
+	unsigned int	  RegisterService::AvahiRegisteringCounter = 0;
+
+	Mutex			  RegisterService::AvahiRegisteringLocker;
+#endif
+#endif
+
 void RegisterService::Init( bool FromConstructor )
 {
 	Registered = false;
 	AutoRenameWasAsk = false;
 	ProtocolAndTransport.Empty();
 
-#ifdef OMISCID_USE_MDNS
-	DnsSdConnection = NULL;
-	ConnectionOk = false;
-#else
-#ifdef OMISCID_USE_AVAHI
-	InitAvahi( FromConstructor );
-#endif
-#endif
+	// Free DNS-SD stuff
+	InitZeroconfSubsystem( FromConstructor );
 }
 
 RegisterService::RegisterService( const SimpleString FullName, uint16_t ePort, bool AutoRegister, bool AutoRename )
@@ -335,57 +374,110 @@ RegisterService::RegisterService( const SimpleString ServiceName, const SimpleSt
 	}
 }
 
-#ifdef OMISCID_USE_MDNS
-#else
-#ifdef OMISCID_USE_AVAHI
 // function to reset avahi stuff
-void RegisterService::InitAvahi( bool FromConstructor )
+void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 {
+#ifdef OMISCID_USE_MDNS
 	if ( FromConstructor == false )
 	{
-		// Free Avahi stuff in inverse order of allocation
+		if ( ConnectionOk )
+		{
+			DNSServiceRefDeallocate(DnsSdConnection);
+		}
+	}
+	DnsSdConnection = NULL;
+	ConnectionOk = false;
+
+#else
+#ifdef OMISCID_USE_AVAHI
+
+	// Lock Avahi connection
+	AvahiRegisteringLocker.EnterMutex();
+
+	if ( FromConstructor == true )
+	{
+		// Add a new instance
+		AvahiRegisteringCounter++;
+
+		// Init non static members
+		AvahiGroup = (AvahiEntryGroup *)NULL;
+		AvahiTxtRecord = (AvahiStringList *)NULL;
+
+		if ( AvahiRegisteringCounter == 1 )
+		{
+			OmiscidTrace( "Init Avahi.\n" );
+
+			// 1st instance, create avahi connection
+			AvahiPoll = avahi_simple_poll_new();
+			if ( AvahiPoll == (AvahiSimplePoll *)NULL )
+			{
+				OmiscidError( "Could not create Avahi poll\n" );
+				AvahiRegisteringLocker.LeaveMutex();
+				return;
+			}
+
+			int error;
+
+			AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, (void*)this, &error );
+			if ( AvahiConnection == (AvahiClient *)NULL )
+			{
+				OmiscidError( "Could not create Avahi client %s\n", avahi_strerror(error) );
+				AvahiRegisteringLocker.LeaveMutex();
+				return;
+			}
+		}
+	}
+	else
+	{
+		// Remove an instance
+		AvahiRegisteringCounter--;
+
+		// Free non static Avahi stuff in inverse order of allocation
 		if ( AvahiTxtRecord != (AvahiStringList *)NULL )
 		{
 			avahi_string_list_free( AvahiTxtRecord );
+			AvahiTxtRecord = (AvahiStringList *)NULL;
 		}
 
 		if ( AvahiGroup != (AvahiEntryGroup *)NULL )
 		{
 			avahi_entry_group_free(AvahiGroup);
+			AvahiGroup = (AvahiEntryGroup *)NULL;
 		}
 
-		if ( AvahiConnection != (AvahiClient *)NULL )
+		if ( AvahiRegisteringCounter == 0 )
 		{
-			avahi_client_free(AvahiConnection);
-		}
+			// Last instance, remove everything
+			OmiscidTrace( "Free Avahi.\n" );
 
-		if ( AvahiPoll != (AvahiSimplePoll *)NULL )
-		{
-			avahi_simple_poll_free(AvahiPoll);
+			// Free static Avahi stuff in inverse order of allocation
+			if ( AvahiConnection != (AvahiClient *)NULL )
+			{
+				avahi_client_free(AvahiConnection);
+			}
+
+			if ( AvahiPoll != (AvahiSimplePoll *)NULL )
+			{
+				avahi_simple_poll_free(AvahiPoll);
+			}
+
+			// Set pointer to NULL
+			AvahiGroup = (AvahiEntryGroup *)NULL;
+			AvahiPoll = (AvahiSimplePoll *)NULL;		
 		}
 	}
 
-	// Set pointer to NULL
-	AvahiTxtRecord = (AvahiStringList *)NULL;
-	AvahiConnection = (AvahiClient *)NULL;
-	AvahiGroup = (AvahiEntryGroup *)NULL;
-	AvahiPoll = (AvahiSimplePoll *)NULL;
+	// Unlock Avahi connection
+	AvahiRegisteringLocker.LeaveMutex();
+#endif
+#endif
 }
-#endif
-#endif
+
 
 RegisterService::~RegisterService()
 {
-#ifdef OMISCID_USE_MDNS
-	if ( ConnectionOk )
-	{
-		DNSServiceRefDeallocate(DnsSdConnection);
-	}
-#else
-#ifdef OMISCID_USE_AVAHI
-	InitAvahi(false);
-#endif
-#endif
+	// Free DNS-SD stuff
+	InitZeroconfSubsystem(false);
 }
 
 #ifdef OMISCID_USE_MDNS
@@ -410,7 +502,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply( DNSServiceRef sdRef, 
 #else
 #ifdef OMISCID_USE_AVAHI
 
-void RegisterService::LaunchRegisterProcess()
+void RegisterService::LaunchRegisterProcess( bool FromAvahiPollThread )
 {
 	if ( AvahiTxtRecord != (AvahiStringList *)NULL )
 	{
@@ -440,9 +532,6 @@ void RegisterService::LaunchRegisterProcess()
 		OmiscidError( "Could not commit service group\n" );
 		return;
 	} 
-
-	// Wait for my callback to stop me
-	avahi_simple_poll_loop(AvahiPoll);
 }
 
 void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata)
@@ -461,7 +550,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			MyThis->CompleteServiceName += ".";
 			MyThis->CompleteServiceName += MyThis->ProtocolAndTransport;
 			MyThis->CompleteServiceName += MyThis->Domain;
-			avahi_simple_poll_quit(MyThis->AvahiPoll);
+			MyThis->RegistrationProcessDone.Signal();
 			break;
 
 		case AVAHI_ENTRY_GROUP_COLLISION :
@@ -472,7 +561,7 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 				MyThis->Name = tmpc;
 				avahi_free(tmpc);
 
-				OmiscidTrace( "Service name collision, renaming service to '%s'\n", tmpc );
+				OmiscidTrace( "Service name collision, try to rename service to '%s'\n", tmpc );
 
 				// And recreate the services
 				MyThis->LaunchRegisterProcess();
@@ -480,14 +569,14 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			else
 			{
 				// We do not try to solve name conflict
-				avahi_simple_poll_quit(MyThis->AvahiPoll);
+				MyThis->RegistrationProcessDone.Signal();
 			}
 			break;
 										   
 		case AVAHI_ENTRY_GROUP_FAILURE:
 			// Some kind of failure happened while we were registering our services
 			OmiscidError( "Entry group failure\n" );
-			avahi_simple_poll_quit(MyThis->AvahiPoll);
+			MyThis->RegistrationProcessDone.Signal();
 			break;
 
 		case AVAHI_ENTRY_GROUP_UNCOMMITED:
@@ -557,30 +646,23 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	}
 #else
 #ifdef OMISCID_USE_AVAHI
-	AvahiPoll = avahi_simple_poll_new();
-	if ( AvahiPoll == (AvahiSimplePoll *)NULL )
-	{
-		OmiscidError( "Could not create poll\n" );
-		return false;
-	}
 
-	int error;
+	AvahiRegisteringLocker.EnterMutex();
 
-	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, (void*)this, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
-		InitAvahi(false);
-		OmiscidError( "Could not create client %s\n", avahi_strerror(error) );
+		OmiscidError( "Avahi connection not initialised.\n" );
+		AvahiRegisteringLocker.LeaveMutex();
 		return false;
 	}
 
 	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, (void*)this );
-    if ( AvahiGroup == (AvahiEntryGroup *)NULL )
+	if ( AvahiGroup == (AvahiEntryGroup *)NULL )
 	{
-		InitAvahi(false);
-		OmiscidError( "Could not create group\n" );
-        return false;
-    }
+		OmiscidError( "Could not create Avahi group\n" );
+		AvahiRegisteringLocker.LeaveMutex();
+		return false;
+	}
 
 	// Construct TXTRecord
 	int PosProperty;
@@ -592,8 +674,24 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 			CurrentProperty.GetValue().GetStr() );
 	}
 
+	// Reset event before launch process
+	RegistrationProcessDone.Reset();
+
 	// We are connected, add the service
 	LaunchRegisterProcess();
+
+	// Run over the loop until work is done or failed
+	while( RegistrationProcessDone.Wait(5) == false )
+	{
+		if ( avahi_simple_poll_iterate(AvahiPoll, 5) != 0 )
+		{
+			// An error or a quit command occurs
+			break;
+		}
+	}
+
+	// Avahi connection unlock
+	AvahiRegisteringLocker.LeaveMutex();
 
 #endif
 #endif

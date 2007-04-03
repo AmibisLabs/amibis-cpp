@@ -9,24 +9,6 @@
 
 using namespace Omiscid;
 
-namespace Omiscid {
-
-class OmiscidRandomInitClass
-{
-public:
-    OmiscidRandomInitClass()
-    {
-        RandomInit();
-    };
-
-};
-
-
-static OmiscidRandomInitClass OmiscidRandomInitClassInitialisationObject;
-
-} // namespace Omiscid
-
-
 MemoryBufferException::MemoryBufferException( SimpleString Msg, int i )
     : SimpleException( Msg, i )
 {
@@ -77,6 +59,11 @@ TemporaryMemoryBuffer::operator char*() const
 TemporaryMemoryBuffer::operator unsigned char*() const
 {
     return (unsigned char*)Buffer;
+}
+
+TemporaryMemoryBuffer::operator void*() const
+{
+    return (void*)Buffer;
 }
 
 size_t TemporaryMemoryBuffer::GetLength() const

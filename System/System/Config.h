@@ -252,6 +252,37 @@ struct timezone {
 
 #endif	// ifdef WIN32
 
+// Define Initialisation Object
+// can be instanciated several time without any problem
+// even if it should not be instanciated by Omiscid user
+class OmiscidSystemLayerInitClass
+{
+public:
+	// Constructor
+	OmiscidSystemLayerInitClass();
+
+	// Destructor
+	~OmiscidSystemLayerInitClass();
+};
+
+// External object
+extern OmiscidSystemLayerInitClass OmiscidSystemLayerInit;
+
+#ifdef DEBUG
+
+// Define Debug objet
+class ClassToDebug
+{
+public:
+	// Constructor where to pu a break point
+	ClassToDebug();
+
+	// Destructor where to pu a break point
+	~ClassToDebug();
+};
+
+#endif
+
 } // namespace Omiscid
 
 #endif	// __SYSTEM_CONFIG_H__

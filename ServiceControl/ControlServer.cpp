@@ -14,9 +14,6 @@
 
 using namespace Omiscid;
 
-
-const SimpleString ControlServer::DefaultServiceClassName = "Service";
-
 void ControlServer::InitInstance()
 {
 	localConnectorId = 0;
@@ -47,31 +44,31 @@ void ControlServer::InitInstance()
 
 	VariableAttribute* va = NULL;
 
-	va = AddVariable(LockString);
+	va = AddVariable(CommonServiceValues::GetNameForLockString());
 	va->SetType("integer");
 	va->SetAccess(ReadWriteAccess);
 	va->SetDescription("Use for locking access");
 	lockIntVariable = new OMISCID_TLM IntVariableAttribute(va, 0);
 
-	va = AddVariable(NameString);
+	va = AddVariable(CommonServiceValues::GetNameForNameString());
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Registered name of this service");
 	NameVariable = new OMISCID_TLM StringVariableAttribute( va, serviceName );
 
-	va = AddVariable(OwnerString);
+	va = AddVariable(CommonServiceValues::GetNameForOwnerString());
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Login which launches this service");
 	OwnerVariable = new OMISCID_TLM StringVariableAttribute( va, "none" );
 
-	va = AddVariable(ClassString);
+	va = AddVariable(CommonServiceValues::GetNameForClassString());
 	va->SetType("class");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of this service");
-	ClassVariable = new OMISCID_TLM StringVariableAttribute( va, DefaultServiceClassName );
+	ClassVariable = new OMISCID_TLM StringVariableAttribute( va, CommonServiceValues::GetDefaultServiceClassName() );
 
-	va = AddVariable(PeerIdString);
+	va = AddVariable(CommonServiceValues::GetNameForPeerIdString());
 	va->SetType("hexadecimal");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("PeerId of this service");
@@ -229,7 +226,7 @@ bool ControlServer::StartServer()
 			}
 
 			// remove Name variable from TxtRecord list, when using DNS-SD, we've got the "id" as service name
-			registerDnsSd->Properties.Undefine( PeerIdString );
+			registerDnsSd->Properties.Undefine( CommonServiceValues::GetNameForPeerIdString() );
 
 			// Add inputs/outputs/inoutputs
 			if ( TxtRecordIsFull != true )

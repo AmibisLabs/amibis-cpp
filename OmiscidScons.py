@@ -26,7 +26,12 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
   
  # default values
  if os.name == 'posix' :
-  WhichZeroConfLibrary = 'OMISCID_USE_AVAHI'
+  if string.find(sys.platform, 'darwin') != -1:
+   # Mac OS
+   WhichZeroConfLibrary = 'OMISCID_USE_MDNS' 
+  else :
+   # default for other posix plateform
+   WhichZeroConfLibrary = 'OMISCID_USE_AVAHI'
  else :
   WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
   

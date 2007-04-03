@@ -13,6 +13,7 @@
 #include <System/SimpleString.h>
 #include <System/SimpleList.h>
 #include <ServiceControl/ServiceProxy.h>
+#include <ServiceControl/ServicesCommon.h>
 
 namespace Omiscid {
 

@@ -61,6 +61,7 @@ public:
 	virtual ~TemporaryMemoryBuffer();
 
 	operator char*() const;
+	operator void*() const;
 	operator unsigned char*() const;
 
 	size_t GetLength() const;

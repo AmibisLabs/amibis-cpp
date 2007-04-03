@@ -34,36 +34,29 @@
 
 using namespace Omiscid;
 
-namespace Omiscid {
-
-	// We need to initialise Windows socket subsystem
-	class OmiscidSocketInitClass
-	{
-	public:
-		OmiscidSocketInitClass()
-		{
-#ifdef WIN32
-			WORD wVersionRequested;
-			WSADATA wsaData;
-
-			wVersionRequested = MAKEWORD( 2, 2 );
-			err = WSAStartup( wVersionRequested, &wsaData );
-#endif
-			Socket::GetDnsNameSolvingOption();
-		};
-
-	private:
-#ifdef WIN32
-		int err;
-#endif
-	};
-
-	static OmiscidSocketInitClass OmiscidSocketInitClassInitialisationObject;
-
-} // namespace Omiscid
 
 // Static members of the Socket class
-Socket::DynamicNameSolvingType Socket::DynamicNameSolving = Socket::OMISCIDNS_UNSET;
+Socket::DynamicNameSolvingType Socket::GetDynamicNameSolving()
+{
+	static DynamicNameSolvingType DynamicNameSolving = OMISCIDNS_UNSET;
+
+	if ( DynamicNameSolving == OMISCIDNS_UNSET )
+	{
+		char * Option = getenv( "OMISCIDNS_USE_MDNS_NAME_SOLVING" );
+		if ( Option == NULL )
+		{
+			DynamicNameSolving = OMISCIDNS_USE_DNS_ONLY;
+			OmiscidTrace( "OMISCIDNS_USE_DNS_ONLY found. Use standard DNS for name solving.\n" );
+		}
+		else
+		{
+			DynamicNameSolving = OMISCIDNS_USE_MDNS_NAME_SOLVING;
+			OmiscidTrace( "OMISCIDNS_USE_MDNS_NAME_SOLVING found. Use mDNS for name solving." );
+		}
+	}
+
+	return DynamicNameSolving;
+}
 
 Socket::Socket()
 : socketType(SOCKET_KIND_UNDEFINED), descriptor((SOCKET)SOCKET_ERROR)
@@ -286,7 +279,16 @@ void Socket::Connect(const SimpleString addr, int port)
 
 		if(connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == SOCKET_ERROR)
 		{
+#ifdef DEBUG
+			SimpleString Mesg;
+			Mesg = "connect to ";
+			Mesg += addr;
+			Mesg += ":";
+			Mesg += port;
+			throw SocketException(Mesg, Errno());
+#else
 			throw SocketException("connect", Errno());
+#endif
 		}
 	}
 	else /* UDP */
@@ -436,38 +438,26 @@ SimpleString Socket::GetHostName()
 
 void Socket::GetDnsNameSolvingOption()
 {
-	char * Option = getenv( "OMISCIDNS_USE_MDNS_NAME_SOLVING" );
-	if ( Option == NULL )
-	{
-		DynamicNameSolving = OMISCIDNS_USE_DNS_ONLY;
-#ifdef DEBUG
-		fprintf( stderr, "OMISCIDNS_USE_DNS_ONLY found. Use DNS for name solving.\n" );
-#endif
-		return;
-	}
+	// Keep for backward compatibility
 
-	DynamicNameSolving = OMISCIDNS_USE_MDNS_NAME_SOLVING;
-
-#ifdef DEBUG
-	fprintf( stderr, "OMISCIDNS_USE_MDNS_NAME_SOLVING found. Use mDNS for name solving." );
-#endif
 }
 
 hostent* Socket::GetHostByName( const SimpleString name )
 {
 	struct hostent *he;
 
-	if ( DynamicNameSolving == OMISCIDNS_USE_MDNS_NAME_SOLVING )
+	if ( GetDynamicNameSolving() == OMISCIDNS_USE_MDNS_NAME_SOLVING )
 	{
 		if((he = ::gethostbyname(name.GetStr())) == NULL)
 		{
-			throw SocketException("GetHostByName", Errno());
+			SimpleString Mesg = "GetHostByName : ";
+			Mesg += name;
+			throw SocketException(Mesg, Errno());
 		}
 		return he;
 	}
 
 	// DynamicNameSolving == OMISCIDNS_USE_DNS_ONLY
-
 	TemporaryMemoryBuffer hostname(1024);	// To prevent memory overflow on stack
 	char * modify;
 	strlcpy( (char*)hostname, name.GetStr(), 1024 );
@@ -477,10 +467,20 @@ hostent* Socket::GetHostByName( const SimpleString name )
 	{
 		modify[0] = '\0';
 	}
+	else
+	{
+		modify = strstr( (char*)hostname, ".local" );
+		if ( modify && modify[6] == '\0' )	// we found ".local\0"
+		{
+			modify[0] = '\0';
+		}
+	}
 
 	if((he = ::gethostbyname((char*)hostname)) == NULL)
 	{
-		throw SocketException("GetHostByName", Errno());
+		SimpleString Mesg = "GetHostByName : ";
+		Mesg += name;
+		throw SocketException(Mesg, Errno());
 	}
 
 	return he;

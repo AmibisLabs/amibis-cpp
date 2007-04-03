@@ -72,13 +72,6 @@ if ( open( $SconsInit, ">$OmiscidInitfile" ) == 0 )
 	die "Unable to open '$OmiscidInitfile' to produce output\n" ;
 }
 
-if ( open( $SConstruct, '>SConstruct' ) == 0 )
-{
-	close( $SconsInit );
-	unlink( $OmiscidInitfile );
-	die "Unable to open 'SConstruct' to produce output\n" ;
-}
-
 print $SconsInit "# Tables of layers files\n\n";
 print $SconsInit "import os\n\n";
 
@@ -90,6 +83,13 @@ close( $SconsInit );
 
 exit;
 
+# if ( open( $SConstruct, '>SConstruct' ) == 0 )
+# {
+# 	close( $SconsInit );
+# 	unlink( $OmiscidInitfile );
+# 	die "Unable to open 'SConstruct' to produce output\n" ;
+# }
+# 
 # print $SConstruct "import os\n";
 # print $SConstruct "from $OmiscidInitfileShortName import *\n";
 # print $SConstruct 'from OmiscidScons import *

@@ -326,7 +326,7 @@ SimpleString ServiceProxy::GetHostName()
 
 SimpleString ServiceProxy::GetName()
 {
-	return GetVariableValue( NameString );
+	return GetVariableValue( CommonServiceValues::GetNameForNameString() );
 }
 
 /**
@@ -336,7 +336,7 @@ SimpleString ServiceProxy::GetName()
 unsigned int ServiceProxy::GetPeerId()
 {
 	unsigned int tmpPeerId = 0;
-	SimpleString lPeerId = GetVariableValue( PeerIdString );
+	SimpleString lPeerId = GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
 
 	if ( sscanf( lPeerId.GetStr(), "%x", &tmpPeerId ) == 1 )
 	{

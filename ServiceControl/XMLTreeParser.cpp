@@ -5,29 +5,6 @@
 
 using namespace Omiscid;
 
-namespace Omiscid {
-
-	class OmiscidInitXmlParser
-	{
-	public:
-		OmiscidInitXmlParser()
-		{
-			// Just call the xmlInitParser
-			//xmlInitParser();
-			LIBXML_TEST_VERSION
-		};
-
-		~OmiscidInitXmlParser()
-		{
-			xmlCleanupParser();
-		};
-	};
-
-	// Create a static object to initialise before any run
-	static OmiscidInitXmlParser OmiscidInstanceToInitXmlParser;
-
-} // namespace Omiscid
-
 ////////////////////////////////////////////////////////////////
 XMLMessage::XMLMessage()
 {

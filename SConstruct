@@ -1,11 +1,12 @@
 import os
 from OmiscidInit import *
-from OmiscidScons import *
+from OmiscidScons import *   
+
 env = Environment()
 OmiscidLinuxMacOSInit(env,COMMAND_LINE_TARGETS,ARGUMENTS,['xml2'])
 
 conf = Configure(env)
-OmiscidCheckLibs(conf,['xml2','pthread']);
+OmiscidCheckLibs(conf,['xml2','dns_sd','pthread']);
 env = conf.Finish()
 
 # common environment settings
@@ -59,3 +60,4 @@ binToInstall += OmiscidDotInFileTarget(env, 'ServiceControl/OmiscidControl-confi
 
 OmiscidInstallTarget(env,binToInstall,libToInstall,hToInstall=hToInstall)
 
+ 

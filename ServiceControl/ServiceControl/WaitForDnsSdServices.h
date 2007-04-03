@@ -20,6 +20,7 @@
 #include <System/ReentrantMutex.h>
 #include <System/AtomicCounter.h>
 #include <System/SimpleString.h>
+#include <ServiceControl/BrowseForDnsSdService.h>
 #include <ServiceControl/DnsSdService.h>
 #include <ServiceControl/DnsSdProxy.h>
 
@@ -59,34 +60,11 @@ private:
 	IsServiceValidForMe CallBack;
 	void * UserData;
 
-	// To memorise that a service is not suitable for us
-	ServiceProperties ServicesNotSuitable;
-
-#ifdef OMISCID_USE_MDNS
-	DNSServiceRef Ref;
-	SOCKET DNSSocket;
-	
-	// Search call back when using DnsSd directly
-	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *serviceName, const char *replyType, const char *replyDomain, void *context );
-	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const unsigned char *txtRecord, void *context );
-#else
-#ifdef OMISCID_USE_AVAHI
-	AvahiClient * AvahiConnection;
-	AvahiSimplePoll * AvahiPoll;
-	AvahiServiceBrowser * AvahiBrowser;
-
-	void InitAvahi( bool FromConstructor );	// function to reset avahi stuff
-
-	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceBrowseReply( AvahiServiceBrowser *b, AvahiIfIndex interface, AvahiProtocol protocol, AvahiBrowserEvent event, const char *name, const char *type, const char *domain, AVAHI_GCC_UNUSED AvahiLookupResultFlags flags, void* userdata);
-	static void FUNCTION_CALL_TYPE SearchCallBackDNSServiceResolveReply( AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interface, AVAHI_GCC_UNUSED AvahiProtocol protocol, AvahiResolverEvent event, const char *name, const char *type, const char *domain, const char *host_name, const AvahiAddress *address, uint16_t port, AvahiStringList *txt, AvahiLookupResultFlags flags, AVAHI_GCC_UNUSED void* userdata);
-#endif
-#endif
-
-	// Search call back when using DnsSdProxy
-	void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& CurrentService );
+	// Call by other classes to say if a new service appears or desappears
+	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service );
 };
 
-class WaitForDnsSdServices : public Thread
+class WaitForDnsSdServices
 {
 	friend class SearchService;
 public:
@@ -99,13 +77,11 @@ public:
 	bool WaitAll(unsigned int DelayMax = 0 );
 
 	int GetNbOfSearchedServices();
+
 	  //int GetNbOfAvailableServices();
 	SearchService & operator[](int nPos);
 
 protected:
-
-	void FUNCTION_CALL_TYPE Run();
-
 	bool LockService( const SimpleString ServiceName );
 	void UnlockService( const SimpleString ServiceName );
 	bool IsServiceLocked( const SimpleString ServiceName );

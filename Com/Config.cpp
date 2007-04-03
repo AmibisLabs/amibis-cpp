@@ -1,6 +1,62 @@
 #include <Com/Config.h>
+#include <System/Mutex.h>
+#include <System/SimpleException.h>
+
+// Initialise All stuff needed by the System Layer
 
 using namespace Omiscid;
+
+namespace Omiscid {
+
+// Objects to prevent multiple access
+static Mutex OmiscidComLayerInitMutex;
+static unsigned int OmiscidComLayerInitInstanceCount = 0;
+
+// Function to do mandatory initialisation
+
+// Object used to initialise 
+OmiscidComLayerInitClass OmiscidComLayerInit;
+
+OmiscidComLayerInitClass::OmiscidComLayerInitClass()
+{
+	// Enter locker
+	OmiscidComLayerInitMutex.EnterMutex();
+
+	OmiscidComLayerInitInstanceCount++;
+	if ( OmiscidComLayerInitInstanceCount == 1 )
+	{
+		// First instance, do init for Layer System
+
+		// now init this layer
+		OmiscidTrace( "Init Com layer\n" );
+	}
+
+	// Leave locker
+	OmiscidComLayerInitMutex.LeaveMutex();
+}
+
+OmiscidComLayerInitClass::~OmiscidComLayerInitClass()
+{
+	// Enter locker
+	OmiscidComLayerInitMutex.EnterMutex();
+
+	OmiscidComLayerInitInstanceCount--;
+	if ( OmiscidComLayerInitInstanceCount == 0 )
+	{
+		// Last instance, do reset for Layer System
+
+		// now init this layer
+		OmiscidTrace( "Free Com layer\n" );
+	}
+
+	// Leave locker
+	OmiscidComLayerInitMutex.LeaveMutex();
+}
+
+} // namespace Omiscid
+
+
+// Need to be moved elsewhere
 
 ConnectionInfos::ConnectionInfos()
 {

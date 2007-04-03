@@ -28,7 +28,7 @@
 	#include <avahi-client/publish.h>
 
 	#include <avahi-common/alternative.h>
-	#include <avahi-common/simple-watch.h>
+	#include <avahi-common/thread-watch.h.>
 	#include <avahi-common/malloc.h>
 	#include <avahi-common/error.h>
 
@@ -70,7 +70,6 @@ class ServiceException : public SimpleException
   virtual SimpleString GetExceptionType() const;
 };
 
-
 /*! \class CommonServiceValues
  *	\brief The mother class of all service oriented classes of the OMiSCID service package.
  *
@@ -105,10 +104,20 @@ public:
 			RegtypeLength = ServiceField + sizeof("_tcp")/*!< the length of the protocol and the transport protocol for a service, i.e "_printer._tcp" */
 		};
 
-		static SimpleString OmiscidServiceDnsSdType;
-		static const SimpleString DefaultDomain;
 
-		static const SimpleString DefaultServiceClassName;
+	static const SimpleString GetNameForLockString();		// = "lock"
+	static const SimpleString GetNameForNameString();		// = "name"
+	static const SimpleString GetNameForOwnerString();		// = "owner"
+	static const SimpleString GetNameForClassString();		// = "class"
+	static const SimpleString GetNameForPeerIdString();		// = "peerId"
+
+	static const SimpleString GetOmiscidServiceDnsSdType();
+	static const SimpleString GetDefaultServiceClassName();
+
+private:
+	// In order to propose InitFunction to the LayerManager
+	friend class OmiscidServiceControlLayerInitClass;
+	void InitFromLayer();
 };
 
 } // namespace Omiscid

@@ -38,6 +38,22 @@ public:
 
 typedef enum MessageOrigine { UnknownOrigine, FromUDP, FromTCP, FromSharedMemory };
 
+// Define Initialisation Object for Com Layer
+// can be instanciated several time without any problem
+// even if it should not be instanciated by Omiscid user
+class OmiscidComLayerInitClass : public OmiscidSystemLayerInitClass
+{
+public:
+	// Constructor
+	OmiscidComLayerInitClass();
+
+	// Destructor
+	~OmiscidComLayerInitClass();
+};
+
+// External object
+extern OmiscidComLayerInitClass OmiscidComLayerInit;
+
 
 } // namespace Omiscid 
 

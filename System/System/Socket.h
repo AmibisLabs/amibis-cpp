@@ -154,7 +154,7 @@ private:
   SOCKET descriptor;
 
   enum DynamicNameSolvingType { OMISCIDNS_UNSET = 0, OMISCIDNS_USE_DNS_ONLY = 1, OMISCIDNS_USE_MDNS_NAME_SOLVING = 2 }; /*!< for future use : maybe we may apply bit operation */
-  static DynamicNameSolvingType DynamicNameSolving;
+  static DynamicNameSolvingType GetDynamicNameSolving();
   
   SimpleString ConnectedHost;  /*!< a host name stored in case of TCP */
   struct sockaddr_in dest;  /*!< a destination stored in case of datagram */

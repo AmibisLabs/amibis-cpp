@@ -83,9 +83,9 @@ chdir('..');
 system( $command );
 chdir('OMiSCID');
 
-$Computers{'astree'} = '00:0e:0c:5e:45:86';
-$Computers{'metis'}  = '00:0d:93:6f:c3:8c';
-$Computers{'desdemona'}  = '00:0b:cd:62:4f:a9';
+$Computers{'astree'} = '000e0c5e4586';
+$Computers{'metis'}  = '000d936fc38c';
+$Computers{'desdemona'}  = '000bcd624fa9';
 $NumComputer = 0;
 
 foreach $TestComputer ( keys %Computers )

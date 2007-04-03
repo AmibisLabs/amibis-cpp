@@ -13,6 +13,8 @@
 
 #include <ServiceControl/Config.h>
 
+#include <System/Event.h>
+#include <System/Mutex.h>
 #include <System/SimpleString.h>
 
 #include <ServiceControl/ServiceProperties.h>
@@ -43,6 +45,10 @@ public:
 
 	static bool CheckProtocol( const SimpleString RegisterType );
 	static bool CheckName( const SimpleString Name );
+
+public:
+	// Static fonction to process data from DNS-SD
+	static SimpleString GetDNSSDServiceNameFromFullName( const SimpleString Name );
 
 protected:
 	void Empty();
@@ -92,20 +98,28 @@ private:
 	static void FUNCTION_CALL_TYPE DnsRegisterReply( DNSServiceRef sdRef, unsigned int flags, DNSServiceErrorType errorCode, const char *name, const char *regtype, const char *domain, void *context ); // DNS-SD callback function
 #else
 #ifdef OMISCID_USE_AVAHI
-	AvahiSimplePoll * AvahiPoll;
-	AvahiClient * AvahiConnection;
-	AvahiEntryGroup * AvahiGroup;
-	AvahiStringList * AvahiTxtRecord;
+	static			Mutex AvahiRegisteringLocker;			// A mutex to lock everything
+	static unsigned int   AvahiRegisteringCounter;			// An instance counter
 
-	void InitAvahi( bool FromConstructor );	// function to reset avahi stuff
+	static AvahiSimplePoll * AvahiPoll;
+	static AvahiClient * AvahiConnection;
+
 
 	// FUNCTION_CALL_TYPE is empty under linux, so when using avahi. It is just add in order
 	// to have consistent writing rules.
 	static void FUNCTION_CALL_TYPE DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata);	// Avahi callback function
 
-	void LaunchRegisterProcess();							// Specific Avahi function
+	void LaunchRegisterProcess(bool FromAvahiPollThread);							// Specific Avahi function
+
+	// Non static value, but dependant ones
+	AvahiEntryGroup * AvahiGroup;
+	AvahiStringList * AvahiTxtRecord;
+	Event RegistrationProcessDone;
+
 #endif
 #endif
+
+	void InitZeroconfSubsystem( bool FromConstructor );	// function to reset (and possibly free) DNS-SD stuff
 
 	bool Registered;								// DNS can register us ?
 	bool AutoRenameWasAsk;							// Shall we try to do automatique renaming

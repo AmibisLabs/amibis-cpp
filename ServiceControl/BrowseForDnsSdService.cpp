@@ -9,6 +9,8 @@
 
 #include <ServiceControl/BrowseForDnsSdService.h>
 
+#include <System/Portage.h>
+
 #ifndef WIN32
 #include <netinet/in.h>
 #endif
@@ -23,12 +25,12 @@
 
 using namespace Omiscid;
 
+void BrowseForDNSSDService::InitZeroconfSubsystem( bool FromConstructor )
+{
 #ifdef OMISCID_USE_MDNS
 	// Nothing to do
 #else
 #ifdef OMISCID_USE_AVAHI
-void BrowseForDNSSDService::InitAvahi( bool FromConstructor )
-{
 	if ( FromConstructor == false )
 	{
 		// Free everything active in inverse order of allocation
@@ -51,9 +53,9 @@ void BrowseForDNSSDService::InitAvahi( bool FromConstructor )
 	AvahiPoll = (AvahiSimplePoll *)NULL;
 	AvahiConnection = (AvahiClient *)NULL;
 	AvahiBrowser = (AvahiServiceBrowser *)NULL;
+#endif
+#endif
 }
-#endif
-#endif
 
 BrowseForDNSSDService::BrowseForDNSSDService()
 #ifdef DEBUG_THREAD
@@ -64,13 +66,8 @@ BrowseForDNSSDService::BrowseForDNSSDService()
 	CallBack = NULL;
 	UserData = 0;
 
-#ifdef OMISCID_USE_MDNS
-	// Nothing
-#else
-#ifdef OMISCID_USE_AVAHI
-		InitAvahi( true );
-#endif
-#endif
+	// Init DNS-SD stuff
+	InitZeroconfSubsystem( true );
 }
 
 BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, BrowseCallBack eCallBack, void * eUserData, bool AutoStart /* = false */)
@@ -82,13 +79,8 @@ BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, Browse
 	CallBack = eCallBack;
 	UserData = eUserData;
 
-#ifdef OMISCID_USE_MDNS
-	// Nothing
-#else
-#ifdef OMISCID_USE_AVAHI
-		InitAvahi( true );
-#endif
-#endif
+	// Init DNS-SD stuff
+	InitZeroconfSubsystem( true );
 
 	if ( AutoStart )
 	{
@@ -100,14 +92,8 @@ BrowseForDNSSDService::~BrowseForDNSSDService()
 {
 	StopThread();
 
-#ifdef OMISCID_USE_MDNS
-	// Nothing
-#else
-#ifdef OMISCID_USE_AVAHI
-	// Free avahi stuff
-	InitAvahi( false );
-#endif
-#endif
+	// Free DNS-SD stuff
+	InitZeroconfSubsystem( false );
 }
 
 #ifdef OMISCID_USE_MDNS
@@ -170,9 +156,6 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 		return;
 	}
 
-	SimpleString FullName;
-	BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)userdata;
-
 	/* Called whenever a service has been resolved successfully or timed out */
 	switch (event)
 	{
@@ -181,23 +164,33 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 	        break;
 	
 	    case AVAHI_RESOLVER_FOUND:
-			FullName = name;
-			FullName.ReplaceAll( "\\032", " " );
-			FullName += ".";
-			FullName += type;
-			FullName += ".";
-			FullName += host_name;	// empirically host_name contains .local. in case of local domain
-			if ( strcmp( domain, "local" ) == 0 )
 			{
+				SimpleString FullName;
+				BrowseForDNSSDService * MyThis = (BrowseForDNSSDService *)userdata;
+				TemporaryMemoryBuffer MemForTxtRecord(8*1024);	// DNS-SD specification say that 8000 is max
+
+				FullName = name;
+				FullName.ReplaceAll( "\\032", " " );
 				FullName += ".";
+				FullName += type;
+				FullName += ".";
+				FullName += host_name;	// empirically host_name contains .local. in case of local domain
+				if ( strcmp( domain, "local" ) == 0 )
+				{
+					FullName += ".";
+				}
+				// OmiscidTrace( "Find %s\n", FullName.GetStr() );
+				DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
+
+				// Add Txt record data
+				size_t SizeOfTxtRecord = avahi_string_list_serialize  ( txt, (void*)MemForTxtRecord, (size_t)MemForTxtRecord.GetLength() );
+				if ( SizeOfTxtRecord > (size_t)0 )
+				{
+					ServiceInfo.Properties.ImportTXTRecord( (int)SizeOfTxtRecord, (const unsigned char*)MemForTxtRecord );
+				}
+
+				MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
 			}
-			// OmiscidTrace( "Find %s\n", FullName.GetStr() );
-			DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
-			// Add Txt record data
-
-			Not donne !!!
-
-			MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
 			break;
 	}
 	
@@ -313,7 +306,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 	AvahiConnection = avahi_client_new( avahi_simple_poll_get(AvahiPoll), (AvahiClientFlags)0, NULL, (void*)this, &error );
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
-		InitAvahi( false );
+		InitZeroconfSubsystem( false );
 		OmiscidError( "Could not create client %s\n", avahi_strerror(error) );
 		return;
 	}
@@ -322,7 +315,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::Run()
 	AvahiBrowser = avahi_service_browser_new(AvahiConnection, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, RegType.GetStr(), NULL, (AvahiLookupFlags)0, SearchCallBackDNSServiceBrowseReply, (void*)this);
 	if ( AvahiBrowser == (AvahiServiceBrowser *)NULL )
 	{
-		InitAvahi( false );
+		InitZeroconfSubsystem( false );
 		OmiscidError( "Failed to create service browser: %s\n", avahi_strerror(avahi_client_errno(AvahiConnection)));
 		return;
 	}
