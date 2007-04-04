@@ -19,6 +19,8 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  global ARGUMENTS
  ARGUMENTS=arguments
  global WhichZeroConfLibrary
+ global TraceMode
+ global DoValgrind
  
  if 'xml2' in options:
   env.ParseConfig('xml2-config --cflags')
@@ -46,9 +48,14 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    
  # check debug et trace parameter
  DebugMode = False
+ DoValgrind = False
  if 'debug' in arguments :
-  if arguments['debug'] in ['1','yes','true'] :
+  if arguments['debug'] in ['1','yes','true','valgrind'] :
    DebugMode = True
+   if arguments['debug'] == 'valgrind' :
+    OmiscidMessage('prepare Omiscid for valgrind')
+    env.AppendUnique(CXXFLAGS = ['-O0','-fno-inline'])
+    DoValgrind = True
   elif arguments['debug'] in ['0','no','false'] :
    DebugMode = False
   else :
@@ -69,7 +76,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    ChMemMode = True
   elif arguments['chmem'] not in ['0','no','false'] :
    OmiscidMessage("Bad value for chmem flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
-   sys.exit(1)   
+   sys.exit(1)
    
  # Do what we ask
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
@@ -129,7 +136,9 @@ def OmiscidDotInFileTarget(env, target, mapping):
 ##############################################
 def OmiscidMapping():
  global WhichZeroConfLibrary
-
+ global TraceMode
+ global DoValgrind
+ 
  ReplaceList = {}
 	
  if "prefix" in ARGUMENTS:
@@ -149,6 +158,11 @@ def OmiscidMapping():
   else :
    OmiscidMessage("Bad value for zeroconf flags (internal).")
    sys.exit(1)
+   
+ if TraceMode == True :
+  ReplaceList['@OmiscidTraceFlag@'] = ' -DOMISCID_TRACE_ENABLE '
+ else :
+  ReplaceList['@OmiscidTraceFlag@'] = ''
    
  return ReplaceList
 
