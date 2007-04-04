@@ -235,12 +235,18 @@ inline void OmiscidTrace(const char * format, ... )
 {
 	va_list args;
 	va_start( args, format );
+#ifdef DEBUG
+	vfprintf( stderr, format, args );
+#else
 	vprintf( format, args );
+#endif
 	va_end( args );
 }
 
 #define OmiscidError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidError
 #define OmiscidTrace  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTrace
+// For dev purpose
+#define TmpOmiscidTrace !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTrace
 
 #ifdef WIN32
 

@@ -74,48 +74,35 @@ const SimpleString CommonServiceValues::GetOmiscidServiceDnsSdType()
 
 const SimpleString CommonServiceValues::GetDefaultServiceClassName()
 {
-	static SimpleString DefaultServiceClassName("Service");
-
-	return DefaultServiceClassName;
+	return SimpleString("Service");
 }
 
 // Constant string values for service registration
 const SimpleString CommonServiceValues::GetNameForLockString()
 {
-	static SimpleString LockString( "lock" );
-
-	return LockString;
+	return SimpleString( "lock" );
 }
 
 const SimpleString CommonServiceValues::GetNameForNameString()
 {
-	static SimpleString NameString( "name" );
-
-	return NameString;
+	return SimpleString( "name" );
 }
 
 const SimpleString CommonServiceValues::GetNameForOwnerString()
 {
-	static SimpleString OwnerString( "owner" );
-
-	return OwnerString;
+	return SimpleString( "owner" );
 }
 
 const SimpleString CommonServiceValues::GetNameForClassString()
 {
-	static SimpleString ClassString( "class" );
-
-	return ClassString;
+	return SimpleString( "class" );
 }
 
 const SimpleString CommonServiceValues::GetNameForPeerIdString()
 {
-	static SimpleString PeerIdString( "peerId" );
-
-	return PeerIdString;
+	return SimpleString( "peerId" );
 }
 
 void CommonServiceValues::InitFromLayer()
 {
 }
-

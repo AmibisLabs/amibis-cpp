@@ -81,7 +81,7 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 	// If something tricky occurred, exit
 	if ( pServ == NULL )
 	{
-		fprintf( stderr, "Could not register the service (my number is %d).\n", Number );
+		OmiscidError( "Could not register the service (my number is %d).\n", Number );
 
 		// Exit the thread
 		return;
@@ -109,12 +109,12 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 /* @brief Usage function */
 void RegisterAndSearchUsage(char * ProgramName)
 {
-	fprintf( stderr, "%s is used to demonstrate register and search methods using OMiSCID.\n", ProgramName );
-	fprintf( stderr, "Usage: %s [-n <Number of services>] [-proxy]\n", ProgramName );
-	fprintf( stderr, "Default option values:\n" );
-	fprintf( stderr, "          -n <Number of services>: from 2 to 100 services. Default is 20.\n" );
-	fprintf( stderr, "          -proxy: activated DnsSdProxy features to speedup reserach process.\n", ProgramName );
-	fprintf( stderr, "                  Not activated by default.\n\n", ProgramName );
+	OmiscidError( "%s is used to demonstrate register and search methods using OMiSCID.\n", ProgramName );
+	OmiscidError( "Usage: %s [-n <Number of services>] [-proxy]\n", ProgramName );
+	OmiscidError( "Default option values:\n" );
+	OmiscidError( "          -n <Number of services>: from 2 to 100 services. Default is 20.\n" );
+	OmiscidError( "          -proxy: activated DnsSdProxy features to speedup reserach process.\n", ProgramName );
+	OmiscidError( "                  Not activated by default.\n\n", ProgramName );
 	exit(-1);
 }
 
@@ -140,7 +140,7 @@ int main(int argc, char*argv[] )
 	{
 		if ( argv[j][0] != '-' )
 		{
-			fprintf( stderr, "Bad parameter '%s'. See Usage :\n\n", argv[j] );
+			OmiscidError( "Bad parameter '%s'. See Usage :\n\n", argv[j] );
 			RegisterAndSearchUsage(argv[0]);
 		}
 
@@ -158,17 +158,17 @@ int main(int argc, char*argv[] )
 			j++;
 			if ( j >= argc )
 			{
-				fprintf( stderr, "Missing parameter value for '%s' option. See Usage :\n\n", argv[j-1] );
+				OmiscidError( "Missing parameter value for '%s' option. See Usage :\n\n", argv[j-1] );
 				RegisterAndSearchUsage(argv[0]);
 			}
 			if ( sscanf( argv[j], "%d", &NumberOfServicesToRegister ) != 1 )
 			{
-				fprintf( stderr, "Bad parameter value '%s' for '%s' option. See Usage :\n\n", argv[j], argv[j-1] );
+				OmiscidError( "Bad parameter value '%s' for '%s' option. See Usage :\n\n", argv[j], argv[j-1] );
 				RegisterAndSearchUsage(argv[0]);
 			}
 			if ( NumberOfServicesToRegister < 2 || NumberOfServicesToRegister > 100 )
 			{
-				fprintf( stderr, "You must set the number of service from 2 and to 100 maximum. See Usage:\n\n" );
+				OmiscidError( "You must set the number of service from 2 and to 100 maximum. See Usage:\n\n" );
 				RegisterAndSearchUsage(argv[0]);
 			}
 
@@ -185,10 +185,10 @@ int main(int argc, char*argv[] )
 			continue;
 		}
 
-		fprintf( stderr, "Bad parameter '%s'. See Usage :\n\n", argv[j] );
+		OmiscidError( "Bad parameter '%s'. See Usage :\n\n", argv[j] );
 		RegisterAndSearchUsage(argv[0]);
 	}
-
+ 
 	// A simple list to store RegisterThread objects
 	SimpleList<RegisterThread*> ListOfRegisterThreads;
 
@@ -196,15 +196,15 @@ int main(int argc, char*argv[] )
 	unsigned int EffectiveNumberOfRegisteredServices = 0;
 
 	// Print Welcome message
-	printf( "This program is used to demonstrate register and search methods using OMiSCID.\n" );
-	printf( "As it is ditributed, registering unique service and searching for services\n" );
-	printf( "is a huge processing. See Accumulator/ClientAccumator examples for communication schema.\n\n" );
+	OmiscidTrace( "This program is used to demonstrate register and search methods using OMiSCID.\n" );
+	OmiscidTrace( "As it is ditributed, registering unique service and searching for services\n" );
+	OmiscidTrace( "is a huge processing. See Accumulator/ClientAccumator examples for communication schema.\n\n" );
 
-	printf( "** Session parameters **\nDnsSdProxy is%s activated.\n", ProxyActivited ? "" : " not"  );
-	printf( "Number of service to register %d\n** **\n\n", NumberOfServicesToRegister ); 
+	OmiscidTrace( "** Session parameters **\nDnsSdProxy is%s activated.\n", ProxyActivited ? "" : " not"  );
+	OmiscidTrace( "Number of service to register %d\n** **\n\n", NumberOfServicesToRegister ); 
 
 // Register services
-	printf( "Start to register services.\n" );
+	OmiscidTrace( "Start to register services.\n" );
 
 	// Create an object to now when the total time
 	// To register the services
@@ -225,7 +225,7 @@ int main(int argc, char*argv[] )
 	EffectiveNumberOfRegisteredServices = ListOfRegisterThreads.GetNumberOfElements();
 
 	// Wait until all registered services are present
-	printf( "Wait for service to be ready.\n" );
+	OmiscidTrace( "Wait for service to be ready.\n" );
 	for(;;)
 	{
 		// Wait for all create thread to register their service
@@ -234,11 +234,11 @@ int main(int argc, char*argv[] )
 			break;
 		}
 
-		// If not done, wait 100 ms maximum for a new service registration
-		RegisterThread::NewServiceIsRegistered.Wait(100);
+		// If not done, wait 10 ms maximum for a new service registration
+		RegisterThread::NewServiceIsRegistered.Wait(10);
 	}
 
-	printf( "=> %d service(s) are registered in %u ms.\n", EffectiveNumberOfRegisteredServices, TimeCounter.Get() );
+	OmiscidTrace( "=> %d service(s) are registered in %u ms.\n", EffectiveNumberOfRegisteredServices, TimeCounter.Get() );
 
 // Search for services, *can be done* in another process/computer over the network obvioulsly !
 
@@ -249,7 +249,7 @@ int main(int argc, char*argv[] )
 	if ( Searcher == NULL )
 	{
 		// print there is a problem
-		fprintf( stderr, "Problem creating 'Searcher' service.\n" );
+		OmiscidError( "Problem creating 'Searcher' service.\n" );
 
 		// Free all registred service
 		// 1er way to walk among the SimpleList
@@ -264,7 +264,7 @@ int main(int argc, char*argv[] )
 	}
 
 // First, search only one service named RegisterThread and get a ServiceProxy for it
-	printf( "Search for single RegisterThread service.\n" );
+	OmiscidTrace( "Search for single RegisterThread service.\n" );
 
 	// Reinit ElapsedTime object
 	TimeCounter.Reset();
@@ -274,18 +274,18 @@ int main(int argc, char*argv[] )
 
 	if ( OneService != NULL )
 	{
-		printf( "=> service 'RegisterThread' found in %u ms.\n", TimeCounter.Get() );
+		OmiscidTrace( "=> service 'RegisterThread' found in %u ms.\n", TimeCounter.Get() );
 
 		// Delet
 		delete OneService;
 	}
 	else
 	{
-		fprintf( stderr, "=> service 'RegisterThread' not found.\n" );
+		OmiscidError( "=> service 'RegisterThread' not found.\n" );
 	}
 
 // Now Search for all services named RegisterThread and get a ServiceProxyList for Them
-	printf( "Search all services named RegisterThread.\n" );
+	OmiscidTrace( "Search all services named RegisterThread.\n" );
 	
 	// We need to a filters list, give a NameIs filter for each service
 	ServiceFilterList ListOfFilters;
@@ -302,7 +302,7 @@ int main(int argc, char*argv[] )
 
 	// MultipleServices != NULL can not be null as we do not got out of FindServices without
 	// an answer
-	printf( "=> services found in %u ms.\n", TimeCounter.Get() );
+	OmiscidTrace( "=> services found in %u ms.\n", TimeCounter.Get() );
 
 	// Delete answer
 	delete MultipleServices;
@@ -311,7 +311,7 @@ int main(int argc, char*argv[] )
 	ListOfFilters.Empty();
 
 // Now Search for all services named RegisterThread with a pair number and get a ServiceProxyList for Them
-	printf( "Search for all RegisterThread services with a pair number.\n" );
+	OmiscidTrace( "Search for all RegisterThread services with a pair number.\n" );
 	
 	// We need to a filters list, give a NameIs filter for each service
 	for( i = 2; i <= EffectiveNumberOfRegisteredServices; i += 2 )
@@ -327,7 +327,7 @@ int main(int argc, char*argv[] )
 
 	// MultipleServices != NULL can not be null as we do not got out of FindServices without
 	// an answer
-	printf( "=> services found in %u ms.\n", TimeCounter.Get() );
+	OmiscidTrace( "=> services found in %u ms.\n", TimeCounter.Get() );
 
 	// Print information about found service
 	for( MultipleServices->First(); MultipleServices->NotAtEnd(); MultipleServices->Next() )
@@ -340,7 +340,7 @@ int main(int argc, char*argv[] )
 
 // Now Search for specific service which is not a specific one
 	MultipleServices->First();
-	printf( "Search for single RegisterThread which is not %8.8x.\n", MultipleServices->GetCurrent()->GetPeerId() );
+	OmiscidTrace( "Search for single RegisterThread which is not %8.8x.\n", MultipleServices->GetCurrent()->GetPeerId() );
 
 	// Reset time counter
 	TimeCounter.Reset();
@@ -350,9 +350,7 @@ int main(int argc, char*argv[] )
 
 	// MultipleServices != NULL can not be null as we do not got out of FindServices without
 	// an answer
-	printf( "=> service %8.8x found in %u ms.\n", OneService->GetPeerId(), TimeCounter.Get() );
-
-	new char[2];
+	OmiscidTrace( "=> service %8.8x found in %u ms.\n", OneService->GetPeerId(), TimeCounter.Get() );
 
 	// Delete last ServiceProxy
 	delete OneService;
@@ -361,7 +359,7 @@ int main(int argc, char*argv[] )
 	delete MultipleServices;
 
 // Unregister service and close all connections
-	printf( "Unregister service and close all connections.\n" );
+	OmiscidTrace( "Unregister service and close all connections.\n" );
 	// Reset time counter
 	TimeCounter.Reset();
 	// Delete registered thread
@@ -369,7 +367,7 @@ int main(int argc, char*argv[] )
 	{
 		delete ListOfRegisterThreads.ExtractFirst();
 	}
-	printf( "=> done in %u ms.\n", TimeCounter.Get() );
+	OmiscidTrace( "=> done in %u ms.\n", TimeCounter.Get() );
 
 	// delete the Search service
 	delete Searcher;

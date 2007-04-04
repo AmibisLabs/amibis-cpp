@@ -35,6 +35,8 @@ SearchService::SearchService()
 
 SearchService::~SearchService()
 {
+	// Try to stop browse
+	StopBrowse();
 }
 
 WaitForDnsSdServices::WaitForDnsSdServices()
@@ -47,6 +49,13 @@ WaitForDnsSdServices::WaitForDnsSdServices()
 
 WaitForDnsSdServices::~WaitForDnsSdServices()
 {
+	// Delete all search service
+	ThreadSafeSection.EnterMutex();
+	while( SearchServices.GetNumberOfElements() > 0 )
+	{
+		delete SearchServices.ExtractFirst();
+	}
+	ThreadSafeSection.LeaveMutex();
 }
 
 bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
@@ -162,6 +171,7 @@ void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned in
 			Properties = CurrentService.Properties;
 			IsResolved = true;
 
+			// TmpOmiscidTrace( "NbReady %d\n", ++Parent->NbServicesReady );
 			++Parent->NbServicesReady;
 		}
 	}
@@ -211,8 +221,8 @@ bool SearchService::StartSearch( const SimpleString eName, const SimpleString eR
 	CallBack = eCallBack;
 	UserData = eUserData;
 
-	// Everything is ready, return true
-	return true;
+	// Everything is ready, return if we can start browse
+	return StartBrowse();
 }
 
 int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleString eRegType, IsServiceValidForMe eCallBack, void * eUserData )

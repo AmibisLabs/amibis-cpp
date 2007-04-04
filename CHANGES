@@ -4,7 +4,7 @@
 
 In this files, you will find changes between OMiSCID versions.
 
-1.0.6	2007-XX-XX
+1.1.0	2007-XX-XX
 	- add Avahi support
 	- add automatic choice between Avahi/mDNS under Linux/MacOSX.
 	  add an option for scons to override this automatic choice.
@@ -14,6 +14,10 @@ In this files, you will find changes between OMiSCID versions.
 	- check init constraints to static global values, so replace
 	  global values like DynamicNameSolving by a method call
 	  like GetDynamicNameSolving().
+	- change Thread constructor behaviour because of virtualisation
+	  problem under linux
+	- Change Wait bug for Event (when asking for subsecond
+	  Wait).
 	- some bugs corrections corrections
 
 1.0.5	2007-02-01

@@ -66,12 +66,21 @@ bool Event::Wait(unsigned long timer)
 		int nanos = (timer-second*1000)*1000000;
 		
 		gettimeofday(&now, NULL);
+
+		// Compute time until where we must wait
 		timeout.tv_sec = now.tv_sec + second;
 		timeout.tv_nsec = now.tv_usec * 1000 + nanos;
-		
+		// If nano is over 1 s, remove it. Shoud appear only once but put a while...
+		while ( timeout.tv_nsec > 1000000000 )
+		{
+			timeout.tv_nsec -= 1000000000;
+			timeout.tv_sec  += 1;
+		}
+
 		retcode = pthread_cond_timedwait(&condition, &mutex, &timeout);
 		pthread_mutex_unlock(&mutex);
-		return (retcode != ETIMEDOUT);
+
+		return (retcode == 0);
 	}
 #else
 	if ( timer == 0 )

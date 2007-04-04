@@ -37,16 +37,15 @@ public:
 	SimpleString ThreadName;
 	
 public:
-	Thread(bool autostart = false, const SimpleString Name = SimpleString::EmptyString );
+	Thread(const SimpleString Name = SimpleString::EmptyString );
 
 #else
 
 public:
 	/** @brief Constructor
 	 * 
-	 * @param autostart [in] if true the constructor call automatically the method 'Start'. (default false)
 	 */
-	Thread(bool autostart=false);
+	Thread();
 #endif
 
 	/** @brief Destructor 

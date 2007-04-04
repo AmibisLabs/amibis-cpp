@@ -14,9 +14,9 @@ using namespace Omiscid;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 #ifdef DEBUG_THREAD
-Thread::Thread(bool autostart, const SimpleString Name /* = SimpleString::EmptyString */)
+Thread::Thread(const SimpleString Name /* = SimpleString::EmptyString */)
 #else
-Thread::Thread(bool autostart)
+Thread::Thread()
 #endif
 {
 #ifdef DEBUG_THREAD
@@ -31,9 +31,6 @@ Thread::Thread(bool autostart)
 	
 	ThreadIsRunning = false;	
 	StopWasAsked = false;
-
-	if (autostart)
-		StartThread();
 }
 
 Thread::~Thread()

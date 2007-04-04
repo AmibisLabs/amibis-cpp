@@ -417,7 +417,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 		}
 		else
 		{	 
-			//requete plus precise
+			// more precise request
 			xmlNodePtr cur_node = node->children;	  
 			for(; cur_node; cur_node = cur_node->next)
 			{

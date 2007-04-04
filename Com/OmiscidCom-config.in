@@ -78,7 +78,7 @@ case "$1" in
 #	exit 0
 	;;
     --all)
-	echo "`OmiscidSystem-config --all` -L@libdir@ -lOmiscidCom -lOmiscidSystem"
+	echo "`OmiscidSystem-config --all` -L@libdir@ -lOmiscidCom -lOmiscidSystem @OmiscidTraceFlag@"
 	;;
 
 	   

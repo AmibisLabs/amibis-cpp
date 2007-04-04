@@ -101,7 +101,7 @@ private:
 	static			Mutex AvahiRegisteringLocker;			// A mutex to lock everything
 	static unsigned int   AvahiRegisteringCounter;			// An instance counter
 
-	static AvahiSimplePoll * AvahiPoll;
+	static AvahiThreadedPoll * AvahiPollWithThread;
 	static AvahiClient * AvahiConnection;
 
 
@@ -109,12 +109,12 @@ private:
 	// to have consistent writing rules.
 	static void FUNCTION_CALL_TYPE DnsRegisterReply(AvahiEntryGroup *g, AvahiEntryGroupState state, AVAHI_GCC_UNUSED void *userdata);	// Avahi callback function
 
-	void LaunchRegisterProcess(bool FromAvahiPollThread);							// Specific Avahi function
+	void LaunchRegisterProcess( bool FromAvahiPollThread );							// Specific Avahi function
 
 	// Non static value, but dependant ones
 	AvahiEntryGroup * AvahiGroup;
 	AvahiStringList * AvahiTxtRecord;
-	Event RegistrationProcessDone;
+	bool RegistrationProcessDone;
 
 #endif
 #endif

@@ -356,8 +356,8 @@ bool ControlClient::ConnectToCtrlServer(const SimpleString host, int port)
 
 bool ControlClient::QueryGlobalDescription()
 {
-	SimpleString requete("");
-	XMLMessage* msg = QueryToServer(requete);
+	SimpleString request("");
+	XMLMessage* msg = QueryToServer(request);
 	if(msg)
 	{
 		ProcessGlobalDescription(msg);
@@ -382,8 +382,8 @@ VariableAttribute* ControlClient::QueryVariableDescription(const SimpleString va
 		}
 	}
 
-	SimpleString requete = "<variable name=\"" + var_name + "\"/>";
-	XMLMessage* msg = QueryToServer(requete);
+	SimpleString request = "<variable name=\"" + var_name + "\"/>";
+	XMLMessage* msg = QueryToServer(request);
 	if(msg)
 	{
 		VariableAttribute* attr = NULL;
@@ -420,14 +420,14 @@ VariableAttribute* ControlClient::QueryVariableModif(const SimpleString var_name
 		return NULL;
 	}
 
-	SimpleString requete = "<variable name=\"" + SimpleString(var_name) + "\">";
+	SimpleString request = "<variable name=\"" + SimpleString(var_name) + "\">";
 
 
-	requete +=  "<value>";
-	VariableAttribute::PutAValueInCData(value_str, requete);
-	requete += "</value>";
-	requete += "</variable>";
-	XMLMessage* msg = QueryToServer(requete);
+	request +=  "<value>";
+	VariableAttribute::PutAValueInCData(value_str, request);
+	request += "</value>";
+	request += "</variable>";
+	XMLMessage* msg = QueryToServer(request);
 	if(msg)
 	{
 		VariableAttribute* attr = NULL;
@@ -454,8 +454,8 @@ InOutputAttribute* ControlClient::QueryInputDescription(const SimpleString input
 		}
 	}
 
-	SimpleString requete = "<"+InOutputAttribute::input_str+" name=\"" + SimpleString(input_name) + "\"/>";
-	XMLMessage* msg = QueryToServer(requete);
+	SimpleString request = "<"+InOutputAttribute::input_str+" name=\"" + SimpleString(input_name) + "\"/>";
+	XMLMessage* msg = QueryToServer(request);
 	if(msg)
 	{
 		InOutputAttribute* attr = NULL;
@@ -494,8 +494,8 @@ InOutputAttribute* ControlClient::QueryOutputDescription(const SimpleString outp
 		}
 	}
 
-	SimpleString requete = "<"+InOutputAttribute::output_str+" name=\"" + SimpleString(output_name) + "\"/>";
-	XMLMessage* msg = QueryToServer(requete);
+	SimpleString request = "<"+InOutputAttribute::output_str+" name=\"" + SimpleString(output_name) + "\"/>";
+	XMLMessage* msg = QueryToServer(request);
 	if(msg)
 	{
 		InOutputAttribute* attr = NULL;
@@ -534,8 +534,8 @@ InOutputAttribute* ControlClient::QueryInOutputDescription(const SimpleString in
 		}
 	}
 
-	SimpleString requete = "<"+InOutputAttribute::inoutput_str+" name=\"" + SimpleString(in_output_name) + "\"/>";
-	XMLMessage* msg = QueryToServer(requete);
+	SimpleString request = "<"+InOutputAttribute::inoutput_str+" name=\"" + SimpleString(in_output_name) + "\"/>";
+	XMLMessage* msg = QueryToServer(request);
 	if(msg)
 	{
 		InOutputAttribute* attr = NULL;
@@ -563,8 +563,8 @@ InOutputAttribute* ControlClient::QueryInOutputDescription(const SimpleString in
 
 bool ControlClient::QueryDetailedDescription()
 {
-	SimpleString requete = "<fullDescription/>";
-	XMLMessage* msg = QueryToServer(requete);
+	SimpleString request = "<fullDescription/>";
+	XMLMessage* msg = QueryToServer(request);
 	if ( msg )
 	{
 		ProcessDetailedDescription( msg );
@@ -576,14 +576,14 @@ bool ControlClient::QueryDetailedDescription()
 	return true;
 }
 
-XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer)
+XMLMessage* ControlClient::QueryToServer(SimpleString& request, bool wait_answer)
 {
-	unsigned int msg_id = BeginEndTag(requete);
+	unsigned int msg_id = BeginEndTag(request);
 
 #ifdef DEBUG
 	// In debug mode, we validate xml before sending it, but nevertheless we send it...
 	// just for warning and conformity
-	if ( ControlQueryValidator.ValidateDoc( requete ) == false )
+	if ( ControlQueryValidator.ValidateDoc( request ) == false )
 	{
 		OmiscidError( "ControlClient::QueryToServer: bad query sent.\n" );
 	}
@@ -601,7 +601,7 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& requete, bool wait_answer
 		}
 	}
 
-	if ( SendToServer((int)requete.GetLength(), requete.GetStr()) == SOCKET_ERROR )
+	if ( SendToServer((int)request.GetLength(), request.GetStr()) == SOCKET_ERROR )
 	{
 		// If we can not send data, free the waiter...
 		pWaiter->Free();

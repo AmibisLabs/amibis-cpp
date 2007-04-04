@@ -160,9 +160,9 @@ def OmiscidMapping():
    sys.exit(1)
    
  if TraceMode == True :
-  ReplaceList['@OmiscidTraceFlag@'] = ' -DOMISCID_TRACE_ENABLE '
+  ReplaceList['@OmiscidTraceFlags@'] = ' -DOMISCID_TRACE_ENABLE '
  else :
-  ReplaceList['@OmiscidTraceFlag@'] = ''
+  ReplaceList['@OmiscidTraceFlags@'] = ''
    
  return ReplaceList
 

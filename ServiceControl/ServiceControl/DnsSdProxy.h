@@ -37,6 +37,9 @@ public:
 	DnsSdProxyClient();
 	virtual ~DnsSdProxyClient();
 
+	bool StartBrowse();
+	bool StopBrowse();
+
 	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service ) = 0;
 };
 
@@ -83,7 +86,7 @@ private:
 	static bool NeedToCleanupServicesList;
 
 	// Number of "copies" of the service in use
-	static unsigned int CurrentNumberOfClients;
+	static unsigned int CurrentNumberOfServicesListCopies;
 
 	// An inline function to Cleanup the list
 	static inline void CleanupServicesList();
@@ -104,7 +107,7 @@ inline void DnsSdProxy::CleanupServicesList()
 	DnsSdServiceInstanceManager * pServiceInfo;
 
 	// Shall we cleanup the List ?
-	if ( NeedToCleanupServicesList == true && CurrentNumberOfClients == 0 )
+	if ( NeedToCleanupServicesList == true && CurrentNumberOfServicesListCopies == 0 )
 	{
 		// walk among the list to remove old entries
 		for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )

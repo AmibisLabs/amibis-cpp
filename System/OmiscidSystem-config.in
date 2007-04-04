@@ -38,7 +38,7 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo "-I@includedir@"
+	echo "-I@includedir@ @OmiscidTraceFlags@"
 #	exit 0
 	;;
     --cflags-only-I)
@@ -78,7 +78,7 @@ case "$1" in
 #	exit 0
 	;;
     --all)
-	echo "-I@includedir@ -L@libdir@ -lOmiscidSystem"
+	echo "-I@includedir@ -L@libdir@ -lOmiscidSystem @OmiscidTraceFlags@ @OmiscidCompilFlags@"
 	;;
     *)
 	echo "Unknown mode \"$1\""

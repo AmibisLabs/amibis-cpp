@@ -179,8 +179,10 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 				{
 					FullName += ".";
 				}
-				// OmiscidTrace( "Find %s\n", FullName.GetStr() );
-				DnsSdService ServiceInfo( FullName, ntohs(port), host_name );
+				OmiscidTrace( "Find %s on %d\n", FullName.GetStr(), port );
+
+				// Avahi port are not in network order !!!!
+				DnsSdService ServiceInfo( FullName, port, host_name );
 
 				// Add Txt record data
 				size_t SizeOfTxtRecord = avahi_string_list_serialize  ( txt, (void*)MemForTxtRecord, (size_t)MemForTxtRecord.GetLength() );
