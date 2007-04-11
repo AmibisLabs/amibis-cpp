@@ -132,12 +132,18 @@ AnswersManager::AnswersManager()
 
 AnswersManager::~AnswersManager()
 {
+	AnswerWaiter * pWaiter;
+
 	WaitersList.Lock();
 
 	// Destroy all waiters information
 	while( WaitersList.GetNumberOfElements() > 0 )
 	{
-		delete WaitersList.ExtractFirst();
+		 pWaiter = WaitersList.ExtractFirst();
+		 if ( pWaiter != (AnswerWaiter *) NULL )
+		 {
+			delete pWaiter;
+		 }
 	}
 
 	WaitersList.Unlock();
@@ -271,12 +277,12 @@ ControlClient::ControlClient(unsigned int serviceId)
 
 void ControlClient::EmptyInOutputAttributeList(SimpleList<InOutputAttribute*>& List)
 {
-	InOutputAttribute* pAtt;
+	InOutputAttribute * pAtt;
 
 	while( List.GetNumberOfElements() > 0 )
 	{
 		pAtt = List.ExtractFirst();
-		if ( pAtt != NULL )
+		if ( pAtt != (InOutputAttribute *)NULL )
 		{
 			delete pAtt;
 		}
@@ -302,8 +308,8 @@ void ControlClient::Init()
 	// Empty VariableAttribnut list
 	while( listVariableAttr.GetNumberOfElements() > 0 )
 	{
-		pVar = listVariableAttr.GetCurrent();
-		if ( pVar != NULL )
+		pVar = listVariableAttr.ExtractFirst();
+		if ( pVar != (VariableAttribute *)NULL )
 		{
 			delete pVar;
 		}
@@ -565,6 +571,7 @@ bool ControlClient::QueryDetailedDescription()
 {
 	SimpleString request = "<fullDescription/>";
 	XMLMessage* msg = QueryToServer(request);
+
 	if ( msg )
 	{
 		ProcessDetailedDescription( msg );

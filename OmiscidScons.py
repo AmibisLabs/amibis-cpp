@@ -162,8 +162,11 @@ def OmiscidMapping():
  if TraceMode == True :
   ReplaceList['@OmiscidTraceFlags@'] = ' -DOMISCID_TRACE_ENABLE '
  else :
-  ReplaceList['@OmiscidTraceFlags@'] = ''
-   
+  ReplaceList['@OmiscidTraceFlags@'] = ' '
+  
+ if TraceMode == True :
+  ReplaceList['@OmiscidCompilFlags@'] = ' '
+ 
  return ReplaceList
 
 

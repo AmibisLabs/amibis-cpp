@@ -418,8 +418,6 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 				return;
 			}
 
-			TmpOmiscidTrace( "AvahiPollWithThread=%p\n", AvahiPollWithThread );
-
 			int error;
 
 			AvahiConnection = avahi_client_new( avahi_threaded_poll_get(AvahiPollWithThread), (AvahiClientFlags)0, NULL, (void*)this, &error );
@@ -432,8 +430,10 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			}
 
 			// Start the poll
+			avahi_threaded_poll_lock(AvahiPollWithThread);
 			if ( avahi_threaded_poll_start(AvahiPollWithThread) < 0)
 			{
+				avahi_threaded_poll_unlock(AvahiPollWithThread);
 				OmiscidError( "Could not start Avahi poll\n" );
 				avahi_client_free(AvahiConnection);
 				AvahiConnection = (AvahiClient *)NULL;
@@ -442,6 +442,7 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 				AvahiRegisteringLocker.LeaveMutex();
 				return;
 			}
+			avahi_threaded_poll_unlock(AvahiPollWithThread);
 		}
 	}
 	else
@@ -469,18 +470,23 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			// Last instance, remove everything
 			OmiscidTrace( "Free Avahi.\n" );
 
+			OmiscidTrace( "Stop avahi poll.\n" );
 			if ( AvahiPollWithThread != (AvahiThreadedPoll *)NULL )
 			{
 				// Stop the threaded poll
+				avahi_threaded_poll_lock(AvahiPollWithThread);
 				avahi_threaded_poll_stop(AvahiPollWithThread);
+				avahi_threaded_poll_unlock(AvahiPollWithThread);
 			}
 
 			// Free static Avahi stuff in inverse order of allocation
+			OmiscidTrace( "Free avahi connection.\n" );
 			if ( AvahiConnection != (AvahiClient *)NULL )
 			{
 				avahi_client_free(AvahiConnection);
 			}
 
+			OmiscidTrace( "Free avahi poll.\n" );
 			if ( AvahiPollWithThread != (AvahiThreadedPoll *)NULL )
 			{
 				// Destroy the poll
@@ -490,6 +496,8 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			// Set pointer to NULL
 			AvahiGroup = (AvahiEntryGroup *)NULL;
 			AvahiPollWithThread = (AvahiThreadedPoll *)NULL;
+
+			OmiscidTrace( "Free avahi done.\n" );
 		}
 	}
 
@@ -536,13 +544,27 @@ void RegisterService::LaunchRegisterProcess( bool FromAvahiPollThread )
 		avahi_threaded_poll_lock(AvahiPollWithThread);
 	}
 
+	if ( AvahiGroup != (AvahiEntryGroup *)NULL )
+	{
+		avahi_entry_group_free(AvahiGroup);
+	}
+
+	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, (void*)this );
+	if ( AvahiGroup == (AvahiEntryGroup *)NULL )
+	{
+		OmiscidError( "Could not create Avahi group (%s).\n", avahi_strerror(avahi_client_errno(AvahiConnection)) );
+		// AvahiRegisteringLocker.LeaveMutex();
+		// return false;
+		goto EndOfLaunchRegisterProcess;
+	}
+
 	if ( AvahiTxtRecord != (AvahiStringList *)NULL )
 	{
 		if ( avahi_entry_group_add_service_strlst(AvahiGroup, AVAHI_IF_UNSPEC, AVAHI_PROTO_UNSPEC, (AvahiPublishFlags)0, (char*)Name.GetStr(),
 			(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, AvahiTxtRecord) < 0 )
 		{
 			Init(false);
-			OmiscidError( "Could not add service group (with TXTRecord)\n" );
+			OmiscidError( "Could not add service group (with TXTRecord)  (%s).\n", avahi_strerror(avahi_client_errno(AvahiConnection)) );
 			goto EndOfLaunchRegisterProcess;
 		}
 	}
@@ -552,7 +574,7 @@ void RegisterService::LaunchRegisterProcess( bool FromAvahiPollThread )
 			(char*)ProtocolAndTransport.GetStr(), (char*)Domain.GetStr(), NULL, Port, NULL) < 0 )
 		{
 			Init(false);
-			OmiscidError( "Could not add service group\n" );
+			OmiscidError( "Could not add service group (%s).\n", avahi_strerror(avahi_client_errno(AvahiConnection)) );
 			goto EndOfLaunchRegisterProcess;
 		}
 	}
@@ -561,7 +583,7 @@ void RegisterService::LaunchRegisterProcess( bool FromAvahiPollThread )
 	if ( avahi_entry_group_commit(AvahiGroup) < 0 )
 	{ 
 		Init(false);
-		OmiscidError( "Could not commit service group\n" );
+		OmiscidError( "Could not commit service group (%s).\n", avahi_strerror(avahi_client_errno(AvahiConnection)) );
 		goto EndOfLaunchRegisterProcess;
 	}
 
@@ -593,12 +615,10 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			{
 				MyThis->CompleteServiceName += ".";
 			}
-			// TmpOmiscidTrace( "%s registered by Avahi\n", MyThis->CompleteServiceName.GetStr() );
 			MyThis->RegistrationProcessDone = true;
 			break;
 
 		case AVAHI_ENTRY_GROUP_COLLISION :
-			TmpOmiscidTrace( "%s name collision in Avahi\n", MyThis->Name.GetStr() );
 			if ( MyThis->AutoRenameWasAsk == true )
 			{
 				// A service name collision happened. Let's pick a new name
@@ -619,7 +639,6 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 			break;
 										   
 		case AVAHI_ENTRY_GROUP_FAILURE:
-			TmpOmiscidTrace( "AVAHI_ENTRY_GROUP_FAILURE for %s\n", MyThis->Name.GetStr() );
 			// Some kind of failure happened while we were registering our services
 			OmiscidError( "Entry group failure\n" );
 			MyThis->RegistrationProcessDone = true;
@@ -628,7 +647,6 @@ void FUNCTION_CALL_TYPE RegisterService::DnsRegisterReply(AvahiEntryGroup *g, Av
 		case AVAHI_ENTRY_GROUP_UNCOMMITED:
 		case AVAHI_ENTRY_GROUP_REGISTERING:
 			// The other (good ???) stuff
-			// TmpOmiscidTrace( "AVAHI_ENTRY_GROUP_(UNCOMMITED|REGISTERING) for %s\n", MyThis->Name.GetStr() );
 			break;
 	}
 }
@@ -656,9 +674,6 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	ProtocolAndTransport  = Protocol;
 	ProtocolAndTransport += ".";
 	ProtocolAndTransport += Transport;
-
-	OmiscidTrace( "Trying to register %s\n", Name.GetStr() );
-
 
 #ifdef OMISCID_USE_MDNS
 	DNSServiceFlags RenamingFlags = (DNSServiceFlags)0; // auto rename
@@ -703,14 +718,6 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 		return false;
 	}
 
-	AvahiGroup = avahi_entry_group_new( AvahiConnection, DnsRegisterReply, (void*)this );
-	if ( AvahiGroup == (AvahiEntryGroup *)NULL )
-	{
-		OmiscidError( "Could not create Avahi group\n" );
-		AvahiRegisteringLocker.LeaveMutex();
-		return false;
-	}
-
 	// Construct TXTRecord
 	int PosProperty;
 	AvahiTxtRecord = (AvahiStringList *)NULL;
@@ -736,8 +743,6 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	{
 		Thread::Sleep(10);
 	}
-
-	TmpOmiscidTrace( "Out of registration process\n" );
 
 #endif
 #endif

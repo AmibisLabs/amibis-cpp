@@ -553,6 +553,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 
 	// Free list
 	avahi_string_list_free( TxtRecordStringList );
+
 #endif
 #endif
 

@@ -312,6 +312,7 @@ void ServiceProxy::UpdateDescription()
 	{
 		FullDescription = true;
 	}
+
 	// else the value of FullDescription remain the same
 }
 

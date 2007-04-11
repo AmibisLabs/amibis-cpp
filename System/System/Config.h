@@ -245,8 +245,20 @@ inline void OmiscidTrace(const char * format, ... )
 
 #define OmiscidError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidError
 #define OmiscidTrace  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTrace
-// For dev purpose
-#define TmpOmiscidTrace !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidTrace
+
+// Message for developping purpose
+#ifdef DEBUG
+	#define DevOmiscidTrace OmiscidError
+#else
+	#define DevOmiscidTrace (void)0
+#endif
+
+// Define an OmiscidMessage depend on DEBUG flag but always doing a trace
+#ifdef DEBUG
+	#define OmiscidMessage OmiscidError
+#else
+	#define OmiscidMessage OmiscidTrace
+#endif
 
 #ifdef WIN32
 

@@ -179,16 +179,20 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 				{
 					FullName += ".";
 				}
-				OmiscidTrace( "Find %s on %d\n", FullName.GetStr(), port );
 
 				// Avahi port are not in network order !!!!
 				DnsSdService ServiceInfo( FullName, port, host_name );
 
 				// Add Txt record data
-				size_t SizeOfTxtRecord = avahi_string_list_serialize  ( txt, (void*)MemForTxtRecord, (size_t)MemForTxtRecord.GetLength() );
+				size_t SizeOfTxtRecord = avahi_string_list_serialize( txt, (void*)MemForTxtRecord, (size_t)MemForTxtRecord.GetLength() );
 				if ( SizeOfTxtRecord > (size_t)0 )
 				{
 					ServiceInfo.Properties.ImportTXTRecord( (int)SizeOfTxtRecord, (const unsigned char*)MemForTxtRecord );
+#ifdef OMISCID_USE_AVAHI
+					// Remove  avahi flag because it will let Omiscid thing that we need to connect to
+					// the service
+					ServiceInfo.Properties.Undefine( "org.freedesktop.Avahi.cookie" );
+#endif
 				}
 
 				MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );

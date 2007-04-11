@@ -368,8 +368,6 @@ bool ServiceHasVariable::IsAGoodService(ServiceProxy& SP)
 	{
 		SimpleString RemoteValue = SP.GetVariableValue( VariableName );
 
-		// TmpOmiscidTrace( "'%s' ==? '%s'\n", VariableValue.GetStr(), RemoteValue.GetStr() );
-
 		if ( VariableValue == RemoteValue )
 		{
 			return true;

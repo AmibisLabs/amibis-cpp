@@ -124,7 +124,6 @@ void WaitForDnsSdServices::UnlockService( const SimpleString ServiceName )
 
 void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& CurrentService )
 {
-	// printf( "%u;", GetTickCount() );
 	if ( flags & OmiscidDNSServiceFlagsAdd )
 	{
 		if ( IsResolved == true )
@@ -171,7 +170,6 @@ void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned in
 			Properties = CurrentService.Properties;
 			IsResolved = true;
 
-			// TmpOmiscidTrace( "NbReady %d\n", ++Parent->NbServicesReady );
 			++Parent->NbServicesReady;
 		}
 	}

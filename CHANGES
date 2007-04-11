@@ -5,20 +5,29 @@
 In this files, you will find changes between OMiSCID versions.
 
 1.1.0	2007-XX-XX
-	- add Avahi support
+	[Global modifications]
+	- change this file grouping changes by section.
+	- add Avahi support for DNS-SD
 	- add automatic choice between Avahi/mDNS under Linux/MacOSX.
 	  add an option for scons to override this automatic choice.
-	- refactoring dues to Avahi stuff
 	- enable automatically DnsSdProxy when using ServiceControl
-	  Layer (due to avahi limitation)
+	  Layer (due to Avahi limitation)
+	- internal refactoring dues to Avahi stuff (sic...). No
+	  changes in exposed API.
+	[API modification]
+	- change Thread constructor behaviour because of virtualisation
+	  problem under linux. You can not anymore create an autostart
+	  Thread. You must start it in you inherited class as shown
+	  previously in 'Examples/RegisterSearchTest.cpp'.
 	- check init constraints to static global values, so replace
 	  global values like DynamicNameSolving by a method call
 	  like GetDynamicNameSolving().
-	- change Thread constructor behaviour because of virtualisation
-	  problem under linux
-	- Change Wait bug for Event (when asking for subsecond
-	  Wait).
-	- some bugs corrections corrections
+	- add SharedMemSegment class in the System layer in order to
+	  propose multiplateform shared memory management
+	[Bug corrections]
+	- Change Event::Wait() bug when asking for subsecond timers
+		under Linux/OSX
+	- some other minor bug corrections
 
 1.0.5	2007-02-01
 	- correct some portability problem with Mac OSX

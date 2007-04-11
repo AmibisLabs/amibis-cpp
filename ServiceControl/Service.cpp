@@ -30,10 +30,20 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 
 	// printf( "%u;", GetTickCount() );
 
+
 	SimpleString Host(hosttarget);
+
+	// Set empty service properties regards to Omiscid Service definition
 	ServiceProperties PropertiesForProxy;
+	PropertiesForProxy["desc"] = "part";
 
 	PropertiesForProxy.ImportTXTRecord( txtLen, (const unsigned char*)txtRecord.GetStr() );
+
+#ifdef OMISCID_USE_AVAHI
+	// Remove  avahi flag because it will let Omiscid thing that we need to connect to
+	// the service
+	PropertiesForProxy.Undefine( "org.freedesktop.Avahi.cookie" );
+#endif
 
 	// Need to add id of the service
 	if ( PropertiesForProxy.IsDefined(PeerIdString) )
@@ -66,10 +76,8 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 		return false;
 	}
 
-	// printf( "%u;", GetTickCount() );
 	if ( MyData->Filter->IsAGoodService( *SP ) == false )
 	{
-		// printf( "%u;\n", GetTickCount() );
 		delete SP;
 		return false;
 	}

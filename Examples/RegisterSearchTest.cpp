@@ -196,19 +196,20 @@ int main(int argc, char*argv[] )
 	unsigned int EffectiveNumberOfRegisteredServices = 0;
 
 	// Print Welcome message
-	OmiscidTrace( "This program is used to demonstrate register and search methods using OMiSCID.\n" );
-	OmiscidTrace( "As it is ditributed, registering unique service and searching for services\n" );
-	OmiscidTrace( "is a huge processing. See Accumulator/ClientAccumator examples for communication schema.\n\n" );
+	OmiscidMessage( "This program is used to demonstrate register and search methods using OMiSCID.\n" );
+	OmiscidMessage( "As it is ditributed, registering unique service and searching for services\n" );
+	OmiscidMessage( "is a huge processing. See Accumulator/ClientAccumator examples for communication schema.\n\n" );
 
-	OmiscidTrace( "** Session parameters **\nDnsSdProxy is%s activated.\n", ProxyActivited ? "" : " not"  );
-	OmiscidTrace( "Number of service to register %d\n** **\n\n", NumberOfServicesToRegister ); 
+	OmiscidMessage( "** Session parameters **\nDnsSdProxy is%s activated.\n", ProxyActivited ? "" : " not"  );
+	OmiscidMessage( "Number of service to register %d\n** **\n\n", NumberOfServicesToRegister ); 
 
 // Register services
-	OmiscidTrace( "Start to register services.\n" );
+	OmiscidMessage( "Start to register services.\n" );
 
 	// Create an object to now when the total time
 	// To register the services
 	ElapsedTime TimeCounter;
+
 	for( i = 1; i <= NumberOfServicesToRegister; i++ )
 	{
 		// Create a new register service called
@@ -225,7 +226,7 @@ int main(int argc, char*argv[] )
 	EffectiveNumberOfRegisteredServices = ListOfRegisterThreads.GetNumberOfElements();
 
 	// Wait until all registered services are present
-	OmiscidTrace( "Wait for service to be ready.\n" );
+	OmiscidMessage( "Wait for service to be ready.\n" );
 	for(;;)
 	{
 		// Wait for all create thread to register their service
@@ -238,7 +239,7 @@ int main(int argc, char*argv[] )
 		RegisterThread::NewServiceIsRegistered.Wait(10);
 	}
 
-	OmiscidTrace( "=> %d service(s) are registered in %u ms.\n", EffectiveNumberOfRegisteredServices, TimeCounter.Get() );
+	OmiscidMessage( "=> %d service(s) are registered in %u ms.\n", EffectiveNumberOfRegisteredServices, TimeCounter.Get() );
 
 // Search for services, *can be done* in another process/computer over the network obvioulsly !
 
@@ -264,19 +265,20 @@ int main(int argc, char*argv[] )
 	}
 
 // First, search only one service named RegisterThread and get a ServiceProxy for it
-	OmiscidTrace( "Search for single RegisterThread service.\n" );
+	OmiscidMessage( "Search for single RegisterThread service.\n" );
 
 	// Reinit ElapsedTime object
 	TimeCounter.Reset();
+
 	// Search for a service, wait at max 5 s (5000 ms) to get an answer. We provide
 	// A filter (automatically create by NameIs and automatically destroyed by FindService
 	ServiceProxy * OneService = Searcher->FindService(NameIs("RegisterThread"), 5000);
 
 	if ( OneService != NULL )
 	{
-		OmiscidTrace( "=> service 'RegisterThread' found in %u ms.\n", TimeCounter.Get() );
+		OmiscidMessage( "=> service 'RegisterThread' found in %u ms.\n", TimeCounter.Get() );
 
-		// Delet
+		// Delete
 		delete OneService;
 	}
 	else
@@ -285,7 +287,7 @@ int main(int argc, char*argv[] )
 	}
 
 // Now Search for all services named RegisterThread and get a ServiceProxyList for Them
-	OmiscidTrace( "Search all services named RegisterThread.\n" );
+	OmiscidMessage( "Search all services named RegisterThread.\n" );
 	
 	// We need to a filters list, give a NameIs filter for each service
 	ServiceFilterList ListOfFilters;
@@ -302,7 +304,7 @@ int main(int argc, char*argv[] )
 
 	// MultipleServices != NULL can not be null as we do not got out of FindServices without
 	// an answer
-	OmiscidTrace( "=> services found in %u ms.\n", TimeCounter.Get() );
+	OmiscidMessage( "=> services found in %u ms.\n", TimeCounter.Get() );
 
 	// Delete answer
 	delete MultipleServices;
@@ -311,7 +313,7 @@ int main(int argc, char*argv[] )
 	ListOfFilters.Empty();
 
 // Now Search for all services named RegisterThread with a pair number and get a ServiceProxyList for Them
-	OmiscidTrace( "Search for all RegisterThread services with a pair number.\n" );
+	OmiscidMessage( "Search for all RegisterThread services with a pair number.\n" );
 	
 	// We need to a filters list, give a NameIs filter for each service
 	for( i = 2; i <= EffectiveNumberOfRegisteredServices; i += 2 )
@@ -327,7 +329,7 @@ int main(int argc, char*argv[] )
 
 	// MultipleServices != NULL can not be null as we do not got out of FindServices without
 	// an answer
-	OmiscidTrace( "=> services found in %u ms.\n", TimeCounter.Get() );
+	OmiscidMessage( "=> services found in %u ms.\n", TimeCounter.Get() );
 
 	// Print information about found service
 	for( MultipleServices->First(); MultipleServices->NotAtEnd(); MultipleServices->Next() )
@@ -340,7 +342,7 @@ int main(int argc, char*argv[] )
 
 // Now Search for specific service which is not a specific one
 	MultipleServices->First();
-	OmiscidTrace( "Search for single RegisterThread which is not %8.8x.\n", MultipleServices->GetCurrent()->GetPeerId() );
+	OmiscidMessage( "Search for single RegisterThread which is not %8.8x.\n", MultipleServices->GetCurrent()->GetPeerId() );
 
 	// Reset time counter
 	TimeCounter.Reset();
@@ -350,7 +352,7 @@ int main(int argc, char*argv[] )
 
 	// MultipleServices != NULL can not be null as we do not got out of FindServices without
 	// an answer
-	OmiscidTrace( "=> service %8.8x found in %u ms.\n", OneService->GetPeerId(), TimeCounter.Get() );
+	OmiscidMessage( "=> service %8.8x found in %u ms.\n", OneService->GetPeerId(), TimeCounter.Get() );
 
 	// Delete last ServiceProxy
 	delete OneService;
@@ -359,7 +361,7 @@ int main(int argc, char*argv[] )
 	delete MultipleServices;
 
 // Unregister service and close all connections
-	OmiscidTrace( "Unregister service and close all connections.\n" );
+	OmiscidMessage( "Unregister service and close all connections.\n" );
 	// Reset time counter
 	TimeCounter.Reset();
 	// Delete registered thread
@@ -367,7 +369,7 @@ int main(int argc, char*argv[] )
 	{
 		delete ListOfRegisterThreads.ExtractFirst();
 	}
-	OmiscidTrace( "=> done in %u ms.\n", TimeCounter.Get() );
+	OmiscidMessage( "=> done in %u ms.\n", TimeCounter.Get() );
 
 	// delete the Search service
 	delete Searcher;

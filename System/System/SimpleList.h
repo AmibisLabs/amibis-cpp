@@ -359,6 +359,14 @@ TYPE& SimpleList<TYPE>::GetCurrent() const
 {
 	if(RemoveCurrentHasOccured)
 		throw SimpleListException("SimpleList<TYPE>::GetCurrent : Forbidden after a call to RemoveCurrent");
+
+#ifdef DEBUG
+	if ( CurrentElement== NULL )
+	{
+		OmiscidError( "Warning :  In SimpleList<TYPE>::GetCurrent() CurrentElement == NULL\n" );
+	}
+#endif
+
 	return CurrentElement->ElementContainer;
 }
 

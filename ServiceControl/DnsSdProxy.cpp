@@ -103,10 +103,16 @@ DnsSdProxy::~DnsSdProxy()
 		InstancesCount = 0;
 		OmiscidTrace( "Last DnsSdProxy instance. Stop it.\n" );
 
+		DnsSdServiceInstanceManager * pSIM;
+
 		// Empty the list of current services
 		while( ServicesList.GetNumberOfElements() != 0 )
 		{
-			delete ServicesList.ExtractFirst();
+			pSIM = ServicesList.ExtractFirst();
+			if ( pSIM != (DnsSdServiceInstanceManager *)NULL )
+			{
+				delete pSIM;
+			}
 		}
 
 		// Say that we do not need to do cleanup action
