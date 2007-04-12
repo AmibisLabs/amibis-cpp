@@ -188,11 +188,9 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 				if ( SizeOfTxtRecord > (size_t)0 )
 				{
 					ServiceInfo.Properties.ImportTXTRecord( (int)SizeOfTxtRecord, (const unsigned char*)MemForTxtRecord );
-#ifdef OMISCID_USE_AVAHI
 					// Remove  avahi flag because it will let Omiscid thing that we need to connect to
 					// the service
 					ServiceInfo.Properties.Undefine( "org.freedesktop.Avahi.cookie" );
-#endif
 				}
 
 				MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );

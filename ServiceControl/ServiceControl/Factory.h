@@ -10,6 +10,7 @@
 
 #include <System/SimpleString.h>
 #include <ServiceControl/Service.h>
+#include <ServiceControl/ServiceRepository.h>
 
 namespace Omiscid {
 
@@ -48,6 +49,7 @@ public:
 	 * @return the Omiscid service. All access to the service will be through this object
 	 */
 	static Service * CreateFromXML(SimpleString XmlDesc);
+
 
 };
 
