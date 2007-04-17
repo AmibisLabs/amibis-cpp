@@ -11,8 +11,11 @@
 #include <System/Mutex.h>
 #include <System/SimpleList.h>
 #include <ServiceControl/DnsSdProxy.h>
+#include <ServiceControl/ServiceProxy.h>
 
 namespace Omiscid {
+
+class ServiceRepository;
 
 /**
  * @class ServiceRepositoryListener ServiceControl/ServiceRepositoryListener.h
@@ -21,8 +24,11 @@ namespace Omiscid {
  * @brief High level user friendly class to collect browse Omiscid services.
  * @author Dominique Vaufreydaz
  */
-class ServiceRepositoryListener : protected DnsSdProxyClient
+class ServiceRepositoryListener : private DnsSdProxyClient
 {
+	// Friend class ServiceRepository can access private members from DnsSdProxyClient
+	friend class ServiceRepository;
+
 public:
 	// Constructor
 	ServiceRepositoryListener();
@@ -30,13 +36,11 @@ public:
 	// virtual destructor
 	virtual ~ServiceRepositoryListener();
 
-
-
-private:
-	SimpleList<ServiceRepositoryListener*> RepoListeners;	// All my listeners
+	virtual void ServiceAdded(const ServiceProxy& ProxyForService   ) = 0;
+	virtual void ServiceRemoved(const ServiceProxy& ProxyForService ) = 0;
 
 protected:
-	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service );
+	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
 };
 
 } // namespace Omiscid

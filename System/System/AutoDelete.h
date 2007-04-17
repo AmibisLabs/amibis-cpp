@@ -18,7 +18,6 @@ namespace Omiscid {
  *
  * Enable a thread to wait on a condition, until be awoken by another thread.
  * @author Dominique Vaufreydaz
- * @author Sebastien Pesnel
  */
 template <typename TYPE>
 class AutoDelete
@@ -45,6 +44,24 @@ public:
 	/** @brief Access function true '->' operator */
     TYPE* operator->();
 
+	/** @brief affectation operator/copy */
+	const AutoDelete<TYPE>& operator=(const AutoDelete<TYPE>& ToCopy);
+
+	/** @brief affectation operator/copy with content type */
+	const AutoDelete<TYPE>& operator=(TYPE * ToCopy);
+
+	/** @brief comparaison operator */
+	bool operator==(const TYPE * ToCompare);
+
+	/** @brief comparaison operator */
+	bool operator==(const AutoDelete<TYPE>& ToCompare);
+
+	/** @brief comparaison operator */
+	bool operator!=(const TYPE * ToCompare);
+
+	/** @brief comparaison operator */
+	bool operator!=(const AutoDelete<TYPE>& ToCompare);
+
 private:
 	TYPE * pObject;
 };
@@ -70,7 +87,6 @@ AutoDelete<TYPE>::AutoDelete(const AutoDelete<TYPE>& ToCopy)
 	throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
 }
 
-
 /** @brief Destructor */
 template <typename TYPE>
 AutoDelete<TYPE>::~AutoDelete()
@@ -82,7 +98,7 @@ AutoDelete<TYPE>::~AutoDelete()
 template <typename TYPE>
 void AutoDelete<TYPE>::Delete()
 {
-	if ( pObject != NULL )
+	if ( pObject != (TYPE*)NULL )
 	{
 		delete pObject;
 		pObject = (TYPE*)NULL;
@@ -101,6 +117,75 @@ template <typename TYPE>
 TYPE* AutoDelete<TYPE>::operator->()
 {
 	return pObject;
+}
+
+template <typename TYPE>
+const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(const AutoDelete<TYPE>& ToCopy)
+{
+	throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
+	return *this;
+}
+
+template <typename TYPE>
+const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(TYPE * ToCopy)
+{
+	if ( pObject != (TYPE*)NULL )
+	{
+		throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
+	}
+
+	// Do affectation
+	pObject = ToCopy;
+
+	return *this;
+}
+
+/** @brief comparaison operator */
+template <typename TYPE>
+bool AutoDelete<TYPE>::operator==(const TYPE * ToCompare)
+{
+	// Are internal pointer equals to the given one ?
+	if ( pObject == ToCompare )
+	{
+		return true;
+	}
+	return false;
+}
+
+/** @brief comparaison operator */
+template <typename TYPE>
+bool AutoDelete<TYPE>::operator==(const AutoDelete<TYPE>& ToCompare)
+{
+	// Are internal pointers equal ?
+	if ( pObject == ToCompare.pObject )
+	{
+		return true;
+	}
+	return false;
+}
+
+/** @brief comparaison operator */
+template <typename TYPE>
+bool AutoDelete<TYPE>::operator!=(const TYPE * ToCompare)
+{
+	// Are internal pointer equals to the given one ?
+	if ( pObject != ToCompare )
+	{
+		return true;
+	}
+	return false;
+}
+
+/** @brief comparaison operator */
+template <typename TYPE>
+bool AutoDelete<TYPE>::operator!=(const AutoDelete<TYPE>& ToCompare)
+{
+	// Are internal pointers equal ?
+	if ( pObject != ToCompare.pObject )
+	{
+		return true;
+	}
+	return false;
 }
 
 } // namespace Omiscid

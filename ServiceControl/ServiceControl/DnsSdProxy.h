@@ -24,6 +24,7 @@ class DnsSdServicesList : public SimpleList<DnsSdService*>
 {
 	friend class DnsSdProxy;
 
+
 private: // can only be constructed by DnsSdProxy
 	DnsSdServicesList();
 
@@ -37,10 +38,10 @@ public:
 	DnsSdProxyClient();
 	virtual ~DnsSdProxyClient();
 
-	bool StartBrowse();
-	bool StopBrowse();
+	bool StartBrowse( bool NotifyOnlyNewEvent = false );
+	bool StopBrowse( bool NotifyAsIfServicesDisappear = false );
 
-	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service ) = 0;
+	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo ) = 0;
 };
 
 class DnsSdProxy
@@ -55,8 +56,8 @@ public:
 
 	static DnsSdServicesList * GetCurrentServicesList();
 
-	static bool AddClient( DnsSdProxyClient* );
-	static bool RemoveClient( DnsSdProxyClient* );
+	static bool AddClient( DnsSdProxyClient * Client, bool NotifyOnlyNewEvent = false );
+	static bool RemoveClient( DnsSdProxyClient * Client, bool NotifyAsIfServicesDisappear = false );
 
 	static bool WaitForChanges(unsigned int TimeToWait);
 

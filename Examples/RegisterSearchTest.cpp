@@ -241,6 +241,9 @@ int main(int argc, char*argv[] )
 
 	OmiscidMessage( "=> %d service(s) are registered in %u ms.\n", EffectiveNumberOfRegisteredServices, TimeCounter.Get() );
 
+	Event Toto;
+	Toto.Wait();
+
 // Search for services, *can be done* in another process/computer over the network obvioulsly !
 
 	// First, in order to serach for service, we need to create a service event if it is

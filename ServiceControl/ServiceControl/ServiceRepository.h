@@ -8,8 +8,9 @@
 
 #include <ServiceControl/Config.h>
 
-#include <System/Mutex.h>
 #include <System/SimpleList.h>
+#include <ServiceControl/ServiceProxy.h>
+#include <ServiceControl/ServiceProxyList.h>
 #include <ServiceControl/ServiceRepositoryListener.h>
 
 namespace Omiscid {
@@ -36,8 +37,17 @@ public:
 	// virtual destructor
 	virtual ~ServiceRepository();
 
+	// defaults to false
+	bool AddListener(ServiceRepositoryListener* Listener, bool NotifyOnlyNewEvents = false );
+	bool RemoveListener(ServiceRepositoryListener* Listener, bool NotifyAsIfExistingServicesDisappear = false );
+
+	ServiceProxyList * GetAllServices();
+
+	// To be compliant with java API
+	void Stop();
+
 private:
-	SimpleList<ServiceRepositoryListener*> RepoListeners;	// All my listeners
+	MutexedSimpleList<ServiceRepositoryListener*> RepoListeners;	// All my listeners
 };
 
 } // namespace Omiscid

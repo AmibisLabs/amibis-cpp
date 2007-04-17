@@ -3,8 +3,11 @@ import sys
 import string
 import random
 import re
+import SCons
 
 from SCons.Util import WhereIs
+
+Chmod = SCons.Action.ActionFactory(os.chmod, lambda dest, mode: 'Chmod: "%s" with 0%o' % (dest, mode)) 
 
 def OmiscidMessage(str):
  print '--==-- '+str
@@ -33,7 +36,8 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
    WhichZeroConfLibrary = 'OMISCID_USE_MDNS' 
   else :
    # default for other posix plateform
-   WhichZeroConfLibrary = 'OMISCID_USE_AVAHI'
+   # Was WhichZeroConfLibrary = 'OMISCID_USE_AVAHI' before Avahi crash problems
+   WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
  else :
   WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
   
@@ -126,8 +130,10 @@ def OmiscidDotInFileTarget(env, target, mapping):
   replacements += "#g'"
  output = []
  if len(replacements) == 0:
+  # OmiscidMessage( "cat $SOURCE > $TARGET && chmod 755 $TARGET" )
   output += env.Command(target,target+".in","cat $SOURCE > $TARGET && chmod 755 $TARGET")
  else:
+  # OmiscidMessage( "sed %s $SOURCE > $TARGET && chmod 755 $TARGET" % replacements )
   output += env.Command(target,target+".in","sed %s $SOURCE > $TARGET && chmod 755 $TARGET" % replacements)
  return output
 
@@ -164,8 +170,7 @@ def OmiscidMapping():
  else :
   ReplaceList['@OmiscidTraceFlags@'] = ' '
   
- if TraceMode == True :
-  ReplaceList['@OmiscidCompilFlags@'] = ' '
+ ReplaceList['@OmiscidCompilFlags@'] = ' '
  
  return ReplaceList
 
@@ -181,14 +186,20 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
    prefix_bin = os.path.join(ARGUMENTS.get("prefix"), "bin")
    prefix_lib = os.path.join(ARGUMENTS.get("prefix"), "lib")
    prefix_h = os.path.join(ARGUMENTS.get("prefix"), "include", "Omiscid")
-   env.Install(prefix_bin, binToInstall)
-   env.Install(prefix_lib, libToInstall)
+   lTarget = env.Install(prefix_bin, binToInstall)
+   env.AddPostAction( lTarget, Chmod( prefix_bin, 0755 ) )
+   lTarget = env.Install(prefix_lib, libToInstall)
+   env.AddPostAction( lTarget, Chmod( prefix_lib, 0755 ) )
    hTargetToInstall = []
    for i in hToInstall:
     if type(i) in (str, unicode):
-     hTargetToInstall += env.Install(os.path.join(prefix_h,i))
+     lTarget = env.Install(os.path.join(prefix_h,i))
+     env.AddPostAction( lTarget, Chmod( os.path.join(prefix_h,i), 0755 ) )
+     hTargetToInstall += lTarget
     else:
-     hTargetToInstall += env.Install(os.path.join(prefix_h,i[1]),i[0])
+     lTarget = env.Install(os.path.join(prefix_h,i[1]),i[0])
+     env.AddPostAction( lTarget, Chmod( os.path.join(prefix_h,re.sub('^'+i[1]+'\/','',i[0])), 0755 ) )
+     hTargetToInstall += lTarget
    #env.Install(prefix_h, hTargetToInstall)
    toInstall = [prefix_bin,prefix_lib,hTargetToInstall]
    env.Alias("install", toInstall)

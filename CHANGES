@@ -7,16 +7,17 @@ In this files, you will find changes between OMiSCID versions.
 1.1.0	2007-XX-XX
 	[Global modifications]
 	- change this file grouping changes by section.
-	- add Avahi support for DNS-SD
-	- add automatic choice between Avahi/mDNS under Linux/MacOSX.
-	  add an option for scons to override this automatic choice.
+	- add Avahi support for DNS-SD (with Avahi 0.6.17)
+	- Default choice is still mDNS under Linux/MacOSX (see known
+	  features to understand why). Add an option for scons to
+	  override this automatic choice.
 	- enable automatically DnsSdProxy when using ServiceControl
 	  Layer (due to Avahi limitation)
 	- internal refactoring dues to Avahi stuff (sic...). No
 	  changes in exposed API.
 	[API modification]
 	- change Thread constructor behaviour because of virtualisation
-	  problem under linux. You can not anymore create an autostart
+	  problem with gcc. You can not anymore create an autostart
 	  Thread. You must start it in you inherited class as shown
 	  previously in 'Examples/RegisterSearchTest.cpp'.
 	- check init constraints to static global values, so replace
@@ -28,6 +29,10 @@ In this files, you will find changes between OMiSCID versions.
 	- Change Event::Wait() bug when asking for subsecond timers
 		under Linux/OSX
 	- some other minor bug corrections
+	[Known features]
+	- Crash (segmentation fault, corrupted double chained list in glibc,
+	  problem in D-BUS) when using Avahi and unregistering many services
+	  in the same process. Still trying to cope with this feature.
 
 1.0.5	2007-02-01
 	- correct some portability problem with Mac OSX

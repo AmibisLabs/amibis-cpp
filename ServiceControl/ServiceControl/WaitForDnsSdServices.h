@@ -61,7 +61,7 @@ private:
 	void * UserData;
 
 	// Call by other classes to say if a new service appears or desappears
-	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& Service );
+	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
 };
 
 class WaitForDnsSdServices
