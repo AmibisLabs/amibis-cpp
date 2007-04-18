@@ -19,9 +19,6 @@
 
 namespace Omiscid {
 
-#define TCP_BUFFER_SIZE (1<<16)+1 // 64ko
-#define UDP_MAX_MSG_SIZE 1024
-
 class MsgSocket;
 
 /**

@@ -16,6 +16,9 @@
 
 namespace Omiscid {
 
+#define TCP_BUFFER_SIZE (63*1024) // 63 ko
+#define UDP_MAX_MSG_SIZE 1024
+
 /**
  * @class Socket Socket.h System/Socket.h
  * @brief Socket for tcp or udp communication.

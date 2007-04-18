@@ -344,12 +344,45 @@ int Socket::Send(int len, const char* buf)
 {
 	const int socket_send_flag = MSG_NOSIGNAL;
 	int res;
-	if(socketType == TCP)
-	{
 
-		if((res = send(descriptor, buf, len, socket_send_flag)) == SOCKET_ERROR)
+	if ( len <= 0 || buf == (const char*)NULL )
+	{
+		return SOCKET_ERROR;
+	}
+
+	if ( socketType == TCP )
+	{
+		if ( len > TCP_BUFFER_SIZE )
 		{
-			throw SocketException("send_sock_stream", Errno());
+			int TotalLen = 0;
+
+			// Send all parts of the message in maximum TCP_BUFFER_SIZE frame
+			// Let's send data... For linux, we can not send it as a single call to
+			// send, so let's do it the other way... Naggle will do the rest...
+			while( TotalLen < len )
+			{
+				if ( (len-TotalLen) >= TCP_BUFFER_SIZE )	// 60 Ko
+				{
+					res = send(descriptor, (char*)(buf+TotalLen), TCP_BUFFER_SIZE, socket_send_flag );
+				}
+				else
+				{
+					res = send(descriptor, (char*)(buf+TotalLen), len-TotalLen, socket_send_flag );
+				}
+
+				if ( res == SOCKET_ERROR )
+				{
+					throw SocketException("send_sock_stream", Errno());
+				}
+				TotalLen += res;
+			}
+		}
+		else
+		{
+			if ( (res = send(descriptor, buf, len, socket_send_flag)) == SOCKET_ERROR )
+			{
+				throw SocketException("send_sock_stream", Errno());
+			}
 		}
 	}
 	else

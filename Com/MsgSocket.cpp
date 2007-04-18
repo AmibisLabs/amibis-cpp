@@ -936,12 +936,12 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 	protectSend.EnterMutex();
 	try
 	{
-		if ( Sendlen > maxMessageSizeForTCP )
+		if ( Sendlen > GetMaxMessageSizeForTCP() )
 		{
 			int HeaderSend	= 0;
 			// int BodySend	= 0;
 			int TailerSend	= 0;
-			int ResSend		= 0;
+			// int ResSend		= 0;
 
 			// OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", Sendlen, maxMessageSizeForTCP);
 			TotalLen = PrepareBufferForBip( (char*)SendBuffer, NULL, Sendlen, true );
@@ -965,27 +965,15 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 				return -1;
 			}
 
-			// Let's send data... For linux, we can not send it as a single call to
-			// send, so let's do it the other way... Naggle will do the rest...
-			for( TotalLen=0; TotalLen < Sendlen; TotalLen += ResSend )
+			// Let's send data... 
+			TotalLen = socket->Send( Sendlen, (char*)(buf) );
+			if ( TotalLen == SOCKET_ERROR )
 			{
-				if ( (Sendlen-TotalLen) >= 60*1024 )	// 60 Ko
-				{
-					ResSend = socket->Send( 60*1024, (char*)(buf+TotalLen) );
-				}
-				else
-				{
-					ResSend = socket->Send( Sendlen-TotalLen, (char*)(buf+TotalLen) );
-				}
-
-				if ( ResSend == -1 )
-				{
-					return -1;
-				}
+				return -1;
 			}
 
 			TailerSend = socket->Send( tag_end_size, tag_end );
-			if ( TailerSend == -1 )
+			if ( TailerSend == SOCKET_ERROR )
 			{
 				return -1;
 			}
@@ -1062,14 +1050,14 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	protectSend.EnterMutex();
 	try
 	{
-		if ( SendLen > maxMessageSizeForTCP )
+		if ( SendLen > GetMaxMessageSizeForTCP() )
 		{
 			int HeaderSend	= 0;
 			int BodySend	= 0;
 			int TailerSend	= 0;
-			int ResSend		= 0;
+			// int ResSend		= 0;
 
-			OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", SendLen, maxMessageSizeForTCP);
+			// OmiscidTrace( "Message too big for one TCP frame (size=%d, sizemax=%d) sends many.\n", SendLen, maxMessageSizeForTCP);
 			
 			// prepare buffer
 			TotalLen = PrepareBufferForBip( (char*)SendBuffer, NULL, SendLen, true );
@@ -1093,27 +1081,16 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 				return -1;
 			}
 
-			// Send all parts of the message in maximum 60 ko frame
+			// Send all parts of the message
 			for( i = 0; i < nb_buf; i ++ )
 			{
-				// Let's send data... For linux, we can not send it as a single call to
-				// send, so let's do it the other way... Naggle will do the rest...
-				for( TotalLen=0; TotalLen < tab_length[i]; TotalLen += ResSend )
-				{
-					if ( (tab_length[i]-TotalLen) >= 60*1024 )	// 60 Ko
-					{
-						ResSend = socket->Send( 60*1024, (char*)(tab_buf[i]+TotalLen) );
-					}
-					else
-					{
-						ResSend = socket->Send( tab_length[i]-TotalLen, (char*)(tab_buf[i]+TotalLen) );
-					}
+				TotalLen = socket->Send( tab_length[i], tab_buf[i] );
 
-					if ( ResSend == -1 )
-					{
-						return -1;
-					}
+				if ( TotalLen == SOCKET_ERROR )
+				{
+					return -1;
 				}
+
 				BodySend += TotalLen;
 			}
 
