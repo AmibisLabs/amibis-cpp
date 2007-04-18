@@ -539,7 +539,7 @@ bool Service::AddConnectorListener(SimpleString ConnectorName, ConnectorListener
 
 	if ( pAtt->IsAnOutput() )	// can be Input, InOutput, but limited on Output
 	{
-		OmiscidError( "Could only receive connection/deconnecion notification over a simple output connector.\n" );
+		OmiscidTrace( "Could only receive connection/deconnecion notification over %s output connector.\n", ConnectorName.GetStr() );
 	}
 
 	// Get the connector
