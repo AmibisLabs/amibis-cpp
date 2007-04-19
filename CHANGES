@@ -28,6 +28,7 @@ In this files, you will find changes between OMiSCID versions.
 	[Bug corrections]
 	- Change Event::Wait() bug when asking for subsecond timers
 		under Linux/OSX
+	- correct huge data send problem when sending to all clients
 	- some other minor bug corrections
 	[Known features]
 	- Crash (segmentation fault, corrupted double chained list in glibc,

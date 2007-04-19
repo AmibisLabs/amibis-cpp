@@ -116,6 +116,37 @@ int TcpServer::SendToAllClients(int len, const char* buf)
 	listConnections.Unlock();
 
 	ProtectedSend.EnterMutex();
+
+	// If message is too big, we do not try to do optimisation
+	if ( len > maxBIPMessageSize )
+	{
+		listConnections.Lock();
+		for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+		{
+			ms = listConnections.GetCurrent();
+			if( ms->IsConnected() )
+			{
+				try
+				{
+					ms->Send(len, buf);
+					nb_clients++;
+				}
+				catch( SocketException &e )
+				{
+					OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+				}
+			}
+			else
+			{
+				listConnections.RemoveCurrent();
+				delete ms;
+			}
+		}
+
+		ProtectedSend.LeaveMutex();
+		return nb_clients;
+	}
+
 	TotalLen = MsgSocket::PrepareBufferForBip( BufferForMultipleClients, buf, len );
 	if ( TotalLen == -1 )
 	{
@@ -156,6 +187,7 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 {
 	int nb_clients = 0;
 	int TotalLen;
+	int i;
 	MsgSocket * ms;
 
 	// Check if we have someone to serve
@@ -166,6 +198,42 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 		return 0;
 	}
 	listConnections.Unlock();
+
+	for( i = 0, TotalLen = 0; i < nb_buf; i++ )
+	{
+		TotalLen += tab_len[0];
+	}
+
+	// If message is too big, we do not try to do optimisation
+	if ( TotalLen > maxBIPMessageSize )
+	{
+		listConnections.Lock();
+		for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+		{
+			ms = listConnections.GetCurrent();
+			if( ms->IsConnected() )
+			{
+				try
+				{
+					ms->SendCuttedMsg(tab_len, tab_buf, nb_buf );
+					nb_clients++;
+				}
+				catch( SocketException &e )
+				{
+					OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+				}
+			}
+			else
+			{
+				listConnections.RemoveCurrent();
+				delete ms;
+			}
+		}
+
+		ProtectedSend.LeaveMutex();
+		return nb_clients;
+	}
+
 	ProtectedSend.EnterMutex();
 	TotalLen = MsgSocket::PrepareBufferForBipFromCuttedMsg( BufferForMultipleClients, tab_len, tab_buf, nb_buf);
 	if ( TotalLen == -1 )
