@@ -22,11 +22,19 @@ void FUNCTION_CALL_TYPE ServiceRepositoryListener::DnsSdProxyServiceBrowseReply(
 		ServiceProxy( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
 
 		// A new service appear
-		ServiceAdded( ServiceProxy( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties ) );
+		// AS this *ù## gcc do not want to create a refernec on "on the fly" construct object
+		// construct it first
+		ServiceProxy LocalSP( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
+
+		ServiceAdded( LocalSP );
 	}
 	else
 	{
 		// A service disappear
-		ServiceRemoved( ServiceProxy( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties ) );
+		// AS this *ù## gcc do not want to create a refernec on "on the fly" construct object
+		// construct it first
+		ServiceProxy LocalSP( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
+
+		ServiceRemoved( LocalSP );
 	}
 }
