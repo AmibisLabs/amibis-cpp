@@ -256,10 +256,10 @@ class MsgSocket : public Thread
    */
   int SendPreparedBuffer(int len, char* buf);
 
-  static int PrepareBufferForBip(char * buf, const char * data, int datalen, bool OnlyHeader= false);
-  static int WriteHeaderForBip(char * buf, int service_id, int message_id );
+  int PrepareBufferForBip(char * buf, const char * data, int datalen, bool OnlyHeader= false);
+  int WriteHeaderForBip(char * buf, int service_id, int message_id );
 
-  static int PrepareBufferForBipFromCuttedMsg(char * buf, int* tab_length, const char** tab_buf, int nb_buf);
+  int PrepareBufferForBipFromCuttedMsg(char * buf, int* tab_length, const char** tab_buf, int nb_buf);
 
   /** \brief Send a message in several part (on TCP) by using the BIP protocol
    *

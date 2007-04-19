@@ -36,8 +36,8 @@ public:
 	// virtual destructor
 	virtual ~ServiceRepositoryListener();
 
-	virtual void ServiceAdded(const ServiceProxy& ProxyForService   ) = 0;
-	virtual void ServiceRemoved(const ServiceProxy& ProxyForService ) = 0;
+	virtual void ServiceAdded( ServiceProxy& ProxyForService   ) = 0;
+	virtual void ServiceRemoved( ServiceProxy& ProxyForService ) = 0;
 
 protected:
 	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );

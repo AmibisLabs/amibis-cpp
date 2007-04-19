@@ -10,7 +10,7 @@
 #ifdef DEBUG
 #define TIME_TO_WAIT_ANSWER 5000
 #else
-#define TIME_TO_WAIT_ANSWER 500
+#define TIME_TO_WAIT_ANSWER 1000
 #endif
 
 using namespace Omiscid;

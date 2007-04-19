@@ -43,3 +43,16 @@ Service * Factory::CreateFromXML( SimpleString XmlDesc )
 {
 	return NULL;
 }
+
+
+	/** 
+	 * Create a new Omiscid Service Repository. This repository is used to browse
+	 * add/remove of Omiscid services. You will need to add listeners to this object
+	 * using classes inherited from #ServiceRepositoryListener.
+	 * @return the #ServiceRepository.
+	 */
+ServiceRepository * Factory::CreateServiceRepository()
+{
+	// For the moment, nothing actually difficult
+	return new ServiceRepository();
+}

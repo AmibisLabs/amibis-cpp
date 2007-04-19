@@ -50,7 +50,13 @@ public:
 	 */
 	static Service * CreateFromXML(SimpleString XmlDesc);
 
-
+	/** 
+	 * Create a new Omiscid Service Repository. This repository is used to browse
+	 * add/remove of Omiscid services. You will need to add listeners to this object
+	 * using classes inherited from #ServiceRepositoryListener.
+	 * @return the #ServiceRepository.
+	 */
+	static ServiceRepository * CreateServiceRepository();
 };
 
 /** 

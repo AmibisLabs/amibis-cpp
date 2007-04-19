@@ -41,5 +41,7 @@
 #include <ServiceControl/ServiceFilter.h>
 #include <ServiceControl/ServiceProxy.h>
 #include <ServiceControl/ServiceProxyList.h>
+#include <ServiceControl/ServiceRepository.h>
+#include <ServiceControl/ServiceRepositoryListener.h>
 
 #endif // __USER_FRIENDLY_API_H__

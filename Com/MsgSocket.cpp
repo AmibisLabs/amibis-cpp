@@ -278,7 +278,7 @@ int MsgSocket::PrepareBufferForBip(char * buf, const char * data, int datalen, b
 	}
 	// else
 
-	if ( buf == NULL || datalen > (TCP_BUFFER_SIZE -1 -tag_size -tag_end_size) )
+	if ( buf == NULL || datalen > maxBIPMessageSize )
 	{
 		return -1;
 	}
@@ -315,7 +315,7 @@ int MsgSocket::PrepareBufferForBipFromCuttedMsg(char * buf, int* tab_length, con
 		TotalLen += tab_length[i];
 	}
 
-	if ( TotalLen > (TCP_BUFFER_SIZE -1 -tag_size -tag_end_size) )
+	if ( TotalLen > maxBIPMessageSize )
 	{
 		return -1;
 	}
@@ -770,7 +770,7 @@ void MsgSocket::Receive()
 					//						offset += length_header;
 					//						size =  occupiedSize - offset;
 					//					}
-					else if((unsigned int)size < length_header + length_msg + tag_end_size)
+					else if ( (unsigned int)size < length_header + length_msg + tag_end_size )
 					{
 						// OmiscidTrace( "wait more byte\n");
 						int total = (int)(length_header + length_msg + tag_end_size);
@@ -936,7 +936,7 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 	protectSend.EnterMutex();
 	try
 	{
-		if ( Sendlen > GetMaxMessageSizeForTCP() )
+		if ( Sendlen > maxBIPMessageSize )
 		{
 			int HeaderSend	= 0;
 			// int BodySend	= 0;
@@ -1050,7 +1050,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	protectSend.EnterMutex();
 	try
 	{
-		if ( SendLen > GetMaxMessageSizeForTCP() )
+		if ( SendLen > maxBIPMessageSize )
 		{
 			int HeaderSend	= 0;
 			int BodySend	= 0;

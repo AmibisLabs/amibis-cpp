@@ -142,6 +142,7 @@ int TcpServer::SendToAllClients(int len, const char* buf)
 				delete ms;
 			}
 		}
+		listConnections.Unlock();
 
 		ProtectedSend.LeaveMutex();
 		return nb_clients;
@@ -229,6 +230,7 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 				delete ms;
 			}
 		}
+		listConnections.Unlock();
 
 		ProtectedSend.LeaveMutex();
 		return nb_clients;

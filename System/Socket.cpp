@@ -352,7 +352,7 @@ int Socket::Send(int len, const char* buf)
 
 	if ( socketType == TCP )
 	{
-		if ( len > TCP_BUFFER_SIZE )
+		if ( len > (TCP_BUFFER_SIZE-1) )
 		{
 			int TotalLen = 0;
 
@@ -361,9 +361,9 @@ int Socket::Send(int len, const char* buf)
 			// send, so let's do it the other way... Naggle will do the rest...
 			while( TotalLen < len )
 			{
-				if ( (len-TotalLen) >= TCP_BUFFER_SIZE )	// 60 Ko
+				if ( (len-TotalLen) >= (TCP_BUFFER_SIZE-1) )	// 60 Ko
 				{
-					res = send(descriptor, (char*)(buf+TotalLen), TCP_BUFFER_SIZE, socket_send_flag );
+					res = send(descriptor, (char*)(buf+TotalLen), (TCP_BUFFER_SIZE-1), socket_send_flag );
 				}
 				else
 				{
