@@ -26,7 +26,6 @@ public:
 bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullname, const SimpleString hosttarget, uint16_t port, uint16_t txtLen, const SimpleString txtRecord, void * UserData)
 {
 	OmiscidServiceSearchData * MyData = (OmiscidServiceSearchData *)UserData;
-	SimpleString PeerIdString = CommonServiceValues::GetNameForPeerIdString();
 
 	// printf( "%u;", GetTickCount() );
 
@@ -44,29 +43,6 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
 	// the service
 	PropertiesForProxy.Undefine( "org.freedesktop.Avahi.cookie" );
 #endif
-
-	// Need to add id of the service
-	if ( PropertiesForProxy.IsDefined(PeerIdString) )
-	{
-#ifdef DEBUG
-		OmiscidError( "Property id defined in TxtRecord as '%s'. Old style Service ?\n", PropertiesForProxy[PeerIdString].GetValue().GetStr() );
-#endif
-	}
-
-	// Create search pattern
-	SimpleString TmpString(".");
-	TmpString += CommonServiceValues::GetOmiscidServiceDnsSdType(); // for example, "." + "_bip._tcp";
-
-	// Search it
-	int Protocol = fullname.Find( TmpString.GetStr() );
-	SimpleString NewId("c");
-	if ( Protocol >= 0 )
-	{
-		// Create a constant value with the name
-		NewId += "/";
-		NewId += fullname.SubString( 0, Protocol );
-	}
-	PropertiesForProxy[PeerIdString] = NewId;
 
 	// To say if the service is the one we are looking for...
 	ServiceProxy * SP = new OMISCID_TLM ServiceProxy( ComTools::GeneratePeerId(), Host, port, PropertiesForProxy ); // MyData->PeerId

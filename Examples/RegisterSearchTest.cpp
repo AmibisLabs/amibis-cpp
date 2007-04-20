@@ -22,11 +22,9 @@ using namespace Omiscid;
 void RegisterAndSearchUsage(char * ProgramName)
 {
 	OmiscidError( "%s is used to demonstrate register and search methods using OMiSCID.\n", ProgramName );
-	OmiscidError( "Usage: %s [-n <Number of services>] [-proxy]\n", ProgramName );
+	OmiscidError( "Usage: %s [-n <Number of services>]\n", ProgramName );
 	OmiscidError( "Default option values:\n" );
 	OmiscidError( "          -n <Number of services>: from 2 to 100 services. Default is 20.\n" );
-	OmiscidError( "          -proxy: activated DnsSdProxy features to speedup reserach process.\n", ProgramName );
-	OmiscidError( "                  Not activated by default.\n\n", ProgramName );
 	exit(-1);
 }
 
@@ -38,11 +36,7 @@ int main(int argc, char*argv[] )
 
 	// Constant values
 	// The number of service to register
-	unsigned int NumberOfServicesToRegister = 20;
-
-	// You can uncomment the following line to speedup searches
-	DnsSdProxy * MyProxy = NULL;
-	bool ProxyActivited  = false;
+	unsigned int NumberOfServicesToRegister = 10;
 
 	// A variable to store pointers on RegisterThread
 	RegisterThread * pRegThread;
@@ -87,16 +81,6 @@ int main(int argc, char*argv[] )
 			continue;
 		}
 
-		if ( strcmp( argv[j], "-proxy" ) == 0 )
-		{
-			if ( ProxyActivited == false )
-			{
-				MyProxy = new OMISCID_TLM DnsSdProxy;
-				ProxyActivited = true;
-			}
-			continue;
-		}
-
 		OmiscidError( "Bad parameter '%s'. See Usage :\n\n", argv[j] );
 		RegisterAndSearchUsage(argv[0]);
 	}
@@ -112,11 +96,18 @@ int main(int argc, char*argv[] )
 	OmiscidMessage( "As it is ditributed, registering unique service and searching for services\n" );
 	OmiscidMessage( "is a huge processing. See Accumulator/ClientAccumator examples for communication schema.\n\n" );
 
-	OmiscidMessage( "** Session parameters **\nDnsSdProxy is%s activated.\n", ProxyActivited ? "" : " not"  );
+	OmiscidMessage( "** Session parameters **\n"  );
 	OmiscidMessage( "Number of service to register %d\n** **\n\n", NumberOfServicesToRegister ); 
 
 // Register services
 	OmiscidMessage( "Start to register services.\n" );
+
+#ifdef OMISCID_USE_AVAHI
+	if ( NumberOfServicesToRegister >= 10 )
+	{
+		OmiscidMessage( "WARNING: Avahi may crash when regestering many service in the same process\n");
+	}
+#endif
 
 	// Create an object to now when the total time
 	// To register the services
@@ -152,9 +143,6 @@ int main(int argc, char*argv[] )
 	}
 
 	OmiscidMessage( "=> %d service(s) are registered in %u ms.\n", EffectiveNumberOfRegisteredServices, TimeCounter.Get() );
-
-	Event Toto;
-	Toto.Wait();
 
 // Search for services, *can be done* in another process/computer over the network obvioulsly !
 
@@ -288,12 +276,6 @@ int main(int argc, char*argv[] )
 
 	// delete the Search service
 	delete Searcher;
-
-	// delete the proxy is any
-	if ( MyProxy != NULL )
-	{
-		delete MyProxy;
-	}
 
 #ifdef WIN32
 	// Create an even in order to Stop here forever

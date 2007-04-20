@@ -336,15 +336,39 @@ SimpleString ServiceProxy::GetName()
 */
 unsigned int ServiceProxy::GetPeerId()
 {
-	unsigned int tmpPeerId = 0;
-	SimpleString lPeerId = GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
-
-	if ( sscanf( lPeerId.GetStr(), "%x", &tmpPeerId ) == 1 )
+	try
 	{
-		return tmpPeerId;
+		unsigned int tmpPeerId = 0;
+		SimpleString lPeerId = GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
+
+		if ( sscanf( lPeerId.GetStr(), "%x", &tmpPeerId ) == 1 )
+		{
+			return tmpPeerId;
+		}
+	}
+	catch( SimpleException & )
+	{
 	}
 
 	return 0;
+}
+
+/**
+* The string containing the Peer Id of the remote bip service
+* @return the peer id as a string
+*/
+SimpleString ServiceProxy::GetPeerIdAsString()
+{
+	try
+	{
+		return GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
+
+	}
+	catch( SimpleException& )
+	{
+	}
+
+	return SimpleString::EmptyString;
 }
 
     /**

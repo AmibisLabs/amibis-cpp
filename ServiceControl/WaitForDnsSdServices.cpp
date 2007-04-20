@@ -185,7 +185,7 @@ void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned in
 				Empty();
 
 				// Let's say I am not resolve anymore
-				IsResolved = true;
+				IsResolved = false;
 				--Parent->NbServicesReady;
 			}
 		}

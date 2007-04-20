@@ -44,9 +44,14 @@ are accessible when invoking scons:
 - If you add debug=1 to the command line, you will have some extra checks
 	and thus more processing when using OMiSCID. For example, when using a
 	MutexedSimpleList, OMiSCID will check that you lock the list before
-	accessing to it.
+	accessing to it. New option can be debug=valgrind in order
+	to debug using valgrind.
 - If you add trace=1, you will have working messages on the standard
 	output and error. It may be useful for debugging.
+- Using zeroconf=avahi will let Omiscid uses avahi as DnsSd implementation
+	(not the mDNS api of avahi). As many problems are still present
+	(see CHANGES comments for version 1.1.0), the default is mdns
+	both for Linux and Mac OSX.
 	
 You can use either one or both options in your project without any problem.
 For example, you can invoke scons in several ways :

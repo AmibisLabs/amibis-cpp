@@ -22,7 +22,7 @@ void FUNCTION_CALL_TYPE ServiceRepositoryListener::DnsSdProxyServiceBrowseReply(
 		ServiceProxy( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
 
 		// A new service appear
-		// AS this *ù## gcc do not want to create a refernec on "on the fly" construct object
+		// AS this *ù## gcc do not want to create a reference on "on the fly" constructed objects
 		// construct it first
 		ServiceProxy LocalSP( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
 
@@ -31,7 +31,7 @@ void FUNCTION_CALL_TYPE ServiceRepositoryListener::DnsSdProxyServiceBrowseReply(
 	else
 	{
 		// A service disappear
-		// AS this *ù## gcc do not want to create a refernec on "on the fly" construct object
+		// AS this *ù## gcc do not want to create a reference on "on the fly" constructed objects
 		// construct it first
 		ServiceProxy LocalSP( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
 

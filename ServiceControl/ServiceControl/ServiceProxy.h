@@ -83,6 +83,12 @@ public:
      * @return the peer id
      */
     unsigned int GetPeerId();
+
+	/**
+	* The string containing the Peer Id of the remote bip service
+	* @return the peer id as a string
+	*/
+	SimpleString GetPeerIdAsString();
 	
 	/**
      * The name of the remote Omiscid service

@@ -160,7 +160,6 @@ bool ControlServer::StartServer()
 
 	try
 	{
-
 		Create(0);
 
 		port = GetSocket()->GetPortNb();

@@ -44,10 +44,12 @@ void BrowseForDNSSDService::InitZeroconfSubsystem( bool FromConstructor )
 			avahi_client_free(AvahiConnection);
 		}
 
-		if ( AvahiPoll != (AvahiSimplePoll *)NULL )
-		{
-			avahi_simple_poll_free(AvahiPoll);
-		}
+		// Not done to prevent Avahi crash (better but still crash some times)
+		// if ( AvahiPoll != (AvahiSimplePoll *)NULL )
+		// {
+		//		avahi_simple_poll_quit( AvahiPoll );
+		//		avahi_simple_poll_free( AvahiPoll );
+		//}
 	}
 
 	AvahiPoll = (AvahiSimplePoll *)NULL;
@@ -112,6 +114,10 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 
 	DnsSdService ServiceInfo( FullName, ntohs(port), hosttarget );
 	ServiceInfo.Properties.ImportTXTRecord( txtLen, txtRecord );
+
+	// Add ServiceShortName as PeerId in a pseudo variable
+	ServiceInfo.Properties[CommonServiceValues::GetNameForPeerIdString()] = "c/" + ServiceInfo.Name;
+
 	MyThis->CallbackClient( ServiceInfo, flags | OmiscidDNSServiceFlagsAdd );
 }
 
@@ -193,6 +199,9 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 					ServiceInfo.Properties.Undefine( "org.freedesktop.Avahi.cookie" );
 				}
 
+				// Add ServiceShortName as PeerId in a pseudo variable
+				ServiceInfo.Properties[CommonServiceValues::GetNameForPeerIdString()] = "c/" + ServiceInfo.Name;
+
 				MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
 			}
 			break;
@@ -230,7 +239,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceBrowseRep
 	        if ( avahi_service_resolver_new(MyThis->AvahiConnection, interface, protocol, name, type, domain, AVAHI_PROTO_UNSPEC, (AvahiLookupFlags)0,
 						SearchCallBackDNSServiceResolveReply, (void*)MyThis) == NULL )
 			{
-				OmiscidError( "AvahiBrowser ailed to resolve service '%s': %s\n", name, avahi_strerror(avahi_client_errno(MyThis->AvahiConnection)));
+				OmiscidError( "AvahiBrowser failed to resolve service name='%s' type='%s': %s\n", name, type, avahi_strerror(avahi_client_errno(MyThis->AvahiConnection)));
 				avahi_simple_poll_quit(MyThis->AvahiPoll);
 			}
 	        break;

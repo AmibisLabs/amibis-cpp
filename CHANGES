@@ -26,6 +26,7 @@ In this files, you will find changes between OMiSCID versions.
 	  like GetDynamicNameSolving().
 	- add SharedMemSegment class in the System layer in order to
 	  propose multiplateform shared memory management
+	- add UserFriendly API in order to provide browsing fonctionnality
 	[Bug corrections]
 	- Change Event::Wait() bug when asking for subsecond timers
 		under Linux/OSX
@@ -33,9 +34,13 @@ In this files, you will find changes between OMiSCID versions.
 	- some other minor bug corrections
 	[Known features]
 	- Crash (segmentation fault, corrupted double chained list in glibc,
-	  problem in D-BUS) when using Avahi and unregistering many services
+	  problem in D-BUS) when using Avahi to (un)register many services
 	  in the same process. Still trying to cope with this feature but
 	  it seems to be internal to Avahi.
+	- Avahi and mDns do not like to collaborate on the same computer.
+	  Even if in this version OMiSCID can handle service with multiple
+	  DNS-SD daemons, try to have only one at a time on the same
+	  computer.
 
 1.0.5	2007-02-01
 	- correct some portability problem with Mac OSX

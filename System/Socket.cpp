@@ -475,13 +475,79 @@ void Socket::GetDnsNameSolvingOption()
 
 }
 
+const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Modified )
+{
+	int Pos;
+	SimpleString TmpS(Name);
+
+	// Say that we do not modify it
+	Modified = false;
+
+	// seek .local.
+	Pos = TmpS.Find( ".local." );
+	if ( Pos != -1 && (Pos+7) == (int)TmpS.GetLength() )
+	{
+		// Ok we found "xxx.local."
+		Modified = true;
+		return TmpS.SubString( 0, Pos );
+	}
+
+	// seek .local.
+	Pos = TmpS.Find( ".local" );
+	if ( Pos != -1 && (Pos+6) == (int)TmpS.GetLength() )
+	{
+		// Ok we found "xxx.local"
+		Modified = true;
+		return TmpS.SubString( 0, Pos );
+	}
+
+	return TmpS;
+}
+
+const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, bool& Modified )
+{
+	int PosDeb;
+
+	// Say that we do not modify it
+	Modified = false;
+
+	// Start from end 
+	for( PosDeb = Name.GetLength()-1; PosDeb >= 2; PosDeb-- )
+	{
+		if ( Name[PosDeb] >= '0' && Name[PosDeb] <= '9' && Name[PosDeb-1] == '-' )
+		{
+			// Ok we do a modification
+			Modified = true;
+			return Name.SubString(0,PosDeb-1) + Name.SubString(PosDeb+1,Name.GetLength() );
+		}
+	}
+
+	return Name;
+}
+
 hostent* Socket::GetHostByName( const SimpleString name )
 {
 	struct hostent *he;
+	SimpleString SearchName = name;
+	bool IsModified;
 
 	if ( GetDynamicNameSolving() == OMISCIDNS_USE_MDNS_NAME_SOLVING )
 	{
-		if((he = ::gethostbyname(name.GetStr())) == NULL)
+		// Try to solve name !
+		if((he = ::gethostbyname(SearchName.GetStr())) != (struct hostent*)NULL )
+		{
+			return he;
+		}
+
+		// Here try to cope with multiple DnsSd deamon running on the
+		// same computer (like Avahi *AND* mDNS).
+		SearchName = RemoveDnsSdDaemonNumber( SearchName, IsModified );
+		if ( IsModified == false )
+		{
+			return (struct hostent*)NULL;
+		}
+
+		if((he = ::gethostbyname(SearchName.GetStr())) == (struct hostent*)NULL )
 		{
 			SimpleString Mesg = "GetHostByName : ";
 			Mesg += name;
@@ -490,26 +556,24 @@ hostent* Socket::GetHostByName( const SimpleString name )
 		return he;
 	}
 
-	// DynamicNameSolving == OMISCIDNS_USE_DNS_ONLY
-	TemporaryMemoryBuffer hostname(1024);	// To prevent memory overflow on stack
-	char * modify;
-	strlcpy( (char*)hostname, name.GetStr(), 1024 );
-
-	modify = strstr( (char*)hostname, ".local." );
-	if ( modify && modify[7] == '\0' )	// we found ".local.\0"
+	// remove try to remove ".local." at end
+	SearchName = RemoveLocalDomain( SearchName, IsModified );
+	if((he = ::gethostbyname((char*)SearchName.GetStr())) != (struct hostent*)NULL )
 	{
-		modify[0] = '\0';
-	}
-	else
-	{
-		modify = strstr( (char*)hostname, ".local" );
-		if ( modify && modify[6] == '\0' )	// we found ".local\0"
-		{
-			modify[0] = '\0';
-		}
+		// ok
+		return he;
 	}
 
-	if((he = ::gethostbyname((char*)hostname)) == NULL)
+	// try to remove number in case of several DnsSdDaemon
+	SearchName = RemoveDnsSdDaemonNumber( SearchName, IsModified );
+	if ( IsModified == false )
+	{
+		SimpleString Mesg = "GetHostByName : ";
+		Mesg += name;
+		throw SocketException(Mesg, Errno());
+	}
+
+	if((he = ::gethostbyname((char*)SearchName.GetStr())) == (struct hostent*)NULL )
 	{
 		SimpleString Mesg = "GetHostByName : ";
 		Mesg += name;

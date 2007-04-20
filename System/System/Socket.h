@@ -137,6 +137,8 @@ public:
    */
   static SimpleString GetHostName();
 
+  static const SimpleString RemoveLocalDomain( const SimpleString Name, bool& Modified );
+  static const SimpleString RemoveDnsSdDaemonNumber( const SimpleString Name, bool& Modified );
   static struct hostent* GetHostByName( const SimpleString name );
   static struct hostent* gethostbyname( const SimpleString name ) { return GetHostByName(name); };
   static bool   FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int port);

@@ -22,8 +22,8 @@ using namespace Omiscid;
 /* @brief Usage function */
 void BrowsingUsage(char * ProgramName)
 {
-	OmiscidError( "%s is used to demonstrate register and search methods using OMiSCID.\n", ProgramName );
-	OmiscidError( "Usage: %s [-n <Number of services>] [-proxy]\n", ProgramName );
+	OmiscidError( "%s is used to demonstrate User Friendly browsing methods using OMiSCID.\n", ProgramName );
+	OmiscidError( "Usage: %s \n", ProgramName );
 }
 
 namespace Omiscid
@@ -39,12 +39,12 @@ public:
 
 void BrowseListener::ServiceAdded( ServiceProxy& ProxyForService )
 {
-	cout << ProxyForService.GetPeerId() << " appear.\n";
+	cout << ProxyForService.GetPeerIdAsString() << " appear.\n";
 }
 
 void BrowseListener::ServiceRemoved( ServiceProxy& ProxyForService )
 {
-	cout << ProxyForService.GetName() << " disappear.\n";
+	cout << ProxyForService.GetPeerIdAsString() << " disappear.\n";
 }
 
 
@@ -54,10 +54,8 @@ int main(int argc, char*argv[] )
 	unsigned int i;
 	int j;
 
-#ifdef WIN32
 	// Create an even in order to Stop when we want
 	Event Forever;
-#endif
 
 	// Constant values
 	// The number of service to register

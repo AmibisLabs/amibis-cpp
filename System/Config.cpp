@@ -68,7 +68,7 @@ OmiscidSystemLayerInitClass::~OmiscidSystemLayerInitClass()
 	if ( OmiscidSystemLayerInitInstanceCount == 0 )
 	{
 		// Last instance, do reset for Layer System
-		OmiscidTrace( "Reset System layer\n" );
+		OmiscidTrace( "Free System layer\n" );
 
 		// Nothing to do for the moment
 	}
