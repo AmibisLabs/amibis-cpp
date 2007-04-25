@@ -71,8 +71,7 @@ public:
    */
   SimpleString ToString(unsigned int MaxBufferLenToWrite = 30) const;
 
-private:
-
+protected:
   /** @name Direct access to data, for members and friens classes MsgSocket and MsgManager */
   //@{
   char* buffer; /*!< The message address */

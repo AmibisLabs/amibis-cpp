@@ -680,3 +680,41 @@ const SimpleString Service::GetPeerId()
 {
 	return PeerIdVariable->GetValue();
 }
+
+    /**
+     * Sends a message back to the sender of a message just received.
+     * Defaults to reliable send.
+	 * @param Buffer the message to send
+	 * @param BufferLen the length of message to send
+     * @param Msg the message to reply to
+ 	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+     * @return true if the answer was successfully send
+     */
+bool Service::SendReplyToMessage( char * Buffer, int BufferLen, const Message& Msg, bool UnreliableButFastSend /* = false */ )
+{
+	ConnectorListener::ExtendedMessageForService * pExtMsg = dynamic_cast<ConnectorListener::ExtendedMessageForService *>((Message*)&Msg);
+	if ( pExtMsg == (ConnectorListener::ExtendedMessageForService *)NULL )
+	{
+		// We do not have correct information
+		return false;
+	}
+
+	return SendToOneClient( pExtMsg->ReceivedFromConnector, Buffer, BufferLen, pExtMsg->GetPeerId(), UnreliableButFastSend );
+}
+
+    /**
+     * Sends a message back to the sender of a message just received.
+     * Allows to specify on which connector to send the answer.
+     * Defaults to reliable send.
+     * @param ConnectorName the name of the connector sending the message
+	 * @param Buffer the message to send
+	 * @param BufferLen the length of message to send
+     * @param Msg the message to reply to
+ 	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+     * @return true if the answer was successfully send
+     */
+bool Service::SendReplyToMessage(SimpleString ConnectorName, char * Buffer, int BufferLen, const Message& Msg, bool UnreliableButFastSend /* = false */ )
+{
+	return SendToOneClient( ConnectorName, Buffer, BufferLen, Msg.GetPeerId(), UnreliableButFastSend );
+}
+

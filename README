@@ -50,7 +50,7 @@ are accessible when invoking scons:
 	output and error. It may be useful for debugging.
 - Using zeroconf=avahi will let Omiscid uses avahi as DnsSd implementation
 	(not the mDNS api of avahi). As many problems are still present
-	(see CHANGES comments for version 1.1.0), the default is mdns
+	(see CHANGES comments for version 1.1.0), the default is still mdns
 	both for Linux and Mac OSX.
 	
 You can use either one or both options in your project without any problem.
@@ -58,6 +58,7 @@ For example, you can invoke scons in several ways :
 * scons install prefix=/usr/local trace=1
 * scons install prefix=/usr/local debug=1
 * scons install prefix=/usr/local debug=1 trace=1
+* scons install prefix=/usr/local debug=valgrind trace=1 zeroconf=avahi
 
 II.3 Compiling your program
 

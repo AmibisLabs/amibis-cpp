@@ -148,8 +148,8 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 	}
 	else
 	{
-		// Discard value and send back to the rigth "person" an error message in safe mode (TCP/SHM - when implemented)
-		TheService.SendToOneClient( LocalConnectorName, (char*)ErrorMessage.GetStr(), ErrorMessage.GetLength(), Msg.GetPeerId(), false );
+		// Discard value and send back to the rigth "person" an error message in safe mode (TCP)
+		TheService.SendReplyToMessage( (char*)ErrorMessage.GetStr(), (int)ErrorMessage.GetLength(), Msg, false );
 	}
 
 	// Unlock myself 

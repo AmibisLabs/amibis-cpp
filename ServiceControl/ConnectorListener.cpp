@@ -5,6 +5,31 @@
 
 using namespace Omiscid;
 
+ConnectorListener::ExtendedMessageForService::ExtendedMessageForService(Message& ToCopy)
+{
+	buffer			= ToCopy.GetBuffer();
+	len				= ToCopy.GetLength();
+	mid				= ToCopy.GetMsgId();
+	OriginalSize	= 0;
+	origine			= ToCopy.GetOrigine();
+	pid				= ToCopy.GetPeerId();
+	realBuffer		= (char*)NULL;
+}
+
+ConnectorListener::ExtendedMessageForService::~ExtendedMessageForService()
+{
+	// To prevent multiple free of buffer, enpty myself
+	buffer			= (char*)NULL;
+	len				= 0;
+	mid				= 0;
+	origine			= UnknownOrigine;
+	pid				= 0;
+
+	// Done in constructor
+	OriginalSize	= 0;
+	realBuffer		= (char*)NULL;
+}
+
 ConnectorListener::~ConnectorListener()
 {
 }
@@ -47,8 +72,11 @@ void ConnectorListener::MessageReceived(Service& TheService, const SimpleString 
 
 void ConnectorListener::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData)
 {
+	ExtendedMessageForService ExtMsg(CallbackData.Msg);
+	ExtMsg.ReceivedFromConnector = ConnectionPoint.GetName();
+
 	// Call the User Friendly interface
-	MessageReceived( *ServiceOfTheConnector, ConnectionPoint.GetName(), CallbackData.Msg );
+	MessageReceived( *ServiceOfTheConnector, ConnectionPoint.GetName(), ExtMsg );
 }
 
 void ConnectorListener::Connected(MsgSocket& ConnectionPoint, unsigned int PeerId)

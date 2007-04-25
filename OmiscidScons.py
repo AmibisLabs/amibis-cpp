@@ -29,6 +29,16 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
   env.ParseConfig('xml2-config --cflags')
   env.ParseConfig('xml2-config --libs')
   
+ if 'bip' in options or 'Omiscid' in options :
+  env.ParseConfig('xml2-config --cflags')
+  env.ParseConfig('xml2-config --libs')
+  env.ParseConfig('OmiscidControl-config --cflags')
+  env.ParseConfig('OmiscidControl-config --libs')
+  env.ParseConfig('OmiscidCom-config --cflags')
+  env.ParseConfig('OmiscidCom-config --libs')
+  env.ParseConfig('OmiscidSystem-config --cflags')
+  env.ParseConfig('OmiscidSystem-config --libs')
+    
  # default values
  if os.name == 'posix' :
   if string.find(sys.platform, 'darwin') != -1:

@@ -1,6 +1,6 @@
 
 
-#include <ServiceControl/ServiceRepository.h>
+#include <ServiceControl/ServiceRepositoryListener.h>
 
 using namespace Omiscid;
 

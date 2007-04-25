@@ -369,12 +369,12 @@ sub CheckExceptionConsistancy()
 		if ( $CurrentLine =~ /catch\s*\(([^)]+)\)/ )
 		{
 			$CurrentLine = $1;
-			if ( $CurrentLine =~ /Exception\s*/ )
+			if ( $CurrentLine =~ /Exception\s*/ || $CurrentLine =~ /\.\.\./ )
 			{
 			}
 			else
 			{
-				print "$FileName ($CurrentLineNumber): bad throw patern ?\n";
+				print "$FileName ($CurrentLineNumber): bad catch patern ?\n";
 			}
 			next;
 		}

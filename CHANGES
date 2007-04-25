@@ -10,7 +10,7 @@ In this files, you will find changes between OMiSCID versions.
 	- add Avahi support for DNS-SD (with Avahi 0.6.17)
 	- Default choice is still mDNS under Linux/MacOSX (see known
 	  features to understand why). Add an option for scons to
-	  override this automatic choice.
+	  override this automatic choice. (zeroconf=avahi)
 	- enable automatically DnsSdProxy when using ServiceControl
 	  Layer (due to Avahi limitation)
 	- internal refactoring dues to Avahi stuff (sic...). No
@@ -27,6 +27,8 @@ In this files, you will find changes between OMiSCID versions.
 	- add SharedMemSegment class in the System layer in order to
 	  propose multiplateform shared memory management
 	- add UserFriendly API in order to provide browsing fonctionnality
+	  ServiceRepository and ServiceRepositoryBrowser. Add an example
+	  showing this functionality : BrowsingTest.cpp.
 	[Bug corrections]
 	- Change Event::Wait() bug when asking for subsecond timers
 		under Linux/OSX
@@ -39,8 +41,9 @@ In this files, you will find changes between OMiSCID versions.
 	  it seems to be internal to Avahi.
 	- Avahi and mDns do not like to collaborate on the same computer.
 	  Even if in this version OMiSCID can handle service with multiple
-	  DNS-SD daemons, try to have only one at a time on the same
-	  computer.
+	  local DNS-SD daemons, try to avoid this feature mixing both on
+	  the same computer. Running Avahi and mDNS on separate computer
+	  seems to word fine.
 
 1.0.5	2007-02-01
 	- correct some portability problem with Mac OSX

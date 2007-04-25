@@ -151,15 +151,65 @@ int main(int argc, char*argv[] )
 			goto FreeAndExit;
 	}
 
+	fprintf( stderr, "Add BrowseCallback object to the repository and wait for 5 seconds.\n" );
+	fprintf( stderr, "All available services must appear.\n" );
 	// Add it as listener of the ServiceRepository object
-	// We want to be notified for all services (already registered ans news ones)
+	// We want to be notified for all services (already registered and news ones)
 	if ( BrowseObject->AddListener( &BrowsingForServices ) == false )
 	{
 			cerr << "Cound not ad ServiceRepository listener. Exit." << endl;
 			goto FreeAndExit;
 	}
 
-	Forever.Wait();
+	Thread::Sleep( 5000 );
+
+	fprintf( stderr, "Remove BrowseCallback object to the repository (no notification).\n" );
+	fprintf( stderr, "Nothing must be listed in the 5 next seconds.\n" );
+	if ( BrowseObject->RemoveListener( &BrowsingForServices ) == false )
+	{
+			cerr << "Cound not ad ServiceRepository listener. Exit." << endl;
+			goto FreeAndExit;
+	}
+
+	Thread::Sleep( 5000 );
+
+	// Add it as listener of the ServiceRepository object
+	// We want to be notified only for new services
+	fprintf( stderr, "Add BrowseCallback object to the repository (ask notification only for new events).\n" );
+	fprintf( stderr, "Nothing must appear as all services are already here. Wait 5 seconds.\n" );
+	if ( BrowseObject->AddListener( &BrowsingForServices, true ) == false )
+	{
+			cerr << "Cound not ad ServiceRepository listener. Exit." << endl;
+			goto FreeAndExit;
+	}
+
+	Thread::Sleep( 5000 );
+	fprintf( stderr, "Nothing appears (hopefully) ?\n" );
+	fprintf( stderr, "Add a new service. As it is a new event, this one should appear. Wait for 5 seconds\n" );
+
+	// Create a new register service called
+	pRegThread = new OMISCID_TLM RegisterThread(i);
+
+	// if ok
+	if ( pRegThread )
+	{
+		// add it to my list of threads
+		ListOfRegisterThreads.Add( pRegThread );
+	}
+
+	Thread::Sleep( 5000 );
+
+	fprintf( stderr, "Remove BrowseCallback object to the repository (request to be notified as if services disappears).\n" );
+	fprintf( stderr, "All services should be marked as disappear). Wait for 5 seconds.\n" );
+	if ( BrowseObject->RemoveListener( &BrowsingForServices, true ) == false )
+	{
+			cerr << "Cound not ad ServiceRepository listener. Exit." << endl;
+			goto FreeAndExit;
+	}
+
+	Thread::Sleep( 5000 );
+
+	fprintf( stderr, "Cleanup everything.\n" );
 
 FreeAndExit:
 
@@ -170,7 +220,7 @@ FreeAndExit:
 	}
 
 // Unregister service and close all connections
-	OmiscidMessage( "Unregister service and close all connections.\n" );
+	fprintf( stderr, "Unregister service and close all connections.\n" );
 	// Reset time counter
 	TimeCounter.Reset();
 	// Delete registered thread
@@ -178,7 +228,7 @@ FreeAndExit:
 	{
 		delete ListOfRegisterThreads.ExtractFirst();
 	}
-	OmiscidMessage( "=> done in %u ms.\n", TimeCounter.Get() );
+	fprintf( stderr, "=> done in %u ms.\n", TimeCounter.Get() );
 
 #ifdef WIN32
 	// Stop here forever as express in the folowing code

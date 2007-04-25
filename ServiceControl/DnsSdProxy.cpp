@@ -173,6 +173,19 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, uns
 	if ( flags & OmiscidDNSServiceFlagsAdd )
 	{
 		// A new service appears
+
+		// Search if this service is already registered in case of multiple network interface
+		// services may appear several times
+		for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )
+		{
+			if ( NewService.CompleteServiceName == ServicesList.GetCurrent()->CompleteServiceName )
+			{
+				// quit
+				Locker.LeaveMutex();
+				return;
+			}
+		}
+
 		// Copy each members of this list into the new list
 		pServiceInfo = new OMISCID_TLM DnsSdServiceInstanceManager( NewService );
 		if ( pServiceInfo != NULL )
