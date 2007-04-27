@@ -1,78 +1,90 @@
 
 
-			CHANGES
+            CHANGES
 
 In this files, you will find changes between OMiSCID versions.
 
-1.1.0	2007-XX-XX
-	[Global modifications]
-	- change this file grouping changes by section.
-	- add Avahi support for DNS-SD (with Avahi 0.6.17)
-	- Default choice is still mDNS under Linux/MacOSX (see known
-	  features to understand why). Add an option for scons to
-	  override this automatic choice. (zeroconf=avahi)
-	- enable automatically DnsSdProxy when using ServiceControl
-	  Layer (due to Avahi limitation)
-	- internal refactoring dues to Avahi stuff (sic...). No
-	  changes in exposed API.
-	- Change examples codes, add new one.
-	[API modification]
-	- change Thread constructor behaviour because of virtualisation
-	  problem with gcc. You can not anymore create an autostart
-	  Thread. You must start it in you inherited class as shown
-	  previously in 'Examples/RegisterSearchTest.cpp'.
-	- check init constraints to static global values, so replace
-	  global values like DynamicNameSolving by a method call
-	  like GetDynamicNameSolving().
-	- add SharedMemSegment class in the System layer in order to
-	  propose multiplateform shared memory management
-	- add UserFriendly API in order to provide browsing fonctionnality
-	  ServiceRepository and ServiceRepositoryBrowser. Add an example
-	  showing this functionality : BrowsingTest.cpp.
-	[Bug corrections]
-	- Change Event::Wait() bug when asking for subsecond timers
-		under Linux/OSX
-	- correct huge data send problem when sending to all clients
-	- some other minor bug corrections
-	[Known features]
-	- Crash (segmentation fault, corrupted double chained list in glibc,
-	  problem in D-BUS) when using Avahi to (un)register many services
-	  in the same process. Still trying to cope with this feature but
-	  it seems to be internal to Avahi.
-	- Avahi and mDns do not like to collaborate on the same computer.
-	  Even if in this version OMiSCID can handle service with multiple
-	  local DNS-SD daemons, try to avoid this feature mixing both on
-	  the same computer. Running Avahi and mDNS on separate computer
-	  seems to word fine.
+1.1.0    2007-04-27
+    [Global modifications]
+    - change this file grouping changes by section.
+    - add Avahi support for DNS-SD (with Avahi 0.6.17)
+    - Default choice is still mDNS under Linux/MacOSX (see known
+      features to understand why). Add an option for scons to
+      override this automatic choice. (zeroconf=avahi)
+    - enable automatically DnsSdProxy when using ServiceControl
+      Layer (due to Avahi limitation)
+    - internal refactoring dues to Avahi stuff (sic...). No
+      changes in exposed API.
+    - Change examples codes, add new one.
+    [API modification]
+    - change Thread constructor behaviour because of virtualisation
+      problem with gcc. You can not anymore create an autostart
+      Thread. You must start it in you inherited class as shown
+      previously in 'Examples/RegisterSearchTest.cpp'.
+    - check init constraints to static global values, so replace
+      global values like DynamicNameSolving by a method call
+      like GetDynamicNameSolving().
+    - add SharedMemSegment class in the System layer in order to
+      propose multiplateform shared memory management
+    - add UserFriendly API in order to provide browsing fonctionnality
+      ServiceRepository and ServiceRepositoryBrowser. Add an example
+      showing this functionality : BrowsingTest.cpp.
+    [Bug corrections]
+    - Change Event::Wait() bug when asking for subsecond timers
+        under Linux/OSX
+    - correct huge data send problem when sending to all clients
+    - some other minor bug corrections
+    [Known features]
+    - Crash (segmentation fault, corrupted double chained list in glibc,
+      problem in D-BUS) when using Avahi to (un)register many services
+      in the same process. Still trying to cope with this feature but
+      it seems to be internal to Avahi.
+    - Avahi and mDns do not like to collaborate on the same computer.
+      Even if in this version OMiSCID can handle service with multiple
+      local DNS-SD daemons, try to avoid this feature mixing both on
+      the same computer. Running Avahi and mDNS on separate computer
+      seems to word fine.
 
-1.0.5	2007-02-01
-	- correct some portability problem with Mac OSX
-	- change tabs into 4 spaces
-	- minor corrections
+1.0.5    2007-02-01
+    - correct some portability problem with Mac OSX
+    - change tabs into 4 spaces
+    - minor corrections
 
-1.0.4	2007-01-09
-	- correct some dead lock problems
-	- correct send huge TCP messages under linux (worked fine
-	  under windows).
-	- correct some bugs
+1.0.4    2007-01-09
+    - correct some dead lock problems
+    - correct send huge TCP messages under linux (worked fine
+      under windows).
+    - correct some bugs
 
-1.0.3	2006-10-26
-	- Add a global include file for the User Friendly Interface
-	  and change examples to use this include. The new include
-	  file can be use with this statement:
-		#include <ServiceControl/UserFriendlyAPI.h>
-	- change all "Attribut" (in French) to "Attribute" in English
-	  either in file, function or class names
-	- correct a little memory leak problem (problem in reference
-	  count) when using SubString.
+1.0.3    2006-10-26
+    - Add a global include file for the User Friendly Interface
+      and change examples to use this include. The new include
+      file can be use with this statement:
+        #include <ServiceControl/UserFriendlyAPI.h>
+    - change all "Attribut" (in French) to "Attribute" in English
+      either in file, function or class names
+    - correct a little memory leak problem (problem in reference
+      count) when using SubString.
 
 1.0.2   2006-10-02
-	- Change to be compliant with Bonjour version 107.6 (changes
-	  made by Apple in API, 2006-09-18) and at the same time with
-	  previous versions.
+    - Change to be compliant with Bonjour version 107.6 (changes
+      made by Apple in API, 2006-09-18) and at the same time with
+      previous versions.
 
 1.0.1
-	- Add missing folder ServiceControl
+    - Add missing folder ServiceControl
 
 1.0.0
-	- Initial version
+    - Initial version
+
+
+
+
+
+
+
+
+
+
+
+
