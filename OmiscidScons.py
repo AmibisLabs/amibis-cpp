@@ -24,6 +24,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  global WhichZeroConfLibrary
  global TraceMode
  global DoValgrind
+ global OSis
  
  if 'xml2' in options:
   env.ParseConfig('xml2-config --cflags')
@@ -43,12 +44,15 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  if os.name == 'posix' :
   if string.find(sys.platform, 'darwin') != -1:
    # Mac OS
+   OSis = 'MacOS'
    WhichZeroConfLibrary = 'OMISCID_USE_MDNS' 
   else :
    # default for other posix plateform
    # Was WhichZeroConfLibrary = 'OMISCID_USE_AVAHI' before Avahi crash problems
+   OSis = 'Linux'
    WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
  else :
+  OSis = 'Win32'
   WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
   
  if 'zeroconf' in arguments :
@@ -154,6 +158,7 @@ def OmiscidMapping():
  global WhichZeroConfLibrary
  global TraceMode
  global DoValgrind
+ global OSis
  
  ReplaceList = {}
 	
@@ -163,6 +168,9 @@ def OmiscidMapping():
         "@includedir@": os.path.join(ARGUMENTS.get("prefix"), "include", "Omiscid"),
         "@bindir@": os.path.join(ARGUMENTS.get("prefix"), "bin"),
         "@libdir@": os.path.join(ARGUMENTS.get("prefix"), "lib")}
+        
+ ReplaceList['@zeroconfflag@'] = ' '
+ ReplaceList['@zeroconflib@'] = ' '
 
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
@@ -170,7 +178,8 @@ def OmiscidMapping():
  else :
   if WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
    ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
-   ReplaceList['@zeroconflib@'] = ' -ldns_sd '
+   if OSis != 'MacOS' :
+    ReplaceList['@zeroconflib@'] = ' -ldns_sd '
   else :
    OmiscidMessage("Bad value for zeroconf flags (internal).")
    sys.exit(1)

@@ -39,12 +39,12 @@ public:
 
 void BrowseListener::ServiceAdded( ServiceProxy& ProxyForService )
 {
-	cout << ProxyForService.GetPeerIdAsString() << " appear.\n";
+	cout << ProxyForService.GetName() << " (" << ProxyForService.GetPeerIdAsString() << ") appear.\n";
 }
 
 void BrowseListener::ServiceRemoved( ServiceProxy& ProxyForService )
 {
-	cout << ProxyForService.GetPeerIdAsString() << " disappear.\n";
+	cout << ProxyForService.GetName() << " (" << ProxyForService.GetPeerIdAsString() << ") disappear.\n";
 }
 
 
@@ -209,9 +209,9 @@ int main(int argc, char*argv[] )
 
 	Thread::Sleep( 5000 );
 
-	fprintf( stderr, "Cleanup everything.\n" );
-
 FreeAndExit:
+
+	fprintf( stderr, "Cleanup everything.\n" );
 
 	// Free ServiceRepository object
 	if ( BrowseObject != (ServiceRepository *)NULL )
@@ -229,6 +229,9 @@ FreeAndExit:
 		delete ListOfRegisterThreads.ExtractFirst();
 	}
 	fprintf( stderr, "=> done in %u ms.\n", TimeCounter.Get() );
+
+	// printf use for autotest
+	printf( "Test ok.\n" );
 
 #ifdef WIN32
 	// Stop here forever as express in the folowing code

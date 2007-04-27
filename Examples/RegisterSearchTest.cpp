@@ -277,6 +277,9 @@ int main(int argc, char*argv[] )
 	// delete the Search service
 	delete Searcher;
 
+	// printf use for autotest
+	printf( "Test ok.\n" );
+
 #ifdef WIN32
 	// Create an even in order to Stop here forever
 	Event Forever;

@@ -1,3 +1,6 @@
+use IPC::Open3;
+use Cwd;
+
 require RecurseWork;
 
 sub EnterDirectory()
@@ -23,8 +26,47 @@ sub WorkOnFile()
 	$FilesToAdd{$FileName} = 1;
 }
 
+$IncrVersionType = 0;	# last
+if ( defined $ARGV[0] )
+{
+	if ( $ARGV[0] eq '-middle' )
+	{
+		$IncrVersionType = 1; # middle number
+	}
+	else
+	{
+		if ( $ARGV[0] eq '-major' )
+		{
+			$IncrVersionType = 2; # major number
+		}
+		else
+		{
+			if ( $ARGV[0] eq '-minor' )
+			{
+				$IncrVersionType = 0; # major number
+			}
+			else
+			{
+				die "Wrong parameter\n";
+			}
+		}
+	}
+}
+
 @UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile' );
 $Version = "1.0.0";
+
+$WorkingRep = cwd;
+
+$WorkingRep =~ /\/([^\/]+)\/?$/;
+$WorkingRep = $1;
+
+if ( $WorkingRep eq '' )
+{
+	die "Unable to find working rep\n";
+}
+
+$WorkingRep = 'OMiSCID-Dev'; # 'OMiSCID';
 
 if ( -e '../LastVersion.info' )
 {
@@ -32,8 +74,26 @@ if ( -e '../LastVersion.info' )
 	$line = <$fd>;
 	if ( $line =~ /^(\d+)\.(\d+)\.(\d+)[\s\r\n]+$/ )
 	{
-		$tmp = $3+1;
-		$Version = "$1.$2.$tmp";
+		$majorn = $1;
+		$middlen = $2;
+		$lastn = $3;
+		if ( $IncrVersionType == 0 )
+		{
+			$lastn++;
+		}
+		if ( $IncrVersionType == 1 )
+		{
+			$middlen++;
+			$lastn = 0;
+		}
+		if ( $IncrVersionType == 2 )
+		{
+			$majorn++;
+			$middlen = 0;
+			$lastn = 0;
+		}
+
+		$Version = "$majorn.$middlen.$lastn";
 	}
 	else
 	{
@@ -57,7 +117,7 @@ if ( -e 'Doc' && -d 'Doc' )
 }
 
 print "Generate Doc\n";
-`doxygen`;
+# `doxygen`;
 
 `perl RecursiveDos2Unix.pl`;
 
@@ -70,28 +130,43 @@ print "Generate Doc\n";
 $command = "zip -9 $VersionFile ";
 foreach $file ( @UsualFiles )
 {
-	$command .= "OMiSCID/$file ";
+	$command .= "$WorkingRep/$file ";
 }
 foreach $file ( keys %FilesToAdd )
 {
-	$command .= "OMiSCID/$file ";
+	$command .= "$WorkingRep/$file ";
 }
 
 # print $command;
 
 chdir('..');
 system( $command );
-chdir('OMiSCID');
+chdir("$WorkingRep");
 
 $Computers{'astree'} = '000e0c5e4586';
+$Options{'astree'}   = ' zeroconf=avahi ';
 $Computers{'metis'}  = '000d936fc38c';
-$Computers{'desdemona'}  = '000bcd624fa9';
+$Options{'metis'}   = '';
+# $Computers{'desdemona'}  = '000bcd624fa9';
+# $Options{'desdemona'}   = ' zeroconf=mdns ';
+
+$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
+$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';
+
+$PutInEnv = "setenv LD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv DYLD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv PATH /tmp/OmiscidInstall/bin:\${PATH}:/tmp/OmiscidInstall/bin/";
+
 $NumComputer = 0;
+
+local (*READ, *WRITE, *ERROR);
 
 foreach $TestComputer ( keys %Computers )
 {
 	# Check if computer if available
 	print STDERR "Trying to connect to $TestComputer.\n";
+	print STDERR "Send an etherwake command to $TestComputer.\n";
+	$MacAddress = $Computers{$TestComputer};
+	$MacAddress =~ s/://g;
+	`wol $MacAddress`;
 	$NbTry = 10;
 	while( $NbTry > 0 )
 	{
@@ -101,9 +176,6 @@ foreach $TestComputer ( keys %Computers )
 			last;
 		}
 		print STDERR "Send an etherwake command to $TestComputer.\n";
-		$MacAddress = $Computers{$TestComputer};
-		$MacAddress =~ s/://g;
-		`wol $MacAddress`;
 		sleep( 10 );
 		$NbTry--;
 	}
@@ -112,14 +184,15 @@ foreach $TestComputer ( keys %Computers )
 		$Tested = 0;
 		last;
 	}
-
+        
 	# copy Archive to the test computer
 	`scp ../$VersionFile $TestComputer:/tmp/`;
 	
 	# set that it is not tested successfully
 	$Tested = 0;
 	
-	open($ExecCommand, "ssh $TestComputer \"cd /tmp;rm -rf OMiSCID;unzip $VersionFile;cd OMiSCID;scons debug=1 trace=1\" |");
+	print STDERR "Try to install Omiscid.\n";
+	open($ExecCommand, "ssh $TestComputer \"cd /tmp;rm -rf $WorkingRep OmiscidInstall;unzip $VersionFile;mkdir OmiscidInstall;cd $WorkingRep;scons debug=1 trace=1 $Options{$TestComputer} install prefix=/tmp/OmiscidInstall\" |");
 	while( $ligne = <$ExecCommand> )
 	{
 		print $ligne;
@@ -131,8 +204,34 @@ foreach $TestComputer ( keys %Computers )
 	}
 	close( $ExecCommand );
 	
+	if ( $Tested == 0 )
+	{
+		last;
+	}
+	
+	# set that it is not tested successfully
+	$Tested = 0;
+	
+	print STDERR "Try to compile and run test(s).\n";
+	foreach $test ( keys %TestsList )
+	{
+		# try to compile Test Examples
+		`ssh $TestComputer "cd /tmp/$WorkingRep/Examples;rm -f ./Test;setenv LD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv PATH /tmp/OmiscidInstall/bin:\${PATH}:/tmp/OmiscidInstall/bin/;g++ -o Test $test \`OmiscidControl-config --all\``;
+		$res = `ssh $TestComputer "${PutInEnv};cd /tmp/OmiscidInstall/lib/;/tmp/$WorkingRep/Examples/Test"`;
+		if ( $res =~ /Test ok\./m )
+		{
+			# test is ok
+			$Tested = 1;
+		}
+	}	
+	
 	# cleaning up
-	`ssh $TestComputer "cd /tmp;rm -rf OMiSCID;rm -f $VersionFile"`;
+	`ssh $TestComputer "cd /tmp/$WorkingRep/;scons debug=1 trace=1 $Options{$TestComputer} install prefix=/tmp/OmiscidInstall -c;cd /tmp;rm -rf $WorkingRep OmiscidInstall $VersionFile"`;
+	
+	if ( $Tested == 0 )
+	{
+		last;
+	}
 }
 
 if ( $Tested == 1 )
