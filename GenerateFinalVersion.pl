@@ -117,7 +117,7 @@ if ( -e 'Doc' && -d 'Doc' )
 }
 
 print "Generate Doc\n";
-# `doxygen`;
+`doxygen`;
 
 `perl RecursiveDos2Unix.pl`;
 
