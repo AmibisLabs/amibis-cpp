@@ -327,7 +327,6 @@ int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
 	}
 	else
 	{
-
 		struct sockaddr_in from;
 		struct sockaddr_in* fromptr = (pfrom)? pfrom : &from;
 		int from_len = sizeof(struct sockaddr);
@@ -343,7 +342,7 @@ int Socket::Recv(int len, unsigned char* buf, struct sockaddr_in* pfrom)
 int Socket::Send(int len, const char* buf)
 {
 	const int socket_send_flag = MSG_NOSIGNAL;
-	int res;
+	int res = 0;		// as gcc on gentoo seems not understand that this will be initialised
 
 	if ( len <= 0 || buf == (const char*)NULL )
 	{
