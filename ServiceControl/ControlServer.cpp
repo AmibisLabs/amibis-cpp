@@ -177,6 +177,7 @@ bool ControlServer::StartServer()
 
 			// Add Constant variable
 			// The desctiption if full by default
+			bool TxtRecordIsFull = true;
 			registerDnsSd->Properties["desc"] = "full"; // Will be set to part if not full
 
 			// Add owner value
@@ -188,7 +189,6 @@ bool ControlServer::StartServer()
 			SetStatus(STATUS_RUNNING);
 
 			SimpleString tmp;
-			bool TxtRecordIsFull = false;
 
 			// Add Constant variable
 			for( listVariable.First(); TxtRecordIsFull != true && listVariable.NotAtEnd(); listVariable.Next() )
@@ -223,9 +223,6 @@ bool ControlServer::StartServer()
 					}
 				}
 			}
-
-			// remove Name variable from TxtRecord list, when using DNS-SD, we've got the "id" as service name
-			registerDnsSd->Properties.Undefine( CommonServiceValues::GetNameForPeerIdString() );
 
 			// Add inputs/outputs/inoutputs
 			if ( TxtRecordIsFull != true )
@@ -300,6 +297,9 @@ bool ControlServer::StartServer()
 					}
 				}		
 			}
+
+			// Remove Name variable from TxtRecord list, when using DNS-SD, we've got the "id" as service name
+			registerDnsSd->Properties.Undefine( CommonServiceValues::GetNameForPeerIdString() );
 
 			// Actually register
 			registerDnsSd->Register(false);
@@ -556,11 +556,21 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 				{
 					if(LockOk(pid) && va->CanBeModifiedFromOutside(GetStatus()))
 					{
-						if(va->GetType() == "xml")
-						{ 
-							// SimpleString val_modif((const char*)val_node->children->content);
-							// VariableAttribute::ModifXmlInStrRevert(val_modif);
-							VariableChange( va, (const char*)val_node->children->content, GetStatus() );
+						//if(va->GetType() == "xml")
+						//{ 
+						//	// SimpleString val_modif((const char*)val_node->children->content);
+						//	// VariableAttribute::ModifXmlInStrRevert(val_modif);
+						//	VariableChange( va, (const char*)val_node->children->content, GetStatus() );
+						//}
+						//else
+						//{
+						//	VariableChange( va, (const char*)val_node->children->content, GetStatus() );
+						//}
+
+						// Check if variable value is empty or not
+						if ( val_node->children == NULL )
+						{
+							VariableChange( va, (const char*)NULL, GetStatus() );
 						}
 						else
 						{

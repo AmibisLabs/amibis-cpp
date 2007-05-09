@@ -179,9 +179,17 @@ int main(int argc, char*argv[] )
 		return -1;
 	}
 
+	for (int i = 0 ; i < 1400 ; i++) {
+       SimpleString var = "v";
+       var += i;
+       pAccuServer->AddVariable(var, "bla", "bla", ReadWriteAccess);
+       pAccuServer->SetVariableValue(var, "a");
+     }
+
+
 	// Just add a Variable of ReadAccess (read only) that can not be modifies by other services.
 	// Set its value to the starting value
-	pAccuServer->AddVariable( "Accu", "float", "Accumulator value", ReadAccess );
+	pAccuServer->AddVariable( "Accu", "float", "Accumulator value", ReadWriteAccess );
 	pAccuServer->SetVariableValue( "Accu", 0.0f );
 
 	// Add a Connector to receive and send messages (AnInOutput) and set my callback

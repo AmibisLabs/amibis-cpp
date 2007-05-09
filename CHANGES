@@ -4,6 +4,12 @@
 
 In this files, you will find changes between OMiSCID versions.
 
+1.1.0    2007-04-28
+    [Global modifications]
+    - add some specific changes for gcc problematic version under
+      gentoo (it do not see that a variable will be initialised
+      in all path of the function, so add initialisation).
+
 1.1.0    2007-04-27
     [Global modifications]
     - change this file grouping changes by section.
@@ -76,6 +82,8 @@ In this files, you will find changes between OMiSCID versions.
 
 1.0.0
     - Initial version
+
+
 
 
 
