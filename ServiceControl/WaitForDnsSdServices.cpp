@@ -97,7 +97,7 @@ bool WaitForDnsSdServices::LockService( const SimpleString ServiceName )
 		return false;
 	}
 
-	ServicesUsed[ServiceName] = SimpleString::EmptyString;	// identical to ServicesUsed[ServiceName] = NULL
+	ServicesUsed[ShortName] = SimpleString::EmptyString;	// identical to ServicesUsed[ServiceName] = NULL
 	// OmiscidTrace( "Lock '%s' set.\n", ServiceName.GetStr() );
 
 	mutexServicesUsed.LeaveMutex();
@@ -156,6 +156,8 @@ void FUNCTION_CALL_TYPE SearchService::DnsSdProxyServiceBrowseReply( unsigned in
 					return;
 				}
 			}
+
+			DevOmiscidTrace( "Try to lock %s\n", FullName.GetStr() );
 				
 			// We lock the full service Name to prevent multiple use of the same instance
 			// of a service...
@@ -263,7 +265,7 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 	{
 		// INFINITE wait
 		Done = false;
-		for(;;)
+		while( Done == false ) // was for(;;) but new version of MS compiler do no like it
 		{
 			// Is the work done ?
 			ThreadSafeSection.EnterMutex();
@@ -278,12 +280,14 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 			// Wait
 			Thread::Sleep( 10 );
 		}
+		// never here
+		return true;
 	}
 	else
 	{
 		ElapsedTime CountWaitedTime;
 		Done = false;
-		for(;;)
+		while( Done == false ) // was for(;;) but new version of MS compiler do no like it
 		{
 			// Is the work done ?
 			ThreadSafeSection.EnterMutex();
@@ -297,10 +301,9 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 
 			Thread::Sleep( 10 );
 		}
+		// never here
+		return true;
 	}
-	// never here
-
-	return true;
 }
 
 int WaitForDnsSdServices::GetNbOfSearchedServices()

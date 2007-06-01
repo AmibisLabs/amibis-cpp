@@ -6,7 +6,7 @@
 using namespace Omiscid;
 
 const SimpleString InOutputAttribute::input_str		= "input";
-const SimpleString InOutputAttribute::output_str		= "output";
+const SimpleString InOutputAttribute::output_str	= "output";
 const SimpleString InOutputAttribute::inoutput_str	= "inoutput";
 const SimpleString InOutputAttribute::unknown_str	= "unknown type";
 
@@ -56,43 +56,61 @@ void InOutputAttribute::GenerateShortDescription(SimpleString& str)
 
 void InOutputAttribute::GenerateLongDescription(SimpleString& str)
 {
-  TemporaryMemoryBuffer tmp(30);
+	// Estimate max size
+	// "<tcp>" + tmp + "</tcp>" + "<udp>" + tmp + "</udp>" + "<peerId>" + tmp+ "</peerId>" +
+	// "<peers>" + {"<peer>"+ tmp +"</peer>" ...} + "</peers>" + "</" + KindToStr() +">"
 
-  GenerateHeaderDescription(KindToStr(), GetName(), str, false);
+	int MaxLenForBuffer = 100; // almost "<tcp>" + tmp + "</tcp>" + "<udp>" + tmp + "</udp>" + "<peerId>" + tmp+ "</peerId>"
 
-  if(GetTcpPort() != 0)
-    {
-      snprintf(tmp, 30, "%d", GetTcpPort());
-      str = str + "<tcp>"+tmp+"</tcp>";
-    }
-  if(GetUdpPort() != 0)
-    {
-      snprintf(tmp, 30, "%d", GetUdpPort());
-      str = str + "<udp>"+tmp+"</udp>";
-    }
+	// Retrieve number of connected peer
+	SimpleList<unsigned int> listPeer;
+	comTool->GetListPeerId(listPeer);
 
-	snprintf( tmp, 30, "%8.8x", comTool->GetServiceId() );
-	str = str + "<peerId>" + tmp+ "</peerId>";
+	// Ok, if need, so
+	// "<peers>" + listPeer.GetNumberOfElements() * "<peer>"+ tmp +"</peer>" + "</peers>" + "</" + KindToStr() +">"
+	if ( listPeer.GetNumberOfElements() >= 2 )
+	{
+		MaxLenForBuffer = 7 + listPeer.GetNumberOfElements() * 25 + 8 + 50;
+	}
 
-  AddTagDescriptionToStr(str);
-  
-  str = str + "<peers>";
-  SimpleList<unsigned int> listPeer;
-  if(comTool)
-  {
-	  comTool->GetListPeerId(listPeer);
-  }
-  
-  for( listPeer.First(); listPeer.NotAtEnd();  listPeer.Next())
-    {
-      snprintf(tmp, 30, "%08x",  listPeer.GetCurrent());
-      str = str + "<peer>"+ tmp +"</peer>";
-    }
-  str = str + "</peers>";
+	TemporaryMemoryBuffer tmp(MaxLenForBuffer);
+	char * WhereToWrite = (char*)tmp;
+	int SizeAvailable   = MaxLenForBuffer;
 
-  str = str + "</" + KindToStr() +">";
+	GenerateHeaderDescription(KindToStr(), GetName(), str, false);
 
-  listPeer.Empty();
+	if ( GetTcpPort() != 0 )
+	{
+		WhereToWrite += snprintf(WhereToWrite, SizeAvailable, "<tcp>%d</tcp>", GetTcpPort());
+		SizeAvailable -= 22;
+	}
+	if ( GetUdpPort() != 0 )
+	{
+		WhereToWrite += snprintf(WhereToWrite, SizeAvailable, "<udp>%d</udp>", GetUdpPort());
+		SizeAvailable -= 22;
+	}
+
+	snprintf( WhereToWrite, SizeAvailable, "<peerId>%8.8x</peerId>", comTool->GetServiceId() );
+	str += (char*)tmp;
+
+	AddTagDescriptionToStr(str);
+
+	WhereToWrite = (char*)tmp;
+	SizeAvailable   = MaxLenForBuffer;
+
+	WhereToWrite += snprintf(WhereToWrite, SizeAvailable, "<peers>" );
+	SizeAvailable -= 7;
+
+	for( listPeer.First(); listPeer.NotAtEnd();  listPeer.Next())
+	{
+		WhereToWrite += snprintf(WhereToWrite, SizeAvailable, "<peer>%08x</peer>",  listPeer.GetCurrent());
+		SizeAvailable -= 21;
+	}
+	snprintf(WhereToWrite, SizeAvailable, "</peers></%s>",  KindToStr().GetStr() );
+
+	str += (char*)tmp;
+
+	listPeer.Empty();
 }
 
 void InOutputAttribute::GenerateRecordData(SimpleString& str)

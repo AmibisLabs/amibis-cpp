@@ -56,175 +56,175 @@ ServiceProxy::ServiceProxy( unsigned int PeerId, SimpleString eHostName, int eCo
 	if ( TmpString == "full" )
 	{
 		FullDescription = true;
+	}
 
-		for( Pos = 0; FullDescription == true && Pos <  ServiceProps.GetNumberOfProperties(); Pos++ )
+	for( Pos = 0; Pos <  ServiceProps.GetNumberOfProperties(); Pos++ )
+	{
+		ServiceProperty& LocalProp = ServiceProps.GetProperty(Pos);
+
+		if ( LocalProp.GetName() == "desc" )
 		{
-			ServiceProperty& LocalProp = ServiceProps.GetProperty(Pos);
+			continue;
+		}
 
-			if ( LocalProp.GetName() == "desc" )
-			{
-				continue;
-			}
+		// SimpleString TmpName = LocalProp.GetName();
 
-			// SimpleString TmpName = LocalProp.GetName();
-
-			// Parse property
-			TmpString = LocalProp.GetValue();
-			char * TmpChar = (char*)TmpString.GetStr();
-			switch( TmpString[0] )
-			{
-				// Work on Variables
-				case 'c':
-					if ( TmpString.GetLength() <= 2 || TmpString[1] != '/' )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					// Ok, something like c/...
-					VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
-					if ( VarAtt == NULL )
-					{
-						FullDescription = false;
-						continue;
-					}
-					VarAtt->SetValue( TmpChar+2 );
-					VarAtt->SetAccessConstant();
-					listVariableName.Add( LocalProp.GetName() );
-					listVariableAttr.Add( VarAtt );
-					break;
-
-				case 'r':
-					if ( TmpString.GetLength() != 1 )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					// Ok, something like r/...
-					VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
-					if ( VarAtt == NULL )
-					{
-						FullDescription = false;
-						continue;
-					}
-					VarAtt->SetAccessRead();
-					listVariableName.Add( LocalProp.GetName() );
-					listVariableAttr.Add( VarAtt );
-					break;
-
-				case 'w':
-					if ( TmpString.GetLength() != 1 )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					// Ok, something like w/...
-					VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
-					if ( VarAtt == NULL )
-					{
-						FullDescription = false;
-						continue;
-					}
-					VarAtt->SetAccessReadWrite();
-					listVariableName.Add( LocalProp.GetName() );
-					listVariableAttr.Add( VarAtt );
-					break;
-
-				// Work on Connectors
-				case 'i':
-					if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					// Check if we've got a correct port
-					Port = 0;
-					Port = atoi(TmpChar+2);
-					if ( Port == 0 || Port >= 0x0000ffff )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnInput );
-					if ( IOAtt == NULL )
-					{
-						FullDescription = false;
-						continue;
-					}
-					IOAtt->SetTcpPort( (unsigned short)Port );
-					listInputName.Add( LocalProp.GetName() );
-					listInputAttr.Add( IOAtt );
-					break;
-
-				case 'o':
-					if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					// Check if we've got a correct port
-					Port = 0;
-					Port = atoi(TmpChar+2);
-					if ( Port == 0 || Port >= 0x0000ffff )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnOutput );
-					if ( IOAtt == NULL )
-					{
-						FullDescription = false;
-						continue;
-					}
-					IOAtt->SetTcpPort( (unsigned short)Port );
-					listOutputName.Add( LocalProp.GetName() );
-					listOutputAttr.Add( IOAtt );
-					break;
-
-				case 'd':
-					if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					// Check if we've got a correct port
-					Port = 0;
-					Port = atoi(TmpChar+2);
-					if ( Port == 0 || Port >= 0x0000ffff )
-					{
-						FullDescription = false;
-						continue;
-					}
-
-					IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnInOutput );
-					if ( IOAtt == NULL )
-					{
-						FullDescription = false;
-						continue;
-					}
-					IOAtt->SetTcpPort( (unsigned short)Port );
-					listInOutputName.Add( LocalProp.GetName() );
-					listInOutputAttr.Add( IOAtt );
-					break;
-
-				default:
+		// Parse property
+		TmpString = LocalProp.GetValue();
+		char * TmpChar = (char*)TmpString.GetStr();
+		switch( TmpString[0] )
+		{
+			// Work on Variables
+			case 'c':
+				if ( TmpString.GetLength() <= 2 || TmpString[1] != '/' )
+				{
 					FullDescription = false;
 					continue;
-			}
+				}
+
+				// Ok, something like c/...
+				VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
+				if ( VarAtt == NULL )
+				{
+					FullDescription = false;
+					continue;
+				}
+				VarAtt->SetValue( TmpChar+2 );
+				VarAtt->SetAccessConstant();
+				listVariableName.Add( LocalProp.GetName() );
+				listVariableAttr.Add( VarAtt );
+				break;
+
+			case 'r':
+				if ( TmpString.GetLength() != 1 )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				// Ok, something like r/...
+				VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
+				if ( VarAtt == NULL )
+				{
+					FullDescription = false;
+					continue;
+				}
+				VarAtt->SetAccessRead();
+				listVariableName.Add( LocalProp.GetName() );
+				listVariableAttr.Add( VarAtt );
+				break;
+
+			case 'w':
+				if ( TmpString.GetLength() != 1 )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				// Ok, something like w/...
+				VarAtt = new OMISCID_TLM VariableAttribute( LocalProp.GetName() );
+				if ( VarAtt == NULL )
+				{
+					FullDescription = false;
+					continue;
+				}
+				VarAtt->SetAccessReadWrite();
+				listVariableName.Add( LocalProp.GetName() );
+				listVariableAttr.Add( VarAtt );
+				break;
+
+			// Work on Connectors
+			case 'i':
+				if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				// Check if we've got a correct port
+				Port = 0;
+				Port = atoi(TmpChar+2);
+				if ( Port == 0 || Port >= 0x0000ffff )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnInput );
+				if ( IOAtt == NULL )
+				{
+					FullDescription = false;
+					continue;
+				}
+				IOAtt->SetTcpPort( (unsigned short)Port );
+				listInputName.Add( LocalProp.GetName() );
+				listInputAttr.Add( IOAtt );
+				break;
+
+			case 'o':
+				if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				// Check if we've got a correct port
+				Port = 0;
+				Port = atoi(TmpChar+2);
+				if ( Port == 0 || Port >= 0x0000ffff )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnOutput );
+				if ( IOAtt == NULL )
+				{
+					FullDescription = false;
+					continue;
+				}
+				IOAtt->SetTcpPort( (unsigned short)Port );
+				listOutputName.Add( LocalProp.GetName() );
+				listOutputAttr.Add( IOAtt );
+				break;
+
+			case 'd':
+				if ( TmpString[1] != '/' || TmpString[2] < '0' || TmpString[2] > '9' )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				// Check if we've got a correct port
+				Port = 0;
+				Port = atoi(TmpChar+2);
+				if ( Port == 0 || Port >= 0x0000ffff )
+				{
+					FullDescription = false;
+					continue;
+				}
+
+				IOAtt = new OMISCID_TLM InOutputAttribute( LocalProp.GetName(), NULL, AnInOutput );
+				if ( IOAtt == NULL )
+				{
+					FullDescription = false;
+					continue;
+				}
+				IOAtt->SetTcpPort( (unsigned short)Port );
+				listInOutputName.Add( LocalProp.GetName() );
+				listInOutputAttr.Add( IOAtt );
+				break;
+
+			default:
+				FullDescription = false;
+				continue;
 		}
 	}
 
-	if ( FullDescription == false )
-	{
-		UpdateDescription();
-	}
+	//if ( FullDescription == false )
+	//{
+	//	UpdateDescription();
+	//}
 }
 
 ServiceProxy::~ServiceProxy()
@@ -247,7 +247,7 @@ SimpleList<SimpleString>& ServiceProxy::GetVariables()
 SimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
 {
 	// We got everything
-	if ( FullDescription )
+	if ( FullDescription == true )
 	{
 		return GetInputNameList();
 	}
@@ -265,7 +265,7 @@ SimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
 SimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
 {
 	// We got everything
-	if ( FullDescription )
+	if ( FullDescription == true )
 	{
 		return GetOutputNameList();
 	}
@@ -283,7 +283,7 @@ SimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
 SimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
 {
 	// We got everything
-	if ( FullDescription )
+	if ( FullDescription == true )
 	{
 		return GetInOutputNameList();
 	}
@@ -303,12 +303,17 @@ SimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
      */
 void ServiceProxy::UpdateDescription()
 {
+	if ( FullDescription == true )
+	{
+		return;
+	}
+
 	if ( IsConnected() == false )
 	{
 		ConnectToCtrlServer( HostName, ControlPort );
 	}
 
-	if ( QueryDetailedDescription() )
+	if ( QueryDetailedDescription() == true )
 	{
 		FullDescription = true;
 	}
@@ -341,10 +346,7 @@ unsigned int ServiceProxy::GetPeerId()
 		unsigned int tmpPeerId = 0;
 		SimpleString lPeerId = GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
 
-		if ( sscanf( lPeerId.GetStr(), "%x", &tmpPeerId ) == 1 )
-		{
-			return tmpPeerId;
-		}
+		return ComTools::PeerIdFromString(lPeerId);
 	}
 	catch( SimpleException & )
 	{
@@ -362,7 +364,6 @@ SimpleString ServiceProxy::GetPeerIdAsString()
 	try
 	{
 		return GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
-
 	}
 	catch( SimpleException& )
 	{
@@ -442,7 +443,7 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 	if ( pVar == NULL )
 	{
 		// This one *here* should not appear
-		throw SimpleException("Unknown variable. Call HasVariableFirst.");
+		throw SimpleException( "Could not retrieve variable '" + VarName + "'." );
 	}
 	return pVar->GetValue();
 }

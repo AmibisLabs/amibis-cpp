@@ -37,7 +37,6 @@ bool VariableAttribute::IsInitialised()
 	return Initialised;
 }
 
-
 void VariableAttribute::GenerateShortDescription(SimpleString& str)
 {
 	GenerateHeaderDescription(variable_str, GetName(), str);

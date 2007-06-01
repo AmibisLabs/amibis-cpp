@@ -64,6 +64,21 @@ class ComTools
    */
   static unsigned int GeneratePeerId();
 
+  /** @brief transcode peer Id from strinf to unsigned int
+   *
+   * @param StringPeerId [in] a simplestring containing a peerId
+   * @return the peerId as an unsigned int if StringPeerId was correct
+   * 0 otherwise
+   */
+  static unsigned int PeerIdFromString(const SimpleString& StringPeerId);
+
+  /** @brief transcode peer Id from strinf to unsigned int
+   *
+   * @param PeerId [in] an unsigned int containing a peerId
+   * @return the string représentation of the given peerId
+   */
+  static SimpleString PeerIdAsString(unsigned int PeerId);
+
   /** @brief Gestion of Magic paquet
    *
    */

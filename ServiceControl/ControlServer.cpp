@@ -1,5 +1,6 @@
 #include <ServiceControl/ControlServer.h>
 
+#include <System/ElapsedTime.h>
 #include <System/Portage.h>
 #include <System/Socket.h>
 #include <System/SocketException.h>
@@ -177,7 +178,7 @@ bool ControlServer::StartServer()
 
 			// Add Constant variable
 			// The desctiption if full by default
-			bool TxtRecordIsFull = true;
+			bool TxtRecordIsFull = false;
 			registerDnsSd->Properties["desc"] = "full"; // Will be set to part if not full
 
 			// Add owner value
@@ -409,6 +410,8 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 		bool ReplyAnAnswer = true;	// default
 		SimpleString str;
 
+		ElapsedTime ET;
+
 		if(node->children == NULL)
 		{
 			//global description	  
@@ -466,6 +469,8 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			}	 
 			// OmiscidError( "Send : %s \n", str.GetStr());
 		}
+
+		DevOmiscidTrace( "Time ET %u\n", ET.Get() );
 
 		if ( ReplyAnAnswer == true )
 		{

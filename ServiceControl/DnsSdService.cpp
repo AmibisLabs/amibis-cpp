@@ -119,14 +119,14 @@ SimpleString DnsSdService::GetDNSSDServiceNameFromFullName( const SimpleString N
 	if ( (LastFind=Name.Find("._tcp.")) >= 0 )
 	{
 		// TCP DnsSdService
-		return Name.SubString( 0, LastFind-1 );
+		return Name.SubString( 0, LastFind );
 	}
 	else
 	{
 		if ( (LastFind=Name.Find("._udp.")) >= 0 )
 		{
 			// UDP DnsSdService
-			return Name.SubString( 0, LastFind-1 );
+			return Name.SubString( 0, LastFind );
 		}
 	}
 

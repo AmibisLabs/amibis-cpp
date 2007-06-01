@@ -673,12 +673,21 @@ const SimpleString Service::GetName()
 }
 
     /**
-     * @brief Retrieve the name of this service
-     * @return the name of this service
+     * @brief Retrieve the PeerId of this service
+     * @return the PeerId of this service in a SimpleString::
      */
-const SimpleString Service::GetPeerId()
+const SimpleString Service::GetPeerIdAsString()
 {
 	return PeerIdVariable->GetValue();
+}
+
+    /**
+     * @brief Retrieve the PeerId of this service
+     * @return the PeerId of this service
+     */
+const unsigned int Service::GetPeerId()
+{
+	return PeerIdFromString(PeerIdVariable->GetValue());
 }
 
     /**

@@ -12,7 +12,7 @@
  */
 
 // Standard includes
-#include <ServiceControl/UserFriendlyAPI.h>
+#include <ServiceControl/UserFriendlyAPI.h> 
 
 #include <iostream>
 using namespace std;
@@ -161,6 +161,8 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int main(int argc, char*argv[] )
 {
+	// TrackMemoryLeaks TML;
+
 	// Instanciate a Connector listener (must *not* be destroyed before it has
 	// been removed for the connector or until the service is destroyed).
 	AccumulatorConnectorListener MyCommandsListener;
@@ -179,13 +181,13 @@ int main(int argc, char*argv[] )
 		return -1;
 	}
 
-	for (int i = 0 ; i < 1400 ; i++) {
+	for (int i = 0 ; i < 1400 ; i++)
+	{
        SimpleString var = "v";
        var += i;
        pAccuServer->AddVariable(var, "bla", "bla", ReadWriteAccess);
        pAccuServer->SetVariableValue(var, "a");
      }
-
 
 	// Just add a Variable of ReadAccess (read only) that can not be modifies by other services.
 	// Set its value to the starting value

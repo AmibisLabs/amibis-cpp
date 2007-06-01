@@ -21,7 +21,7 @@ Mutex::Mutex()
 		if ( mutex == NULL )
 		{
 			int err = GetLastError();
-			int zz = 0;
+			OmiscidError( "Could not create mutex : %d\n", err );
 		}
 		OwnerId = 0;
 	#endif

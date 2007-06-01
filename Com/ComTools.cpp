@@ -27,6 +27,33 @@ unsigned int ComTools::GeneratePeerId()
 	return (res & SERVICE_PEERID);
 }
 
+unsigned int ComTools::PeerIdFromString(const SimpleString& StringPeerId)
+{
+	unsigned int res;
+
+	if ( StringPeerId.IsEmpty() )
+	{
+		return 0;
+	}
+
+	if ( sscanf( StringPeerId.GetStr(), "%x", &res ) == 1 )
+	{
+		return res;
+	}
+	return 0;
+}
+
+SimpleString ComTools::PeerIdAsString(unsigned int PeerId)
+{
+	TemporaryMemoryBuffer tmp(30);
+
+	(*(char*)tmp) = '\0';
+
+	sprintf( (char*)tmp, "%8.8x", PeerId );
+
+	return SimpleString(tmp);
+}
+
 const SimpleString ComTools::MagicUdp("udp-port");
 
 SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString key)

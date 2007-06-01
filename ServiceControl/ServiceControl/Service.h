@@ -219,7 +219,13 @@ public:
      * @brief Retrieve the name of this service
      * @return the name of this service
      */
-	const SimpleString GetPeerId();
+	const SimpleString GetPeerIdAsString();
+
+	    /**
+     * @brief Retrieve the name of this service
+     * @return the name of this service
+     */
+	const unsigned int GetPeerId();
 	
 	/**
      * Connects a local connector to a remote connector of a remote ServiceProxy

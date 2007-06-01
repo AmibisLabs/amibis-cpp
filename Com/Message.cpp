@@ -1,6 +1,7 @@
 #include <Com/Message.h>
 
 #include <System/Portage.h>
+#include <Com/ComTools.h>
 
 using namespace Omiscid;
 
@@ -94,9 +95,7 @@ SimpleString Message::ToString(unsigned int MaxBufferLenToWrite /* default = 20,
 		TmpMessage += " on TCP from ";
 	}
 
-	*((char*)TmpBuffer) = '\0';	// Empty string
-	snprintf( (char*)TmpBuffer, TmpBuffer.GetLength(), "%8.8x", pid );
-	TmpMessage += (char*)TmpBuffer;
+	TmpMessage += ComTools::PeerIdAsString(pid);
 
 	if ( MaxBufferLenToWrite == 0 || MaxBufferLenToWrite > 256 )
 	{
