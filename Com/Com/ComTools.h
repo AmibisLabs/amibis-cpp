@@ -29,7 +29,7 @@ class ComTools
 
   /** \brief Access to the TCP port
    * \return 0 if there is no TCP port (default implementation do that)*/
-  virtual unsigned short GetTcpPort();  
+  virtual unsigned short GetTcpPort();
 
   /** \brief Access to the UDP port
    * \return 0 if there is no UDP port (default implementation do that)*/
@@ -58,7 +58,7 @@ class ComTools
 
   /** @brief Generation of service id
    *
-   * The generated value is composed of 2 bytes created by using the 
+   * The generated value is composed of 2 bytes created by using the
    * current time and 2 other bytes obtained by using a random generator
    * @return a value that can be used as service Id
    */
@@ -89,3 +89,67 @@ class ComTools
 } // namespace Omiscid
 
 #endif // __COM_TOOLS_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

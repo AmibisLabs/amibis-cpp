@@ -27,13 +27,13 @@ class Service;
  */
 class ConnectorListener : public MsgSocketCallbackObject
 {
-	friend class Service;
+    friend class Service;
 
 public:
-	// Virtual destructor always
-	virtual ~ConnectorListener();
+    // Virtual destructor always
+    virtual ~ConnectorListener();
 
-	/**
+    /**
      * Processes a received Omiscid message. As a given message could be processed
      * by several others listeners, the message must not be modified by its
      * processing.
@@ -62,46 +62,110 @@ public:
     virtual void Disconnected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId);
 
 private:
-	// Atributs
-	Service    * ServiceOfTheConnector;
+    // Atributs
+    Service    * ServiceOfTheConnector;
 
-	void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData);
-	void Connected(MsgSocket& ConnectionPoint, unsigned int PeerId);
-	void Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId);
+    void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData);
+    void Connected(MsgSocket& ConnectionPoint, unsigned int PeerId);
+    void Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId);
 
 private:
-	/**
-	 * @class ExtendedMessageForService ServiceControl/ConnectorListener.h
-	 * @ingroup UserFriendly
-	 * @ingroup ServiceControl
-	 * @brief Class used to pass extra information for method Service#SendReplyToMessage.
-	 *
-	 * This class is used in order to add extra information in order to provide
-	 * more user friendly API to reply to a message using Service#SendReplyToMessage.
-	 * The #ConnectorListener class will create this object and the #Service will
-	 * use it.
-	 * This class is a wrapper, so we so not plan to copy buffers (for performance)
-	 * neither to free it at the end.
-	 * 
-	 * @author Dominique Vaufreydaz
-	 */
-	class ExtendedMessageForService : public Message
-	{
-		// The class CollectorListener will create such 
-		friend class ConnectorListener;
+    /**
+     * @class ExtendedMessageForService ServiceControl/ConnectorListener.h
+     * @ingroup UserFriendly
+     * @ingroup ServiceControl
+     * @brief Class used to pass extra information for method Service#SendReplyToMessage.
+     *
+     * This class is used in order to add extra information in order to provide
+     * more user friendly API to reply to a message using Service#SendReplyToMessage.
+     * The #ConnectorListener class will create this object and the #Service will
+     * use it.
+     * This class is a wrapper, so we so not plan to copy buffers (for performance)
+     * neither to free it at the end.
+     *
+     * @author Dominique Vaufreydaz
+     */
+    class ExtendedMessageForService : public Message
+    {
+        // The class CollectorListener will create such
+        friend class ConnectorListener;
 
-	public:
-		// Constructor
-		ExtendedMessageForService(Message& ToCopy);
+    public:
+        // Constructor
+        ExtendedMessageForService(Message& ToCopy);
 
-		// Destructor
-		virtual ~ExtendedMessageForService();
+        // Destructor
+        virtual ~ExtendedMessageForService();
 
-		// Simple member to recall from wich connector we received the message
-		SimpleString ReceivedFromConnector;
-	};
+        // Simple member to recall from wich connector we received the message
+        SimpleString ReceivedFromConnector;
+    };
 };
 
 } // namespace Omiscid
 
-#endif	// __CONNECTOR_LISTENER_H__
+#endif    // __CONNECTOR_LISTENER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

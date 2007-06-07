@@ -27,11 +27,11 @@ class ServiceProxy;
  */
 class RemoteVariableChangeListener : public VariableAttributeListener
 {
-	friend class ServiceProxy;
+    friend class ServiceProxy;
 
 public:
-	// Virtual destructor always
-	virtual ~RemoteVariableChangeListener();
+    // Virtual destructor always
+    virtual ~RemoteVariableChangeListener();
 
 protected:
     /**
@@ -44,10 +44,10 @@ protected:
     virtual void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue ) = 0;
 
 private:
-	/**
+    /**
     * This method is called when a new value is request on a variable. This method must
      * check that this new value is a valid value. As we are a remote componant, we
-	 * do not care about change. So we always say yes...
+     * do not care about change. So we always say yes...
      * @param service the service owning the variable
      * @param currentVariable the current value of the variable
      * @param newValue the new requested value
@@ -55,18 +55,82 @@ private:
      */
     bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue );
 
-	/**
+    /**
     * This method is called when the value has change is request on a variable. This method must
      * check that this new value is a valid value. As we are a remote componant, we
-	 * do not care about change. So we always say yes...
+     * do not care about change. So we always say yes...
      * @param service the service owning the variable
      * @param currentVariable the current value of the variable
      * @param newValue the new requested value
      * @return true if the new value is accepted, false if rejected.
      */
-	void VariableChanged( VariableAttribute * ChangedVariable );
+    void VariableChanged( VariableAttribute * ChangedVariable );
 };
 
 } // namespace Omiscid
 
-#endif	// __REMOTE_VARIABLE_CHANGE_LISTENER_H__
+#endif    // __REMOTE_VARIABLE_CHANGE_LISTENER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

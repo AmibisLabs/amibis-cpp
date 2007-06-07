@@ -1,4 +1,4 @@
-/*! @file 
+/*! @file
  * @ingroup ServiceControl
  * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2006
@@ -31,3 +31,67 @@ public:
 } // namespace Omiscid
 
 #endif // __CONTROL_UTILS_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

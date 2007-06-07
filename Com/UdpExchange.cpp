@@ -35,7 +35,7 @@ void UdpExchange::Disconnect()
     {
         delete (listUdpConnections.GetCurrent());
         listUdpConnections.RemoveCurrent();
-    }  
+    }
     listUdpConnections.Unlock();
 }
 
@@ -53,11 +53,11 @@ int UdpExchange::SendTo(int len, const char* buf, const char* addr, int port)
     /*
     udp_connect.addr.sin_family = AF_INET;
     udp_connect.addr.sin_port = htons(port);
-    if(!strcmp(addr, ""))  udp_connect.addr.sin_addr.s_addr = INADDR_ANY;    
-    else udp_connect.addr.sin_addr.s_addr = inet_addr(addr);    
+    if(!strcmp(addr, ""))  udp_connect.addr.sin_addr.s_addr = INADDR_ANY;
+    else udp_connect.addr.sin_addr.s_addr = inet_addr(addr);
     memset(&(udp_connect.addr.sin_zero), 0, 8); */
     if ( Socket::FillAddrIn( &udp_connect.addr, addr, port ) == false )
-        return -1;	// Socket error
+        return -1;    // Socket error
 
     return MsgSocket::SendTo(len, buf, &udp_connect);
 }
@@ -92,13 +92,13 @@ void UdpExchange::SendToAll(int len, const char* buf)
     {
         try
         {
-            SendTo(len, buf, (listUdpConnections.GetCurrent())); 
+            SendTo(len, buf, (listUdpConnections.GetCurrent()));
         }
         catch( SocketException &e )
         {
             OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
         }
-    }  
+    }
     listUdpConnections.Unlock();
 }
 
@@ -128,7 +128,7 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
     if(!udp_found && msg_empty)
     {
         udp_found = new OMISCID_TLM UdpConnection(udp_connect);
-        listUdpConnections.Add(udp_found);      
+        listUdpConnections.Add(udp_found);
     }
     else if (!msg_empty)
     {
@@ -140,12 +140,12 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
 
 int UdpExchange::GetListPeerId(SimpleList<unsigned int>& listId)
 {
-    int nb =0;  
-    listUdpConnections.Lock();  
+    int nb =0;
+    listUdpConnections.Lock();
     for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
         listUdpConnections.Next())
     {
-        listId.Add((listUdpConnections.GetCurrent())->pid);    
+        listId.Add((listUdpConnections.GetCurrent())->pid);
         nb++;
     }
     listUdpConnections.Unlock();
@@ -231,7 +231,7 @@ void UdpExchange::SetServiceId(unsigned int pid)
     {
         // pid = pid | 0xffffff01;
 #ifdef DEBUG
-        //		fprintf( stderr, "Warning: ConnectorId could not be 0 for UdpExchange. Value changes to 1 (PeerId = %8.8x)\n", pid );
+        //        fprintf( stderr, "Warning: ConnectorId could not be 0 for UdpExchange. Value changes to 1 (PeerId = %8.8x)\n", pid );
 #endif
     }
     MsgSocket::SetServiceId(pid);
@@ -256,3 +256,67 @@ unsigned short UdpExchange::GetUdpPort()
 {
     return MsgSocket::GetPortNb();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

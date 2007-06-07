@@ -7,12 +7,12 @@ using namespace Omiscid;
 MsgManager::MsgManager(unsigned int max)
   : maxMessage(max)
 {}
- 
+
 MsgManager::~MsgManager()
 {
   ClearMessages();
 }
-    
+
 void MsgManager::PushMessage(Message* msg)
 {
   listMsg.Lock();
@@ -28,7 +28,7 @@ void MsgManager::PushMessage(Message* msg)
   event.Signal();
   event.Reset();
 }
- 
+
 unsigned int MsgManager::GetNbMessages()
 {
   listMsg.Lock();
@@ -44,9 +44,9 @@ Message* MsgManager::GetMessage()
   listMsg.Lock();
   if(listMsg.GetNumberOfElements())
     {
-		listMsg.First();
-		msg = listMsg.GetCurrent();
-		listMsg.RemoveCurrent();
+        listMsg.First();
+        msg = listMsg.GetCurrent();
+        listMsg.RemoveCurrent();
     }
   listMsg.Unlock();
 
@@ -59,7 +59,7 @@ void MsgManager::ClearMessages()
   for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
     {
       delete listMsg.GetCurrent();
-	  listMsg.RemoveCurrent();
+      listMsg.RemoveCurrent();
     }
   listMsg.Unlock();
 }
@@ -73,14 +73,14 @@ int MsgManager::ProcessMessages()
   for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
     {
       msg = listMsg.GetCurrent();
-	  try
-	  {
-		ProcessAMessage(msg);
-	  }
-	  catch(SimpleException &e) // Catch every Omiscid exception within this, can break the whole system
-	  {
-		  OmiscidTrace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
-	  }
+      try
+      {
+        ProcessAMessage(msg);
+      }
+      catch(SimpleException &e) // Catch every Omiscid exception within this, can break the whole system
+      {
+          OmiscidTrace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
+      }
       delete msg;
       listMsg.RemoveCurrent();
       nb++;
@@ -109,18 +109,18 @@ void MsgManager::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 //
 //void MsgManager::LinkToMsgSocketObject(MsgSocket* ms)
 //{
-//	ms->AddCallbackObject( this );
+//    ms->AddCallbackObject( this );
 //}
 
 bool MsgManager::WaitForMessage(unsigned long timer)
-{  
+{
   event.Reset();
   if(!HasMessages())
     {
       if(timer)
-	return event.Wait(timer);
+    return event.Wait(timer);
       else
-	return event.Wait();
+    return event.Wait();
     }
   return true;
 }
@@ -129,3 +129,67 @@ bool MsgManager::HasMessages()
 {
   return GetNbMessages() != 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

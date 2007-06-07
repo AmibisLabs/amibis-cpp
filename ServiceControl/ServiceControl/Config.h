@@ -1,9 +1,9 @@
-/** 
- * @defgroup ServiceControl Layer 2 : Omiscid multiplateform Service Control layer. 
+/**
+ * @defgroup ServiceControl Layer 2 : Omiscid multiplateform Service Control layer.
  *
  */
 
-/** 
+/**
  * @file ServiceControl/Config.h
  * @ingroup ServiceControl
  * @brief this file is the first file included in the Service Control layer.
@@ -41,11 +41,11 @@ typedef enum VariableAccessType { ReadAccess = 0, ConstantAccess = 1, ReadWriteA
 class OmiscidServiceControlLayerInitClass : public OmiscidComLayerInitClass
 {
 public:
-	// Constructor
-	OmiscidServiceControlLayerInitClass();
+    // Constructor
+    OmiscidServiceControlLayerInitClass();
 
-	// Destructor
-	~OmiscidServiceControlLayerInitClass();
+    // Destructor
+    ~OmiscidServiceControlLayerInitClass();
 };
 
 // External object
@@ -53,4 +53,68 @@ extern OmiscidServiceControlLayerInitClass OmiscidServiceControlLayerInit;
 
 } // namespace Omiscid
 
-#endif	// __SERVICE_CONTROL_CONFIG_H__
+#endif    // __SERVICE_CONTROL_CONFIG_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

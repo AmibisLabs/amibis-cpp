@@ -38,11 +38,11 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo "`OmiscidSystem-config --cflags`"
+	echo "`@bindir@/OmiscidSystem-config --cflags`"
 #	exit 0
 	;;
     --cflags-only-I)
-	echo "`OmiscidSystem-config --cflags-only-I`"
+	echo "`@bindir@/OmiscidSystem-config --cflags-only-I`"
 #	exit 0
 	;;
     --libs)
@@ -78,7 +78,7 @@ case "$1" in
 #	exit 0
 	;;
     --all)
-	echo "`OmiscidSystem-config --all` -L@libdir@ -lOmiscidCom -lOmiscidSystem @OmiscidTraceFlags@"
+	echo "`@bindir@/OmiscidSystem-config --all` -L@libdir@ -lOmiscidCom -lOmiscidSystem @OmiscidTraceFlags@"
 	;;
 
 	   

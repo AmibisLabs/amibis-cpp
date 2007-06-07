@@ -17,23 +17,87 @@ namespace Omiscid {
 class XsdValidator
 {
 public:
-	XsdValidator();
-	virtual ~XsdValidator();
+    XsdValidator();
+    virtual ~XsdValidator();
 
-	bool CreateSchemaFromString( const SimpleString XsdSchemaToValidate );
-	bool CreateSchemaFromFile( const SimpleString XsdSchemaFile );
+    bool CreateSchemaFromString( const SimpleString XsdSchemaToValidate );
+    bool CreateSchemaFromFile( const SimpleString XsdSchemaFile );
 
-	bool ValidateDoc( const SimpleString Doc );
-	bool ValidateDoc( xmlDocPtr Doc );
+    bool ValidateDoc( const SimpleString Doc );
+    bool ValidateDoc( xmlDocPtr Doc );
 
 private:
-	void DestroySchema();
+    void DestroySchema();
 
-	xmlSchemaPtr Schema;
-	xmlSchemaParserCtxtPtr ParserCtxt;
-	xmlSchemaValidCtxtPtr ValidCtxt;
+    xmlSchemaPtr Schema;
+    xmlSchemaParserCtxtPtr ParserCtxt;
+    xmlSchemaValidCtxtPtr ValidCtxt;
 };
 
 } // namespace Omiscid
 
 #endif // __XSD_VALIDATOR_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

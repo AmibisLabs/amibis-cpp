@@ -200,51 +200,114 @@ const SimpleString Omiscid::ControlQueryXsdSchema = ""
 const SimpleString Omiscid::ServiceXsdSchema = ""
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 "<schema xmlns=\"http://www.w3.org/2001/XMLSchema\" targetNamespace=\"http://www-prima.inrialpes.fr/schemas/omiscid/service.xsd\" xmlns:omiscid=\"http://www-prima.inrialpes.fr/schemas/omiscid/service.xsd\">\n"
-"	<element name=\"service\">\n"
-"		<complexType>\n"
-"			<choice maxOccurs=\"unbounded\" minOccurs=\"0\">\n"
-"				<element ref=\"omiscid:variable\" />\n"
-"				<element ref=\"omiscid:input\" />\n"
-"				<element ref=\"omiscid:output\" />\n"
-"				<element ref=\"omiscid:inoutput\" />\n"
-"			</choice>\n"
-"			<attribute name=\"name\" type=\"string\" use=\"required\" />\n"
-"			<attribute name=\"docURL\" type=\"string\" use=\"optional\" />\n"
-"			<attribute name=\"class\" type=\"string\" use=\"optional\" />\n"
-"		</complexType>\n"
-"	</element>\n"
-"	<element name=\"variable\">\n"
-"		<complexType>\n"
-"			<all>\n"
-"				<element name=\"description\" type=\"string\" minOccurs=\"0\" />\n"
-"				<element name=\"formatDescription\" type=\"string\" minOccurs=\"0\" />\n"
-"				<element name=\"value\" type=\"string\" minOccurs=\"0\" />\n"
-"				<element name=\"default\" type=\"string\" minOccurs=\"0\" />\n"
-"				<element name=\"type\" type=\"string\" minOccurs=\"0\" />\n"
-"				<element name=\"access\" type=\"omiscid:accessType\" minOccurs=\"1\" maxOccurs=\"1\"/>\n"
-"			</all>\n"
-"			<attribute name=\"name\" type=\"string\" use=\"required\"></attribute>\n"
-"		</complexType>\n"
-"	</element>\n"
-"	<simpleType name=\"accessType\">\n"
-"		<restriction base=\"string\">\n"
-"			<enumeration value=\"constant\"></enumeration>\n"
-"			<enumeration value=\"read\"></enumeration>\n"
-"			<enumeration value=\"readWrite\"></enumeration>\n"
-"		</restriction>\n"
-"	</simpleType>\n"
-"	<complexType name=\"connectorType\">\n"
-"		<all>\n"
-"			<element name=\"description\" type=\"string\" minOccurs=\"0\" />\n"
-"			<element name=\"formatDescription\" type=\"string\" minOccurs=\"0\" />\n"
-"			<element name=\"schemaURL\" type=\"string\" minOccurs=\"0\" />\n"
-"			<element name=\"messageExample\" type=\"string\" minOccurs=\"0\" />\n"
-"		</all>\n"
-"		<attribute name=\"name\" type=\"string\" use=\"required\"></attribute>\n"
-"	</complexType>\n"
-"	<element name=\"input\" type=\"omiscid:connectorType\"></element>\n"
-"	<element name=\"output\" type=\"omiscid:connectorType\"></element>\n"
-"	<element name=\"inoutput\" type=\"omiscid:connectorType\"></element>\n"
+"    <element name=\"service\">\n"
+"        <complexType>\n"
+"            <choice maxOccurs=\"unbounded\" minOccurs=\"0\">\n"
+"                <element ref=\"omiscid:variable\" />\n"
+"                <element ref=\"omiscid:input\" />\n"
+"                <element ref=\"omiscid:output\" />\n"
+"                <element ref=\"omiscid:inoutput\" />\n"
+"            </choice>\n"
+"            <attribute name=\"name\" type=\"string\" use=\"required\" />\n"
+"            <attribute name=\"docURL\" type=\"string\" use=\"optional\" />\n"
+"            <attribute name=\"class\" type=\"string\" use=\"optional\" />\n"
+"        </complexType>\n"
+"    </element>\n"
+"    <element name=\"variable\">\n"
+"        <complexType>\n"
+"            <all>\n"
+"                <element name=\"description\" type=\"string\" minOccurs=\"0\" />\n"
+"                <element name=\"formatDescription\" type=\"string\" minOccurs=\"0\" />\n"
+"                <element name=\"value\" type=\"string\" minOccurs=\"0\" />\n"
+"                <element name=\"default\" type=\"string\" minOccurs=\"0\" />\n"
+"                <element name=\"type\" type=\"string\" minOccurs=\"0\" />\n"
+"                <element name=\"access\" type=\"omiscid:accessType\" minOccurs=\"1\" maxOccurs=\"1\"/>\n"
+"            </all>\n"
+"            <attribute name=\"name\" type=\"string\" use=\"required\"></attribute>\n"
+"        </complexType>\n"
+"    </element>\n"
+"    <simpleType name=\"accessType\">\n"
+"        <restriction base=\"string\">\n"
+"            <enumeration value=\"constant\"></enumeration>\n"
+"            <enumeration value=\"read\"></enumeration>\n"
+"            <enumeration value=\"readWrite\"></enumeration>\n"
+"        </restriction>\n"
+"    </simpleType>\n"
+"    <complexType name=\"connectorType\">\n"
+"        <all>\n"
+"            <element name=\"description\" type=\"string\" minOccurs=\"0\" />\n"
+"            <element name=\"formatDescription\" type=\"string\" minOccurs=\"0\" />\n"
+"            <element name=\"schemaURL\" type=\"string\" minOccurs=\"0\" />\n"
+"            <element name=\"messageExample\" type=\"string\" minOccurs=\"0\" />\n"
+"        </all>\n"
+"        <attribute name=\"name\" type=\"string\" use=\"required\"></attribute>\n"
+"    </complexType>\n"
+"    <element name=\"input\" type=\"omiscid:connectorType\"></element>\n"
+"    <element name=\"output\" type=\"omiscid:connectorType\"></element>\n"
+"    <element name=\"inoutput\" type=\"omiscid:connectorType\"></element>\n"
 "</schema>\n"
 ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

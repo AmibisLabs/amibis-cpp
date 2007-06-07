@@ -12,7 +12,7 @@
 
 namespace Omiscid {
 
-/** 
+/**
  * @class Event System/AutoDelete.h
  * @brief Event or condition implementation.
  *
@@ -23,171 +23,234 @@ template <typename TYPE>
 class AutoDelete
 {
 public:
-	/** @brief Constructor */
-	AutoDelete();
+    /** @brief Constructor */
+    AutoDelete();
 
-	/** @brief Copy constructor */
-	AutoDelete(TYPE * ToCopy);
+    /** @brief Copy constructor */
+    AutoDelete(TYPE * ToCopy);
 
-	/** @brief Copy constructor not allowed */
-	AutoDelete(const AutoDelete<TYPE>& ToCopy);
+    /** @brief Copy constructor not allowed */
+    AutoDelete(const AutoDelete<TYPE>& ToCopy);
 
-	/** @brief Destructor */
-	virtual ~AutoDelete();
+    /** @brief Destructor */
+    virtual ~AutoDelete();
 
-	/** @brief Explicitally destroy the pointed object */
-	void Delete(); 
-	
-	/** @brief Access function true '*' operator */
-	TYPE& operator*();
+    /** @brief Explicitally destroy the pointed object */
+    void Delete();
 
-	/** @brief Access function true '->' operator */
+    /** @brief Access function true '*' operator */
+    TYPE& operator*();
+
+    /** @brief Access function true '->' operator */
     TYPE* operator->();
 
-	/** @brief affectation operator/copy */
-	const AutoDelete<TYPE>& operator=(const AutoDelete<TYPE>& ToCopy);
+    /** @brief affectation operator/copy */
+    const AutoDelete<TYPE>& operator=(const AutoDelete<TYPE>& ToCopy);
 
-	/** @brief affectation operator/copy with content type */
-	const AutoDelete<TYPE>& operator=(TYPE * ToCopy);
+    /** @brief affectation operator/copy with content type */
+    const AutoDelete<TYPE>& operator=(TYPE * ToCopy);
 
-	/** @brief comparaison operator */
-	bool operator==(const TYPE * ToCompare);
+    /** @brief comparaison operator */
+    bool operator==(const TYPE * ToCompare);
 
-	/** @brief comparaison operator */
-	bool operator==(const AutoDelete<TYPE>& ToCompare);
+    /** @brief comparaison operator */
+    bool operator==(const AutoDelete<TYPE>& ToCompare);
 
-	/** @brief comparaison operator */
-	bool operator!=(const TYPE * ToCompare);
+    /** @brief comparaison operator */
+    bool operator!=(const TYPE * ToCompare);
 
-	/** @brief comparaison operator */
-	bool operator!=(const AutoDelete<TYPE>& ToCompare);
+    /** @brief comparaison operator */
+    bool operator!=(const AutoDelete<TYPE>& ToCompare);
 
 private:
-	TYPE * pObject;
+    TYPE * pObject;
 };
 
 /** @brief Constructor */
 template <typename TYPE>
 AutoDelete<TYPE>::AutoDelete()
 {
-	pObject = (TYPE*)NULL;
+    pObject = (TYPE*)NULL;
 }
 
 /** @brief Copy constructor */
 template <typename TYPE>
 AutoDelete<TYPE>::AutoDelete(TYPE * ToCopy)
 {
-	pObject = ToCopy;
+    pObject = ToCopy;
 }
 
 /** @brief Copy constructor not allowed */
 template <typename TYPE>
 AutoDelete<TYPE>::AutoDelete(const AutoDelete<TYPE>& ToCopy)
 {
-	throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
+    throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
 }
 
 /** @brief Destructor */
 template <typename TYPE>
 AutoDelete<TYPE>::~AutoDelete()
 {
-	Delete();
+    Delete();
 }
-	
+
 /** @brief Explicitally destroy the pointed object */
 template <typename TYPE>
 void AutoDelete<TYPE>::Delete()
 {
-	if ( pObject != (TYPE*)NULL )
-	{
-		delete pObject;
-		pObject = (TYPE*)NULL;
-	}
+    if ( pObject != (TYPE*)NULL )
+    {
+        delete pObject;
+        pObject = (TYPE*)NULL;
+    }
 }
-	
+
 /** @brief Access function true '*' operator */
 template <typename TYPE>
 TYPE& AutoDelete<TYPE>::operator*()
 {
-	return *pObject;
+    return *pObject;
 }
 
 /** @brief Access function true '->' operator */
 template <typename TYPE>
 TYPE* AutoDelete<TYPE>::operator->()
 {
-	return pObject;
+    return pObject;
 }
 
 template <typename TYPE>
 const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(const AutoDelete<TYPE>& ToCopy)
 {
-	throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
-	return *this;
+    throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
+    return *this;
 }
 
 template <typename TYPE>
 const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(TYPE * ToCopy)
 {
-	if ( pObject != (TYPE*)NULL )
-	{
-		throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
-	}
+    if ( pObject != (TYPE*)NULL )
+    {
+        throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
+    }
 
-	// Do affectation
-	pObject = ToCopy;
+    // Do affectation
+    pObject = ToCopy;
 
-	return *this;
+    return *this;
 }
 
 /** @brief comparaison operator */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator==(const TYPE * ToCompare)
 {
-	// Are internal pointer equals to the given one ?
-	if ( pObject == ToCompare )
-	{
-		return true;
-	}
-	return false;
+    // Are internal pointer equals to the given one ?
+    if ( pObject == ToCompare )
+    {
+        return true;
+    }
+    return false;
 }
 
 /** @brief comparaison operator */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator==(const AutoDelete<TYPE>& ToCompare)
 {
-	// Are internal pointers equal ?
-	if ( pObject == ToCompare.pObject )
-	{
-		return true;
-	}
-	return false;
+    // Are internal pointers equal ?
+    if ( pObject == ToCompare.pObject )
+    {
+        return true;
+    }
+    return false;
 }
 
 /** @brief comparaison operator */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator!=(const TYPE * ToCompare)
 {
-	// Are internal pointer equals to the given one ?
-	if ( pObject != ToCompare )
-	{
-		return true;
-	}
-	return false;
+    // Are internal pointer equals to the given one ?
+    if ( pObject != ToCompare )
+    {
+        return true;
+    }
+    return false;
 }
 
 /** @brief comparaison operator */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator!=(const AutoDelete<TYPE>& ToCompare)
 {
-	// Are internal pointers equal ?
-	if ( pObject != ToCompare.pObject )
-	{
-		return true;
-	}
-	return false;
+    // Are internal pointers equal ?
+    if ( pObject != ToCompare.pObject )
+    {
+        return true;
+    }
+    return false;
 }
 
 } // namespace Omiscid
 
 #endif // __AUTO_DELETE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

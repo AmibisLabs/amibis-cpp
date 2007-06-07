@@ -1,9 +1,9 @@
-/** 
- * @defgroup System Layer 0 : Omiscid multiplateform System layer. 
+/**
+ * @defgroup System Layer 0 : Omiscid multiplateform System layer.
  *
  */
 
-/** 
+/**
  * @file System/Config.h
  * @ingroup System
  * @brief this file is the first file included in the System layer. it defines all mandatory includes.
@@ -14,181 +14,181 @@
 
 #if defined _WIN32 && ! defined WIN32
    /**
-	* @def WIN32
-	* @ingroup System
-	* @brief Define the WIN32 symbol
-	*
-	* In order to be sure to have the correct WIN32 symbol.
-	*/
-	#define WIN32	// WIN32 is more general for us
+    * @def WIN32
+    * @ingroup System
+    * @brief Define the WIN32 symbol
+    *
+    * In order to be sure to have the correct WIN32 symbol.
+    */
+    #define WIN32    // WIN32 is more general for us
 #endif
 
 
 #ifdef WIN32
 
-	// To prevent warning about printf, strcpy in Visual Studio 2005, etc...
-	#ifndef _CRT_SECURE_NO_DEPRECATE
-		#define _CRT_SECURE_NO_DEPRECATE
-	#endif
+    // To prevent warning about printf, strcpy in Visual Studio 2005, etc...
+    #ifndef _CRT_SECURE_NO_DEPRECATE
+        #define _CRT_SECURE_NO_DEPRECATE
+    #endif
 
-	#pragma warning(disable : 4996) // deprecated API
-	#pragma warning(disable : 4100) // formal parameter not used, mostly in virtual fonction
-	#pragma warning(disable : 4512) // Could not generate automatically operator= for a class
-	// #pragma warning(disable : 4127)	// to remove carning about constant expression when compiling...
+    #pragma warning(disable : 4996) // deprecated API
+    #pragma warning(disable : 4100) // formal parameter not used, mostly in virtual fonction
+    #pragma warning(disable : 4512) // Could not generate automatically operator= for a class
+    // #pragma warning(disable : 4127)    // to remove carning about constant expression when compiling...
 
-	// If U are using MFC and co...
-	#ifdef USE_AFX
-		#define  WINVER 0x0501
-		#include "StdAfx.h"
-		// To prevent problems using iostream later...
-		#ifndef _IOSTREAM_
-			#error "You must include '<iostream>' in your 'StdAfx.h' file."
-		#endif
-	#else
-		#define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
-		#include <windows.h>
-	#endif
+    // If U are using MFC and co...
+    #ifdef USE_AFX
+        #define  WINVER 0x0501
+        #include "StdAfx.h"
+        // To prevent problems using iostream later...
+        #ifndef _IOSTREAM_
+            #error "You must include '<iostream>' in your 'StdAfx.h' file."
+        #endif
+    #else
+        #define _WINSOCKAPI_   /* Prevent inclusion of winsock.h in windows.h */
+        #include <windows.h>
+    #endif
 
-	#include <Winsock2.h>
-	#include <process.h>		// Process action
+    #include <Winsock2.h>
+    #include <process.h>        // Process action
 
-   /**	@def FUNCTION_CALL_TYPE
-    *	@ingroup System
-	*	@brief DNS-SD callbacks type (WIN32 specific).
-	*
-	*	As WIN32 plateform supports many function call types, we must use the right
-	*	one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
-	*	the callback type is __stdcall.	On other plateform, this define is empty.
-	*/
-	#define FUNCTION_CALL_TYPE __stdcall
+   /**    @def FUNCTION_CALL_TYPE
+    *    @ingroup System
+    *    @brief DNS-SD callbacks type (WIN32 specific).
+    *
+    *    As WIN32 plateform supports many function call types, we must use the right
+    *    one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
+    *    the callback type is __stdcall.    On other plateform, this define is empty.
+    */
+    #define FUNCTION_CALL_TYPE __stdcall
 
-	/** @def DEBUG
-     *	@ingroup System
-	 *	@brief Define the gcc like debug symbol (WIN32 only).
+    /** @def DEBUG
+     *    @ingroup System
+     *    @brief Define the gcc like debug symbol (WIN32 only).
      *
-	 *	In order to have portable DEBUG support, we need to define a common
-	 *	debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
-	 */
-	#if defined _DEBUG && ! defined DEBUG
-		#define DEBUG	// let Visual Studio be gcc -g compliant
-	#endif
+     *    In order to have portable DEBUG support, we need to define a common
+     *    debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
+     */
+    #if defined _DEBUG && ! defined DEBUG
+        #define DEBUG    // let Visual Studio be gcc -g compliant
+    #endif
 
-	/*! @def strcasecmp
-     *	@ingroup System
-	 *	@brief Define the WIN32 symbol
+    /*! @def strcasecmp
+     *    @ingroup System
+     *    @brief Define the WIN32 symbol
      *
-	 *	For multiplateform source code.
-	 */
-	
+     *    For multiplateform source code.
+     */
 
-	/*! @def strncasecmp
-     *	@ingroup System
-	 *	@brief Define the WIN32 symbol
-     *
-	 *	For multiplateform source code.
-	 */
 
-	/*! @def _snprintf
-     *	@ingroup System
-	 *	@brief Define the WIN32 symbol
+    /*! @def strncasecmp
+     *    @ingroup System
+     *    @brief Define the WIN32 symbol
      *
-	 *	For snprintf source code.
-	 */
-	#define strcasecmp stricmp
-	#define strncasecmp strnicmp
-	#define snprintf _snprintf
+     *    For multiplateform source code.
+     */
 
-	/*! @def SOCKET
-     *	@ingroup System
-	 *	@brief Define the SOCKET type as on WIN32 plateform.
+    /*! @def _snprintf
+     *    @ingroup System
+     *    @brief Define the WIN32 symbol
      *
-	 *	For multiplateform source code.
-	 */
-	/*! @def SOCKET_ERROR
-     *	@ingroup System
-	 *	@brief Define the socket error symbol as on WIN32 plateform.
+     *    For snprintf source code.
+     */
+    #define strcasecmp stricmp
+    #define strncasecmp strnicmp
+    #define snprintf _snprintf
+
+    /*! @def SOCKET
+     *    @ingroup System
+     *    @brief Define the SOCKET type as on WIN32 plateform.
      *
-	 *	For multiplateform source code.
-	 */
+     *    For multiplateform source code.
+     */
+    /*! @def SOCKET_ERROR
+     *    @ingroup System
+     *    @brief Define the socket error symbol as on WIN32 plateform.
+     *
+     *    For multiplateform source code.
+     */
 
 #else
-	#include <sys/types.h>
-	#include <sys/time.h>
+    #include <sys/types.h>
+    #include <sys/time.h>
 
-	#include <sys/socket.h>
-	#include <netinet/in.h>
-	#include <arpa/inet.h>
-	
-   /*!	@def FUNCTION_CALL_TYPE
-    *	@ingroup System
-	*	@brief DNS-SD callbacks type (WIN32 specific).
-	*
-	*	As WIN32 plateform supports many function call types, we must use the right
-	*	one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
-	*	the callback type is __stdcall.	On other plateform, this define is empty.
-	*/
-	#define FUNCTION_CALL_TYPE
+    #include <sys/socket.h>
+    #include <netinet/in.h>
+    #include <arpa/inet.h>
 
-	/*! @def SOCKET
-     *	@ingroup System
-	 *	@brief Define the SOCKET type as on WIN32 plateform.
+   /*!    @def FUNCTION_CALL_TYPE
+    *    @ingroup System
+    *    @brief DNS-SD callbacks type (WIN32 specific).
+    *
+    *    As WIN32 plateform supports many function call types, we must use the right
+    *    one for DNS-SD callbacks. As defined in DNS-SD documentation, under WIN32 plateforms
+    *    the callback type is __stdcall.    On other plateform, this define is empty.
+    */
+    #define FUNCTION_CALL_TYPE
+
+    /*! @def SOCKET
+     *    @ingroup System
+     *    @brief Define the SOCKET type as on WIN32 plateform.
      *
-	 *	For multiplateform source code.
-	 */
-	/*! @def SOCKET_ERROR
-     *	@ingroup System
-	 *	@brief Define the socket error symbol as on WIN32 plateform.
+     *    For multiplateform source code.
+     */
+    /*! @def SOCKET_ERROR
+     *    @ingroup System
+     *    @brief Define the socket error symbol as on WIN32 plateform.
      *
-	 *	For multiplateform source code.
-	 */
-	typedef int SOCKET;
-	#define SOCKET_ERROR (-1)
+     *    For multiplateform source code.
+     */
+    typedef int SOCKET;
+    #define SOCKET_ERROR (-1)
 
-	/*! @def DEBUG
-     *	@ingroup System
-	 *	@brief Define the gcc like debug symbol (WIN32 only).
+    /*! @def DEBUG
+     *    @ingroup System
+     *    @brief Define the gcc like debug symbol (WIN32 only).
      *
-	 *	In order to have portable DEBUG support, we need to define a common
-	 *	debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
-	 */
-	#if defined DEBUG
-		#undef DEBUG
-		#define DEBUG
-	#endif
+     *    In order to have portable DEBUG support, we need to define a common
+     *    debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
+     */
+    #if defined DEBUG
+        #undef DEBUG
+        #define DEBUG
+    #endif
 
-	/*! @def WIN32
-     *	@ingroup System
-	 *	@brief Define the WIN32 symbol
+    /*! @def WIN32
+     *    @ingroup System
+     *    @brief Define the WIN32 symbol
      *
-	 *	In order to be sure to have the correct WIN32 symbol.
-	 */
-	#if defined WIN32
-		#define WIN32	// WIN32 is more interesting for us
-	#endif
+     *    In order to be sure to have the correct WIN32 symbol.
+     */
+    #if defined WIN32
+        #define WIN32    // WIN32 is more interesting for us
+    #endif
 
-	/*! @def strcasecmp
-     *	@ingroup System
-	 *	@brief Define the WIN32 symbol
+    /*! @def strcasecmp
+     *    @ingroup System
+     *    @brief Define the WIN32 symbol
      *
-	 *	For multiplateform source code.
-	 */
+     *    For multiplateform source code.
+     */
 
-	/*! @def strncasecmp
-     *	@ingroup System
-	 *	@brief Define the WIN32 symbol
+    /*! @def strncasecmp
+     *    @ingroup System
+     *    @brief Define the WIN32 symbol
      *
-	 *	For multiplateform source code.
-	 */
+     *    For multiplateform source code.
+     */
 
-	/*! @def _snprintf
-     *	@ingroup System
-	 *	@brief Define the WIN32 symbol
+    /*! @def _snprintf
+     *    @ingroup System
+     *    @brief Define the WIN32 symbol
      *
-	 *	For snprintf source code.
-	 */
+     *    For snprintf source code.
+     */
 
-	#include <unistd.h>
-	#include <pthread.h>
+    #include <unistd.h>
+    #include <pthread.h>
 #endif
 
 // mandatory included files. Some are included here in order to
@@ -199,14 +199,14 @@
 
 #ifdef TRACKING_MEMORY_LEAKS
 
-	// include redefinition of new/delete operator
-	#include <System/TrackingMemoryLeaks.h>
+    // include redefinition of new/delete operator
+    #include <System/TrackingMemoryLeaks.h>
 
-	#define OMISCID_TLM (__LINE__,__FILE__)
+    #define OMISCID_TLM (__LINE__,__FILE__)
 
-#else 
+#else
 
-	#define OMISCID_TLM
+    #define OMISCID_TLM
 
 #endif
 
@@ -215,32 +215,32 @@ namespace Omiscid {
 
 // Trace management
 #ifdef OMISCID_TRACE_ENABLE
-	#define OMISCID_TRACE_IS_ENABLED 1
+    #define OMISCID_TRACE_IS_ENABLED 1
 #else
-	#define OMISCID_TRACE_IS_ENABLED 0
+    #define OMISCID_TRACE_IS_ENABLED 0
 #endif
 
 /** @fct OmiscidError
-	*  @brief used to warn messages
-	*/
+    *  @brief used to warn messages
+    */
 inline void OmiscidError(const char * format, ... )
 {
-	va_list args;
-	va_start( args, format );
-	vfprintf( stderr, format, args );
-	va_end( args );
+    va_list args;
+    va_start( args, format );
+    vfprintf( stderr, format, args );
+    va_end( args );
 }
 
 inline void OmiscidTrace(const char * format, ... )
 {
-	va_list args;
-	va_start( args, format );
+    va_list args;
+    va_start( args, format );
 #ifdef DEBUG
-	vfprintf( stderr, format, args );
+    vfprintf( stderr, format, args );
 #else
-	vprintf( format, args );
+    vprintf( format, args );
 #endif
-	va_end( args );
+    va_end( args );
 }
 
 #define OmiscidError  !(OMISCID_TRACE_IS_ENABLED) ? (void)0 : OmiscidError
@@ -248,16 +248,16 @@ inline void OmiscidTrace(const char * format, ... )
 
 // Message for developping purpose
 #ifdef DEBUG
-	#define DevOmiscidTrace OmiscidError
+    #define DevOmiscidTrace OmiscidError
 #else
-	#define DevOmiscidTrace (void)0
+    #define DevOmiscidTrace (void)0
 #endif
 
 // Define an OmiscidMessage depend on DEBUG flag but always doing a trace
 #ifdef DEBUG
-	#define OmiscidMessage OmiscidError
+    #define OmiscidMessage OmiscidError
 #else
-	#define OmiscidMessage OmiscidTrace
+    #define OmiscidMessage OmiscidTrace
 #endif
 
 #ifdef WIN32
@@ -268,7 +268,7 @@ struct timezone {
        int  tz_dsttime;     /* type of dst correction */
 };
 
-#endif	// ifdef WIN32
+#endif    // ifdef WIN32
 
 // Define Initialisation Object
 // can be instanciated several time without any problem
@@ -276,11 +276,11 @@ struct timezone {
 class OmiscidSystemLayerInitClass
 {
 public:
-	// Constructor
-	OmiscidSystemLayerInitClass();
+    // Constructor
+    OmiscidSystemLayerInitClass();
 
-	// Destructor
-	~OmiscidSystemLayerInitClass();
+    // Destructor
+    ~OmiscidSystemLayerInitClass();
 };
 
 // External object
@@ -292,15 +292,78 @@ extern OmiscidSystemLayerInitClass OmiscidSystemLayerInit;
 class ClassToDebug
 {
 public:
-	// Constructor where to pu a break point
-	ClassToDebug();
+    // Constructor where to pu a break point
+    ClassToDebug();
 
-	// Destructor where to pu a break point
-	~ClassToDebug();
+    // Destructor where to pu a break point
+    ~ClassToDebug();
 };
 
 #endif
 
 } // namespace Omiscid
 
-#endif	// __SYSTEM_CONFIG_H__
+#endif    // __SYSTEM_CONFIG_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

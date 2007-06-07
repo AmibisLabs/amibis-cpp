@@ -14,27 +14,27 @@ using namespace Omiscid;
 
 void RegisterOmiscidService::Init( bool AutoRegister )
 {
-	if ( AutoRegister )
-	{
-		Register();
-	}
+    if ( AutoRegister )
+    {
+        Register();
+    }
 }
 
 RegisterOmiscidService::RegisterOmiscidService( const SimpleString FullName, uint16_t ePort, bool AutoRegister /* = false */ )
-	: RegisterService( FullName, ePort, /* AutoRegister = */ false, /* AutoRename */ false )
+    : RegisterService( FullName, ePort, /* AutoRegister = */ false, /* AutoRename */ false )
 {
-	if ( strstr( FullName.GetStr(), GetOmiscidServiceDnsSdType().GetStr() ) == NULL )
-	{
-		throw ServiceException( "It do not seem to be a valid BIP service" );
-	}
+    if ( strstr( FullName.GetStr(), GetOmiscidServiceDnsSdType().GetStr() ) == NULL )
+    {
+        throw ServiceException( "It do not seem to be a valid BIP service" );
+    }
 
-	Init(AutoRegister);
+    Init(AutoRegister);
 }
 
 RegisterOmiscidService::RegisterOmiscidService( const SimpleString ServiceName, const SimpleString Domain, uint16_t ePort, bool AutoRegister /* = false */ )
-	: RegisterService( ServiceName, GetOmiscidServiceDnsSdType(), Domain, ePort, /* AutoRegister = */ false, /* AutoRename */ false )
+    : RegisterService( ServiceName, GetOmiscidServiceDnsSdType(), Domain, ePort, /* AutoRegister = */ false, /* AutoRename */ false )
 {
-	Init(AutoRegister);
+    Init(AutoRegister);
 }
 
 WaitForOmiscidServices::WaitForOmiscidServices()
@@ -49,3 +49,66 @@ WaitForOmiscidServices::~WaitForOmiscidServices(void)
 RegisterOmiscidService::~RegisterOmiscidService()
 {
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

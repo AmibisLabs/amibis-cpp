@@ -7,391 +7,391 @@ using namespace Omiscid;
 TcpServer::TcpServer()
 : MsgSocket(Socket::TCP), TcpNoDelayMode(false)
 {
-	BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
+    BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
 }
 
 TcpServer::TcpServer(int port, int pid)
 : MsgSocket(Socket::TCP), TcpNoDelayMode(false)
 {
-	BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
-	SetServiceId(pid);
-	Create(port);
+    BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
+    SetServiceId(pid);
+    Create(port);
 }
 
 TcpServer::~TcpServer()
 {
-	Disconnect();
-	Close();
+    Disconnect();
+    Close();
 
-	if ( BufferForMultipleClients )
-	{
-		delete [] BufferForMultipleClients;
-		BufferForMultipleClients = NULL;
-	}
+    if ( BufferForMultipleClients )
+    {
+        delete [] BufferForMultipleClients;
+        BufferForMultipleClients = NULL;
+    }
 }
 
 void TcpServer::Create(int port)
 {
-	InitForTcpServer(port);
-	StartThread();
+    InitForTcpServer(port);
+    StartThread();
 }
 
 void TcpServer::Disconnect()
-{  
-	listConnections.Lock();
+{
+    listConnections.Lock();
 
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		delete listConnections.GetCurrent();
-		listConnections.RemoveCurrent();
-	}
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        delete listConnections.GetCurrent();
+        listConnections.RemoveCurrent();
+    }
 
-	listConnections.Unlock();
+    listConnections.Unlock();
 }
 
 void TcpServer::Close()
 {
-	StopThread();
-	GetSocket()->Close();
+    StopThread();
+    GetSocket()->Close();
 }
 
 int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 {
-	// OmiscidTrace( "TcpServer::SendToClient\n");
-	listConnections.Lock();
-	MsgSocket* ms = FindClientFromId(pid);
-	int nb_send = 0;
-	if(ms)
-	{
-		//ms->IsConnected()  : tested by FindClientFromId
-		try
-		{
-			nb_send = ms->Send(len, buf);
-		}
-		catch( SocketException &e )
-		{
-			OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
-		}
-	}
-	listConnections.Unlock();
-	return nb_send;
+    // OmiscidTrace( "TcpServer::SendToClient\n");
+    listConnections.Lock();
+    MsgSocket* ms = FindClientFromId(pid);
+    int nb_send = 0;
+    if(ms)
+    {
+        //ms->IsConnected()  : tested by FindClientFromId
+        try
+        {
+            nb_send = ms->Send(len, buf);
+        }
+        catch( SocketException &e )
+        {
+            OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+        }
+    }
+    listConnections.Unlock();
+    return nb_send;
 }
 
 int TcpServer::SendToClient(int* tab_len, const char** tab_buf, int nb_buf, unsigned int pid)
 {
-	listConnections.Lock();
+    listConnections.Lock();
 
-	MsgSocket* ms = FindClientFromId(pid);
-	int nb_send = 0;
+    MsgSocket* ms = FindClientFromId(pid);
+    int nb_send = 0;
 
-	if(ms)
-	{
-		//ms->IsConnected() tested by FindClientFromId
-		try
-		{
-			nb_send = ms->SendCuttedMsg(tab_len, tab_buf, nb_buf);
-		}
-		catch( SocketException &e )
-		{
-			OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
-		}
-	}
-	listConnections.Unlock();
-	return nb_send;
+    if(ms)
+    {
+        //ms->IsConnected() tested by FindClientFromId
+        try
+        {
+            nb_send = ms->SendCuttedMsg(tab_len, tab_buf, nb_buf);
+        }
+        catch( SocketException &e )
+        {
+            OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
+        }
+    }
+    listConnections.Unlock();
+    return nb_send;
 }
 
 int TcpServer::SendToAllClients(int len, const char* buf)
 {
-	int nb_clients = 0;
-	int TotalLen;
-	MsgSocket * ms;
+    int nb_clients = 0;
+    int TotalLen;
+    MsgSocket * ms;
 
-	// Check if we have someone to serve
-	listConnections.Lock();
-	if ( listConnections.GetNumberOfElements() == 0 )
-	{
-		listConnections.Unlock();
-		return 0;
-	}
-	listConnections.Unlock();
+    // Check if we have someone to serve
+    listConnections.Lock();
+    if ( listConnections.GetNumberOfElements() == 0 )
+    {
+        listConnections.Unlock();
+        return 0;
+    }
+    listConnections.Unlock();
 
-	ProtectedSend.EnterMutex();
+    ProtectedSend.EnterMutex();
 
-	// If message is too big, we do not try to do optimisation
-	if ( len > maxBIPMessageSize )
-	{
-		listConnections.Lock();
-		for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-		{
-			ms = listConnections.GetCurrent();
-			if( ms->IsConnected() )
-			{
-				try
-				{
-					ms->Send(len, buf);
-					nb_clients++;
-				}
-				catch( SocketException &e )
-				{
-					OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
-				}
-			}
-			else
-			{
-				listConnections.RemoveCurrent();
-				delete ms;
-			}
-		}
-		listConnections.Unlock();
+    // If message is too big, we do not try to do optimisation
+    if ( len > maxBIPMessageSize )
+    {
+        listConnections.Lock();
+        for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+        {
+            ms = listConnections.GetCurrent();
+            if( ms->IsConnected() )
+            {
+                try
+                {
+                    ms->Send(len, buf);
+                    nb_clients++;
+                }
+                catch( SocketException &e )
+                {
+                    OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+                }
+            }
+            else
+            {
+                listConnections.RemoveCurrent();
+                delete ms;
+            }
+        }
+        listConnections.Unlock();
 
-		ProtectedSend.LeaveMutex();
-		return nb_clients;
-	}
+        ProtectedSend.LeaveMutex();
+        return nb_clients;
+    }
 
-	TotalLen = MsgSocket::PrepareBufferForBip( BufferForMultipleClients, buf, len );
-	if ( TotalLen == -1 )
-	{
-		ProtectedSend.LeaveMutex();
-		return -1;
-	}
+    TotalLen = MsgSocket::PrepareBufferForBip( BufferForMultipleClients, buf, len );
+    if ( TotalLen == -1 )
+    {
+        ProtectedSend.LeaveMutex();
+        return -1;
+    }
 
-	listConnections.Lock();
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( ms->IsConnected() )
-		{
-			try
-			{
-				ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
-				nb_clients++;
-			}
-			catch( SocketException &e )
-			{
-				OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
-			}
-		}
-		else
-		{
-			listConnections.RemoveCurrent();
-			delete ms;
-		}
-	}
-	listConnections.Unlock();
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( ms->IsConnected() )
+        {
+            try
+            {
+                ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
+                nb_clients++;
+            }
+            catch( SocketException &e )
+            {
+                OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+            }
+        }
+        else
+        {
+            listConnections.RemoveCurrent();
+            delete ms;
+        }
+    }
+    listConnections.Unlock();
 
-	ProtectedSend.LeaveMutex();
+    ProtectedSend.LeaveMutex();
 
-	return nb_clients;
+    return nb_clients;
 }
 
 int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 {
-	int nb_clients = 0;
-	int TotalLen;
-	int i;
-	MsgSocket * ms;
+    int nb_clients = 0;
+    int TotalLen;
+    int i;
+    MsgSocket * ms;
 
-	// Check if we have someone to serve
-	listConnections.Lock();
-	if ( listConnections.GetNumberOfElements() == 0 )
-	{
-		listConnections.Unlock();
-		return 0;
-	}
-	listConnections.Unlock();
+    // Check if we have someone to serve
+    listConnections.Lock();
+    if ( listConnections.GetNumberOfElements() == 0 )
+    {
+        listConnections.Unlock();
+        return 0;
+    }
+    listConnections.Unlock();
 
-	for( i = 0, TotalLen = 0; i < nb_buf; i++ )
-	{
-		TotalLen += tab_len[0];
-	}
+    for( i = 0, TotalLen = 0; i < nb_buf; i++ )
+    {
+        TotalLen += tab_len[0];
+    }
 
-	// If message is too big, we do not try to do optimisation
-	if ( TotalLen > maxBIPMessageSize )
-	{
-		listConnections.Lock();
-		for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-		{
-			ms = listConnections.GetCurrent();
-			if( ms->IsConnected() )
-			{
-				try
-				{
-					ms->SendCuttedMsg(tab_len, tab_buf, nb_buf );
-					nb_clients++;
-				}
-				catch( SocketException &e )
-				{
-					OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
-				}
-			}
-			else
-			{
-				listConnections.RemoveCurrent();
-				delete ms;
-			}
-		}
-		listConnections.Unlock();
+    // If message is too big, we do not try to do optimisation
+    if ( TotalLen > maxBIPMessageSize )
+    {
+        listConnections.Lock();
+        for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+        {
+            ms = listConnections.GetCurrent();
+            if( ms->IsConnected() )
+            {
+                try
+                {
+                    ms->SendCuttedMsg(tab_len, tab_buf, nb_buf );
+                    nb_clients++;
+                }
+                catch( SocketException &e )
+                {
+                    OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+                }
+            }
+            else
+            {
+                listConnections.RemoveCurrent();
+                delete ms;
+            }
+        }
+        listConnections.Unlock();
 
-		ProtectedSend.LeaveMutex();
-		return nb_clients;
-	}
+        ProtectedSend.LeaveMutex();
+        return nb_clients;
+    }
 
-	ProtectedSend.EnterMutex();
-	TotalLen = MsgSocket::PrepareBufferForBipFromCuttedMsg( BufferForMultipleClients, tab_len, tab_buf, nb_buf);
-	if ( TotalLen == -1 )
-	{
-		ProtectedSend.LeaveMutex();
-		return -1;
-	}
+    ProtectedSend.EnterMutex();
+    TotalLen = MsgSocket::PrepareBufferForBipFromCuttedMsg( BufferForMultipleClients, tab_len, tab_buf, nb_buf);
+    if ( TotalLen == -1 )
+    {
+        ProtectedSend.LeaveMutex();
+        return -1;
+    }
 
-	listConnections.Lock();
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( ms->IsConnected() )
-		{
-			try
-			{
-				ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
-				nb_clients++;
-			}
-			catch( SocketException &e )
-			{
-				OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
-			}
-		}
-		else
-		{
-			listConnections.RemoveCurrent();
-			delete ms;
-		}
-	}
-	listConnections.Unlock();
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( ms->IsConnected() )
+        {
+            try
+            {
+                ms->SendPreparedBuffer(TotalLen, BufferForMultipleClients);
+                nb_clients++;
+            }
+            catch( SocketException &e )
+            {
+                OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
+            }
+        }
+        else
+        {
+            listConnections.RemoveCurrent();
+            delete ms;
+        }
+    }
+    listConnections.Unlock();
 
-	ProtectedSend.LeaveMutex();
+    ProtectedSend.LeaveMutex();
 
-	return nb_clients;
+    return nb_clients;
 }
 
 
 int TcpServer::GetNbConnections()
 {
-	MsgSocket * ms;
+    MsgSocket * ms;
 
-	listConnections.Lock();
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next())
-	{
-		ms = listConnections.GetCurrent();
-		if( !ms->IsConnected() )
-		{
-			listConnections.RemoveCurrent();
-			delete ms;
-		}
-	}
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next())
+    {
+        ms = listConnections.GetCurrent();
+        if( !ms->IsConnected() )
+        {
+            listConnections.RemoveCurrent();
+            delete ms;
+        }
+    }
 
-	int nb = (int)listConnections.GetNumberOfElements();
-	listConnections.Unlock();
-	return nb;
+    int nb = (int)listConnections.GetNumberOfElements();
+    listConnections.Unlock();
+    return nb;
 }
 
 bool TcpServer::AcceptConnection(MsgSocket* sock)
 {
-	// OmiscidTrace( "in TcpServer::acceptConnection(MsgSocket*) %u\n", sock->GetPeerPid());
+    // OmiscidTrace( "in TcpServer::acceptConnection(MsgSocket*) %u\n", sock->GetPeerPid());
 
-	// OmiscidTrace( "TcpServer::AcceptConnection:: connection from (%s)\n", sock->GetSocket()->GetConnectedHost().GetStr());
+    // OmiscidTrace( "TcpServer::AcceptConnection:: connection from (%s)\n", sock->GetSocket()->GetConnectedHost().GetStr());
 
-	listConnections.Lock();
+    listConnections.Lock();
 
-	// Init the socket
-	// REVIEW: Inherit my SyndLink data
-	mutex.EnterMutex();
-	if ( SyncLinkData.GetLength() != 0 )
-	{
-		sock->SetSyncLinkData( SyncLinkData  );
-	}
-	// If we have a fonction set to process LincSyncData, set it to the opened connection
-	if ( callbackSyncLinkFct )
-	{
-		sock->SetCallbackSyncLink( callbackSyncLinkFct, callbackSyncLinkData.userData1, callbackSyncLinkData.userData2 );
-	}
-	mutex.LeaveMutex();
+    // Init the socket
+    // REVIEW: Inherit my SyndLink data
+    mutex.EnterMutex();
+    if ( SyncLinkData.GetLength() != 0 )
+    {
+        sock->SetSyncLinkData( SyncLinkData  );
+    }
+    // If we have a fonction set to process LincSyncData, set it to the opened connection
+    if ( callbackSyncLinkFct )
+    {
+        sock->SetCallbackSyncLink( callbackSyncLinkFct, callbackSyncLinkData.userData1, callbackSyncLinkData.userData2 );
+    }
+    mutex.LeaveMutex();
 
-	// Add all my listener to the new socket
-	CallbackObjects.Lock();
-	for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
-	{
-		// Add this listener
-		sock->AddCallbackObject( CallbackObjects.GetCurrent() );
-	}
-	CallbackObjects.Unlock();
+    // Add all my listener to the new socket
+    CallbackObjects.Lock();
+    for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
+    {
+        // Add this listener
+        sock->AddCallbackObject( CallbackObjects.GetCurrent() );
+    }
+    CallbackObjects.Unlock();
 
-	sock->SetTcpNoDelay(TcpNoDelayMode);
-	sock->SetName(GetName());
-	sock->SetServiceId(GetServiceId());
-	sock->SetMaxMessageSizeForTCP(MsgSocket::GetMaxMessageSizeForTCP());
-	sock->StartThread();
+    sock->SetTcpNoDelay(TcpNoDelayMode);
+    sock->SetName(GetName());
+    sock->SetServiceId(GetServiceId());
+    sock->SetMaxMessageSizeForTCP(MsgSocket::GetMaxMessageSizeForTCP());
+    sock->StartThread();
 
-	listConnections.Add(sock);
-	listConnections.Unlock();
+    listConnections.Add(sock);
+    listConnections.Unlock();
 
-	// Send empty message information
-	sock->SendSyncLinkMsg();
+    // Send empty message information
+    sock->SendSyncLinkMsg();
 
-	return true;
+    return true;
 }
 
 bool TcpServer::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 {
-	if ( MsgSocket::AddCallbackObject( CallbackObject ) == false )
-	{
-		return false;
-	}
+    if ( MsgSocket::AddCallbackObject( CallbackObject ) == false )
+    {
+        return false;
+    }
 
-	MsgSocket* ms;
-	listConnections.Lock(); 
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( ms->IsConnected() )
-		{
-			ms->AddCallbackObject( CallbackObject );
-		}
-		else
-		{
-			listConnections.RemoveCurrent();
-			delete ms;
-		}
-	}
-	listConnections.Unlock();
+    MsgSocket* ms;
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( ms->IsConnected() )
+        {
+            ms->AddCallbackObject( CallbackObject );
+        }
+        else
+        {
+            listConnections.RemoveCurrent();
+            delete ms;
+        }
+    }
+    listConnections.Unlock();
 
-	return true;
+    return true;
 }
 
 bool TcpServer::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 {
-	if ( MsgSocket::RemoveCallbackObject( CallbackObject ) == false )
-	{
-		return false;
-	}
+    if ( MsgSocket::RemoveCallbackObject( CallbackObject ) == false )
+    {
+        return false;
+    }
 
-	MsgSocket* ms;
-	listConnections.Lock(); 
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( ms->IsConnected() )
-		{
-			ms->RemoveCallbackObject( CallbackObject );
-		}
-		else
-		{
-			listConnections.RemoveCurrent();
-			delete ms;
-		}
-	}
-	listConnections.Unlock();
+    MsgSocket* ms;
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( ms->IsConnected() )
+        {
+            ms->RemoveCallbackObject( CallbackObject );
+        }
+        else
+        {
+            listConnections.RemoveCurrent();
+            delete ms;
+        }
+    }
+    listConnections.Unlock();
 
-	return true;
+    return true;
 }
 
 /** \brief Remove all callback objects for notification
@@ -399,210 +399,274 @@ bool TcpServer::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 */
 void TcpServer::RemoveAllCallbackObjects()
 {
-	MsgSocket::RemoveAllCallbackObjects();
+    MsgSocket::RemoveAllCallbackObjects();
 
-	MsgSocket* ms;
-	listConnections.Lock(); 
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( ms->IsConnected() )
-		{
-			ms->RemoveAllCallbackObjects();
-		}
-		else
-		{
-			listConnections.RemoveCurrent();
-			delete ms;
-		}
-	}
-	listConnections.Unlock();
+    MsgSocket* ms;
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( ms->IsConnected() )
+        {
+            ms->RemoveAllCallbackObjects();
+        }
+        else
+        {
+            listConnections.RemoveCurrent();
+            delete ms;
+        }
+    }
+    listConnections.Unlock();
 }
 
 int TcpServer::GetListPeerId(SimpleList<unsigned int>& list_peer)
 {
-	MsgSocket * ms;
-	int nb = 0;
+    MsgSocket * ms;
+    int nb = 0;
 
-	listConnections.Lock(); 
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( !ms->IsConnected() )
-		{
-			listConnections.RemoveCurrent();
-			delete ms;
-		}
-		else
-		{
-			list_peer.Add(ms->GetPeerPid());    
-			nb++;
-		}
-	}
-	listConnections.Unlock();
-	return nb;
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( !ms->IsConnected() )
+        {
+            listConnections.RemoveCurrent();
+            delete ms;
+        }
+        else
+        {
+            list_peer.Add(ms->GetPeerPid());
+            nb++;
+        }
+    }
+    listConnections.Unlock();
+    return nb;
 }
 
 void TcpServer::SetServiceId(unsigned int pid)
 {
-	// Check validity of a service Id
-	if ( (pid & ComTools::CONNECTOR_ID) == 0 )
-	{
-		// pid = pid | 0xffffff01;
+    // Check validity of a service Id
+    if ( (pid & ComTools::CONNECTOR_ID) == 0 )
+    {
+        // pid = pid | 0xffffff01;
 #ifdef DEBUG
-		//		fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpServer. Value changes to 1 (PeerId = %8.8x)\n", pid );
+        //        fprintf( stderr, "Warning: ConnectorId could not be 0 for TcpServer. Value changes to 1 (PeerId = %8.8x)\n", pid );
 #endif
-	}
-	MsgSocket::SetServiceId(pid); 
+    }
+    MsgSocket::SetServiceId(pid);
 
-	listConnections.Lock();
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		if( listConnections.GetCurrent()->IsConnected() )
-		{
-			listConnections.GetCurrent()->SetServiceId(pid);
-		}
-		else
-		{
-			delete listConnections.GetCurrent();
-			listConnections.RemoveCurrent();
-		}
-	}
-	listConnections.Unlock();
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        if( listConnections.GetCurrent()->IsConnected() )
+        {
+            listConnections.GetCurrent()->SetServiceId(pid);
+        }
+        else
+        {
+            delete listConnections.GetCurrent();
+            listConnections.RemoveCurrent();
+        }
+    }
+    listConnections.Unlock();
 }
 
 void TcpServer::SetMaxMessageSizeForTCP(int max)
 {
-	MsgSocket::SetMaxMessageSizeForTCP(max);
+    MsgSocket::SetMaxMessageSizeForTCP(max);
 
-	listConnections.Lock();
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		if(listConnections.GetCurrent()->IsConnected())
-			listConnections.GetCurrent()->SetMaxMessageSizeForTCP(max);
-		else
-		{
-			delete listConnections.GetCurrent();
-			listConnections.RemoveCurrent();
-		}
-	}
-	listConnections.Unlock();
+    listConnections.Lock();
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        if(listConnections.GetCurrent()->IsConnected())
+            listConnections.GetCurrent()->SetMaxMessageSizeForTCP(max);
+        else
+        {
+            delete listConnections.GetCurrent();
+            listConnections.RemoveCurrent();
+        }
+    }
+    listConnections.Unlock();
 }
 
 MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 {
-	MsgSocket * ms;
+    MsgSocket * ms;
 
-	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( *ms == id )
-		{
-			if( ms->IsConnected() )
-			{
-				return ms;
-			}
-			else 
-			{
-				delete listConnections.GetCurrent();
-				listConnections.RemoveCurrent();
-				// look forward to look if there is not another pid
-			}
-		}
-	}
+    for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( *ms == id )
+        {
+            if( ms->IsConnected() )
+            {
+                return ms;
+            }
+            else
+            {
+                delete listConnections.GetCurrent();
+                listConnections.RemoveCurrent();
+                // look forward to look if there is not another pid
+            }
+        }
+    }
 
-	unsigned int SearchId = id & ComTools::SERVICE_PEERID;
+    unsigned int SearchId = id & ComTools::SERVICE_PEERID;
 
-	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( SearchId == (ms->GetPeerPid() & ComTools::SERVICE_PEERID) )
-		{
-			if ( ms->IsConnected() )
-			{
-				return ms;
-			}
-		}
-	}
+    for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( SearchId == (ms->GetPeerPid() & ComTools::SERVICE_PEERID) )
+        {
+            if ( ms->IsConnected() )
+            {
+                return ms;
+            }
+        }
+    }
 
-	return NULL;
+    return NULL;
 }
 
 /** \brief Destroy a specific connection */
 bool TcpServer::DisconnectPeerId(unsigned int PeerId)
 {
-	MsgSocket * ms;
-	bool ret = false;
-	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
+    MsgSocket * ms;
+    bool ret = false;
+    unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
 
-	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ms = listConnections.GetCurrent();
-		if( ms->IsConnected() == false )
-		{
-			delete listConnections.GetCurrent();
-			listConnections.RemoveCurrent();
-			continue;
-		}
+    for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ms = listConnections.GetCurrent();
+        if( ms->IsConnected() == false )
+        {
+            delete listConnections.GetCurrent();
+            listConnections.RemoveCurrent();
+            continue;
+        }
 
-		if ( SearchId == (ms->GetPeerPid() & ComTools::SERVICE_PEERID) )
-		{
-			delete listConnections.GetCurrent();
-			listConnections.RemoveCurrent();
-			ret = true;
-			continue;
-		}
-	}
+        if ( SearchId == (ms->GetPeerPid() & ComTools::SERVICE_PEERID) )
+        {
+            delete listConnections.GetCurrent();
+            listConnections.RemoveCurrent();
+            ret = true;
+            continue;
+        }
+    }
 
-	return ret;
+    return ret;
 }
 
 bool TcpServer::SetTcpNoDelay(bool Set)
 {
-	bool ReturnCode = true;
+    bool ReturnCode = true;
 
-	if ( Set == TcpNoDelayMode )
-		return true;
+    if ( Set == TcpNoDelayMode )
+        return true;
 
-	listConnections.Lock();
+    listConnections.Lock();
 
-	TcpNoDelayMode = Set;
+    TcpNoDelayMode = Set;
 
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
-	{
-		ReturnCode = ReturnCode & listConnections.GetCurrent()->SetTcpNoDelay(TcpNoDelayMode);
-	}
+    for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+    {
+        ReturnCode = ReturnCode & listConnections.GetCurrent()->SetTcpNoDelay(TcpNoDelayMode);
+    }
 
-	listConnections.Unlock();
+    listConnections.Unlock();
 
-	return ReturnCode;
+    return ReturnCode;
 }
 
 ComTools* TcpServer::Cast()
 {
-	return dynamic_cast<ComTools*>(this); 
+    return dynamic_cast<ComTools*>(this);
 }
 
 unsigned int TcpServer::GetServiceId() const
 {
-	return MsgSocket::GetServiceId(); 
+    return MsgSocket::GetServiceId();
 }
 
 unsigned short TcpServer::GetTcpPort()
 {
-	return MsgSocket::GetPortNb(); 
+    return MsgSocket::GetPortNb();
 }
 
 int TcpServer::GetMaxMessageSizeForTCP()
 {
-	return MsgSocket::GetMaxMessageSizeForTCP(); 
+    return MsgSocket::GetMaxMessageSizeForTCP();
 }
 
 bool TcpServer::IsStillConnected(unsigned int peer_id)
-{ 
-	bool res = false;
-	listConnections.Lock();
-	res = FindClientFromId(peer_id) != NULL; 
-	listConnections.Unlock();
-	return res;
+{
+    bool res = false;
+    listConnections.Lock();
+    res = FindClientFromId(peer_id) != NULL;
+    listConnections.Unlock();
+    return res;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-/* @file 
+/* @file
  * @ingroup ServiceControl
  * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2006
@@ -23,25 +23,25 @@ class AnswersManager;
 
 class AnswerWaiter
 {
-	friend class AnswersManager;
+    friend class AnswersManager;
 
 protected:
-	AnswerWaiter();
-	virtual ~AnswerWaiter();
+    AnswerWaiter();
+    virtual ~AnswerWaiter();
 
 public:
-	XMLMessage * GetAnswer(unsigned int TimeToWait);
-	void Free();
+    XMLMessage * GetAnswer(unsigned int TimeToWait);
+    void Free();
 
 protected:
-	bool Use( unsigned int eMessageId );
+    bool Use( unsigned int eMessageId );
 
 private:
-	ReentrantMutex ObjectMutex;	// A mutex to protect the structure
-	Event Waiter;				// in order to wait for answer
-	unsigned int MessageId;		// Num of my query, so num of the answer
-	XMLMessage * AnswerMessage; // Received Message
-	bool IsFree;				// Is this object free of use ? (memory and event creation
+    ReentrantMutex ObjectMutex;    // A mutex to protect the structure
+    Event Waiter;                // in order to wait for answer
+    unsigned int MessageId;        // Num of my query, so num of the answer
+    XMLMessage * AnswerMessage; // Received Message
+    bool IsFree;                // Is this object free of use ? (memory and event creation
 };
 
 /**
@@ -51,23 +51,23 @@ private:
 class AnswersManager
 {
 public:
-	AnswersManager();
-	virtual ~AnswersManager();
+    AnswersManager();
+    virtual ~AnswersManager();
 
-	AnswerWaiter * CreateAnswerWaiter(unsigned int MessageId);
+    AnswerWaiter * CreateAnswerWaiter(unsigned int MessageId);
 
-	/** \brief check the id of 'msg'
-	 * \param msg [in] the received messages
-	 * \param msg_id [in] the waited id
-	 * \return true if the id of 'msg' has the value 'msg_id'
-	 */
-	bool CheckMessage(XMLMessage* msg, unsigned int msg_id);
-	
-	bool PushAnswer(XMLMessage * Msg);
+    /** \brief check the id of 'msg'
+     * \param msg [in] the received messages
+     * \param msg_id [in] the waited id
+     * \return true if the id of 'msg' has the value 'msg_id'
+     */
+    bool CheckMessage(XMLMessage* msg, unsigned int msg_id);
+
+    bool PushAnswer(XMLMessage * Msg);
 
 private:
-	// List of event for each thread
-	MutexedSimpleList<AnswerWaiter*> WaitersList;
+    // List of event for each thread
+    MutexedSimpleList<AnswerWaiter*> WaitersList;
 };
 
 /**
@@ -86,8 +86,8 @@ private:
  * The returned object contains the data.
  * To consult the data already asked to the ControlServer use FindVariable, FindInput, FindOutput.
  * To update a description, call again QueryxxxDescription
- * 
- * You can subscribe to variable modification by using Subscribe method, 
+ *
+ * You can subscribe to variable modification by using Subscribe method,
  * the modification event are processed by a callback method define by SetCtrlEventListener.
  */
 class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersManager
@@ -95,7 +95,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
  public:
   /** \brief Event listener type */
   typedef void (FUNCTION_CALL_TYPE *CtrlEventListener)(XMLMessage*, void*);
- 
+
   /** \brief Constructor
    * \param serviceId [in] the id of the service associated to this object
    */
@@ -129,9 +129,9 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
 
   /** @brief Ask for a variable Description
    * @param var_name name of the variable
-   * @return NULL if query failed, else a pointer on a structure with data about the variable 
+   * @return NULL if query failed, else a pointer on a structure with data about the variable
    */
-  VariableAttribute* QueryVariableDescription(const SimpleString var_name);  
+  VariableAttribute* QueryVariableDescription(const SimpleString var_name);
 
   /** @brief Ask for a variable modification
    * @param var_name name of the variable
@@ -140,13 +140,13 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    * If the query has bee accepted GetValue give value_str
    */
   VariableAttribute* QueryVariableModif(const SimpleString var_name, const SimpleString value_str);
-  
+
   /** @brief Ask for a input description
    * @param input_name name of the input
    * @return NULL if query failed, else a pointer on a structure with data about the input
    */
   InOutputAttribute* QueryInputDescription(const SimpleString input_name);
-  
+
   /** @brief Ask for a output description
    * @param output_name name of the output
    * @return NULL if query failed, else a pointer on a structure with data about the output
@@ -159,12 +159,12 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    */
   InOutputAttribute* QueryInOutputDescription(const SimpleString in_output_name);
 
-    /** @brief Ask for a precise description of everything in the ControlServer 
+    /** @brief Ask for a precise description of everything in the ControlServer
    * @return false if query failed, true otherwise
    */
   bool QueryDetailedDescription();
 
-  /** @brief Ask for receive variable modification 
+  /** @brief Ask for receive variable modification
    * @param var_name [in] the variable name
    */
   void Subscribe(const SimpleString var_name);
@@ -174,28 +174,28 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   void Unsubscribe(const SimpleString var_name);
   //@}
 
-  /** @name Retrieve data about attributes 
+  /** @name Retrieve data about attributes
    *
    * Access to attribute already known, with data filled by previous called to QueryXXXDescription.
    */
   //@{
-  /** @brief Access to data about a variable 
-   * @param name [in] the variable name 
+  /** @brief Access to data about a variable
+   * @param name [in] the variable name
    * @return NULL if the variable is not found, else a pointer on a structure with the data about the variable
    */
   VariableAttribute* FindVariable(const SimpleString name);
   /** @brief Access to data about an input
-   * @param name [in] the input name 
+   * @param name [in] the input name
    * @return NULL if the input is not found, else a pointer on a structure with the data about the input
    */
   InOutputAttribute* FindInput(const SimpleString name);
   /** @brief Access to data about an output
-   * @param name [in] the output name 
+   * @param name [in] the output name
    * @return NULL if the output is not found, else a pointer on a structure with the data about the output
    */
   InOutputAttribute* FindOutput(const SimpleString name);
   /** @brief Access to data about an inoutput
-   * @param name [in] the inoutput name 
+   * @param name [in] the inoutput name
    * @return NULL if the inoutput is not found, else a pointer on a structure with the data about the inoutput
    */
   InOutputAttribute* FindInOutput(const SimpleString name);
@@ -236,7 +236,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   SimpleList<InOutputAttribute*>& GetInOutputList();
   //@}
 
-  
+
   /** \brief Process Control Event
    *
    * For the event about value modification, the value contained in the VariableAttribute
@@ -261,7 +261,7 @@ private:
 
   /** @brief Finish query by adding begin and end tags.
    *
-   * Add the tag <controlQuery id="..."> to the message 
+   * Add the tag <controlQuery id="..."> to the message
    * beginning and </controlQuery> to the end.
    * id field is completed with the current value of id.
    * Then this value is incremented.
@@ -283,41 +283,41 @@ private:
 
   /** \name Message processing */
   //@{
-  /** \brief Extract global description from message 
+  /** \brief Extract global description from message
    * \param xml_msg [in] message to parse */
   void ProcessGlobalDescription(XMLMessage* xml_msg);
 
   /** \name Message processing */
   //@{
-  /** \brief Extract global description from message 
+  /** \brief Extract global description from message
    * \param xml_msg [in] message to parse */
   void ProcessDetailedDescription(XMLMessage* xml_msg);
-  
+
   /** \brief Extract variable description from a message
    * \param node part of message where extract data
    * \param var_attr structure where store data. Can be null
-   * \return a structure with the data. It is var_attr if var_attr is non null, 
+   * \return a structure with the data. It is var_attr if var_attr is non null,
    * else return a pointer to a new allocated struture
    */
   VariableAttribute* ProcessVariableDescription(xmlNodePtr node, VariableAttribute* var_attr);
-  /** \brief Extract input description from a message   
+  /** \brief Extract input description from a message
    * \param node part of message where extract data
    * \param input_attr structure where store data. Can be null
-   * \return a structure with the data. It is input_attr if input_attr is non null, 
+   * \return a structure with the data. It is input_attr if input_attr is non null,
    * else return a pointer to a new allocated struture
    */
   InOutputAttribute* ProcessInputDescription(xmlNodePtr node, InOutputAttribute* input_attr);
-  /** \brief Extract output description from a message   
+  /** \brief Extract output description from a message
    * \param node part of message where extract data
    * \param output_attr structure where store data. Can be null
-   * \return a structure with the data. It is output_attr if output_attr is non null, 
+   * \return a structure with the data. It is output_attr if output_attr is non null,
    * else return a pointer to a new allocated struture
    */
   InOutputAttribute* ProcessOutputDescription(xmlNodePtr node, InOutputAttribute* output_attr);
-  /** \brief Extract inoutput description from a message   
+  /** \brief Extract inoutput description from a message
    * \param node part of message where extract data
    * \param in_output_attr structure where store data. Can be null
-   * \return a structure with the data. It is in_output_attr if in_output_attr is non null, 
+   * \return a structure with the data. It is in_output_attr if in_output_attr is non null,
    * else return a pointer to a new allocated struture
    */
   InOutputAttribute* ProcessInOutputDescription(xmlNodePtr node, InOutputAttribute* in_output_attr);
@@ -357,7 +357,7 @@ protected:
   //@{
   SimpleList<VariableAttribute*> listVariableAttr; /*!< list of variable attribute*/
   SimpleList<InOutputAttribute*> listInputAttr; /*!< list of input attribute*/
-  SimpleList<InOutputAttribute*> listOutputAttr; /*!< list of output attribute*/ 
+  SimpleList<InOutputAttribute*> listOutputAttr; /*!< list of output attribute*/
   SimpleList<InOutputAttribute*> listInOutputAttr; /*!< list of inoutput attribute*/
   //@}
 
@@ -387,3 +387,67 @@ protected:
 } // namespace Omiscid
 
 #endif // __CONTROL_CLIENT_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

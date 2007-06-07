@@ -25,7 +25,7 @@ libToInstall += target_system
 
 env_com = env.Copy()
 env_com.Append(CPPPATH=['System', 'Com'])
-env_com.Append(LIBPATH=['.'])
+env_com.Prepend(LIBPATH=['.'])
 env_com.Append(LIBS = ['OmiscidSystem'])
 target_com = env_com.SharedLibrary(
     target='OmiscidCom',
@@ -36,7 +36,7 @@ libToInstall += target_com
 
 env_control = env.Copy()
 env_control.Append(CPPPATH=['System', 'Com', 'ServiceControl'])
-env_control.Append(LIBPATH=['.'])
+env_control.Prepend(LIBPATH=['.'])
 env_control.Append(LIBS = ['OmiscidCom', 'OmiscidSystem'])
 target_control = env_control.SharedLibrary(
     target='OmiscidControl',

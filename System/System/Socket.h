@@ -107,7 +107,7 @@ public:
    * @param len [in] the length of the buffer
    * @param buf  [in] the buffer of byte to send
    * @return the number of send byte
-   * @exception raise SocketException if error during sending 
+   * @exception raise SocketException if error during sending
    */
   int Send(int len, const char* buf);
 
@@ -116,7 +116,7 @@ public:
    * @param buf  [in] the buffer of byte to send
    * @param dest [in] the destination of the message
    * @return the number of send byte
-   * @exception raise SocketException if error during sending 
+   * @exception raise SocketException if error during sending
    */
   int SendTo(int len, const char* buf, struct sockaddr_in* dest );
 
@@ -160,7 +160,7 @@ private:
 
   enum DynamicNameSolvingType { OMISCIDNS_UNSET = 0, OMISCIDNS_USE_DNS_ONLY = 1, OMISCIDNS_USE_MDNS_NAME_SOLVING = 2 }; /*!< for future use : maybe we may apply bit operation */
   static DynamicNameSolvingType GetDynamicNameSolving();
-  
+
   SimpleString ConnectedHost;  /*!< a host name stored in case of TCP */
   struct sockaddr_in dest;  /*!< a destination stored in case of datagram */
 };
@@ -168,3 +168,66 @@ private:
 } // namespace Omiscid
 
 #endif // __SOCKET_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

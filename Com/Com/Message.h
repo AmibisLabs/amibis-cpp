@@ -15,7 +15,7 @@
 namespace Omiscid {
 
 /**
- * @class Message Message.h Com/Message.h 
+ * @class Message Message.h Com/Message.h
  * @ingroup Com
  * @ingroup UserFriendly
  * @brief Group Data about a received message
@@ -30,13 +30,13 @@ namespace Omiscid {
 class Message
 {
    /**
-	* @brief The MsgSocket class can acces directly to private members of this class
-	*/
-	friend class MsgSocket;
+    * @brief The MsgSocket class can acces directly to private members of this class
+    */
+    friend class MsgSocket;
    /**
-	* @brief The MsgManager class can acces directly to private members of this class
-	*/
-	friend class MsgManager;
+    * @brief The MsgManager class can acces directly to private members of this class
+    */
+    friend class MsgManager;
 
 public:
   /** @brief Constructor
@@ -81,7 +81,7 @@ protected:
   unsigned int mid; /*!< message id */
   //@}
 
-  /** the buffer allocated for the message with a byte before 
+  /** the buffer allocated for the message with a byte before
    * the message data. (Rq : buffer = realBuffer + 1)
    */
   char* realBuffer;
@@ -91,3 +91,67 @@ protected:
 } // namespace Omiscid
 
 #endif // __MESSAGE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

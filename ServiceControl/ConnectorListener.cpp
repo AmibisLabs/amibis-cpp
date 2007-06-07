@@ -7,27 +7,27 @@ using namespace Omiscid;
 
 ConnectorListener::ExtendedMessageForService::ExtendedMessageForService(Message& ToCopy)
 {
-	buffer			= ToCopy.GetBuffer();
-	len				= ToCopy.GetLength();
-	mid				= ToCopy.GetMsgId();
-	OriginalSize	= 0;
-	origine			= ToCopy.GetOrigine();
-	pid				= ToCopy.GetPeerId();
-	realBuffer		= (char*)NULL;
+    buffer            = ToCopy.GetBuffer();
+    len                = ToCopy.GetLength();
+    mid                = ToCopy.GetMsgId();
+    OriginalSize    = 0;
+    origine            = ToCopy.GetOrigine();
+    pid                = ToCopy.GetPeerId();
+    realBuffer        = (char*)NULL;
 }
 
 ConnectorListener::ExtendedMessageForService::~ExtendedMessageForService()
 {
-	// To prevent multiple free of buffer, enpty myself
-	buffer			= (char*)NULL;
-	len				= 0;
-	mid				= 0;
-	origine			= UnknownOrigine;
-	pid				= 0;
+    // To prevent multiple free of buffer, enpty myself
+    buffer            = (char*)NULL;
+    len                = 0;
+    mid                = 0;
+    origine            = UnknownOrigine;
+    pid                = 0;
 
-	// Done in constructor
-	OriginalSize	= 0;
-	realBuffer		= (char*)NULL;
+    // Done in constructor
+    OriginalSize    = 0;
+    realBuffer        = (char*)NULL;
 }
 
 ConnectorListener::~ConnectorListener()
@@ -43,7 +43,7 @@ ConnectorListener::~ConnectorListener()
      */
 void ConnectorListener::Connected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId)
 {
-	OmiscidTrace( "A new peer %8.8x connects to %s:%s.\n", PeerId, TheService.GetName().GetStr(), LocalConnectorName.GetStr() );
+    OmiscidTrace( "A new peer %8.8x connects to %s:%s.\n", PeerId, TheService.GetName().GetStr(), LocalConnectorName.GetStr() );
 }
 
     /**
@@ -55,10 +55,10 @@ void ConnectorListener::Connected(Service& TheService, const SimpleString LocalC
      */
 void ConnectorListener::Disconnected(Service& TheService, const SimpleString LocalConnectorName, unsigned int PeerId)
 {
-	OmiscidTrace( "The peer %8.8x disconnects from %s:%s.\n", PeerId, TheService.GetName().GetStr(), LocalConnectorName.GetStr() );
+    OmiscidTrace( "The peer %8.8x disconnects from %s:%s.\n", PeerId, TheService.GetName().GetStr(), LocalConnectorName.GetStr() );
 }
 
-	/**
+    /**
      * Processes a received Omiscid message. As a given message could be processed
      * by several others listeners, the message must not be modified by its
      * processing.
@@ -72,19 +72,83 @@ void ConnectorListener::MessageReceived(Service& TheService, const SimpleString 
 
 void ConnectorListener::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData)
 {
-	ExtendedMessageForService ExtMsg(CallbackData.Msg);
-	ExtMsg.ReceivedFromConnector = ConnectionPoint.GetName();
+    ExtendedMessageForService ExtMsg(CallbackData.Msg);
+    ExtMsg.ReceivedFromConnector = ConnectionPoint.GetName();
 
-	// Call the User Friendly interface
-	MessageReceived( *ServiceOfTheConnector, ConnectionPoint.GetName(), ExtMsg );
+    // Call the User Friendly interface
+    MessageReceived( *ServiceOfTheConnector, ConnectionPoint.GetName(), ExtMsg );
 }
 
 void ConnectorListener::Connected(MsgSocket& ConnectionPoint, unsigned int PeerId)
 {
-	Connected( *ServiceOfTheConnector, ConnectionPoint.GetName(), PeerId );
+    Connected( *ServiceOfTheConnector, ConnectionPoint.GetName(), PeerId );
 }
 
 void ConnectorListener::Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId)
 {
-	Disconnected( *ServiceOfTheConnector, ConnectionPoint.GetName(), PeerId );
+    Disconnected( *ServiceOfTheConnector, ConnectionPoint.GetName(), PeerId );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

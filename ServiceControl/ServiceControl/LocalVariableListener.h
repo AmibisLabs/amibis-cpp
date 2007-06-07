@@ -28,10 +28,10 @@ class Service;
 class LocalVariableListener : public VariableAttributeListener
 {
 public:
-	// Virtual destructor always
-	virtual ~LocalVariableListener();
+    // Virtual destructor always
+    virtual ~LocalVariableListener();
 
-	/**
+    /**
      * This method is called when the value of a variable
      * changes
      *
@@ -40,7 +40,7 @@ public:
      * @param NewValue the new value of the variable
      */
     virtual void VariableChanged(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue) = 0;
-    
+
     /**
      * This method is called when a value modification is requested on a variable. This method must
      * check that this new value is a valid value for us.
@@ -52,11 +52,75 @@ public:
     virtual bool IsValid(Service& ServiceRef, const SimpleString VarName, const SimpleString NewValue) = 0;
 
 private:
-	void VariableChanged( VariableAttribute * ChangedVariable );
-	bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue );
+    void VariableChanged( VariableAttribute * ChangedVariable );
+    bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue );
 };
 
 
 } // namespace Omiscid
 
-#endif	// __LOCAL_VARIABLE_LISTENER_H__
+#endif    // __LOCAL_VARIABLE_LISTENER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

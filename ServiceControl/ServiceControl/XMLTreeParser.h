@@ -37,12 +37,12 @@ class XMLMessage
  public:
   /** @brief Constructor */
   XMLMessage();
- 
-  /** @brief Copy Constructor 
+
+  /** @brief Copy Constructor
    *
    * The message as XML tree is not copied.
    * Only the pointer on the structure is copied.
-   * Before deleting these object, set one of the two doc attribute to NULL, 
+   * Before deleting these object, set one of the two doc attribute to NULL,
    * in order to not free two times the same data.
    * @param msg [in] the message to copy
    */
@@ -53,7 +53,7 @@ class XMLMessage
    */
   XMLMessage(const Message& MesgFromPeer);
 
-  /** @brief Destructor 
+  /** @brief Destructor
    *
    * free the XML tree, if the doc attribute is not NULL.
    */
@@ -63,19 +63,19 @@ class XMLMessage
   MessageOrigine origine; /*!< pointer on the source of the message (MsgSocket or UdpConnection object)*/
   unsigned int pid; /*!< peer identifier*/
   unsigned int mid; /*!< message identifier*/
-  
+
   /** @brief Display the message
    *
    * Message can be displayed on screen, or write in file.
    * @param fout destination for display
    */
   void Display(FILE* fout = stdout);
-  
-  /** @brief Access to the root node in the XML message 
+
+  /** @brief Access to the root node in the XML message
    * @return the pointer on the first node in the tree structure */
   xmlNodePtr GetRootNode();
-  
-  /** @brief Find a particular attribute 
+
+  /** @brief Find a particular attribute
    *
    * Search among the attributes of 'node' for an attribute wit a particular name
    * @param name [in] the name for the wanted attribute
@@ -83,7 +83,7 @@ class XMLMessage
    * @return the found attribute, NULL if not found
    */
   static xmlAttrPtr FindAttribute(const SimpleString name, xmlNodePtr node);
-  
+
   /** @brief Find a particular child node
    *
    * Search in the children of 'node', the first node with a given name.
@@ -94,7 +94,7 @@ class XMLMessage
   static xmlNodePtr FindFirstChild(const SimpleString name, xmlNodePtr node);
 
   /** @brief Display a node
-   * 
+   *
    * Display a node to a file descriptor. Recursive methods called on the node child.
    * @param node [in] node to display
    * @param fout destination for display
@@ -107,7 +107,7 @@ class XMLMessage
 /**
  * @class XMLTreeParser  XMLTreeParser.h  ServiceControl/XMLTreeParser.h
  * @brief Class to receive and parse and store XML Message.
- *  
+ *
  * Provides a callback methods for the received message by TcpClient, TcpServer or Connector.
  * The message are parsed and pushed in a list. There, they wait for processing.
  * It is similar to MsgManager, with a message processing to change XML message in XML tree.
@@ -131,7 +131,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    * @return NULL if parsing failed, else return a pointer on a structure containing the built tree.
    */
   static xmlDocPtr ParseMessage(int length, unsigned char* buffer);
-  
+
   /** @brief Add a new parsed message to the list
    *
    * This message is waiting to be processed.
@@ -139,7 +139,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    */
   void PushMessage(XMLMessage* msg);
 
-  /** @brief process parsed message that are waiting. 
+  /** @brief process parsed message that are waiting.
    *
    * Call on each message the methods ProcessAMessage and then delete the message.
    * @return the number of processed message
@@ -173,7 +173,7 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    */
   bool WaitForMessage(unsigned long timer = 0);
 
-  /** @brief Presence of waiting message 
+  /** @brief Presence of waiting message
    * @return true if there is waiting message */
   bool HasMessages();
 
@@ -198,12 +198,12 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
    */
   void FUNCTION_CALL_TYPE Run();
 
-  /** @brief Generate a tree structure from XML in a file 
+  /** @brief Generate a tree structure from XML in a file
    * @param filename [in] file to parse
    * @return the tree structure, NULL if parsing failed
    */
   static xmlDocPtr ParseFile(const SimpleString filename);
-  
+
  private:
 
   MutexedSimpleList<XMLMessage*> listXMLMsg; /*!< list of the waiting message*/
@@ -215,3 +215,67 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
 } // namespace Omiscid
 
 #endif // __XMLTREE_PARSER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

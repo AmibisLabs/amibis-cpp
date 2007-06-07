@@ -1,4 +1,4 @@
-/* @file 
+/* @file
  * @ingroup ServiceControl
  * @brief Header of the common classes and values for the OMiSCID service package
  * @date 2004-2006
@@ -48,14 +48,14 @@ public:
   /** @brief Destructor */
   virtual ~ValueListener();
 
-  /** @brief Add a peer interested in the variable modification 
+  /** @brief Add a peer interested in the variable modification
    * @param listener_id an id of peer interest in the variable modification
    */
   void AddListener(unsigned int listener_id);
-  /** @brief Remove a peer 
+  /** @brief Remove a peer
    *
-   * Remove a peer no more interested in the variable modification 
-   * or disconnected 
+   * Remove a peer no more interested in the variable modification
+   * or disconnected
    * @param listener_id an id of peer to remove
    */
   void RemoveListener(unsigned int listener_id);
@@ -83,7 +83,7 @@ class VariableAttributeListener;
  *
  * @author Sebastien Pesnel
  */
-class ControlServer : public TcpServer, public XMLTreeParser, public VariableAttributeListener		      
+class ControlServer : public TcpServer, public XMLTreeParser, public VariableAttributeListener
 {
  public:
   /** @brief Constructor
@@ -94,7 +94,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
   ControlServer(const SimpleString service_name = "Control");
 
   /** @brief Destructor */
-  virtual ~ControlServer();  
+  virtual ~ControlServer();
 
   /** @brief Set the name of the service.
    *
@@ -107,7 +107,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    * @return the service name
    */
   const SimpleString& GetServiceName();
-  
+
   /** @brief Access to the name of the registered service.
    *
    * Available after server starts.
@@ -125,7 +125,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
 
   /** @brief Message processing in a thread.
    *
-   * run a thread where queries to the server are processed. In this case, the user don't need 
+   * run a thread where queries to the server are processed. In this case, the user don't need
    * to use the methods ProcessMessages() and WaitForMessage().
    * call ProcessMessages when messages wait.
    * \see ProcessMessages, WaitForMessage
@@ -152,7 +152,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    * @brief display on standard output the service id followed by a newline
    */
   void DisplayServiceId() const;
-  
+
   /**
    * @brief display on standard output the service description
    */
@@ -169,7 +169,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    * @return a new InOutputAttribute object (will be deleted by the controlServer)
    */
   InOutputAttribute* AddInOutput(const SimpleString name, ComTools* com_tool, ConnectorKind kind_of_input);
-  
+
   /**
    * @brief Create a new variable to export.
    *
@@ -191,7 +191,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
 
   /** @brief Retrieve a VariableAttribute object with a particular name
    *
-   * retrieve a VariableAttribute object declared with AddVariable, 
+   * retrieve a VariableAttribute object declared with AddVariable,
    * and that has the name 'name'.
    * @param name [in] name of the variable
    * @return the VariableAttribute object or NULL if not found
@@ -223,8 +223,8 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
   const SimpleString GetClass();
 
 protected:
-  /** 
-   * @brief Called when a request of connection is done. 
+  /**
+   * @brief Called when a request of connection is done.
    *
    * A VOIR, A REVOIR, ...
    * Must be be reimplemented by the user.
@@ -282,8 +282,8 @@ protected:
    * @verbatim
      str = str + <br>
        <variable name="..."/> ...
-       <input name="..."/> ... 
-       <output name="..."/> ... 
+       <input name="..."/> ...
+       <output name="..."/> ...
      @endverbatim
    * @param str [in, out] SimpleString where add ths short descriptions.
    */
@@ -306,17 +306,17 @@ protected:
   void NotifyValueChanged( VariableAttribute* var );
 
   void RefreshLock();
-  
+
  private:
   /** @brief Only one function for all constructors
    */
-	void InitInstance();
+    void InitInstance();
 
   /** @brief Add a peer interested in variable modification
    * @param var the intersting variable for the peer
    * @param listener_id the peer id
    */
-  void AddListener(VariableAttribute* var, unsigned int listener_id);  
+  void AddListener(VariableAttribute* var, unsigned int listener_id);
   /** @brief Remove a peer no more interested in variable modification
    * @param var the interesting variable for the peer
    * @param listener_id the peer id
@@ -326,7 +326,7 @@ protected:
    * @param var the variable searched
    * @return the group of listener associated to the variable, NULL if inexisting
    */
-  ValueListener* FindValueListener(VariableAttribute* var); 
+  ValueListener* FindValueListener(VariableAttribute* var);
 
 protected:
 
@@ -342,7 +342,7 @@ protected:
 
   SimpleString serviceName; /*<! service name */
   ControlServerStatus Status; /*!< default variable structure for the variable status combined with the status value */
-  
+
   IntVariableAttribute* lockIntVariable; /*!< variable structure for integer to manage the lock state */
   StringVariableAttribute* NameVariable; /*!< variable structure for exporting the name of this service */
   StringVariableAttribute* OwnerVariable; /*!< variable structure for exporting the name of this service */
@@ -350,11 +350,11 @@ protected:
   StringVariableAttribute* PeerIdVariable; /*!< variable structure for integer to export the peerid */
 
   SimpleList<InOutputAttribute*> listInOutput; /*!< list of inputs and outputs */
-   
+
   SimpleList<VariableAttribute*> listVariable; /*!<  list of variables */
 
   RegisterOmiscidService* registerDnsSd; /*!< Object for registering the service to DNS-SD */
-  
+
   MutexedSimpleList<ValueListener*> listValueListener; /*!< list of group variable - peer id intereted in variable modification */
 
 protected:
@@ -373,3 +373,67 @@ protected:
 } // namespace Omiscid
 
 #endif // __CONTROL_SERVER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

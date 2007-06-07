@@ -2,7 +2,7 @@
 
 using namespace Omiscid;
 
-  
+
 SimpleListException::SimpleListException(const SimpleString m, int i)
  : SimpleException(m, i)
 {
@@ -19,5 +19,68 @@ SimpleListException::SimpleListException(const SimpleListException& ExceptionToC
 
 SimpleString SimpleListException::GetExceptionType() const
 {
-	return SimpleString( "SimpleListException" ); 
+    return SimpleString( "SimpleListException" );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

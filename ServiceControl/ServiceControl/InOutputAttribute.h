@@ -38,22 +38,22 @@ class InOutputAttribute : public Attribute
   /** @brief Default Constructor */
   InOutputAttribute();
 
-  /** @brief Constructor 
+  /** @brief Constructor
    * @param a_name name for the input/output
    * @param com_tool Communication tool assciated to the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
-  InOutputAttribute(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input);  
+  InOutputAttribute(const SimpleString a_name, ComTools* com_tool, ConnectorKind kind_of_input);
 
-  /** @brief Constructor 
+  /** @brief Constructor
    * @param a_name name for the input/output
    * @param kind_of_input define if the object is AnInput, AnOutput or AnInOutput
    */
   InOutputAttribute(const SimpleString a_name, ConnectorKind kind_of_input);
   //@}
 
-	// Virtual destructor always
-	virtual ~InOutputAttribute();
+    // Virtual destructor always
+    virtual ~InOutputAttribute();
 
   /** \name Read Accessors */
   //@{
@@ -73,9 +73,9 @@ class InOutputAttribute : public Attribute
   /** \name Write Accessors */
   //@{
   void SetKindOfInput(ConnectorKind kind_of_input); /*!< Change the kind of the object */
-  
+
   void SetComTool(ComTools* com_tool); /*!< define the comunication tool associated to the input/output */
-  ComTools * GetComTool();			   /*!< retrieve the comunication tool associated to the input/output */
+  ComTools * GetComTool();               /*!< retrieve the comunication tool associated to the input/output */
   //@}
 
   /** \name Write Accessor for data storage when request to controlServer
@@ -122,3 +122,67 @@ public:
 } // namespace Omiscid
 
 #endif // __IN_OUTPUT_ATTRIBUTE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

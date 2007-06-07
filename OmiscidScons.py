@@ -200,6 +200,10 @@ def OmiscidMapping():
 def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hToInstall=[]):
  # global COMMAND_LINE_TARGETS
  # global ARGUMENTS
+ 
+ global prefix_bin
+ global prefix_lib
+ 
  if "install" in COMMAND_LINE_TARGETS :
   if "prefix" in ARGUMENTS :
    prefix_bin = os.path.join(ARGUMENTS.get("prefix"), "bin")

@@ -18,7 +18,7 @@
 
 namespace Omiscid {
 
-/** 
+/**
  * @class ClientConnection Connector.h Com/Connector.h
  * \brief Group Data about Conection TCP and UDP.
  *
@@ -41,7 +41,7 @@ class ClientConnection
 
   /** \brief Destructor */
   virtual ~ClientConnection();
-  
+
   /** \brief Access to the identifer of the peer for this connection
    * \return the identifer of the peer for this connection. */
   unsigned int GetPeerPid() const;
@@ -50,13 +50,13 @@ class ClientConnection
   UdpConnection* udpConnection; /*!< contains the data about the connection using UDP. */
 };
 
-/** 
+/**
  * @class Connector Connector.h Com/Connector.h
  * @brief Group TCP and UDP communication means.
  *
  * Manage connection as a server or can be connected as client.
  * Communication can be done with TCP or UDP protocol.
- * 
+ *
  * \author Sebastien Pesnel
  * \author Dominique Vaufreydaz
  */
@@ -75,7 +75,7 @@ class Connector : public TcpServer, public UdpExchange
 
   /**
    * \brief Run a TcpServer, an UdpExchange object
-   * \param port_tcp [in] port where bind the TCP socket. if zero a free port is chosen, 
+   * \param port_tcp [in] port where bind the TCP socket. if zero a free port is chosen,
    * this port has the value returned by 'GetTcpPort'.
    * \param port_udp [in] port where bind the UDP socket. if zero a free port is chosen,
    * this port has the value returned by 'GetUdpPort'.
@@ -85,7 +85,7 @@ class Connector : public TcpServer, public UdpExchange
   /** \brief Connection as client.
    *
    * Create a Tcp Connection.
-   * If port_udp is not null, create an udp connection based on the tcp connection 
+   * If port_udp is not null, create an udp connection based on the tcp connection
    * (for checking the validity of the connection).
    * \param addr [in] the address for the host to connect.
    * \param port_tcp [in] the number of the tcp port.
@@ -99,7 +99,7 @@ class Connector : public TcpServer, public UdpExchange
    * \brief Send a message on all the existing connection.
    * \param len [in] the length of the message
    * \param buf [in] the buffer that contains the message.
-   * \param fastsend [in] if true unsafe UDP connection may be used, 
+   * \param fastsend [in] if true unsafe UDP connection may be used,
    * it is this connection where the data are sent.
    */
   void SendToAll(int len, const char* buf, bool fastsend = false);
@@ -109,7 +109,7 @@ class Connector : public TcpServer, public UdpExchange
    * \param len [in] the length of the message
    * \param buf [in] the buffer that contains the message.
    * \param pid [in] the identifier of the destination peer
-   * \param fastsend [in] if true unsafe UDP connection may be used, 
+   * \param fastsend [in] if true unsafe UDP connection may be used,
    * it is this connection where the data are sent.
    * \return the number of byte sent.
    */
@@ -175,7 +175,7 @@ class Connector : public TcpServer, public UdpExchange
 
   /** \brief Set a MsgManager object as callback for message reception
    *
-   * Enable to define a MsgManager object for the callback function of the 
+   * Enable to define a MsgManager object for the callback function of the
    * receive method.
    * \param msgManager [in, out] object where the message are sent when they arrive.
    * \see SetCallBackOnRecv
@@ -206,9 +206,9 @@ class Connector : public TcpServer, public UdpExchange
   /** \brief Call on source of UDP message
    *
    * Find the UdpConnection object associated to an UDP connection,
-   * or create a new UdpConnection object if it is the first connection 
+   * or create a new UdpConnection object if it is the first connection
    * (first contact is done with empty message). The research is done by using the peer identifier
-   * \param udp_connection [in] the data of the connection, base for the research or the 
+   * \param udp_connection [in] the data of the connection, base for the research or the
    * creation of a new UdpConnection object, contains the peer identifier.
    * \param NewConnection [in] define if the message was done for a new connection.
    * \return NULL if connection refused, or the UdpConnection oebjct associated to the connection.
@@ -223,7 +223,7 @@ private:
   ClientConnection* FindClientConnectionFromId(unsigned int pid);
 
   unsigned int pid; /*!< identifier of the service associated to this object */
-  
+
   MutexedSimpleList<ClientConnection*> ListClients; /*!< list of client connections*/
 
   /** \name Callback information */
@@ -236,3 +236,67 @@ private:
 } // namespace Omiscid
 
 #endif // __CONNECTOR_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

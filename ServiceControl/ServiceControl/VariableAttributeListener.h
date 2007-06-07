@@ -20,32 +20,96 @@ class VariableAttribute;
 class VariableAttributeListener
 {
 public:
-	VariableAttributeListener();
+    VariableAttributeListener();
 
   /** @brief Destructor */
-	virtual ~VariableAttributeListener();
+    virtual ~VariableAttributeListener();
 
 private:
-	// To prevent usuage of SetUSerData from the user side
-	friend class VariableAttribute;
-	friend class ControlServer;
-	friend class Service;
-	friend class ServiceProxy;
-	friend class LocalVariableListener;
-	friend class RemoteVariableChangeListener;
+    // To prevent usuage of SetUSerData from the user side
+    friend class VariableAttribute;
+    friend class ControlServer;
+    friend class Service;
+    friend class ServiceProxy;
+    friend class LocalVariableListener;
+    friend class RemoteVariableChangeListener;
 
-	// Get and Set user data
-	void SetUserData( void * eUserData );
-	void * GetUserData() const;
+    // Get and Set user data
+    void SetUserData( void * eUserData );
+    void * GetUserData() const;
 
 protected:
-	virtual void VariableChanged( VariableAttribute * ChangedVariable ) = 0;
-	virtual bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue ) = 0;
+    virtual void VariableChanged( VariableAttribute * ChangedVariable ) = 0;
+    virtual bool IsValid( VariableAttribute * ChangedVariable, SimpleString newValue ) = 0;
 
 private:
-	void * UserData;
+    void * UserData;
 };
 
 } // namespace Omiscid
 
-#endif	// __VARIABLE_ATTRIBUTE_LISTENER_H__
+#endif    // __VARIABLE_ATTRIBUTE_LISTENER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

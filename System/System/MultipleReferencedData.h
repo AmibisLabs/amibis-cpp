@@ -25,14 +25,14 @@ class MultipleReferencedData
  public:
   typedef void (FUNCTION_CALL_TYPE *MethodForRelease)(MultipleReferencedData*);
 
- public: 
-  /** @brief Constructor 
+ public:
+  /** @brief Constructor
    * @see Init */
   MultipleReferencedData(MethodForRelease method_for_release = NULL);
 
   /** @brief Destructor */
   virtual ~MultipleReferencedData();
- 
+
   /** @brief Initialize the object
    *
    * Set the reference counter to 0.
@@ -46,7 +46,7 @@ class MultipleReferencedData
   void RemoveRef();
 
 
-  /** @brief Test if the object is still referenced 
+  /** @brief Test if the object is still referenced
    * \return true if the number of reference is greater than 0 */
   bool IsStillUseful() const;
 
@@ -54,12 +54,12 @@ class MultipleReferencedData
    *
    * Remove a reference on the object.
    * If the number of reference on the object fall to 0,
-   * the object is released by using the method associated to the object. 
+   * the object is released by using the method associated to the object.
    * @param multiple_referenced_data the MultipleReferencedData object to release
    */
   static void ReleaseData(MultipleReferencedData* multiple_referenced_data);
 
- private:  
+ private:
 
   AtomicCounter NbCurrentRef;  /*!< number of reference on the object */
 
@@ -70,3 +70,66 @@ class MultipleReferencedData
 } // namespace Omiscid
 
 #endif // __MULTIPLE_REFERENCED_DATA_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

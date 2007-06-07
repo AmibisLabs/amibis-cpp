@@ -24,14 +24,14 @@ namespace Omiscid {
 class ServiceFilter
 {
 protected:
-	ServiceFilter() {};
+    ServiceFilter() {};
 
 public:
-	virtual ~ServiceFilter();
+    virtual ~ServiceFilter();
 
 public:
-	virtual bool IsAGoodService(ServiceProxy& SP) = 0;
-	virtual ServiceFilter * Duplicate() = 0;
+    virtual bool IsAGoodService(ServiceProxy& SP) = 0;
+    virtual ServiceFilter * Duplicate() = 0;
 };
 
 /**
@@ -41,10 +41,10 @@ public:
 class ServiceFilterList : public SimpleList<ServiceFilter*>
 {
 public:
-	virtual ~ServiceFilterList();
+    virtual ~ServiceFilterList();
 
 public:
-	virtual void Empty();
+    virtual void Empty();
 };
 
 /**
@@ -136,8 +136,8 @@ ServiceFilter * HasConnector( const SimpleString ConnectorName, ConnectorKind Ki
 * @return a pointer ServiceFilter
 */
 ServiceFilter * And( ServiceFilter * First, ServiceFilter * Second = NULL,
-						    ServiceFilter * Third = NULL, ServiceFilter * Fourth = NULL,
-							ServiceFilter * Fifth = NULL );
+                            ServiceFilter * Third = NULL, ServiceFilter * Fourth = NULL,
+                            ServiceFilter * Fifth = NULL );
 
 /**
 * Create an OR ServiceFilter test set with 1 up to 5 parameters
@@ -146,8 +146,8 @@ ServiceFilter * And( ServiceFilter * First, ServiceFilter * Second = NULL,
 * @return a pointer ServiceFilter
 */
 ServiceFilter * Or( ServiceFilter * First, ServiceFilter * Second = NULL,
-						   ServiceFilter * Third = NULL, ServiceFilter * Fourth = NULL,
-						   ServiceFilter * Fifth = NULL );
+                           ServiceFilter * Third = NULL, ServiceFilter * Fourth = NULL,
+                           ServiceFilter * Fifth = NULL );
 
 /**
 * Create a service Filter that will answer always yes. Usefull
@@ -169,3 +169,67 @@ ServiceFilter * Not(ServiceProxy& SP);
 } // namespace Omiscid
 
 #endif  // __SERVICE_FILTER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -26,7 +26,7 @@ class Message;
  * @brief Message Storing and Processing
  *
  * An object MsgManager is used to accumulate messages.
- * The object Message buffer must be deleted by the user 
+ * The object Message buffer must be deleted by the user
  * after a call to GetMessage.
  * The messages can be processed with ProcessMessages.
  * This function calls the virtual method ProcessAMessage on each Message,
@@ -47,7 +47,7 @@ public:
    * Deletes the no read messages.
    */
   virtual ~MsgManager();
-  
+
   /** @brief Adds a message in the list.
    * .
    * Called by CumulMessage.
@@ -55,7 +55,7 @@ public:
    * @see CumulMessage.
    */
   void PushMessage(Message* msg);
-  
+
   /** @brief Current number of message
    * @return the number of message in the list
    */
@@ -68,7 +68,7 @@ public:
 
   /**
    * Remove the first message object in the list and return it.
-   * @return a message object or 
+   * @return a message object or
    * NULL if there is no available message
    */
   Message* GetMessage();
@@ -79,7 +79,7 @@ public:
   void ClearMessages();
 
   /** @brief Process each message in the list.
-   * 
+   *
    * Call for each message the virtual method  ProcessAMessage
    * and then delete the buffer.
    * @return the number of processed messages.
@@ -89,16 +89,16 @@ public:
   /** @brief Callback for the reception of message by MsgSocket object.
    *
    * use the user data pointer of the MsgSocketCallBackData object.
-   * The user data points on a MsgManager object. This method create a message 
+   * The user data points on a MsgManager object. This method create a message
    * and add it to the MsgManager object (by calling PushMessage).
    * @param ptr pointer on a MsgSocketCallBackData object
    * @see MsgSocketCallBackData
    */
   void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& ptr);
-  
+
   /** @brief Set the callback method of a MsgSocket object
    *
-   * call the method SetCallBackOnRecv of the tools of communication (derived 
+   * call the method SetCallBackOnRecv of the tools of communication (derived
    * from MsgSocket)
    * with the function CumulMessage and this object MsgManager
    * @param ms communication tool who will provide the message
@@ -107,7 +107,7 @@ public:
 
   /** @brief Wait for new message
    *
-   * Block until there is a message in the list 
+   * Block until there is a message in the list
    * or timer is expired (except if timer equals 0).
    * @param [in] timer timeout in milliseconds.
    * @return false if timer is expired or true if a message is in the list.
@@ -144,3 +144,67 @@ private:
 } // namespace Omiscid
 
 #endif // __MSG_MANAGER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

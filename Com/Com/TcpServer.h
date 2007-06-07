@@ -24,7 +24,7 @@ namespace Omiscid {
  * The message are exchanged between BIP tag.
  * Can receive TCP connection, from TCPClient, telnet.
  * The BIP protocol ask for en exchange of empty message after the connection creation.
- * An empty message is : BIP/1.0 pppppppp 00000000 00000000 \\r\\n\\r\\n 
+ * An empty message is : BIP/1.0 pppppppp 00000000 00000000 \\r\\n\\r\\n
  * where pppppppp is a hexadecimal representation of the id of the client
  *
  * \author Sebastien Pesnel
@@ -32,13 +32,13 @@ namespace Omiscid {
 class TcpServer : public MsgSocket, virtual public ComTools
 {
  public:
-  /** \brief Constructor 
+  /** \brief Constructor
    *
    * Build a TCP socket
    */
   TcpServer();
 
-  /** \brief Constructor 
+  /** \brief Constructor
    *
    * Build a TCP socket
    * ans then call Create with the parameter port.
@@ -78,7 +78,7 @@ class TcpServer : public MsgSocket, virtual public ComTools
    * @param len [in] number of bytes to send.
    * @param buf [in] buffer with the len bytes to send.
    * @param pid [in] id of the client to contact.
-   * \return number of byte send 
+   * \return number of byte send
    */
   int SendToClient(int len, const char* buf, unsigned int pid);
 
@@ -124,7 +124,7 @@ class TcpServer : public MsgSocket, virtual public ComTools
 
   /** \brief Accept a new TCP Connection
    *
-   * Call for each new connection.   
+   * Call for each new connection.
    * (reimplemented from MsgSocket)
    * @param msgsocket [in] object MsgSocket associated to the new connection.
    */
@@ -151,7 +151,7 @@ class TcpServer : public MsgSocket, virtual public ComTools
    */
   void SetServiceId(unsigned int pid);
 
-  /** \brief Access to the service id 
+  /** \brief Access to the service id
    * \return the service id*/
   unsigned int GetServiceId() const;
   /**
@@ -179,7 +179,7 @@ class TcpServer : public MsgSocket, virtual public ComTools
    *
    * The list of connection is not locked during the research for the id.
    * Test if the object is connected before returned it : if not, then remove ot and return NULL.
-   * \param id [in] the value of the wanted peer id 
+   * \param id [in] the value of the wanted peer id
    * \return NULL if not found, else the MsgSocket connected to the peer id.
    */
   MsgSocket* FindClientFromId(unsigned int id);
@@ -202,3 +202,67 @@ class TcpServer : public MsgSocket, virtual public ComTools
 } // namespace Omiscid
 
 #endif // __TCP_SERVER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

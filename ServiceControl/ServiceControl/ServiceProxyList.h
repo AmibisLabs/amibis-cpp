@@ -21,18 +21,82 @@ class RemoteVariableChangeListener;
 class Service;
 
 /**
- * @author 
+ * @author
  *
  */
 class ServiceProxyList  : public SimpleList<ServiceProxy*>
 {
 public:
-	// Destructor
-	virtual ~ServiceProxyList();
+    // Destructor
+    virtual ~ServiceProxyList();
 
-	virtual void Empty();
+    virtual void Empty();
 };
 
 } // namespace Omiscid
 
 #endif  // __SERVICE_PROXY_LIST_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

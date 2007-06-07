@@ -20,38 +20,38 @@ ComTools::~ComTools()
 
 unsigned int ComTools::GeneratePeerId()
 {
-	unsigned int res;
+    unsigned int res;
 
-	res = random();
+    res = random();
 
-	return (res & SERVICE_PEERID);
+    return (res & SERVICE_PEERID);
 }
 
 unsigned int ComTools::PeerIdFromString(const SimpleString& StringPeerId)
 {
-	unsigned int res;
+    unsigned int res;
 
-	if ( StringPeerId.IsEmpty() )
-	{
-		return 0;
-	}
+    if ( StringPeerId.IsEmpty() )
+    {
+        return 0;
+    }
 
-	if ( sscanf( StringPeerId.GetStr(), "%x", &res ) == 1 )
-	{
-		return res;
-	}
-	return 0;
+    if ( sscanf( StringPeerId.GetStr(), "%x", &res ) == 1 )
+    {
+        return res;
+    }
+    return 0;
 }
 
 SimpleString ComTools::PeerIdAsString(unsigned int PeerId)
 {
-	TemporaryMemoryBuffer tmp(30);
+    TemporaryMemoryBuffer tmp(30);
 
-	(*(char*)tmp) = '\0';
+    (*(char*)tmp) = '\0';
 
-	sprintf( (char*)tmp, "%8.8x", PeerId );
+    sprintf( (char*)tmp, "%8.8x", PeerId );
 
-	return SimpleString(tmp);
+    return SimpleString(tmp);
 }
 
 const SimpleString ComTools::MagicUdp("udp-port");
@@ -66,39 +66,39 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
    line_start:
 
      if (len < klen + 1)
-	 {
-		 goto eat_line;
-	 }
+     {
+         goto eat_line;
+     }
 
      // check if key matches the line head
      if ( key != array.SubString(idx, idx + klen) )
-	 {
-		 goto eat_line;
-	 }
+     {
+         goto eat_line;
+     }
      idx += klen; len -= klen;
 
      // check if a colon follows immediately
      if (array[idx] != ':')
-	 {
-		 goto eat_line;
-	 }
+     {
+         goto eat_line;
+     }
      idx += 1; len -= 1;
 
    eat_spaces:
 
      if (len == 0)
-	 {
-		 return SimpleString::EmptyString;
-	 }
+     {
+         return SimpleString::EmptyString;
+     }
 
      switch (array[idx])
-	 {
+     {
        case ' ':
        case '\t':
          idx += 1; len -= 1;
          goto eat_spaces;
-     
-	   default:
+
+       default:
          break;
      }
      idx_start = idx;
@@ -107,12 +107,12 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
    eat_data:
 
      if (len == 0)
-	 {
-		 goto data_eaten;
-	 }
+     {
+         goto data_eaten;
+     }
 
      switch (array[idx])
-	 {
+     {
        case '\r':
        case '\n':
          goto data_eaten;
@@ -127,12 +127,12 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
    eat_line:
 
      if (len == 0)
-	 {
-		 return SimpleString::EmptyString;
-	 }
+     {
+         return SimpleString::EmptyString;
+     }
 
      switch (array[idx])
-	 {
+     {
        case '\n':
          idx += 1; len -= 1;
          goto line_start;
@@ -142,6 +142,70 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
          goto eat_line;
      }
 
-	 // We never come here
-	 // return SimpleString::EmptyString;
+     // We never come here
+     // return SimpleString::EmptyString;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

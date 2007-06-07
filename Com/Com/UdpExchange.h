@@ -20,7 +20,7 @@ namespace Omiscid {
  * @class UdpExchange UdpExchange.h Com/UdpExchange.h
  * @brief Class to manage with UDP exchange using BIP
  *
- * The implementation does not use Client / Server aspect, 
+ * The implementation does not use Client / Server aspect,
  * since this distinction does not exist with UDP.
  * This class manages client or server in a symetric way.
  *
@@ -33,13 +33,13 @@ namespace Omiscid {
 class UdpExchange : public MsgSocket, virtual public ComTools
 {
  public:
-  /**\brief Default Constructor 
+  /**\brief Default Constructor
    *
    * Create a UDP socket
    */
   UdpExchange();
 
-  /** \brief Constructor 
+  /** \brief Constructor
    *
    * Create a UDP socket.
    * Bind the socket to a port
@@ -53,7 +53,7 @@ class UdpExchange : public MsgSocket, virtual public ComTools
 
   /**
    * \brief Bind UDP socket to a port
-   * \param port [in] port where listen. Note : if port value is 0, 
+   * \param port [in] port where listen. Note : if port value is 0,
    * a free port is chosen.
    */
   void Create(int port);
@@ -98,7 +98,7 @@ class UdpExchange : public MsgSocket, virtual public ComTools
    * \return the number of sent bytes.
    */
   int SendTo(int len, const char* buf, unsigned int pid);
-  
+
   /**
    * \brief Send a message to all the known client.
    * \param len [in] the length of the message
@@ -136,9 +136,9 @@ class UdpExchange : public MsgSocket, virtual public ComTools
   /** \brief Call when message arrives from a UDP source
    *
    * find the UdpConnection object associated to an UDP connection,
-   * or create a new UdpConnection object if it is the first connection 
+   * or create a new UdpConnection object if it is the first connection
    * (first contact is done with empty message). The research is done by using the peer identifier
-   * \param udp_connect [in] the data of the connection, base for the research or the 
+   * \param udp_connect [in] the data of the connection, base for the research or the
    * creation of a new UdpConnection object, contains the peer identifier.
    * \param msg_empty [in] define if the message, sent by peer, was empty.
    * \return NULL if connection refused, or the UdpConnection oebjct associated to the connection.
@@ -159,7 +159,7 @@ class UdpExchange : public MsgSocket, virtual public ComTools
   /** \brief Remove the data about a connection with a particular id
    *
    * Do not lock the list of connection during the research
-   * \param pid [in] connection id for the connection to remove 
+   * \param pid [in] connection id for the connection to remove
    * \return true if a connection is removed, false otherwise.
    */
   bool RemoveConnectionWithId( unsigned int pid);
@@ -168,3 +168,67 @@ class UdpExchange : public MsgSocket, virtual public ComTools
 } // namespace Omiscid
 
 #endif // __UDP_EXCHANGE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

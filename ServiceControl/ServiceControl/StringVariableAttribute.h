@@ -35,20 +35,20 @@ public:
    */
   StringVariableAttribute(VariableAttribute* va, SimpleString value);
 
-	// Virtual destructor always
-	virtual ~StringVariableAttribute();
+    // Virtual destructor always
+    virtual ~StringVariableAttribute();
 
   /** @brief Read access to the integer value
    * @return the integer value */
   SimpleString GetValue() const;
-  
+
   /** @brief Write access to the integer value
    *
    * Change the integer value, and also the description for the service
    * @param value the new value for the integer
    */
   void SetValue( SimpleString value );
-  
+
 private:
   /** the integer description */
   VariableAttribute* VariableAtt;
@@ -59,3 +59,67 @@ private:
 } // namespace Omiscid
 
 #endif // __STRING_VARIABLE_ATTRIBUTE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

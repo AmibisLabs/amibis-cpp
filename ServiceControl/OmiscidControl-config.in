@@ -38,11 +38,11 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo "`OmiscidCom-config --cflags` `xml2-config --cflags` @zeroconfflag@"
+	echo "`@bindir@/OmiscidCom-config --cflags` `xml2-config --cflags` @zeroconfflag@"
 #	exit 0
 	;;
     --cflags-only-I)
-	echo "`OmiscidCom-config --cflags-only-I`"
+	echo "`@bindir@/OmiscidCom-config --cflags-only-I`"
 #	exit 0
 	;;
     --libs)
@@ -78,7 +78,7 @@ case "$1" in
 #	exit 0
 	;;
     --all)
-	echo "`OmiscidCom-config --all` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ -lOmiscidControl `xml2-config --libs` @OmiscidTraceFlags@"
+	echo "`@bindir@/OmiscidCom-config --all` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ -lOmiscidControl `xml2-config --libs` @OmiscidTraceFlags@"
 #	exit 0
 	;;	    
     *)

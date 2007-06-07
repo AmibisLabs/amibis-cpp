@@ -19,41 +19,105 @@
 
 namespace Omiscid {
 
-/** 
+/**
  * @class RegisterOmiscidService ServicesTools.cpp ServiceControl/ServicesTools.h
  * @brief To Comment
  */
 class RegisterOmiscidService : public RegisterService
 {
 public:
-	RegisterOmiscidService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
- 	RegisterOmiscidService( const SimpleString ServiceName, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
+    RegisterOmiscidService( const SimpleString FullName, uint16_t ePort, bool AutoRegister = false );
+     RegisterOmiscidService( const SimpleString ServiceName, const SimpleString Domain, uint16_t ePort, bool AutoRegister = false );
 
-	// Virtual destructor always
-	virtual ~RegisterOmiscidService();
+    // Virtual destructor always
+    virtual ~RegisterOmiscidService();
 
 private:
-	void Init( bool AutoRegister );
+    void Init( bool AutoRegister );
 };
 
 class WaitForOmiscidServices : public WaitForDnsSdServices, public CommonServiceValues
 {
 public:
-	WaitForOmiscidServices();
-	virtual ~WaitForOmiscidServices(void);
+    WaitForOmiscidServices();
+    virtual ~WaitForOmiscidServices(void);
 
-	int NeedService( const SimpleString eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
-	{
-		return WaitForDnsSdServices::NeedService( eName, GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
-	}
+    int NeedService( const SimpleString eName, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL )
+    {
+        return WaitForDnsSdServices::NeedService( eName, GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
+    }
 
-	// If we do not plan to filter with the name, ask for all services
-	int NeedService( IsServiceValidForMe eCallBack, void * eUserData = NULL )
-	{
-		return WaitForDnsSdServices::NeedService( SimpleString::EmptyString, GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
-	}
+    // If we do not plan to filter with the name, ask for all services
+    int NeedService( IsServiceValidForMe eCallBack, void * eUserData = NULL )
+    {
+        return WaitForDnsSdServices::NeedService( SimpleString::EmptyString, GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
+    }
 };
 
 } // namespace Omiscid
 
 #endif // __SERVICES_TOOLS_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

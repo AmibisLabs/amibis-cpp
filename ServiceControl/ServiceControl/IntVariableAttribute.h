@@ -34,13 +34,13 @@ class IntVariableAttribute
    */
   IntVariableAttribute(VariableAttribute* va, int value);
 
-	// Virtual destructor always
-	virtual ~IntVariableAttribute();
+    // Virtual destructor always
+    virtual ~IntVariableAttribute();
 
   /** @brief Read access to the integer value
    * @return the integer value */
   int GetValue() const;
-  
+
   /** @brief Write access to the integer value
    *
    * Change the integer value, and also the description for the service
@@ -48,7 +48,7 @@ class IntVariableAttribute
    * @param ForceChange shall we force change !
    */
   void SetValue( int value, bool ForceChange = false );
-  
+
   /** @brief Increment the  integer value
    * @see SetValue*/
   void Incr();
@@ -67,3 +67,67 @@ class IntVariableAttribute
 } // namespace Omiscid
 
 #endif // __INT_VARIABLE_ATTRIBUTE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

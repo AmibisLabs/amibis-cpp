@@ -25,24 +25,88 @@ namespace Omiscid {
 class RegisterThread : public Thread
 {
 public:
-	/* @brief Create a new thread that will register a thread
-	 * give its number
-	 */
-	RegisterThread(unsigned int MyNumber);
+    /* @brief Create a new thread that will register a thread
+     * give its number
+     */
+    RegisterThread(unsigned int MyNumber);
 
-	/* @brief destructor (all destructor must be virtual !) */
-	virtual ~RegisterThread();
+    /* @brief destructor (all destructor must be virtual !) */
+    virtual ~RegisterThread();
 
-	/* @brief The Run procedure of the thread, so what he must do */
-	void FUNCTION_CALL_TYPE Run();
-	
-	static AtomicCounter NbRegistered; /*!< @brief A static value to count registered services */
-	static Event NewServiceIsRegistered; /*!< @brief A static value to count registered services */
+    /* @brief The Run procedure of the thread, so what he must do */
+    void FUNCTION_CALL_TYPE Run();
+
+    static AtomicCounter NbRegistered; /*!< @brief A static value to count registered services */
+    static Event NewServiceIsRegistered; /*!< @brief A static value to count registered services */
 
 private:
-	unsigned int Number; /*!< Storage place of my Number */
+    unsigned int Number; /*!< Storage place of my Number */
 };
 
 } // namespace Omiscid
 
 #endif // __REGISTER_THREAD_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -5,7 +5,7 @@
  */
 
 #ifndef __VARIABLE_ATTRIBUTE_H__
-#define __VARIABLE_ATTRIBUTE_H__ 
+#define __VARIABLE_ATTRIBUTE_H__
 
 #include <ServiceControl/Config.h>
 
@@ -28,14 +28,14 @@ class VariableAttributeListener;
  * the access restriction (read-only, read-write, read-write before init) for external users.
  * The users must change the value of this symbolic variable when the asscoiated variable
  * in its program change.
- * When the value change, a callback can be called : 
+ * When the value change, a callback can be called :
  * used by ControlServer to enable users to subscribe to variable modification.
  */
 class VariableAttribute : public Attribute
 {
-	friend class ControlServer;
-	friend class ControlClient;
-	friend class ServiceProxy;
+    friend class ControlServer;
+    friend class ControlClient;
+    friend class ServiceProxy;
 
 private:
   /** @name Constructor */
@@ -51,7 +51,7 @@ private:
 public:
 
   /** @brief Destructor */
-	virtual ~VariableAttribute() {};
+    virtual ~VariableAttribute() {};
 
   /** @name Read Accessors */
   //@{
@@ -74,12 +74,12 @@ public:
   void SetAccessReadWriteBeforeInit();
 
   bool IsInitialised();
-  
-  /** @brief Set the value and signal that the value has changed 
+
+  /** @brief Set the value and signal that the value has changed
    * @param value_str [in] the new string representaion of the value */
   void SetValue(const SimpleString value_str);
 
-  /** @brief Set the value and signal that the value has changed 
+  /** @brief Set the value and signal that the value has changed
    * @param value_str [in] the new string representaion of the value */
   void SetValueFromControl(const SimpleString value_str);
 
@@ -115,11 +115,11 @@ public:
    *
    * The description has the form :
    * @verbatim
-    <variable name="name of the variable"> 
+    <variable name="name of the variable">
      <value>the value</value>
      <default>the default value</value>
      <access>the kind of access</access>
-     <type>the type of the variable</type> 
+     <type>the type of the variable</type>
      <description>the description</description> (if there is a description)
      <formatDescription>the description of the format </formatDescription> (if there is a description for the format)
     </variable> @endverbatim
@@ -129,7 +129,7 @@ public:
 
   /** @brief Add to atring a XML message containing the variable and its value.
    *
-   * It has the form : 
+   * It has the form :
    * @verbatim
     <variable name="name of the variable">
      <value> the value of the variable </value>
@@ -170,7 +170,7 @@ public:
   /**  \brief to parse/generate XML data.
    */
   static const SimpleString variable_str;
- 
+
 protected:
   SimpleString type; /*!< type of the variable */
   SimpleString defaultValue; /*!< default value*/
@@ -189,3 +189,67 @@ private:
 } // namespace Omiscid
 
 #endif // __VARIABLE_ATTRIBUTE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

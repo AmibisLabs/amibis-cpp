@@ -33,7 +33,7 @@ class Attribute
   //@{
   Attribute(); /*!< \brief Default Constructor*/
 
-  /** \brief Constructor 
+  /** \brief Constructor
    * \param a_name [in] name of the attribute */
   Attribute(const SimpleString a_name);
   //@}
@@ -52,13 +52,13 @@ class Attribute
   /** \name Write Accessors */
   //@{
   void SetName(const SimpleString str);
-  void SetDescription(const SimpleString str); 
+  void SetDescription(const SimpleString str);
   void SetFormatDescription(const SimpleString str);
   //@}
 
   /** \name XML Generation */
   //@{
-  /** \brief Add to str a short xml description of the attribut. 
+  /** \brief Add to str a short xml description of the attribut.
    *
    * This description is composed by the kind of the attribute and the name.
    * It can be generated with the method GenerateHeaderDescription.
@@ -96,9 +96,9 @@ class Attribute
    * \param end [in] define if the tag is closed or not.
    */
   static void GenerateHeaderDescription(const SimpleString& type,
-					const SimpleString& name,
-					SimpleString& str,
-					bool end = true);
+                    const SimpleString& name,
+                    SimpleString& str,
+                    bool end = true);
   /**
    * \brief Add to a SimpleString the xml tag for description.
    *
@@ -106,7 +106,7 @@ class Attribute
    * \param str [in, out] the xml tag for description is added to the ned of the SimpleString
    */
   void AddTagDescriptionToStr(SimpleString& str);
-  
+
  private:
   SimpleString name; /*!< name of the attribute*/
   SimpleString description; /*!< description of the attribute*/
@@ -117,3 +117,67 @@ class Attribute
 } // namespace Omiscid
 
 #endif // __ATTRIBUTE_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-/** 
+/**
  * @defgroup UserFriendly User friendly high-level API for Omiscid
  *
  */
@@ -26,23 +26,87 @@ class ServiceRepository;
  */
 class ServiceRepositoryListener : private DnsSdProxyClient
 {
-	// Friend class ServiceRepository can access private members from DnsSdProxyClient
-	friend class ServiceRepository;
+    // Friend class ServiceRepository can access private members from DnsSdProxyClient
+    friend class ServiceRepository;
 
 public:
-	// Constructor
-	ServiceRepositoryListener();
+    // Constructor
+    ServiceRepositoryListener();
 
-	// virtual destructor
-	virtual ~ServiceRepositoryListener();
+    // virtual destructor
+    virtual ~ServiceRepositoryListener();
 
-	virtual void ServiceAdded( ServiceProxy& ProxyForService   ) = 0;
-	virtual void ServiceRemoved( ServiceProxy& ProxyForService ) = 0;
+    virtual void ServiceAdded( ServiceProxy& ProxyForService   ) = 0;
+    virtual void ServiceRemoved( ServiceProxy& ProxyForService ) = 0;
 
 protected:
-	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
+    virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
 };
 
 } // namespace Omiscid
 
 #endif  // __SERVICE_REPOSITORY_LISTENER_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

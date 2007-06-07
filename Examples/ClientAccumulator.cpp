@@ -23,32 +23,32 @@ namespace Omiscid {
 class ClientConnectorAndVariableListener : public ConnectorListener, public RemoteVariableChangeListener
 {
 public:
-	/* @brief constructor */
-	ClientConnectorAndVariableListener()
-	{
-	}
+    /* @brief constructor */
+    ClientConnectorAndVariableListener()
+    {
+    }
 
-	/* @brief destructor */
-	virtual ~ClientConnectorAndVariableListener()
-	{
-	}
+    /* @brief destructor */
+    virtual ~ClientConnectorAndVariableListener()
+    {
+    }
 
-	/* @brief callback function overide to receive data */
-	void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
-	{
-		// Create a SimpleString with message and output it
-		// even if we can directly output it. Show usage of SimpleString
+    /* @brief callback function overide to receive data */
+    void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
+    {
+        // Create a SimpleString with message and output it
+        // even if we can directly output it. Show usage of SimpleString
 
-		SimpleString Message = Msg.GetBuffer();
+        SimpleString Message = Msg.GetBuffer();
 
-		cerr << Message << endl;
-	}
+        cerr << Message << endl;
+    }
 
-	/* @ brief callback for variable changes notification */
-	void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
-	{
-		cout << "Current Accu value: " << NewValue << endl;
-	};
+    /* @ brief callback for variable changes notification */
+    void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
+    {
+        cout << "Current Accu value: " << NewValue << endl;
+    };
 };
 
 } // namespace Omiscid
@@ -56,98 +56,162 @@ public:
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int main(int argc, char*argv[] )
 {
-	// Instanciate a Connector and a Variable listener (must *not* be destroyed before it has
-	// been removed for the connector or until the service is destroyed).
-	ClientConnectorAndVariableListener MyListener;
+    // Instanciate a Connector and a Variable listener (must *not* be destroyed before it has
+    // been removed for the connector or until the service is destroyed).
+    ClientConnectorAndVariableListener MyListener;
 
-	
-	// Ask to the service factory to create a Service. The service is not
-	// register yet. We do not provide the service class, the default value 'Service'
-	// will be used
-	Service * pAccuClient = ServiceFactory.Create( "Accumulator Client" );
 
-	// If something tricky occurred, exit
-	if ( pAccuClient == NULL )
-	{
-		fprintf( stderr, "Could not create the Accumulator Client service.\n" );
+    // Ask to the service factory to create a Service. The service is not
+    // register yet. We do not provide the service class, the default value 'Service'
+    // will be used
+    Service * pAccuClient = ServiceFactory.Create( "Accumulator Client" );
 
-		// Exit the thread
-		return -1;
-	}
+    // If something tricky occurred, exit
+    if ( pAccuClient == NULL )
+    {
+        fprintf( stderr, "Could not create the Accumulator Client service.\n" );
 
-	// Add a Connector to send commands and receive error messages (AnInOutput) and set my callback
-	// object to receive notification of messages
-	pAccuClient->AddConnector( "SendCommands", "A way to send commands to the Accumulator", AnInOutput );
-	pAccuClient->AddConnectorListener( "SendCommands", &MyListener );
+        // Exit the thread
+        return -1;
+    }
 
-	// Trace
-	printf( "Accumulator Client created.\n" );
+    // Add a Connector to send commands and receive error messages (AnInOutput) and set my callback
+    // object to receive notification of messages
+    pAccuClient->AddConnector( "SendCommands", "A way to send commands to the Accumulator", AnInOutput );
+    pAccuClient->AddConnectorListener( "SendCommands", &MyListener );
 
-	// A proxy to communicate with the Accumulator
-	ServiceProxy * OneAccumulator = NULL;
+    // Trace
+    printf( "Accumulator Client created.\n" );
 
-	// Loop for searching an Accumulator
-	printf( "Search for an Accumulator service.\n" );
-	for( int NbTry = 1; NbTry <= 5; NbTry ++ )
-	{
-		// Search for services, wait 5 s (5000 ms) to get an answer
-		// Get in return a ServiceProxy*. This service is nammed Accumalator, gets a variable
-		// Accu and an InOutput connector "Commands"
-		OneAccumulator = pAccuClient->FindService( And(NameIs("Accumulator"),HasVariable("Accu"), HasConnector("Commands",AnInOutput) ), 5000 );
+    // A proxy to communicate with the Accumulator
+    ServiceProxy * OneAccumulator = NULL;
 
-		if ( OneAccumulator == NULL )
-		{
-			fprintf( stderr, "Search for an Accumulator service failed. Try again...\n" );
-			continue;
-		}
+    // Loop for searching an Accumulator
+    printf( "Search for an Accumulator service.\n" );
+    for( int NbTry = 1; NbTry <= 5; NbTry ++ )
+    {
+        // Search for services, wait 5 s (5000 ms) to get an answer
+        // Get in return a ServiceProxy*. This service is nammed Accumalator, gets a variable
+        // Accu and an InOutput connector "Commands"
+        OneAccumulator = pAccuClient->FindService( And(NameIs("Accumulator"),HasVariable("Accu"), HasConnector("Commands",AnInOutput) ), 5000 );
 
-		break;
-	}
+        if ( OneAccumulator == NULL )
+        {
+            fprintf( stderr, "Search for an Accumulator service failed. Try again...\n" );
+            continue;
+        }
 
-	if ( OneAccumulator == NULL )
-	{
-		fprintf( stderr, "Could not find an Accumulator service. quit !\n" );
+        break;
+    }
 
-		// delete 
-		delete pAccuClient;
-		return -1;
-	}
+    if ( OneAccumulator == NULL )
+    {
+        fprintf( stderr, "Could not find an Accumulator service. quit !\n" );
 
-	// register the Client service and launch everything
-	// we must do it before communicating with the Accumalator
-	pAccuClient->Start();
+        // delete
+        delete pAccuClient;
+        return -1;
+    }
 
-	// Connect to the Accumulator
-	if ( pAccuClient->ConnectTo( "SendCommands", OneAccumulator, "Commands" ) == true )
-	{
-		// Subscribe to variables changes for Accu. We will receive a first callback
-		// when done
-		OneAccumulator->AddRemoteVariableChangeListener( "Accu", &MyListener );
+    // register the Client service and launch everything
+    // we must do it before communicating with the Accumalator
+    pAccuClient->Start();
 
-		// Enter command prompt, 1er time with help
-		cout << "Enter new command ('+4', '/5.5', ' *8.59', '-6', ' = 8.2'...): " << endl;
-		
-		// Do my work
-		SimpleString LocalCommand;
-		for(;;)
-		{
-			// Get the local command at keyboard
-			cin >> LocalCommand;
+    // Connect to the Accumulator
+    if ( pAccuClient->ConnectTo( "SendCommands", OneAccumulator, "Commands" ) == true )
+    {
+        // Subscribe to variables changes for Accu. We will receive a first callback
+        // when done
+        OneAccumulator->AddRemoteVariableChangeListener( "Accu", &MyListener );
 
-			// Send to all connected Client... Here we are connected to only one accumulator
-			// we can also use SentToOneClient...
-			pAccuClient->SendToAllClients( "SendCommands", (char*)LocalCommand.GetStr(), LocalCommand.GetLength(), false );
-		}
-	}
-	else
-	{
-		fprintf( stderr, "Could not connect to the Accumulator connector. quit !\n" );
-	}
+        // Enter command prompt, 1er time with help
+        cout << "Enter new command ('+4', '/5.5', ' *8.59', '-6', ' = 8.2'...): " << endl;
 
-	// cleanup everything
-	delete pAccuClient;
-	delete OneAccumulator;
+        // Do my work
+        SimpleString LocalCommand;
+        for(;;)
+        {
+            // Get the local command at keyboard
+            cin >> LocalCommand;
 
-	// exit
-	return 0;
+            // Send to all connected Client... Here we are connected to only one accumulator
+            // we can also use SentToOneClient...
+            pAccuClient->SendToAllClients( "SendCommands", (char*)LocalCommand.GetStr(), LocalCommand.GetLength(), false );
+        }
+    }
+    else
+    {
+        fprintf( stderr, "Could not connect to the Accumulator connector. quit !\n" );
+    }
+
+    // cleanup everything
+    delete pAccuClient;
+    delete OneAccumulator;
+
+    // exit
+    return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -5,14 +5,14 @@
  */
 
 #ifndef __SIMPLE_EXCEPTION_H__
-#define __SIMPLE_EXCEPTION_H__ 
+#define __SIMPLE_EXCEPTION_H__
 
 #include <System/Config.h>
 
 #include <System/SimpleString.h>
 
 #ifndef WIN32
-	#include <errno.h>
+    #include <errno.h>
 #endif
 
 namespace Omiscid {
@@ -20,11 +20,11 @@ namespace Omiscid {
 /**
  * @class SimpleException SimpleException.h System/SimpleException.h
  * @brief Exception raised by the object of the OMiSCID system library
- * 
+ *
  * This class is a mother class for exceptions.
  * All derived classes must define their own exception type (const char*)
  * by rewriting the virtual function GetExceptionType.
- * <br>Inherited by SocketException raised by Socket objects 
+ * <br>Inherited by SocketException raised by Socket objects
  * and SimpleListException raised by SimpleList object.
  * \author Domnique Vaufreydaz
  * \author Sebastien Pesnel
@@ -32,9 +32,9 @@ namespace Omiscid {
 class SimpleException
 {
 public:
-	typedef enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
+    typedef enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
 
-  /** \brief Constructor 
+  /** \brief Constructor
    *
    * Create a new SimpleException.
    * \param m [in] message for the error. This string is copied.
@@ -47,7 +47,7 @@ public:
 
   /** \brief Destructor */
   virtual ~SimpleException();
-  
+
   /** \brief Display the message followed by the error number on stderr. */
   void Display() const;
 
@@ -58,7 +58,7 @@ public:
    *  implementing this fonction.
    */
   virtual SimpleString GetExceptionType() const;
-  
+
   SimpleString msg; /*!< string message */
   int err; /*!< error number (for example value returned by errno)*/
 };
@@ -66,3 +66,66 @@ public:
 } // namespace Omiscid
 
 #endif // __SIMPLE_EXCEPTION_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

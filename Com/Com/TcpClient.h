@@ -40,9 +40,9 @@ class TcpClient : public MsgSocket, public ComTools
    */
   TcpClient(const SimpleString addr, int port);
 
-	// Virtual destructor always
-	virtual ~TcpClient();
-  
+    // Virtual destructor always
+    virtual ~TcpClient();
+
   /**
    * @brief Connect to Server.
    * @param addr [in] host address or name.
@@ -58,10 +58,10 @@ class TcpClient : public MsgSocket, public ComTools
    * @param buffer [in] buffer with the len bytes to send.
    * (reimplemented from Client)
    * @return number of byte sent, (-1 if error)
-   */  
+   */
   int SendToServer(int len, const char* buffer);
 
-    
+
   /** @brief Define the service Id
    *
    * Define the service Id used in the header of each sent messages.
@@ -94,3 +94,67 @@ class TcpClient : public MsgSocket, public ComTools
 } // namespace Omiscid
 
 #endif // __TCP_CLIENT_H__
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
