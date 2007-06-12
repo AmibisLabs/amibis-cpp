@@ -173,7 +173,7 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, uns
     if ( flags & OmiscidDNSServiceFlagsAdd )
     {
         // A new service appears
-		// DevOmiscidTrace( "A new service appear in DnsSd : %s\n", NewService.Name.GetStr() );
+        // DevOmiscidTrace( "A new service appear in DnsSd : %s\n", NewService.Name.GetStr() );
 
         // Search if this service is already registered in case of multiple network interface
         // services may appear several times
@@ -390,67 +390,3 @@ bool DnsSdProxy::WaitForChanges(unsigned int TimeToWait)
 
     return Changes.Wait( TimeToWait );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

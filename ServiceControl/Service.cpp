@@ -48,16 +48,16 @@ bool FUNCTION_CALL_TYPE WaitForOmiscidServiceCallback(const SimpleString fullnam
         return false;
     }
 
-	// DevOmiscidTrace( "Look if %s is suitable for me\n", SP->GetName().GetStr() );
+    // DevOmiscidTrace( "Look if %s is suitable for me\n", SP->GetName().GetStr() );
     if ( MyData->Filter->IsAGoodService( *SP ) == false )
     {
-		// DevOmiscidTrace( "=> no\n", SP->GetName().GetStr() );
+        // DevOmiscidTrace( "=> no\n", SP->GetName().GetStr() );
         delete SP;
         return false;
     }
 
     // Return the found service
-	// DevOmiscidTrace( "=> yes\n", SP->GetName().GetStr() );
+    // DevOmiscidTrace( "=> yes\n", SP->GetName().GetStr() );
     MyData->Proxy = SP;
     return true;
 }
@@ -724,68 +724,3 @@ bool Service::SendReplyToMessage(SimpleString ConnectorName, char * Buffer, int 
 {
     return SendToOneClient( ConnectorName, Buffer, BufferLen, Msg.GetPeerId(), UnreliableButFastSend );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

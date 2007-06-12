@@ -4,7 +4,37 @@
 
 In this files, you will find changes between OMiSCID versions.
 
-1.1.0    2007-04-28
+%Version%    %Date%
+    [Global modifications]
+    - change stuff in order to be actually able to install several
+      instances of Omiscid on the same computer.
+    - add automatic test processing (compilation with many combination
+      of parameters). As Avahi is not stable for our test suite (see
+      [Known features]), failed test using avahi are not considered as
+      relevant.
+    [API]
+    - change API in Service and ServiceProxy class. Now you have the
+      same API to get the PeerIf for both classes: GetPeerId() in order
+      to get numerical value of the peerId and GetPeerIdAsString() to get
+      a SimpleString containing its string representation.
+    - add 2 static member methods to ComTools: PeerIdFromString and
+      PeerIdAsString to handle peerId transformation.
+    - change java callback paradigm for local variable listeners to
+      be compliant with the C++ version (do not affect your C++ code).
+    [Known features]
+    - still crash (segmentation fault, corrupted double chained list in
+      glibc, problem in D-BUS) when using Avahi to (un)register many
+      services in the same process (even with Avahi 0.6.19). No longer
+      trying to cope with this features. Let's Avahi team solve this.
+    - Avahi and mDns can now collaborate on the same computer. mDns
+      works fine and Avahi do not work worst.
+    - You can have up to 9 DnsSD daemon at the same time (sic...).
+      Be carrefull, when using hibernate functionnality under linux,
+      some time the DnsSd daemon can generate at each wake up a false
+      new instance and a new daemon number. If this number goes
+      over 9, you may encounter problems.
+
+1.1.1    2007-04-28
     [Global modifications]
     - add some specific changes for gcc problematic version under
       gentoo (it do not see that a variable will be initialised
@@ -16,7 +46,7 @@ In this files, you will find changes between OMiSCID versions.
     - add Avahi support for DNS-SD (with Avahi 0.6.17)
     - Default choice is still mDNS under Linux/MacOSX (see known
       features to understand why). Add an option for scons to
-      override this automatic choice. (zeroconf=avahi)
+      override this automatic choice. (zeroconf=Avahi)
     - enable automatically DnsSdProxy when using ServiceControl
       Layer (due to Avahi limitation)
     - internal refactoring dues to Avahi stuff (sic...). No
@@ -82,81 +112,3 @@ In this files, you will find changes between OMiSCID versions.
 
 1.0.0
     - Initial version
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

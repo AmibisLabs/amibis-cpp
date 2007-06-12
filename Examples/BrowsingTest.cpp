@@ -211,7 +211,7 @@ int main(int argc, char*argv[] )
 
 FreeAndExit:
 
-	// printf use for autotest
+    // printf use for autotest
     printf( "Test ok.\n" );
 
     fprintf( stderr, "Cleanup everything.\n" );
@@ -221,6 +221,10 @@ FreeAndExit:
     {
         delete BrowseObject;
     }
+
+    // printf use for autotest
+    printf( "Test ok.\n" );
+	fflush( stdout );
 
 // Unregister service and close all connections
     fprintf( stderr, "Unregister service and close all connections.\n" );
@@ -233,9 +237,6 @@ FreeAndExit:
     }
     fprintf( stderr, "=> done in %u ms.\n", TimeCounter.Get() );
 
-    // printf use for autotest
-    printf( "Test ok.\n" );
-
 #ifdef WIN32
     // Stop here forever as express in the folowing code
     Forever.Wait();
@@ -244,67 +245,3 @@ FreeAndExit:
     // exit
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

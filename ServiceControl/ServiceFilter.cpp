@@ -674,26 +674,3 @@ ServiceFilter * Omiscid::Not(ServiceProxy& SP)
 {
     return new OMISCID_TLM ServiceBooleanNot( PeerIdIs(SP.GetPeerId()) );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

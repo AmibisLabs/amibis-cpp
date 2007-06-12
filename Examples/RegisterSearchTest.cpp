@@ -239,7 +239,7 @@ int main(int argc, char*argv[] )
     {
         // in order to write shorter lines below
         ServiceProxy * pProxy = MultipleServices->GetCurrent();
-        cerr << pProxy->GetName() << " (" << pProxy->GetVariableValue("peerId") << ") is number "
+        cerr << pProxy->GetName() << " (" << pProxy->GetPeerIdAsString() << ") is number "
              << pProxy->GetVariableValue("Number") << endl;
     }
 
@@ -265,6 +265,7 @@ int main(int argc, char*argv[] )
 
     // printf use for autotest
     printf( "Test ok.\n" );
+	fflush( stdout );
 
 // Unregister service and close all connections
     OmiscidMessage( "Unregister service and close all connections.\n" );
@@ -289,67 +290,3 @@ int main(int argc, char*argv[] )
     // exit
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

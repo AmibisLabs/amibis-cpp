@@ -32,21 +32,54 @@ sub CheckCommand()
 	my $checkline = shift @_;
 	my $ExecCommand;
 	my $ligne;
-	
+
+	print STDERR "Execute '$commandline'\n";
 	open($ExecCommand, "$commandline |");
 	while( $ligne = <$ExecCommand> )
 	{
-		print $ligne;
+		print STDERR $ligne;
 		if ( $ligne =~ /^$checkline/ )
 		{
 			# test is ok
-			close( $ExecCommand );
+			# close( $ExecCommand );
 			return 1;
 		}
 	}
-	close( $ExecCommand );
+	# close( $ExecCommand );
 	return 0;
 }
+
+sub WakeOnLan()
+{
+	my $TestComputer = shift @_;		
+	my $MacAddress;
+	my $res;
+	
+	if ( !defined $Computers{$TestComputer} )
+	{
+		return 0;
+	}
+	
+	$MacAddress = $Computers{$TestComputer};
+	
+	$MacAddress =~ s/://g;
+	`./wol $MacAddress`;
+	$NbTry = 10;
+	while( $NbTry > 0 )
+	{
+		$res = `ssh $TestComputer "echo 'ssh is now ok.'"`;
+		if ( $res =~ /^ssh is now ok\./ )
+		{
+			return 1;
+		}
+		sleep( 5 );
+		print STDERR "Send an etherwake command to $TestComputer.\n";
+		`./wol $MacAddress`;
+		$NbTry--;
+	}
+	return 0;
+}
+
 
 $NameOfLogFile = 'Problems.txt';
 
@@ -196,6 +229,8 @@ if ( -e "../$VersionFile" )
 	unlink "../$VersionFile";
 }
 
+# generate temporary CHANGES from CHANGES.in
+`cp CHANGES.in CHANGES`;
 
 # generate testing archive
 &RecurseWork::RecurseWork("System/");
@@ -227,18 +262,70 @@ if ( $ZipAfterZip == 1 )
 
 &EmptyLog();
 
-$TestSuite = "########################################\n#\n# report of automatic test procedure\n#\n########################################\n\n";
+$TestSuite  = "###########################################################\n";
+$TestSuite .= "#\n";
+$TestSuite .= "# Report of automatic test procedure\n";
+$TestSuite .= "#\n";
+$TestSuite .= "###########################################################\n";
+$TestSuite .= "# You will find a list of test computers, and\n";
+$TestSuite .= "# for each one, you may have the following flags:\n";
+$TestSuite .= "#    CMT: comments\n";
+$TestSuite .= "#    C++: version of C++ compiler installed on test computer\n";
+$TestSuite .= "#    SCO: scons version\n";
+$TestSuite .= "#    XML: lib XML version\n";
+$TestSuite .= "#    IOK: compilation and installation of Omiscid was ok\n";
+$TestSuite .= "#    IFA: compilation and installation of Omiscid failed\n";
+$TestSuite .= "#    TOK: the test is ok\n";
+$TestSuite .= "#    TFA: the test failed\n";
+$TestSuite .= "###########################################################\n";
+$TestSuite .= "\n\n";
+$TestSuite .= "##################\n";
+$TestSuite .= "# Computer 1\n";
+$TestSuite .= "##################\n";
+$TestSuite .= "CMT: Compilation environment\n";
+$TestSuite .= "C++: Microsoft Visual Studio 2005\n";
+$TestSuite .= "     Version 8.0.50727.867  (vsvista.050727-8600)\n";
+$TestSuite .= "     Édition installée : Professional\n";
+$TestSuite .= "     Microsoft Visual Studio 2005 Professional - Français Service Pack 1 (KB926607)\n";   
+$TestSuite .= "     Update pour Microsoft Visual Studio 2005 Professional - Français (KB932233)\n";  
+$TestSuite .= "XML: libxml2 version 2.6.23 with iconv 1.9.1\n";
+$TestSuite .= "CMT: Test Omiscid with 'debug=0 trace=0' flags.\n";
+$TestSuite .= "IOK: Compile and install Omiscid.\n";
+$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
+$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
+$TestSuite .= "CMT: Test Omiscid with 'debug=0 trace=1' flags.\n";
+$TestSuite .= "IOK: Compile and install Omiscid.\n";
+$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
+$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
+$TestSuite .= "CMT: Test Omiscid with 'debug=1 trace=0' flags.\n";
+$TestSuite .= "IOK: Compile and install Omiscid.\n";
+$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
+$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
+$TestSuite .= "CMT: Test Omiscid with 'debug=1 trace=1' flags.\n";
+$TestSuite .= "IOK: Compile and install Omiscid.\n";
+$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
+$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
+$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
+
+
 
 if ( $DoTest == 1 )
 {
 	# $Computers{'astree'} = '000e0c5e4586';
 	# $Options{'astree'}   = '("zeroconf=avahi")';
-	# $Computers{'metis'}  = '000d936fc38c';
-	# $Options{'metis'}   = '("")';
+	$Computers{'metis'}  = '000d936fc38c';
+	$Options{'metis'}   = '("")';
 	# $Computers{'junon'}  = '0013202e4fea';
 	# $Options{'junon'}   = '("zeroconf=mdns")';
-	# $Computers{'desdemona'}  = '000bcd624fa9';
-	# $Options{'desdemona'}   = '("zeroconf=mdns")';
+	$Computers{'desdemona'}  = '000bcd624fa9';
+	$Options{'desdemona'}   = '("zeroconf=mdns")';
 	# $Options{'desdemona'}   = '("")';
 	$Computers{'deimos'}  = '000d561ff276';
 	$Options{'deimos'}   = '("zeroconf=avahi")';
@@ -253,66 +340,51 @@ if ( $DoTest == 1 )
 	
 	local (*READ, *WRITE, *ERROR);
 	
-	$NumComputer = 0;
+	$NumComputer = 1;
 	foreach $TestComputer ( keys %Computers )
 	{
 		# Check if computer if available
 		print STDERR "Trying to connect to $TestComputer.\n";
 		print STDERR "Send an etherwake command to $TestComputer.\n";
-		$MacAddress = $Computers{$TestComputer};
-		$MacAddress =~ s/://g;
-		`./wol $MacAddress`;
-		$NbTry = 10;
-		while( $NbTry > 0 )
-		{
-			$res = `ssh $TestComputer "echo 'ssh is not ok.'"`;
-			if ( $res =~ /^ssh is not ok\./ )
-			{
-				last;
-			}
-			print STDERR "Send an etherwake command to $TestComputer.\n";
-			`./wol $MacAddress`;
-			sleep( 10 );
-			$NbTry--;
-		}
-		if ( $NbTry == 0 )
+		if ( &WakeOnLan($TestComputer) == 0 )
 		{
 			$Tested = 0;
 			&AddLog( "ERR: Could not connect to $TestComputer" );
+			next;
 		}
 		
 		# incr num of computer 1
 		$NumComputer++;
 		
-		$TestSuite .= "##################\n# Computer $NumComputer\n##################\nCMT: Compilation environment\n";
+		$TestSuite .= "\n\n##################\n# Computer $NumComputer\n##################\nCMT: Compilation environment\n";
 		
 		# retrieve test suite
-		print STDERR "Retrieve g++ version.\n";
+		print STDERR "$TestComputer: Retrieve g++ version\n";
 		$gccversion = `ssh $TestComputer "g++ --version | head -n 1"`;
-		$TestSuite .= "G++: $gccversion";
+		$TestSuite .= "C++: $gccversion";
 		
-		print STDERR "Retrieve scons version.\n";
+		print STDERR "$TestComputer: Retrieve scons version\n";
 		$sconsversion = `ssh $TestComputer "scons --version"`;
 		$sconsversion =~ s/[\r\n]+/ù/g;
 		$sconsversion =~ s/^([^ù]+)ù//;
 		$sconsversion =~ s/ù([^ù]+)ù$//;
-		$sconsversion =~ s/ù/\n---: /;
-		$sconsversion = "---: $sconsversion\n";
+		$sconsversion =~ s/ù/\n     /;
+		$sconsversion = "     $sconsversion\n";
 		$TestSuite .= "SCO: scons version :\n$sconsversion";
 		
-		print STDERR "Retrieve libxml version.\n";
+		print STDERR "$TestComputer: Retrieve libxml version\n";
 		$xmlversion = `ssh $TestComputer "xml2-config --version"`;
 		$TestSuite .= "XML: libxml2 version $xmlversion";
 		
 		# cleaning up everything
-		print STDERR "Cleanup $TestComputer:/tmp/.\n";
+		print STDERR "$TestComputer: Cleanup /tmp/\n";
 		`ssh $TestComputer "cd /tmp/;rm -rf $WorkingRep OmiscidInstall $VersionFile"`;	
 	        
 		# copy Archive to the test computer
-		print STDERR "Copy and unzip Omiscid on $TestComputer:/tmp/.\n";
+		print STDERR "$TestComputer: Copy and unzip Omiscid in /tmp/\n";
 		`scp ../$VersionFile $TestComputer:/tmp/;ssh $TestComputer "cd /tmp;rm -rf $WorkingRep OmiscidInstall;unzip $VersionFile;mkdir OmiscidInstall"`;
 		
-		print STDERR "Change permissions on test scripts on $TestComputer:/tmp/$WorkingRep/.\n";
+		print STDERR "$TestComputer: Change permissions on test scripts in /tmp/$WorkingRep/Test/\n";
 		`ssh $TestComputer "chmod 755 /tmp/$WorkingRep/Test"`;
 
 		# set that it is not tested successfully
@@ -327,46 +399,60 @@ if ( $DoTest == 1 )
 
 				foreach $Option ( @OptionsTable )
 				{
-					print STDERR "Try to install Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option' flags.\n";
+					# &WakeOnLan($TestComputer);
+					
+					$TestSuite .= "CMT: Test Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option' flags.\n";
+					
+					print STDERR "$TestComputer: Try to install Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option' flags.\n";
 					$LastTry = "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileOmiscid.sh $WorkingRep 'debug=$DebugFlag trace=$TraceFlag $Option install prefix=/tmp/OmiscidInstall'\""; 
 					$Tested = &CheckCommand( "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileOmiscid.sh $WorkingRep 'debug=$DebugFlag trace=$TraceFlag $Option install prefix=/tmp/OmiscidInstall'\"", 'scons: done building targets.' );
 					if ( $Tested == 0 )
 					{
 						&AddLog( "ERR: Could not compile Omiscid on $TestComputer" );
 						&AddLog( "CMT: $LastTry" );
-						$TestSuite .= "ERR: Could not compile and install Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option install prefix=/tmp/OmiscidInstall' flags\n";
+						$TestSuite .= "IFA: Could not compile and install Omiscid.\n";
 						next;
 					}
 					else
 					{
-						$TestSuite .= "IOK: compile and install Omiscid\n---: flags used 'debug=$DebugFlag trace=$TraceFlag $Option install prefix=/tmp/OmiscidInstall'\n";
+						$TestSuite .= "IOK: Compile and install Omiscid.\n";
 					}					
 					# set that it is not tested successfully
 					$Tested = 0;
 			
-					print STDERR "Try to compile and run test(s) with 'debug=$DebugFlag trace=$TraceFlag $Option'.\n";
+					print STDERR "$TestComputer: Try to compile and run test(s) with 'debug=$DebugFlag trace=$TraceFlag $Option'.\n";
 					foreach $test ( keys %TestsList )
 					{
 						# try to compile Test Examples
 						$LastTry = "ssh $TestComputer $Options{$TestComputer} : \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test'\"";
 						$Tested = 0;
 						$NbTestsTried = 0;
-						while( $NbTestsTried < 10 )
+						$NbTestsOk = 0;
+						while( $NbTestsTried < 5 )
 						{
-							$res = `ssh $TestComputer "/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test'"`;
-							if ( $res =~ /Test ok\./m )
+							$NbTestsTried++;
+							# &WakeOnLan($TestComputer);
+							print STDERR "$TestComputer: Test $NbTestsTried.\n";
+							$res = &CheckCommand( "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test'\"", 'Test ok\.' );
+							if ( $res == 1 )
 							{
 								# test is ok
-								$Tested = 1;
-								$TestSuite .= "TOK: compile TestsList{$test} and run it successfully\n---: files used '$test'\n";
+								$NbTestsOk++;
 								last;
 							}
-							sleep( 5 );
-							$NbTestsTried++;
-						}						
+							sleep( 2 );
+
+						}
+						if ( $NbTestsTried == $NbTestsOk )
+						{
+							
+							$Tested = 1;
+							$TestSuite .= "TOK: Compile $TestsList{$test} and run it successfully ($NbTestsTried/$NbTestsOk)\n     files used '$test'\n";
+						}
+					
 						if ( $Tested == 0 )
 						{
-							$TestSuite .= "TFA: Could not compile TestsList{$test} and run it successfully\n---: files used '$test'\n";
+							$TestSuite .= "TFA: Could not compile $TestsList{$test} and run it successfully ($NbTestsTried/$NbTestsOk)\n     files used '$test'\n";
 							if ( $Option =~ /avahi/ )
 							{
 								&AddLog( "WRN: Could not run test ('debug=$DebugFlag trace=$TraceFlag $Option') on $TestComputer" );
@@ -386,7 +472,7 @@ if ( $DoTest == 1 )
 			}
 		}
 		# cleaning up everything
-		print STDERR "Cleanup $TestComputer:/tmp/.\n";
+		print STDERR "$TestComputer: Cleanup /tmp/\n";
 		`ssh $TestComputer "cd /tmp/;rm -rf $WorkingRep OmiscidInstall $VersionFile"`;
 		
 		$TestSuite .= "\n";
@@ -404,7 +490,6 @@ if ( &LogOk() == 0 )
 	exit();
 }
 
-
 print STDERR "\n\n\t=> $VersionFile successfully generated.\n";
 `echo $Version > ../LastVersion.info`;
 print STDERR "Generate final version of $VersionFile.\n";
@@ -413,6 +498,32 @@ print STDERR "Generate final version of $VersionFile.\n";
 open( $fdtests, '>TESTS' );
 print $fdtests $TestSuite;
 close( $fdtests);
+
+# generate date
+my ($sec,$min,$hour,$mday,$mon,$year, $wday,$yday,$isdst) = localtime time;
+$year += 1900;
+$mon += 1;
+my $fdchanges;
+my $ligne;
+my $contenu = '';
+	
+open( $fd, '<CHANGES.in' ) or die "Could not open 'CHANGES.in'\n";
+while( $ligne = <$fd> )
+{
+	$ligne =~ s/[\r\n\s]+$//g;
+	$ligne =~ s/%Version%/$Version/g;
+	$ligne =~ s/%Date%/$year-$mon-$mday/g;
+	$contenu .= $ligne . '_#_#_#_#_';
+}
+close( $fd );
+	
+$contenu =~ s/(_#_#_#_#_)+$//;
+$contenu =~ s/(_#_#_#_#_)/\n/g;
+	
+open( $fd, '>CHANGES' ) or die "Could not write to 'CHANGES'\n";
+print $fd $contenu;
+print $fd "\n";
+close( $fd );
 
 # reset file list
 undef %FilesToAdd;
@@ -442,7 +553,7 @@ if ( $DoDoc == 1 )
 	&RecurseWork::RecurseWork("Doc/");
 }
 
-print STDERR "Remove BipService.cpp from list.\n";
+print STDERR "Remove BipService.cpp from list\n";
 undef $FilesToAdd{'Examples/BipService.cpp'};
 
 $command = "zip -9 $VersionFile ";
