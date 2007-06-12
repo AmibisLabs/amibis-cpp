@@ -29,8 +29,8 @@ class MsgSocket;
 class MsgSocketCallBackData
 {
 public:
-    // Virtual destructor always
-    virtual ~MsgSocketCallBackData();
+	// Virtual destructor always
+	virtual ~MsgSocketCallBackData();
 
   Message Msg;
   void* userData1;/*!< first user parameter */
@@ -95,13 +95,13 @@ class UdpConnection
 class MsgSocketCallbackObject
 {
 public:
-    // Virtual destructor always
-    virtual ~MsgSocketCallbackObject();
+	// Virtual destructor always
+	virtual ~MsgSocketCallbackObject();
 
-    virtual void Connected(MsgSocket& ConnectionPoint, unsigned int PeerId);
-    virtual void Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId);
+	virtual void Connected(MsgSocket& ConnectionPoint, unsigned int PeerId);
+	virtual void Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId);
 
-    virtual void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData) = 0;
+	virtual void Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& CallbackData) = 0;
 };
 
 /**
@@ -125,15 +125,15 @@ class MsgSocket : public Thread
 
 #ifdef DEBUG
 
-     enum DEBUGFLAGS
-     {
-         DBG_NONE        = 0x000000000,
-         DBG_LINKSYNC    = 0x000000001,
-         DBG_RECV        = 0x000000002,
-         DBG_SEND        = 0x000000004,
-         DBG_ALL        = 0xffffffff
-     };
-     static DEBUGFLAGS Debug;
+	 enum DEBUGFLAGS
+	 {
+		 DBG_NONE		= 0x000000000,
+		 DBG_LINKSYNC	= 0x000000001,
+		 DBG_RECV		= 0x000000002,
+		 DBG_SEND		= 0x000000004,
+		 DBG_ALL		= 0xffffffff
+	 };
+	 static DEBUGFLAGS Debug;
 
 #endif
 
@@ -142,12 +142,12 @@ class MsgSocket : public Thread
 
   /** \brief Kind of use of a MsgSocket object */
   enum MsgSocketKind
-    {
-      NONE_KIND = -1,
-      TCP_CLIENT_KIND = 0, /*!< for TCP connection : client side */
-      TCP_SERVER_KIND, /*!< for TCP connection : server side */
-      UDP_EXCHANGE_KIND /*!< for UDP connection */
-    };
+	{
+	  NONE_KIND = -1,
+	  TCP_CLIENT_KIND = 0, /*!< for TCP connection : client side */
+	  TCP_SERVER_KIND, /*!< for TCP connection : server side */
+	  UDP_EXCHANGE_KIND /*!< for UDP connection */
+	};
 
  public:
   /** \brief Constructor
@@ -209,7 +209,7 @@ class MsgSocket : public Thread
   /** @name Naming connecting points */
   //@{
   void SetName(const SimpleString NewName); /*!< Used to set names on MsgSocket */
-  const SimpleString GetName();                /*!< Used to set names on MsgSocket */
+  const SimpleString GetName();				/*!< Used to set names on MsgSocket */
   //@}
 
   /** \brief define callback function called in receive
@@ -321,8 +321,8 @@ class MsgSocket : public Thread
 
   /** \brief wait for a synclink message
    *
-   * @param[in]    TimeToWait the max time to wait in ms (default 250 ms)
-   * @return    true if the Socket has received a SyncLink message before timeout
+   * @param[in]	TimeToWait the max time to wait in ms (default 250 ms)
+   * @return	true if the Socket has received a SyncLink message before timeout
    */
   bool WaitSyncLinkMsg(unsigned int TimeToWait = 250);
 
@@ -335,7 +335,7 @@ class MsgSocket : public Thread
   bool SyncLinkMsgSent() const;
 
   // TO COMMENT
-    bool SendSyncLinkMsg();
+	bool SendSyncLinkMsg();
 
   /**\brief size max for message on TCP
    * \return the size max accepted for exchange on TCP */
@@ -356,7 +356,7 @@ class MsgSocket : public Thread
    */
   bool SetTcpNoDelay(bool Set = true);
 
-    // REVIEW
+	// REVIEW
   bool SetSyncLinkData( SimpleString DataForSL );
   SimpleString GetSyncLinkData();
   SimpleString GetPeerSyncLinkData();
@@ -389,11 +389,11 @@ protected:
  virtual UdpConnection* AcceptConnection(const UdpConnection& udp_connect, bool msg_empty);
 
 
-  MutexedSimpleList<MsgSocketCallbackObject*>   CallbackObjects;    /*!< callback call when messages arrive*/
-  MsgSocketCallBackData                callbackData;        /*!< structure given to the callback methods */
+  MutexedSimpleList<MsgSocketCallbackObject*>   CallbackObjects;	/*!< callback call when messages arrive*/
+  MsgSocketCallBackData				callbackData;		/*!< structure given to the callback methods */
 
-  Mutex mutex;                                /*!< mutex to protect the callback access */
-  Callback_SyncLink callbackSyncLinkFct;                /*!< callback call when SyncLink messages arrive*/
+  Mutex mutex;								/*!< mutex to protect the callback access */
+  Callback_SyncLink callbackSyncLinkFct;				/*!< callback call when SyncLink messages arrive*/
   MsgSocketCallBackData callbackSyncLinkData;
   SimpleString SyncLinkData;
   SimpleString PeerSyncLinkData;
@@ -446,16 +446,16 @@ private:
    * else return the number of byte to go to the message body from 'buf'.
    */
   int GoodBeginning(unsigned char* buf, int len, unsigned int& lengthmsg,
-            unsigned int& pid, unsigned int& mid);
+			unsigned int& pid, unsigned int& mid);
   //@}
 
 private:
 
-    // REVIEW : can only be done internaly
+	// REVIEW : can only be done internaly
   bool SetPeerSyncLinkData( char* DataForSL, int DataLength );
 
-    // let say that TcpServer Need to now these constant values
-    friend class TcpServer;
+	// let say that TcpServer Need to now these constant values
+	friend class TcpServer;
 
   Socket* socket; /*!< Socket use for connection */
 
@@ -469,7 +469,7 @@ private:
   static const char* tag_start2; /*!< part of BIP header : '\\r\\n'*/
   static const char* tag_end; /*!< BIP end tag : '\\r\\n' */
   static const char* tag_str; /*!< format of BIP header : 'BIP/1.0 %08x %08x %08x\\r\\n'*/
-  static const char* tag_prepared_hdr; /*!< format of BIP header preparation: 'BIP/1.0                   %08x\r\n'*/
+  static const char* tag_prepared_hdr; /*!< format of BIP header preparation: 'BIP/1.0				   %08x\r\n'*/
   static const char* tag_prepared_serv; /*!< format of BIP header preparation: '%08x %08x'*/
 
   static const int tag_end_size; /*!< size of string tag_end */
@@ -499,7 +499,7 @@ private:
 
   /** @name Named MsgSocket */
   //@{
-  SimpleString Name;                        /*!< The name of this connecting point */
+  SimpleString Name;						/*!< The name of this connecting point */
   const SimpleString DefaultMsgSocketName;  /*!< Default name of this MsgSocket : anonymous */
   //@}
 

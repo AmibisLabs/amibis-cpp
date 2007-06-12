@@ -4,9 +4,9 @@ using namespace Omiscid;
 
 AtomicReentrantCounter::AtomicReentrantCounter(int init_value)
 {
-    mutex.EnterMutex();
-    counter = init_value;
-    mutex.LeaveMutex();
+	mutex.EnterMutex();
+	counter = init_value;
+	mutex.LeaveMutex();
 }
 
 AtomicReentrantCounter::~AtomicReentrantCounter()
@@ -15,34 +15,34 @@ AtomicReentrantCounter::~AtomicReentrantCounter()
 
 int AtomicReentrantCounter::operator++()
 {
-    mutex.EnterMutex();
-    ++counter;
-    mutex.LeaveMutex();
-    return counter;
+	mutex.EnterMutex();
+	++counter;
+	mutex.LeaveMutex();
+	return counter;
 }
 
 int AtomicReentrantCounter::operator++(int)
 {
-    mutex.EnterMutex();
-    int val = counter++;
-    mutex.LeaveMutex();
-    return val;
+	mutex.EnterMutex();
+	int val = counter++;
+	mutex.LeaveMutex();
+	return val;
 }
 
 int AtomicReentrantCounter::operator--()
 {
-    mutex.EnterMutex();
-    --counter;
-    mutex.LeaveMutex();
-    return counter;
+	mutex.EnterMutex();
+	--counter;
+	mutex.LeaveMutex();
+	return counter;
 }
 
 int AtomicReentrantCounter::operator--(int)
 {
-    mutex.EnterMutex();
-    int val = counter--;
-    mutex.LeaveMutex();
-    return val;
+	mutex.EnterMutex();
+	int val = counter--;
+	mutex.LeaveMutex();
+	return val;
 }
 
 AtomicReentrantCounter::operator int() const

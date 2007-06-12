@@ -13,9 +13,9 @@
 namespace Omiscid {
 
 
-extern const SimpleString ControlAnswerXsdSchema;    // extern definition for control-answer.xsd verification
-extern const SimpleString ControlQueryXsdSchema;    // extern definition for control-query.xsd verification
-extern const SimpleString ServiceXsdSchema;    // extern definition for service.xsd verification
+extern const SimpleString ControlAnswerXsdSchema;	// extern definition for control-answer.xsd verification
+extern const SimpleString ControlQueryXsdSchema;	// extern definition for control-query.xsd verification
+extern const SimpleString ServiceXsdSchema;	// extern definition for service.xsd verification
 
 } // namespace Omiscid
 

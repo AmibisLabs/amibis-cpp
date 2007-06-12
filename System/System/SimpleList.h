@@ -33,28 +33,28 @@ template <typename TYPE> class SimpleRecycleList;
 template <typename TYPE>
 class SimpleListElement
 {
-    friend class SimpleList<TYPE>;
-    friend class SimpleRecycleList<TYPE>;
+	friend class SimpleList<TYPE>;
+	friend class SimpleRecycleList<TYPE>;
 
 public:
-    /** \brief Default Constructor */
-    SimpleListElement()
-    {
-        NextElement = NULL;
-    }
+	/** \brief Default Constructor */
+	SimpleListElement()
+	{
+		NextElement = NULL;
+	}
 
-    /** \brief Initialize the object */
-    void Init()
-    {
-          NextElement = NULL;
-    }
+	/** \brief Initialize the object */
+	void Init()
+	{
+		  NextElement = NULL;
+	}
 
-    /** \brief Destructor */
-    virtual ~SimpleListElement();
+	/** \brief Destructor */
+	virtual ~SimpleListElement();
 
 private:
-    TYPE ElementContainer; /*!< the data contains by the cell */
-     SimpleListElement<TYPE> * NextElement; /*!< a pointer on the next cell in the list */
+	TYPE ElementContainer; /*!< the data contains by the cell */
+	 SimpleListElement<TYPE> * NextElement; /*!< a pointer on the next cell in the list */
 };
 
 /** \brief Default Constructor */
@@ -76,380 +76,380 @@ template <typename TYPE>
 class SimpleList
 {
 public:
-        /** \brief Constructor
-     *
-     * Build an empty list
-     */
-    SimpleList();
+		/** \brief Constructor
+	 *
+	 * Build an empty list
+	 */
+	SimpleList();
 
-    /** \brief Destructor */
-    virtual ~SimpleList();
+	/** \brief Destructor */
+	virtual ~SimpleList();
 
-    /** \brief Function to add an item at tail of the list
-     * \param Val [in] the item to add
-     * \return false if a new cell has not been allocated
-     */
-    bool Add( const TYPE& Val );
+	/** \brief Function to add an item at tail of the list
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
+	bool Add( const TYPE& Val );
 
-    /** \brief Function to add an item at head of the list
-     * \param Val [in] the item to add
-     * \return false if a new cell has not been allocated
-     */
-    bool AddHead( const TYPE& Val );
+	/** \brief Function to add an item at head of the list
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
+	bool AddHead( const TYPE& Val );
 
-    /** \brief Function to add an item at tail of the list
-     * \param Val [in] the item to add
-     * \return false if a new cell has not been allocated
-     */
-    bool AddTail( const TYPE& Val );
+	/** \brief Function to add an item at tail of the list
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
+	bool AddTail( const TYPE& Val );
 
-    /** \brief Retrieve the current number of elements in the list
-     * \return the current number of elements
-     */
-    unsigned int GetNumberOfElements() const;
+	/** \brief Retrieve the current number of elements in the list
+	 * \return the current number of elements
+	 */
+	unsigned int GetNumberOfElements() const;
 
-    /** \name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
-    //@{
-    /** \brief Set position to the first element */
-    void First();
+	/** \name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
+	//@{
+	/** \brief Set position to the first element */
+	void First();
 
-    /** \brief Set position to the next element
-     * \return false if there is not a next element : it is the end of the list.
-     */
-    bool Next();
+	/** \brief Set position to the next element
+	 * \return false if there is not a next element : it is the end of the list.
+	 */
+	bool Next();
 
-    /** \brief Do we reach the end of the list
-     * \return true is we have reached the end of the list
-     */
-    bool AtEnd() const;
+	/** \brief Do we reach the end of the list
+	 * \return true is we have reached the end of the list
+	 */
+	bool AtEnd() const;
 
-    /** \brief Are we at the begining of the middle of the list ?
-     * \return true is we don't have reached the end of the list
-     */
-    bool NotAtEnd() const;
+	/** \brief Are we at the begining of the middle of the list ?
+	 * \return true is we don't have reached the end of the list
+	 */
+	bool NotAtEnd() const;
 
-    /** \brief Get the current element of the list
-     * \return the current element of the list
-     * \exception SimpleListException raised if GetCurrent is called after a call to RemoveCurrent
-     */
-    TYPE& GetCurrent() const;
+	/** \brief Get the current element of the list
+	 * \return the current element of the list
+	 * \exception SimpleListException raised if GetCurrent is called after a call to RemoveCurrent
+	 */
+	TYPE& GetCurrent() const;
 
-    /** \brief Remove the current element
-     * \return false if called on an empty list
-     * \exception SimpleListException raised if this method has already been called on the same element
-     */
-    bool RemoveCurrent();
-    //@}
+	/** \brief Remove the current element
+	 * \return false if called on an empty list
+	 * \exception SimpleListException raised if this method has already been called on the same element
+	 */
+	bool RemoveCurrent();
+	//@}
 
-    /** \brief Test if the list is empty or not
-     * \return true if the list is empty
-     */
-    bool IsEmpty() const;
+	/** \brief Test if the list is empty or not
+	 * \return true if the list is empty
+	 */
+	bool IsEmpty() const;
 
-    /** \brief Test if the list is empty or not
-     * \return true if the list is not empty
-     */
-    bool IsNotEmpty() const;
+	/** \brief Test if the list is empty or not
+	 * \return true if the list is not empty
+	 */
+	bool IsNotEmpty() const;
 
-    /** \brief Extract the first element of the list
-     *
-     * Return the first element in the list and remove it from the list
-     * \return the first element in the list
-     * \exception  SimpleListException raised if the list is empty
-     */
-    TYPE ExtractFirst();
+	/** \brief Extract the first element of the list
+	 *
+	 * Return the first element in the list and remove it from the list
+	 * \return the first element in the list
+	 * \exception  SimpleListException raised if the list is empty
+	 */
+	TYPE ExtractFirst();
 
-    /** \brief Remove a specific element
-     * \param Element [in] the element to remove
-     * \return false if the element to delete has not been found in the list
-     */
-    bool Remove(const TYPE& Element);
+	/** \brief Remove a specific element
+	 * \param Element [in] the element to remove
+	 * \return false if the element to delete has not been found in the list
+	 */
+	bool Remove(const TYPE& Element);
 
 
-    /** \brief  Empty (so empty) the whole list */
-    virtual void Empty();
+	/** \brief  Empty (so empty) the whole list */
+	virtual void Empty();
 
 
  protected:
-    /** \brief Obtain a new SimpleListElement object
-     *
-     * Create a new instance of SimpleListElement object
-     */
-    virtual SimpleListElement<TYPE>* GetNewSimpleListElement() const;
+	/** \brief Obtain a new SimpleListElement object
+	 *
+	 * Create a new instance of SimpleListElement object
+	 */
+	virtual SimpleListElement<TYPE>* GetNewSimpleListElement() const;
 
-    /** \brief Release a SimpleListElement object
-     *
-     * Delete the SimpleListElement object
-     * @param elt the element to release
-     */
-    virtual void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const;
+	/** \brief Release a SimpleListElement object
+	 *
+	 * Delete the SimpleListElement object
+	 * @param elt the element to release
+	 */
+	virtual void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const;
 
  private:
-    SimpleListElement<TYPE> * Head, * Tail; /*!< pointers on head and tail of the list */
-    unsigned int NumberOfElements; /*!< number of elements in the list*/
+	SimpleListElement<TYPE> * Head, * Tail; /*!< pointers on head and tail of the list */
+	unsigned int NumberOfElements; /*!< number of elements in the list*/
 
-    SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
-    bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
+	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
+	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
 };
 
 template <typename TYPE>
 SimpleList<TYPE>::SimpleList()
 {
-    // There is nothing in the list
-    NumberOfElements = 0;
-    Head = NULL;
-    Tail = NULL;
+	// There is nothing in the list
+	NumberOfElements = 0;
+	Head = NULL;
+	Tail = NULL;
 
-    // There is no position at all
-    PreviousElement = NULL;
-    CurrentElement = NULL;
-    RemoveCurrentHasOccured = false;
+	// There is no position at all
+	PreviousElement = NULL;
+	CurrentElement = NULL;
+	RemoveCurrentHasOccured = false;
 }
 
 template <typename TYPE>
 SimpleList<TYPE>::~SimpleList()
 {
-    Empty();
+	Empty();
 }
 
 // Access fonction
 template <typename TYPE>
 bool SimpleList<TYPE>::Add( const TYPE& Val )
 {
-    SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
-    if ( tmp == NULL ) // Plus assez de memoire
-        return false;
+	SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
+	if ( tmp == NULL ) // Plus assez de memoire
+		return false;
 
-    tmp->ElementContainer = Val;
-    if ( Head == NULL ) // La liste etait vide
-    {
-        Tail =    Head = tmp;
-    }
-    else
-    {
-        // Le nouveau devient le dernier
-        Tail->NextElement = tmp;
-        Tail = tmp;
+	tmp->ElementContainer = Val;
+	if ( Head == NULL ) // La liste etait vide
+	{
+		Tail =	Head = tmp;
+	}
+	else
+	{
+		// Le nouveau devient le dernier
+		Tail->NextElement = tmp;
+		Tail = tmp;
 
-        //if ( Head->NextElement == NULL )
-        //{
-        //    Head->NextElement = tmp;
-        //}
-    }
+		//if ( Head->NextElement == NULL )
+		//{
+		//	Head->NextElement = tmp;
+		//}
+	}
 
-    // On incremente le nombre d'objet dans la liste
-    NumberOfElements++;
+	// On incremente le nombre d'objet dans la liste
+	NumberOfElements++;
 
-    // Tout est ok
-    return true;
+	// Tout est ok
+	return true;
 }
 
-    /** \brief Function to add an item at head of the list
-     * \param Val [in] the item to add
-     * \return false if a new cell has not been allocated
-     */
+	/** \brief Function to add an item at head of the list
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
 template <typename TYPE>
 bool SimpleList<TYPE>::AddHead( const TYPE& Val )
 {
-    SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
-    if ( tmp == NULL ) // Plus assez de memoire
-        return false;
+	SimpleListElement<TYPE> * tmp = GetNewSimpleListElement();
+	if ( tmp == NULL ) // Plus assez de memoire
+		return false;
 
-    tmp->ElementContainer = Val;
-    if ( Head == NULL ) // La liste etait vide
-    {
-        Tail =    Head = tmp;
-    }
-    else
-    {
-        // Le nouveau devient le dernier
-        // Head->NextElement = tmp;
-        tmp->NextElement = Head;
-        Head = tmp;
-    }
+	tmp->ElementContainer = Val;
+	if ( Head == NULL ) // La liste etait vide
+	{
+		Tail =	Head = tmp;
+	}
+	else
+	{
+		// Le nouveau devient le dernier
+		// Head->NextElement = tmp;
+		tmp->NextElement = Head;
+		Head = tmp;
+	}
 
-    // On incremente le nombre d'objet dans la liste
-    NumberOfElements++;
+	// On incremente le nombre d'objet dans la liste
+	NumberOfElements++;
 
-    // Tout est ok
-    return true;
+	// Tout est ok
+	return true;
 }
 
-    /** \brief Function to add an item at tail of the list
-     * \param Val [in] the item to add
-     * \return false if a new cell has not been allocated
-     */
+	/** \brief Function to add an item at tail of the list
+	 * \param Val [in] the item to add
+	 * \return false if a new cell has not been allocated
+	 */
 template <typename TYPE>
 bool SimpleList<TYPE>::AddTail( const TYPE& Val )
 {
-    // just call the add function
-    return Add(Val);
+	// just call the add function
+	return Add(Val);
 }
 
 template <typename TYPE>
 unsigned int SimpleList<TYPE>::GetNumberOfElements() const
 {
-    return NumberOfElements;
+	return NumberOfElements;
 }
 
 // Set position to the first element
 template <typename TYPE>
 void SimpleList<TYPE>::First()
 {
-    PreviousElement = NULL;
-    CurrentElement = Head;
-    RemoveCurrentHasOccured = false;
+	PreviousElement = NULL;
+	CurrentElement = Head;
+	RemoveCurrentHasOccured = false;
 }
 
 // Set position to the next element
 template <typename TYPE>
 bool SimpleList<TYPE>::Next()
 {
-    // Ok, we do not have any other element
-    if ( CurrentElement == NULL ){
-        RemoveCurrentHasOccured = false;
-        return false;
-    }
+	// Ok, we do not have any other element
+	if ( CurrentElement == NULL ){
+		RemoveCurrentHasOccured = false;
+		return false;
+	}
 
-    //seb
-    if(RemoveCurrentHasOccured){
-        RemoveCurrentHasOccured = false;
-        // Previous and Current have already the good value
-        return true;
-    }
+	//seb
+	if(RemoveCurrentHasOccured){
+		RemoveCurrentHasOccured = false;
+		// Previous and Current have already the good value
+		return true;
+	}
 
-    // Here we can go forward in the list
-    PreviousElement = CurrentElement;
-    CurrentElement  = CurrentElement->NextElement;
+	// Here we can go forward in the list
+	PreviousElement = CurrentElement;
+	CurrentElement  = CurrentElement->NextElement;
 
-    // Have we reach the end of the list ?
-    if ( CurrentElement == NULL )
-    {
-        return false;
-    }
+	// Have we reach the end of the list ?
+	if ( CurrentElement == NULL )
+	{
+		return false;
+	}
 
-    return true;
+	return true;
 }
 
 // Set position to the next element
 template <typename TYPE>
 bool SimpleList<TYPE>::AtEnd() const
 {
-    // Ok, we do not have any other element
-    if ( CurrentElement == NULL )
-        return true;
+	// Ok, we do not have any other element
+	if ( CurrentElement == NULL )
+		return true;
 
-    return false;
+	return false;
 }
 
 // Set position to the next element
 template <typename TYPE>
 bool SimpleList<TYPE>::NotAtEnd() const
 {
-    // Ok, we do not have any other element
-    if ( CurrentElement != NULL )
-        return true;
+	// Ok, we do not have any other element
+	if ( CurrentElement != NULL )
+		return true;
 
-    return false;
+	return false;
 }
 
 // Get the current element of the list
 template <typename TYPE>
 TYPE& SimpleList<TYPE>::GetCurrent() const
 {
-    if(RemoveCurrentHasOccured)
-        throw SimpleListException("SimpleList<TYPE>::GetCurrent : Forbidden after a call to RemoveCurrent");
+	if(RemoveCurrentHasOccured)
+		throw SimpleListException("SimpleList<TYPE>::GetCurrent : Forbidden after a call to RemoveCurrent");
 
 #ifdef DEBUG
-    if ( CurrentElement== NULL )
-    {
-        OmiscidError( "Warning :  In SimpleList<TYPE>::GetCurrent() CurrentElement == NULL\n" );
-    }
+	if ( CurrentElement== NULL )
+	{
+		OmiscidError( "Warning :  In SimpleList<TYPE>::GetCurrent() CurrentElement == NULL\n" );
+	}
 #endif
 
-    return CurrentElement->ElementContainer;
+	return CurrentElement->ElementContainer;
 }
 
 // Remove the current element
 template <typename TYPE>
 bool SimpleList<TYPE>::RemoveCurrent()
 {
-    if(RemoveCurrentHasOccured)
-        throw SimpleListException("SimpleList<TYPE>::RemoveCurrent : Forbidden after a previous call to RemoveCurrent");
-    RemoveCurrentHasOccured = true;
-    SimpleListElement<TYPE> * tmp = CurrentElement;
+	if(RemoveCurrentHasOccured)
+		throw SimpleListException("SimpleList<TYPE>::RemoveCurrent : Forbidden after a previous call to RemoveCurrent");
+	RemoveCurrentHasOccured = true;
+	SimpleListElement<TYPE> * tmp = CurrentElement;
 
-    if ( tmp == NULL )
-    {
-        // We must call at least First on a non empty list
-        return false;
-    }
+	if ( tmp == NULL )
+	{
+		// We must call at least First on a non empty list
+		return false;
+	}
 
-    // Here we have a current element...
-    // Are we at the begining of the SimpleList ?
-    if ( Head == tmp )
-    {
-        // Yes, wa are !
-        Head = tmp->NextElement;
+	// Here we have a current element...
+	// Are we at the begining of the SimpleList ?
+	if ( Head == tmp )
+	{
+		// Yes, wa are !
+		Head = tmp->NextElement;
 
-        // PreviousElement remains the same :
-        // PreviousElement == NULL
+		// PreviousElement remains the same :
+		// PreviousElement == NULL
 
-        // The new current element if the next in the list, so the head
-        CurrentElement = Head;
-    }
-    else
-    {
-        // We are not at the begining of the list
-        // Here we can remove directly the element within the list
-        tmp = CurrentElement;
-        PreviousElement->NextElement = tmp->NextElement;
-        CurrentElement = tmp->NextElement;
-    }
+		// The new current element if the next in the list, so the head
+		CurrentElement = Head;
+	}
+	else
+	{
+		// We are not at the begining of the list
+		// Here we can remove directly the element within the list
+		tmp = CurrentElement;
+		PreviousElement->NextElement = tmp->NextElement;
+		CurrentElement = tmp->NextElement;
+	}
 
-    // Was the element the last item of the list ?
-    if ( Tail == tmp )
-    {
-        // We have remove the last item of the list
-        Tail = PreviousElement;
-    }
+	// Was the element the last item of the list ?
+	if ( Tail == tmp )
+	{
+		// We have remove the last item of the list
+		Tail = PreviousElement;
+	}
 
-    // Delete the old current element
-     ReleaseSimpleListElement(tmp);
+	// Delete the old current element
+	 ReleaseSimpleListElement(tmp);
 
-    // Change the element count
-    NumberOfElements--;
+	// Change the element count
+	NumberOfElements--;
 
-    return true;
+	return true;
 }
 
 // Remove a specific element
 template <typename TYPE>
 bool SimpleList<TYPE>::Remove(const TYPE& Element)
 {
-    for( First(); NotAtEnd(); Next() )
-    {
-        if ( GetCurrent() == Element )
-        {
-            RemoveCurrent();
-            return true;
-        }
-    }
-    return false;
+	for( First(); NotAtEnd(); Next() )
+	{
+		if ( GetCurrent() == Element )
+		{
+			RemoveCurrent();
+			return true;
+		}
+	}
+	return false;
 }
 
 template <typename TYPE>
 void SimpleList<TYPE>::Empty()
 {
-    SimpleListElement<TYPE> * tmp;
-    // On libere tous les elements de la liste
-    while( Head != NULL )
-    {
-        tmp = Head;
-        Head = Head->NextElement; // On dechaine le premier element
-        ReleaseSimpleListElement(tmp);
-        NumberOfElements--; // Non obligatoire !
-    }
+	SimpleListElement<TYPE> * tmp;
+	// On libere tous les elements de la liste
+	while( Head != NULL )
+	{
+		tmp = Head;
+		Head = Head->NextElement; // On dechaine le premier element
+		ReleaseSimpleListElement(tmp);
+		NumberOfElements--; // Non obligatoire !
+	}
 }
 
 template <typename TYPE>
@@ -464,15 +464,15 @@ template <typename TYPE>
 TYPE SimpleList<TYPE>::ExtractFirst()
 {
   if(IsEmpty())
-    throw SimpleListException("SimpleList<TYPE>::ExtractFirst : Forbidden when the list is empty");
+	throw SimpleListException("SimpleList<TYPE>::ExtractFirst : Forbidden when the list is empty");
 
   SimpleListElement<TYPE>* elt = Head;
   if(Head == Tail)
-    {
-      Head = NULL; Tail = NULL;
-    }else{
-      Head = elt->NextElement;
-    }
+	{
+	  Head = NULL; Tail = NULL;
+	}else{
+	  Head = elt->NextElement;
+	}
   NumberOfElements--;
 
   TYPE tmp = elt->ElementContainer;
@@ -483,13 +483,13 @@ TYPE SimpleList<TYPE>::ExtractFirst()
 template <typename TYPE>
 SimpleListElement<TYPE>*  SimpleList<TYPE>::GetNewSimpleListElement() const
 {
-    return new OMISCID_TLM SimpleListElement<TYPE>;
+	return new OMISCID_TLM SimpleListElement<TYPE>;
 }
 
 template <typename TYPE>
 void SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const
 {
-    delete elt;
+	delete elt;
 }
 
 
@@ -506,194 +506,194 @@ class MutexedSimpleList : public SimpleList<TYPE>
 {
 public:
 #ifdef DEBUG
-    MutexedSimpleList()
-    {
-        NbLocks = 0; // MutexedSimpleList is not lock
-    }
+	MutexedSimpleList()
+	{
+		NbLocks = 0; // MutexedSimpleList is not lock
+	}
 
-    virtual ~MutexedSimpleList()
-    {
-        NbLocks = 100; // MutexedSimpleList is not lock anymore,
-        // All operation will be permitted to destroy the list
-    }
+	virtual ~MutexedSimpleList()
+	{
+		NbLocks = 100; // MutexedSimpleList is not lock anymore,
+		// All operation will be permitted to destroy the list
+	}
 
-    bool Add( const TYPE& Val )
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using Add on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::Add(Val);
-    }
+	bool Add( const TYPE& Val )
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using Add on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::Add(Val);
+	}
 
-    bool AddHead( const TYPE& Val )
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using AddHeah on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::AddHead(Val);
-    }
+	bool AddHead( const TYPE& Val )
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using AddHeah on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::AddHead(Val);
+	}
 
-    bool AddTail( const TYPE& Val )
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using AddTail on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::AddTail(Val);
-    }
+	bool AddTail( const TYPE& Val )
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using AddTail on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::AddTail(Val);
+	}
 
-    unsigned int GetNumberOfElements() const
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using GetNumberOfElements on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::GetNumberOfElements();
-    }
+	unsigned int GetNumberOfElements() const
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using GetNumberOfElements on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::GetNumberOfElements();
+	}
 
-    void First()
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using First on a non lock list.\n" );
-        }
-        SimpleList<TYPE>::First();
-    }
+	void First()
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using First on a non lock list.\n" );
+		}
+		SimpleList<TYPE>::First();
+	}
 
-    bool Next()
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using Next on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::Next();
-    }
+	bool Next()
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using Next on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::Next();
+	}
 
-    bool AtEnd() const
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using AtEnd on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::AtEnd();
-    }
+	bool AtEnd() const
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using AtEnd on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::AtEnd();
+	}
 
-    bool NotAtEnd() const
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using NotAtEnd on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::NotAtEnd();
-    }
+	bool NotAtEnd() const
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using NotAtEnd on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::NotAtEnd();
+	}
 
-    TYPE& GetCurrent() const
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using GetCurrent on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::GetCurrent();
-    }
+	TYPE& GetCurrent() const
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using GetCurrent on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::GetCurrent();
+	}
 
-    bool RemoveCurrent()
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using RemoveCurrent on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::RemoveCurrent();
-    }
+	bool RemoveCurrent()
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using RemoveCurrent on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::RemoveCurrent();
+	}
 
-    bool IsEmpty() const
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using IsEmpty on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::IsEmpty();
-    }
+	bool IsEmpty() const
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using IsEmpty on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::IsEmpty();
+	}
 
-    bool IsNotEmpty() const
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using IsNotEmpty on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::IsNotEmpty();
-    }
+	bool IsNotEmpty() const
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using IsNotEmpty on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::IsNotEmpty();
+	}
 
-    TYPE ExtractFirst()
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using ExtractFirst on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::ExtractFirst();
-    }
+	TYPE ExtractFirst()
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using ExtractFirst on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::ExtractFirst();
+	}
 
-    bool Remove(const TYPE& Element)
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using Remove on a non lock list.\n" );
-        }
-        return SimpleList<TYPE>::Remove(Element);
-    }
+	bool Remove(const TYPE& Element)
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using Remove on a non lock list.\n" );
+		}
+		return SimpleList<TYPE>::Remove(Element);
+	}
 
-    virtual void Empty()
-    {
-        if ( NbLocks == 0 )
-        {
-            fprintf( stderr, "Using Empty on a non lock list.\n" );
-        }
-        SimpleList<TYPE>::Empty();
-    }
+	virtual void Empty()
+	{
+		if ( NbLocks == 0 )
+		{
+			fprintf( stderr, "Using Empty on a non lock list.\n" );
+		}
+		SimpleList<TYPE>::Empty();
+	}
 
 private:
-    AtomicReentrantCounter NbLocks;
+	AtomicReentrantCounter NbLocks;
 #else
 public:
-    virtual ~MutexedSimpleList()
-    {
-    }
+	virtual ~MutexedSimpleList()
+	{
+	}
 #endif
 
 public:
-    /** \brief Lock the access to the list
-     *
-     * Wait until the mutex can be locked.
-     * \return if the 'lock' on the mutex is successful
-         */
-    bool Lock();
+	/** \brief Lock the access to the list
+	 *
+	 * Wait until the mutex can be locked.
+	 * \return if the 'lock' on the mutex is successful
+		 */
+	bool Lock();
 
-    /** \brief Unlock the access to the list
-     *
-     * Enable another thread to lock the list.
-     * \return if the 'unlock' on the mutex is successful
-     */
-    bool Unlock();
+	/** \brief Unlock the access to the list
+	 *
+	 * Enable another thread to lock the list.
+	 * \return if the 'unlock' on the mutex is successful
+	 */
+	bool Unlock();
 
 private:
-    ReentrantMutex mutex; /*!< the mutex to protect access to the list*/
+	ReentrantMutex mutex; /*!< the mutex to protect access to the list*/
 };
 
 template <typename TYPE>
 bool MutexedSimpleList<TYPE>::Lock()
 {
 #ifdef DEBUG
-    // Only for MutexedSimpleList debugging
-    bool ret = mutex.EnterMutex();
+	// Only for MutexedSimpleList debugging
+	bool ret = mutex.EnterMutex();
 
-    if ( ret == true )
-    {
-        NbLocks++;
-    }
-    return ret;
+	if ( ret == true )
+	{
+		NbLocks++;
+	}
+	return ret;
 #else
-    return mutex.EnterMutex();
+	return mutex.EnterMutex();
 #endif
 }
 
@@ -701,21 +701,21 @@ template <typename TYPE>
 bool MutexedSimpleList<TYPE>::Unlock()
 {
 #ifdef DEBUG
-    if ( NbLocks == 0 )
-    {
-        OmiscidTrace( "List already unlock. something goes wrong ?" );
-    }
+	if ( NbLocks == 0 )
+	{
+		OmiscidTrace( "List already unlock. something goes wrong ?" );
+	}
 
-    // Only for MutexedSimpleList debugging
-    bool ret = mutex.LeaveMutex();
+	// Only for MutexedSimpleList debugging
+	bool ret = mutex.LeaveMutex();
 
-    if ( ret == true && NbLocks > 0)
-    {
-        NbLocks++;
-    }
-    return ret;
+	if ( ret == true && NbLocks > 0)
+	{
+		NbLocks++;
+	}
+	return ret;
 #else
-    return mutex.LeaveMutex();
+	return mutex.LeaveMutex();
 #endif
 }
 

@@ -33,9 +33,9 @@ class VariableAttributeListener;
  */
 class VariableAttribute : public Attribute
 {
-    friend class ControlServer;
-    friend class ControlClient;
-    friend class ServiceProxy;
+	friend class ControlServer;
+	friend class ControlClient;
+	friend class ServiceProxy;
 
 private:
   /** @name Constructor */
@@ -51,7 +51,7 @@ private:
 public:
 
   /** @brief Destructor */
-    virtual ~VariableAttribute() {};
+	virtual ~VariableAttribute() {};
 
   /** @name Read Accessors */
   //@{
@@ -115,14 +115,14 @@ public:
    *
    * The description has the form :
    * @verbatim
-    <variable name="name of the variable">
-     <value>the value</value>
-     <default>the default value</value>
-     <access>the kind of access</access>
-     <type>the type of the variable</type>
-     <description>the description</description> (if there is a description)
-     <formatDescription>the description of the format </formatDescription> (if there is a description for the format)
-    </variable> @endverbatim
+	<variable name="name of the variable">
+	 <value>the value</value>
+	 <default>the default value</value>
+	 <access>the kind of access</access>
+	 <type>the type of the variable</type>
+	 <description>the description</description> (if there is a description)
+	 <formatDescription>the description of the format </formatDescription> (if there is a description for the format)
+	</variable> @endverbatim
    * @param str [in, out] the SimpleString where add the description.
    */
   void GenerateLongDescription(SimpleString& str);
@@ -131,9 +131,9 @@ public:
    *
    * It has the form :
    * @verbatim
-    <variable name="name of the variable">
-     <value> the value of the variable </value>
-    </variable> @endverbatim
+	<variable name="name of the variable">
+	 <value> the value of the variable </value>
+	</variable> @endverbatim
    * @param str [in, out] the SimpleString where add the description.
    */
   // void GenerateValueMessage(SimpleString& str);

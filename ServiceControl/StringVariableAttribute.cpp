@@ -17,11 +17,11 @@ StringVariableAttribute::StringVariableAttribute(VariableAttribute* va, SimpleSt
 
 void StringVariableAttribute::SetValue( SimpleString value )
 {
-    StringValue = value;
-    VariableAtt->SetValueFromControl( StringValue );
+	StringValue = value;
+	VariableAtt->SetValueFromControl( StringValue );
 }
 
 SimpleString StringVariableAttribute::GetValue() const
 {
-    return StringValue;
+	return StringValue;
 }

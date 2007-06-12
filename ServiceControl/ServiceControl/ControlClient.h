@@ -23,25 +23,25 @@ class AnswersManager;
 
 class AnswerWaiter
 {
-    friend class AnswersManager;
+	friend class AnswersManager;
 
 protected:
-    AnswerWaiter();
-    virtual ~AnswerWaiter();
+	AnswerWaiter();
+	virtual ~AnswerWaiter();
 
 public:
-    XMLMessage * GetAnswer(unsigned int TimeToWait);
-    void Free();
+	XMLMessage * GetAnswer(unsigned int TimeToWait);
+	void Free();
 
 protected:
-    bool Use( unsigned int eMessageId );
+	bool Use( unsigned int eMessageId );
 
 private:
-    ReentrantMutex ObjectMutex;    // A mutex to protect the structure
-    Event Waiter;                // in order to wait for answer
-    unsigned int MessageId;        // Num of my query, so num of the answer
-    XMLMessage * AnswerMessage; // Received Message
-    bool IsFree;                // Is this object free of use ? (memory and event creation
+	ReentrantMutex ObjectMutex;	// A mutex to protect the structure
+	Event Waiter;				// in order to wait for answer
+	unsigned int MessageId;		// Num of my query, so num of the answer
+	XMLMessage * AnswerMessage; // Received Message
+	bool IsFree;				// Is this object free of use ? (memory and event creation
 };
 
 /**
@@ -51,23 +51,23 @@ private:
 class AnswersManager
 {
 public:
-    AnswersManager();
-    virtual ~AnswersManager();
+	AnswersManager();
+	virtual ~AnswersManager();
 
-    AnswerWaiter * CreateAnswerWaiter(unsigned int MessageId);
+	AnswerWaiter * CreateAnswerWaiter(unsigned int MessageId);
 
-    /** \brief check the id of 'msg'
-     * \param msg [in] the received messages
-     * \param msg_id [in] the waited id
-     * \return true if the id of 'msg' has the value 'msg_id'
-     */
-    bool CheckMessage(XMLMessage* msg, unsigned int msg_id);
+	/** \brief check the id of 'msg'
+	 * \param msg [in] the received messages
+	 * \param msg_id [in] the waited id
+	 * \return true if the id of 'msg' has the value 'msg_id'
+	 */
+	bool CheckMessage(XMLMessage* msg, unsigned int msg_id);
 
-    bool PushAnswer(XMLMessage * Msg);
+	bool PushAnswer(XMLMessage * Msg);
 
 private:
-    // List of event for each thread
-    MutexedSimpleList<AnswerWaiter*> WaitersList;
+	// List of event for each thread
+	MutexedSimpleList<AnswerWaiter*> WaitersList;
 };
 
 /**
@@ -159,7 +159,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    */
   InOutputAttribute* QueryInOutputDescription(const SimpleString in_output_name);
 
-    /** @brief Ask for a precise description of everything in the ControlServer
+	/** @brief Ask for a precise description of everything in the ControlServer
    * @return false if query failed, true otherwise
    */
   bool QueryDetailedDescription();
@@ -266,8 +266,8 @@ private:
    * id field is completed with the current value of id.
    * Then this value is incremented.
    * \verbatim
-    str <-- <controlQuery id="..."> + str + </controlQuery>
-    \endverbatim
+	str <-- <controlQuery id="..."> + str + </controlQuery>
+	\endverbatim
    * \param str the message to complete
    * \return the message id
    */

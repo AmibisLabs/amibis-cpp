@@ -34,8 +34,8 @@ class IntVariableAttribute
    */
   IntVariableAttribute(VariableAttribute* va, int value);
 
-    // Virtual destructor always
-    virtual ~IntVariableAttribute();
+	// Virtual destructor always
+	virtual ~IntVariableAttribute();
 
   /** @brief Read access to the integer value
    * @return the integer value */

@@ -4,7 +4,7 @@
  * @brief Defines ServiceProxyList class in order to get list of other services
  * @author Dominique Vaufreydaz
  * @version 1.0
- * @date    2004-2006
+ * @date	2004-2006
  */
 
 #ifndef __SERVICE_PROXY_LIST_H__
@@ -27,10 +27,10 @@ class Service;
 class ServiceProxyList  : public SimpleList<ServiceProxy*>
 {
 public:
-    // Destructor
-    virtual ~ServiceProxyList();
+	// Destructor
+	virtual ~ServiceProxyList();
 
-    virtual void Empty();
+	virtual void Empty();
 };
 
 } // namespace Omiscid

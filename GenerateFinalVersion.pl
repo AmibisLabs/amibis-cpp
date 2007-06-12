@@ -433,7 +433,7 @@ if ( $DoTest == 1 )
 							$NbTestsTried++;
 							# &WakeOnLan($TestComputer);
 							print STDERR "$TestComputer: Test $NbTestsTried.\n";
-							$res = &CheckCommand( "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test'\"", 'Test ok\.' );
+							$res = &CheckCommand( "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test TimeoutProg.cpp'\"", 'Test ok\.' );
 							if ( $res == 1 )
 							{
 								# test is ok
@@ -447,12 +447,12 @@ if ( $DoTest == 1 )
 						{
 							
 							$Tested = 1;
-							$TestSuite .= "TOK: Compile $TestsList{$test} and run it successfully ($NbTestsTried/$NbTestsOk)\n     files used '$test'\n";
+							$TestSuite .= "TOK: Compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'\n";
 						}
 					
 						if ( $Tested == 0 )
 						{
-							$TestSuite .= "TFA: Could not compile $TestsList{$test} and run it successfully ($NbTestsTried/$NbTestsOk)\n     files used '$test'\n";
+							$TestSuite .= "TFA: Could not compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'\n";
 							if ( $Option =~ /avahi/ )
 							{
 								&AddLog( "WRN: Could not run test ('debug=$DebugFlag trace=$TraceFlag $Option') on $TestComputer" );
@@ -553,8 +553,9 @@ if ( $DoDoc == 1 )
 	&RecurseWork::RecurseWork("Doc/");
 }
 
-print STDERR "Remove BipService.cpp from list\n";
+print STDERR "Remove BipService.cpp & TimeoutProg.cpp from list\n";
 undef $FilesToAdd{'Examples/BipService.cpp'};
+undef $FilesToAdd{'Examples/TimeoutProg.cpp'};
 
 $command = "zip -9 $VersionFile ";
 foreach $file ( @UsualFiles )

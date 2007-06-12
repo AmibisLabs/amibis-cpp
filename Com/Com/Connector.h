@@ -182,7 +182,7 @@ class Connector : public TcpServer, public UdpExchange
    */
   bool LinkToMsgManager(MsgManager* msgManager);
 
-    /** \brief Remove a MsgManager object as callback for message reception
+	/** \brief Remove a MsgManager object as callback for message reception
    *
    */
   bool UnlinkFromMsgManager(MsgManager* msgManager);

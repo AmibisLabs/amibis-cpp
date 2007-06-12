@@ -23,17 +23,17 @@ typedef enum ConnectorKind { UnkownConnectorKind = 0, AnInput = 1, AnOutput = 2,
 class ConnectionInfos
 {
 public:
-    ConnectionInfos();
-    ConnectionInfos(ConnectionInfos& ToCopy);
+	ConnectionInfos();
+	ConnectionInfos(ConnectionInfos& ToCopy);
 
-    // Virtual destructor always
-    virtual ~ConnectionInfos();
+	// Virtual destructor always
+	virtual ~ConnectionInfos();
 
-    ConnectionInfos& operator=(ConnectionInfos& ToCopy);
+	ConnectionInfos& operator=(ConnectionInfos& ToCopy);
 
-    int TcpPort;
-    int UdpPort;
-    ConnectorKind Type;
+	int TcpPort;
+	int UdpPort;
+	ConnectorKind Type;
 };
 
 typedef enum MessageOrigine { UnknownOrigine, FromUDP, FromTCP, FromSharedMemory };
@@ -44,11 +44,11 @@ typedef enum MessageOrigine { UnknownOrigine, FromUDP, FromTCP, FromSharedMemory
 class OmiscidComLayerInitClass : public OmiscidSystemLayerInitClass
 {
 public:
-    // Constructor
-    OmiscidComLayerInitClass();
+	// Constructor
+	OmiscidComLayerInitClass();
 
-    // Destructor
-    ~OmiscidComLayerInitClass();
+	// Destructor
+	~OmiscidComLayerInitClass();
 };
 
 // External object
@@ -57,4 +57,4 @@ extern OmiscidComLayerInitClass OmiscidComLayerInit;
 
 } // namespace Omiscid
 
-#endif    // __COM_CONFIG_H__
+#endif	// __COM_CONFIG_H__

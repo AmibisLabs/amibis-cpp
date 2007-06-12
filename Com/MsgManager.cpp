@@ -18,10 +18,10 @@ void MsgManager::PushMessage(Message* msg)
   listMsg.Lock();
   if(maxMessage && listMsg.GetNumberOfElements() == maxMessage)
   {
-    listMsg.First();
-    Message* m = listMsg.GetCurrent();
-    listMsg.RemoveCurrent();
-    delete m;
+	listMsg.First();
+	Message* m = listMsg.GetCurrent();
+	listMsg.RemoveCurrent();
+	delete m;
   }
   listMsg.Add(msg);
   listMsg.Unlock();
@@ -43,11 +43,11 @@ Message* MsgManager::GetMessage()
 
   listMsg.Lock();
   if(listMsg.GetNumberOfElements())
-    {
-        listMsg.First();
-        msg = listMsg.GetCurrent();
-        listMsg.RemoveCurrent();
-    }
+	{
+		listMsg.First();
+		msg = listMsg.GetCurrent();
+		listMsg.RemoveCurrent();
+	}
   listMsg.Unlock();
 
   return msg;
@@ -57,10 +57,10 @@ void MsgManager::ClearMessages()
 {
   listMsg.Lock();
   for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
-    {
-      delete listMsg.GetCurrent();
-      listMsg.RemoveCurrent();
-    }
+	{
+	  delete listMsg.GetCurrent();
+	  listMsg.RemoveCurrent();
+	}
   listMsg.Unlock();
 }
 
@@ -71,20 +71,20 @@ int MsgManager::ProcessMessages()
   listMsg.Lock();
   int nb = 0;
   for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
-    {
-      msg = listMsg.GetCurrent();
-      try
-      {
-        ProcessAMessage(msg);
-      }
-      catch(SimpleException &e) // Catch every Omiscid exception within this, can break the whole system
-      {
-          OmiscidTrace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
-      }
-      delete msg;
-      listMsg.RemoveCurrent();
-      nb++;
-    }
+	{
+	  msg = listMsg.GetCurrent();
+	  try
+	  {
+		ProcessAMessage(msg);
+	  }
+	  catch(SimpleException &e) // Catch every Omiscid exception within this, can break the whole system
+	  {
+		  OmiscidTrace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
+	  }
+	  delete msg;
+	  listMsg.RemoveCurrent();
+	  nb++;
+	}
   listMsg.Unlock();
   return nb;
 }
@@ -97,31 +97,31 @@ void MsgManager::ProcessAMessage(Message* msg)
 
 void MsgManager::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 {
-    Message* msg = new OMISCID_TLM Message(cd.Msg.len + 1);
-    msg->len = cd.Msg.len;
-    memcpy(msg->buffer, cd.Msg.buffer, cd.Msg.len + 1);
-    msg->origine = cd.Msg.GetOrigine();
-    msg->pid = cd.Msg.GetPeerId();
-    msg->mid = cd.Msg.GetMsgId();
-    PushMessage(msg);
+	Message* msg = new OMISCID_TLM Message(cd.Msg.len + 1);
+	msg->len = cd.Msg.len;
+	memcpy(msg->buffer, cd.Msg.buffer, cd.Msg.len + 1);
+	msg->origine = cd.Msg.GetOrigine();
+	msg->pid = cd.Msg.GetPeerId();
+	msg->mid = cd.Msg.GetMsgId();
+	PushMessage(msg);
 }
 
 //
 //void MsgManager::LinkToMsgSocketObject(MsgSocket* ms)
 //{
-//    ms->AddCallbackObject( this );
+//	ms->AddCallbackObject( this );
 //}
 
 bool MsgManager::WaitForMessage(unsigned long timer)
 {
   event.Reset();
   if(!HasMessages())
-    {
-      if(timer)
-    return event.Wait(timer);
-      else
-    return event.Wait();
-    }
+	{
+	  if(timer)
+	return event.Wait(timer);
+	  else
+	return event.Wait();
+	}
   return true;
 }
 

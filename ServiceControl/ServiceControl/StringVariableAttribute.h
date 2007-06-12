@@ -35,8 +35,8 @@ public:
    */
   StringVariableAttribute(VariableAttribute* va, SimpleString value);
 
-    // Virtual destructor always
-    virtual ~StringVariableAttribute();
+	// Virtual destructor always
+	virtual ~StringVariableAttribute();
 
   /** @brief Read access to the integer value
    * @return the integer value */

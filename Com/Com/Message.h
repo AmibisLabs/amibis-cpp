@@ -30,13 +30,13 @@ namespace Omiscid {
 class Message
 {
    /**
-    * @brief The MsgSocket class can acces directly to private members of this class
-    */
-    friend class MsgSocket;
+	* @brief The MsgSocket class can acces directly to private members of this class
+	*/
+	friend class MsgSocket;
    /**
-    * @brief The MsgManager class can acces directly to private members of this class
-    */
-    friend class MsgManager;
+	* @brief The MsgManager class can acces directly to private members of this class
+	*/
+	friend class MsgManager;
 
 public:
   /** @brief Constructor

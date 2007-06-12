@@ -18,5 +18,5 @@ MsgSocketException::~MsgSocketException()
 
 SimpleString MsgSocketException::GetExceptionType() const
 {
-    return SimpleString( "MsgSocketException" );
+	return SimpleString( "MsgSocketException" );
 }

@@ -12,7 +12,7 @@
 #include <System/SimpleString.h>
 
 #ifndef WIN32
-    #include <errno.h>
+	#include <errno.h>
 #endif
 
 namespace Omiscid {
@@ -32,7 +32,7 @@ namespace Omiscid {
 class SimpleException
 {
 public:
-    typedef enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
+	typedef enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
 
   /** \brief Constructor
    *

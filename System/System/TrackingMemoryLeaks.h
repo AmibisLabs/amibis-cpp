@@ -11,45 +11,45 @@
 #ifdef TRACKING_MEMORY_LEAKS
 
 #if defined WIN32
-    #ifndef _CRT_SECURE_NO_DEPRECATE
-        #define _CRT_SECURE_NO_DEPRECATE
-    #endif
+	#ifndef _CRT_SECURE_NO_DEPRECATE
+		#define _CRT_SECURE_NO_DEPRECATE
+	#endif
 #endif
 
 #include <memory>
 
-    #ifdef WIN32
-        #pragma warning(disable : 4290)    // warning about throw specification in new/delete declaration...
-    #endif
+	#ifdef WIN32
+		#pragma warning(disable : 4290)	// warning about throw specification in new/delete declaration...
+	#endif
 
-    void * operator new( size_t size ) throw (std::bad_alloc);
-    void * operator new[]( size_t size ) throw (std::bad_alloc);
-    void operator delete( void *p ) throw ();
-    void operator delete[]( void *p ) throw ();
+	void * operator new( size_t size ) throw (std::bad_alloc);
+	void * operator new[]( size_t size ) throw (std::bad_alloc);
+	void operator delete( void *p ) throw ();
+	void operator delete[]( void *p ) throw ();
 
-    void * operator new( size_t size, int Line, char * File ) throw (std::bad_alloc);
-    void * operator new[]( size_t size, int Line, char * File ) throw (std::bad_alloc);
-    void operator delete( void *p, int Line, char * File ) throw ();
-    void operator delete[]( void *p, int Line, char * File ) throw ();
+	void * operator new( size_t size, int Line, char * File ) throw (std::bad_alloc);
+	void * operator new[]( size_t size, int Line, char * File ) throw (std::bad_alloc);
+	void operator delete( void *p, int Line, char * File ) throw ();
+	void operator delete[]( void *p, int Line, char * File ) throw ();
 
 
 namespace Omiscid {
 
-    class TrackMemoryLeaks
-    {
-    public:
-        TrackMemoryLeaks();
-        virtual ~TrackMemoryLeaks();
+	class TrackMemoryLeaks
+	{
+	public:
+		TrackMemoryLeaks();
+		virtual ~TrackMemoryLeaks();
 
-        static void DumpUnfreed();
+		static void DumpUnfreed();
 
-    private:
-        static void StartTrackingMemory();
-        static void StopTrackingMemory();
-    };
+	private:
+		static void StartTrackingMemory();
+		static void StopTrackingMemory();
+	};
 
 } // namespace Omiscid
 
-#endif    // defined  TRACKING_MEMORY_LEAKS
+#endif	// defined  TRACKING_MEMORY_LEAKS
 
-#endif    // __TRACKING_MEMORY_LEAKS_H__
+#endif	// __TRACKING_MEMORY_LEAKS_H__

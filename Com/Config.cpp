@@ -19,38 +19,38 @@ OmiscidComLayerInitClass OmiscidComLayerInit;
 
 OmiscidComLayerInitClass::OmiscidComLayerInitClass()
 {
-    // Enter locker
-    OmiscidComLayerInitMutex.EnterMutex();
+	// Enter locker
+	OmiscidComLayerInitMutex.EnterMutex();
 
-    OmiscidComLayerInitInstanceCount++;
-    if ( OmiscidComLayerInitInstanceCount == 1 )
-    {
-        // First instance, do init for Layer System
+	OmiscidComLayerInitInstanceCount++;
+	if ( OmiscidComLayerInitInstanceCount == 1 )
+	{
+		// First instance, do init for Layer System
 
-        // now init this layer
-        OmiscidTrace( "Init Com layer\n" );
-    }
+		// now init this layer
+		OmiscidTrace( "Init Com layer\n" );
+	}
 
-    // Leave locker
-    OmiscidComLayerInitMutex.LeaveMutex();
+	// Leave locker
+	OmiscidComLayerInitMutex.LeaveMutex();
 }
 
 OmiscidComLayerInitClass::~OmiscidComLayerInitClass()
 {
-    // Enter locker
-    OmiscidComLayerInitMutex.EnterMutex();
+	// Enter locker
+	OmiscidComLayerInitMutex.EnterMutex();
 
-    OmiscidComLayerInitInstanceCount--;
-    if ( OmiscidComLayerInitInstanceCount == 0 )
-    {
-        // Last instance, do reset for Layer System
+	OmiscidComLayerInitInstanceCount--;
+	if ( OmiscidComLayerInitInstanceCount == 0 )
+	{
+		// Last instance, do reset for Layer System
 
-        // now init this layer
-        OmiscidTrace( "Free Com layer\n" );
-    }
+		// now init this layer
+		OmiscidTrace( "Free Com layer\n" );
+	}
 
-    // Leave locker
-    OmiscidComLayerInitMutex.LeaveMutex();
+	// Leave locker
+	OmiscidComLayerInitMutex.LeaveMutex();
 }
 
 } // namespace Omiscid
@@ -60,14 +60,14 @@ OmiscidComLayerInitClass::~OmiscidComLayerInitClass()
 
 ConnectionInfos::ConnectionInfos()
 {
-    TcpPort = 0;
-    UdpPort = 0;
-    Type    = UnkownConnectorKind;
+	TcpPort = 0;
+	UdpPort = 0;
+	Type	= UnkownConnectorKind;
 }
 
 ConnectionInfos::ConnectionInfos(ConnectionInfos& ToCopy)
 {
-    operator=(ToCopy);
+	operator=(ToCopy);
 }
 
 ConnectionInfos::~ConnectionInfos()
@@ -76,9 +76,9 @@ ConnectionInfos::~ConnectionInfos()
 
 ConnectionInfos& ConnectionInfos::operator=(ConnectionInfos& ToCopy)
 {
-    TcpPort = ToCopy.TcpPort;
-    UdpPort = ToCopy.UdpPort;
-    Type    = ToCopy.Type;
+	TcpPort = ToCopy.TcpPort;
+	UdpPort = ToCopy.UdpPort;
+	Type	= ToCopy.Type;
 
-    return *this;
+	return *this;
 }

@@ -16,22 +16,22 @@ namespace Omiscid {
 class ElapsedTime
 {
 public:
-    /** @brief Constructor */
-    ElapsedTime();
-    /** @brief Destructor */
-    virtual ~ElapsedTime();
+	/** @brief Constructor */
+	ElapsedTime();
+	/** @brief Destructor */
+	virtual ~ElapsedTime();
 
-    /** @brief reset Start time */
-    void Reset();
+	/** @brief reset Start time */
+	void Reset();
 
-    /** @brief Get the elapsed time in ms
-     * @param DoReset says if we need to reset the object with a new start time
-     * @return the Elapsed Time in ms since the
-    */
-    unsigned int Get(bool DoReset = false);
+	/** @brief Get the elapsed time in ms
+	 * @param DoReset says if we need to reset the object with a new start time
+	 * @return the Elapsed Time in ms since the
+	*/
+	unsigned int Get(bool DoReset = false);
 
 private:
-    unsigned int StartTime; // StartTime in ms since epoque
+	unsigned int StartTime; // StartTime in ms since epoque
 };
 
 } // namespace Omiscid

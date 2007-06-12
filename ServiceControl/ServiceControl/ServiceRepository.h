@@ -27,27 +27,27 @@ class Factory;
 class ServiceRepository
 {
 private:
-    // Only the Factory class can create a ServiceRepository
-    friend class Factory;
+	// Only the Factory class can create a ServiceRepository
+	friend class Factory;
 
-    // Constructor
-    ServiceRepository();
+	// Constructor
+	ServiceRepository();
 
 public:
-    // virtual destructor
-    virtual ~ServiceRepository();
+	// virtual destructor
+	virtual ~ServiceRepository();
 
-    // defaults to false
-    bool AddListener(ServiceRepositoryListener* Listener, bool NotifyOnlyNewEvents = false );
-    bool RemoveListener(ServiceRepositoryListener* Listener, bool NotifyAsIfExistingServicesDisappear = false );
+	// defaults to false
+	bool AddListener(ServiceRepositoryListener* Listener, bool NotifyOnlyNewEvents = false );
+	bool RemoveListener(ServiceRepositoryListener* Listener, bool NotifyAsIfExistingServicesDisappear = false );
 
-    ServiceProxyList * GetAllServices();
+	ServiceProxyList * GetAllServices();
 
-    // To be compliant with java API
-    void Stop();
+	// To be compliant with java API
+	void Stop();
 
 private:
-    MutexedSimpleList<ServiceRepositoryListener*> RepoListeners;    // All my listeners
+	MutexedSimpleList<ServiceRepositoryListener*> RepoListeners;	// All my listeners
 };
 
 } // namespace Omiscid

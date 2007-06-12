@@ -9,343 +9,343 @@ bool Debug = false;
 
 void Usage(const char * Message)
 {
-    fprintf( stderr, "%s\n", Message );
-    exit(1);
+	fprintf( stderr, "%s\n", Message );
+	exit(1);
 }
 
 int ParseConnectionString( char * Connecting, bool Prepare = false, char ** Table = NULL )
 {
-    int pos;
-    int length;
-    int NbObjects = 0;
+	int pos;
+	int length;
+	int NbObjects = 0;
 
-    if ( Connecting == NULL || (Prepare == true && Table == NULL) )
-        return -2; // Bad parameter
+	if ( Connecting == NULL || (Prepare == true && Table == NULL) )
+		return -2; // Bad parameter
 
-    for( length = 0, pos = 0; Connecting[pos] != '\0'; pos++ )
-    {
-        if ( Connecting[pos] == ':' )
-        {
-            if ( length == 0 )
-                return -1;    // Bad format
+	for( length = 0, pos = 0; Connecting[pos] != '\0'; pos++ )
+	{
+		if ( Connecting[pos] == ':' )
+		{
+			if ( length == 0 )
+				return -1;	// Bad format
 
-            // Ok, we have one more object
-            NbObjects++;
-        }
-        else
-        {
-            length++;
-        }
-    }
+			// Ok, we have one more object
+			NbObjects++;
+		}
+		else
+		{
+			length++;
+		}
+	}
 
-    if ( length != 0 )
-    {
-        NbObjects++;
-    }
+	if ( length != 0 )
+	{
+		NbObjects++;
+	}
 
-    if ( NbObjects %2 != 0 )
-    {
-        return -1;    // Bad format
-    }
+	if ( NbObjects %2 != 0 )
+	{
+		return -1;	// Bad format
+	}
 
-    if ( Prepare )
-    {
-        Table[0] = &Connecting[0];
-        int InTable = 1;
+	if ( Prepare )
+	{
+		Table[0] = &Connecting[0];
+		int InTable = 1;
 
-        for( pos = 1; Connecting[pos] != '\0'; pos++ )
-        {
-            if ( Connecting[pos] == ':' )
-            {
-                Connecting[pos] = '\0';
+		for( pos = 1; Connecting[pos] != '\0'; pos++ )
+		{
+			if ( Connecting[pos] == ':' )
+			{
+				Connecting[pos] = '\0';
 
-                if ( Connecting[pos+1] != '\0' )
-                {
-                    Table[InTable++] = &Connecting[pos+1];
-                }
+				if ( Connecting[pos+1] != '\0' )
+				{
+					Table[InTable++] = &Connecting[pos+1];
+				}
 
-                // Ok, we have one more object
-                NbObjects++;
-            }
-            else
-            {
-                length++;
-            }
-        }
-    }
+				// Ok, we have one more object
+				NbObjects++;
+			}
+			else
+			{
+				length++;
+			}
+		}
+	}
 
-    return NbObjects;
+	return NbObjects;
 }
 
 int main(int argc, char* argv[])
 {
-    int Argument;
-    char Message[512];
-    SimpleString ServiceName;
-    int ConnectionString = -1;
-    int ConnectionObjects = -1;
+	int Argument;
+	char Message[512];
+	SimpleString ServiceName;
+	int ConnectionString = -1;
+	int ConnectionObjects = -1;
 
-    if ( argc < 2 )
-    {
-        Usage( "Two few parameters" );
-    }
+	if ( argc < 2 )
+	{
+		Usage( "Two few parameters" );
+	}
 
-    if ( argv[1][0] == '-' )
-    {
-        Usage( "The first parameter *must* be the service name" );
-    }
-    ServiceName = argv[1];
+	if ( argv[1][0] == '-' )
+	{
+		Usage( "The first parameter *must* be the service name" );
+	}
+	ServiceName = argv[1];
 
-    // Check argument before launching any registering process
-    for( Argument = 2; Argument < argc; Argument++ )
-    {
-        if ( strcmp( "-o", argv[Argument]) == 0 )
-        {
-            if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing output name at parameter %d\n", Argument+1 );
-                Usage( (const char *)Message );
-            }
-            if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing description for output '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
-                Usage( (const char *)Message );
-            }
+	// Check argument before launching any registering process
+	for( Argument = 2; Argument < argc; Argument++ )
+	{
+		if ( strcmp( "-o", argv[Argument]) == 0 )
+		{
+			if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing output name at parameter %d\n", Argument+1 );
+				Usage( (const char *)Message );
+			}
+			if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing description for output '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
+				Usage( (const char *)Message );
+			}
 
-            Argument += 2;
-            continue;
-        }
+			Argument += 2;
+			continue;
+		}
 
-        if ( strcmp( "-i", argv[Argument]) == 0 )
-        {
-            if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing input name at parameter %d\n", Argument+1 );
-                Usage( (const char *)Message );
-            }
-            if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing description for input '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
-                Usage( (const char *)Message );
-            }
-            Argument += 2;
-            continue;
-        }
+		if ( strcmp( "-i", argv[Argument]) == 0 )
+		{
+			if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing input name at parameter %d\n", Argument+1 );
+				Usage( (const char *)Message );
+			}
+			if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing description for input '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
+				Usage( (const char *)Message );
+			}
+			Argument += 2;
+			continue;
+		}
 
-        if ( strcmp( "-io", argv[Argument]) == 0 )
-        {
-            if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing inoutput name at parameter %d\n", Argument+1 );
-                Usage( (const char *)Message );
-            }
-            if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing description for inoutput '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
-                Usage( (const char *)Message );
-            }
-            Argument += 2;
-            continue;
-        }
+		if ( strcmp( "-io", argv[Argument]) == 0 )
+		{
+			if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing inoutput name at parameter %d\n", Argument+1 );
+				Usage( (const char *)Message );
+			}
+			if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing description for inoutput '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
+				Usage( (const char *)Message );
+			}
+			Argument += 2;
+			continue;
+		}
 
-        if ( strcmp( "-v", argv[Argument]) == 0 )
-        {
-            if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing variable name at parameter %d\n", Argument+1 );
-                Usage( (const char *)Message );
-            }
-            if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing description for variable '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
-                Usage( (const char *)Message );
-            }
-            if ( Argument+3 >= argc || argv[Argument+3][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing value for variable '%s' at parameter %d\n", argv[Argument+1], Argument+3 );
-                Usage( (const char *)Message );
-            }
-            Argument += 3;
-            continue;
-        }
+		if ( strcmp( "-v", argv[Argument]) == 0 )
+		{
+			if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing variable name at parameter %d\n", Argument+1 );
+				Usage( (const char *)Message );
+			}
+			if ( Argument+2 >= argc || argv[Argument+2][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing description for variable '%s' at parameter %d\n", argv[Argument+1], Argument+2 );
+				Usage( (const char *)Message );
+			}
+			if ( Argument+3 >= argc || argv[Argument+3][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing value for variable '%s' at parameter %d\n", argv[Argument+1], Argument+3 );
+				Usage( (const char *)Message );
+			}
+			Argument += 3;
+			continue;
+		}
 
-        if ( strcmp( "-ct", argv[Argument]) == 0 )
-        {
-            if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
-            {
-                // We consider it as the name
-                sprintf( Message, "Missing connection strint after parameter %d\n", Argument+1 );
-                Usage( (const char *)Message );
-            }
+		if ( strcmp( "-ct", argv[Argument]) == 0 )
+		{
+			if ( Argument+1 >= argc || argv[Argument+1][0] == '-')
+			{
+				// We consider it as the name
+				sprintf( Message, "Missing connection strint after parameter %d\n", Argument+1 );
+				Usage( (const char *)Message );
+			}
 
-            ConnectionString = Argument+1;
+			ConnectionString = Argument+1;
 
-            ConnectionObjects = ParseConnectionString( argv[ConnectionString], false );
-            if ( ConnectionObjects <= 0 )
-            {
-                sprintf( Message, "Bad connection string in parameter %d\n", Argument+1 );
-                Usage( (const char *)Message );
-            }
+			ConnectionObjects = ParseConnectionString( argv[ConnectionString], false );
+			if ( ConnectionObjects <= 0 )
+			{
+				sprintf( Message, "Bad connection string in parameter %d\n", Argument+1 );
+				Usage( (const char *)Message );
+			}
 
-            Argument += 1;
-            continue;
-        }
+			Argument += 1;
+			continue;
+		}
 
-        if ( strcmp( "-d", argv[Argument]) == 0 )
-        {
-            if ( Debug )
-            {
-                fprintf( stderr, "Warning: debug mode already set\n" );
-            }
-            Debug = true;
-             continue;
-        }
+		if ( strcmp( "-d", argv[Argument]) == 0 )
+		{
+			if ( Debug )
+			{
+				fprintf( stderr, "Warning: debug mode already set\n" );
+			}
+			Debug = true;
+			 continue;
+		}
 
-        sprintf( Message, "invalid option in parameter %d ('%s')", Argument+1, argv[Argument] );
-        Usage( (const char *)Message );
-    }
+		sprintf( Message, "invalid option in parameter %d ('%s')", Argument+1, argv[Argument] );
+		Usage( (const char *)Message );
+	}
 
 #ifdef _DEBUG
-        // MsgSocket::Debug = MsgSocket::DBG_LINKSYNC;
+		// MsgSocket::Debug = MsgSocket::DBG_LINKSYNC;
 #endif
 
-    // Ok, it seems that parameters looks ok...
-    // start registering service
-    if ( Debug ) { printf("Launching service '%s' ", ServiceName.GetStr() ); }
+	// Ok, it seems that parameters looks ok...
+	// start registering service
+	if ( Debug ) { printf("Launching service '%s' ", ServiceName.GetStr() ); }
 
-    Service * pServ = ServiceFactory.Create( ServiceName );
-    if ( Debug ) { printf("with ServiceId %s\n", pServ->GetPeerIdAsString().GetStr() ); }
+	Service * pServ = ServiceFactory.Create( ServiceName );
+	if ( Debug ) { printf("with ServiceId %s\n", pServ->GetPeerIdAsString().GetStr() ); }
 
-    // Check argument before launching any registering process
-    for( Argument = 2; Argument < argc; Argument++ )
-    {
-        if ( strcmp( "-o", argv[Argument]) == 0 )
-        {
-            pServ->AddConnector( argv[Argument+1], argv[Argument+2], AnOutput );
+	// Check argument before launching any registering process
+	for( Argument = 2; Argument < argc; Argument++ )
+	{
+		if ( strcmp( "-o", argv[Argument]) == 0 )
+		{
+			pServ->AddConnector( argv[Argument+1], argv[Argument+2], AnOutput );
 
-            Argument += 2;
-            continue;
-        }
+			Argument += 2;
+			continue;
+		}
 
-        if ( strcmp( "-i", argv[Argument]) == 0 )
-        {
-            pServ->AddConnector( argv[Argument+1], argv[Argument+2], AnInput );
+		if ( strcmp( "-i", argv[Argument]) == 0 )
+		{
+			pServ->AddConnector( argv[Argument+1], argv[Argument+2], AnInput );
 
-            Argument += 2;
-            continue;
-        }
+			Argument += 2;
+			continue;
+		}
 
-        if ( strcmp( "-io", argv[Argument]) == 0 )
-        {
-            pServ->AddConnector( argv[Argument+1], argv[Argument+2], AnInOutput );
+		if ( strcmp( "-io", argv[Argument]) == 0 )
+		{
+			pServ->AddConnector( argv[Argument+1], argv[Argument+2], AnInOutput );
 
-            Argument += 2;
-            continue;
-        }
+			Argument += 2;
+			continue;
+		}
 
-        if ( strcmp( "-v", argv[Argument]) == 0 )
-        {
-            if ( Debug ) { printf( "Adding variable '%s' ('%s') with value '%s'...", argv[Argument+1], argv[Argument+2], argv[Argument+3] ); }
+		if ( strcmp( "-v", argv[Argument]) == 0 )
+		{
+			if ( Debug ) { printf( "Adding variable '%s' ('%s') with value '%s'...", argv[Argument+1], argv[Argument+2], argv[Argument+3] ); }
 
-            if ( pServ->AddVariable( argv[Argument+1], SimpleString::EmptyString, argv[Argument+2], ReadWriteAccess ) == true )
-            {
-                pServ->SetVariableValue( argv[Argument+1], argv[Argument+3] );
-                if ( Debug ) { printf( "done.\n" ); }
-            }
-            else
-            {
-                if ( Debug ) { printf( "failed.\n" ); }
-            }
+			if ( pServ->AddVariable( argv[Argument+1], SimpleString::EmptyString, argv[Argument+2], ReadWriteAccess ) == true )
+			{
+				pServ->SetVariableValue( argv[Argument+1], argv[Argument+3] );
+				if ( Debug ) { printf( "done.\n" ); }
+			}
+			else
+			{
+				if ( Debug ) { printf( "failed.\n" ); }
+			}
 
-            Argument += 3;
-            continue;
-        }
+			Argument += 3;
+			continue;
+		}
 
-        if ( strcmp( "-ct", argv[Argument]) == 0 )
-        {
-            // Already processed
-            Argument += 1;
-             continue;
-        }
+		if ( strcmp( "-ct", argv[Argument]) == 0 )
+		{
+			// Already processed
+			Argument += 1;
+			 continue;
+		}
 
-        if ( strcmp( "-d", argv[Argument]) == 0 )
-        {
-            // Debug option already processed int the validity checking mode
-             continue;
-        }
+		if ( strcmp( "-d", argv[Argument]) == 0 )
+		{
+			// Debug option already processed int the validity checking mode
+			 continue;
+		}
 
-        sprintf( Message, "invalid option in parameter %d ('%s')", Argument+1, argv[Argument] );
-        Usage( (const char *)Message );
-    }
+		sprintf( Message, "invalid option in parameter %d ('%s')", Argument+1, argv[Argument] );
+		Usage( (const char *)Message );
+	}
 
-    pServ->Start();
+	pServ->Start();
 
 #if 0
 
-    // Now we'd like to connect to ask connection point...
-    if ( ConnectionString >= 2 )
-    {
-        char ** Table = new char *[ConnectionObjects];
-        if ( Table == NULL )
-        {
-            exit(1);
-        }
-        ParseConnectionString( argv[ConnectionString], true, Table );
+	// Now we'd like to connect to ask connection point...
+	if ( ConnectionString >= 2 )
+	{
+		char ** Table = new char *[ConnectionObjects];
+		if ( Table == NULL )
+		{
+			exit(1);
+		}
+		ParseConnectionString( argv[ConnectionString], true, Table );
 
-        WaitForOmiscidServices WFS;
+		WaitForOmiscidServices WFS;
 
-        for( Argument = 0; Argument < ConnectionObjects; Argument+=2 )
-        {
-            WFS.NeedService( Table[Argument] );
-        }
+		for( Argument = 0; Argument < ConnectionObjects; Argument+=2 )
+		{
+			WFS.NeedService( Table[Argument] );
+		}
 
-        printf( "Wait for %d services...\n", ConnectionObjects/2 );
-        WFS.WaitAll();
+		printf( "Wait for %d services...\n", ConnectionObjects/2 );
+		WFS.WaitAll();
 
-        for( Argument = 0; Argument < ConnectionObjects; Argument+=2 )
-        {
-            ControlClient * CtrCli = new ControlClient(CtrSrv.GetServiceId());
-            fprintf( stderr, "%s\n", WFS[Argument/2].Name );
-            if ( CtrCli->ConnectToCtrlServer( WFS[Argument/2].HostName, WFS[Argument/2].Port ) )
-            {
-                InOutputAttribut * ConnectPointAtt;
-                TcpUdpClientServer * TcpCli;
-                CtrCli->QueryGlobalDescription();
+		for( Argument = 0; Argument < ConnectionObjects; Argument+=2 )
+		{
+			ControlClient * CtrCli = new ControlClient(CtrSrv.GetServiceId());
+			fprintf( stderr, "%s\n", WFS[Argument/2].Name );
+			if ( CtrCli->ConnectToCtrlServer( WFS[Argument/2].HostName, WFS[Argument/2].Port ) )
+			{
+				InOutputAttribut * ConnectPointAtt;
+				TcpUdpClientServer * TcpCli;
+				CtrCli->QueryGlobalDescription();
 
-                if ( (ConnectPointAtt = CtrCli->QueryInputDescription( Table[Argument+1] ))  ||
-                     (ConnectPointAtt = CtrCli->QueryOutputDescription( Table[Argument+1] )) ||
-                     (ConnectPointAtt = CtrCli->QueryInOutputDescription( Table[Argument+1] )) )
-                {
-                    TcpCli = new TcpUdpClientServer();
-                    TcpCli->SetServiceId( CtrSrv.GetServiceId() );
-                    TcpCli->SetCallBackOnRecv( DropMessage, (void*)TcpCli, NULL );
-                    TcpCli->ConnectTo( WFS[Argument/2].HostName, ConnectPointAtt->GetTcpPort(), ConnectPointAtt->GetUdpPort() );
+				if ( (ConnectPointAtt = CtrCli->QueryInputDescription( Table[Argument+1] ))  ||
+					 (ConnectPointAtt = CtrCli->QueryOutputDescription( Table[Argument+1] )) ||
+					 (ConnectPointAtt = CtrCli->QueryInOutputDescription( Table[Argument+1] )) )
+				{
+					TcpCli = new TcpUdpClientServer();
+					TcpCli->SetServiceId( CtrSrv.GetServiceId() );
+					TcpCli->SetCallBackOnRecv( DropMessage, (void*)TcpCli, NULL );
+					TcpCli->ConnectTo( WFS[Argument/2].HostName, ConnectPointAtt->GetTcpPort(), ConnectPointAtt->GetUdpPort() );
 
-                    continue;
-                }
-            }
-            else
-            {
-                int zz = 0;
-            }
-        }
+					continue;
+				}
+			}
+			else
+			{
+				int zz = 0;
+			}
+		}
 
-    }
+	}
 #endif
 
-    printf( "Waiting...\n" );
-    // Lock Mylself
-    Event ForEver;
-    ForEver.Wait();
+	printf( "Waiting...\n" );
+	// Lock Mylself
+	Event ForEver;
+	ForEver.Wait();
 
-    return 0;
+	return 0;
 }

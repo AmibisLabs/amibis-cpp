@@ -20,30 +20,30 @@ void MultipleReferencedData::ReleaseData(MultipleReferencedData* multiple_refere
 {
   multiple_referenced_data->RemoveRef();
   if(!( multiple_referenced_data->IsStillUseful()))
-    {
-      MethodForRelease method_for_release = multiple_referenced_data->methodForRelease;
-      if(method_for_release == NULL)
-    {
-      delete multiple_referenced_data;
-    }
-      else
-    {
-      method_for_release(multiple_referenced_data);
-    }
-    }
+	{
+	  MethodForRelease method_for_release = multiple_referenced_data->methodForRelease;
+	  if(method_for_release == NULL)
+	{
+	  delete multiple_referenced_data;
+	}
+	  else
+	{
+	  method_for_release(multiple_referenced_data);
+	}
+	}
 }
 
 void MultipleReferencedData::AddRef()
 {
-    NbCurrentRef++;
+	NbCurrentRef++;
 }
 
 void MultipleReferencedData::RemoveRef()
 {
-    NbCurrentRef--;
+	NbCurrentRef--;
 }
 
 bool MultipleReferencedData::IsStillUseful() const
 {
-    return NbCurrentRef > 0;
+	return NbCurrentRef > 0;
 }

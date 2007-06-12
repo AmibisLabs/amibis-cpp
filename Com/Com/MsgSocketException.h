@@ -20,8 +20,8 @@ namespace Omiscid {
 class MsgSocketException : public SimpleException
 {
 public:
-    // Virtual destructor always
-    virtual ~MsgSocketException();
+	// Virtual destructor always
+	virtual ~MsgSocketException();
 
   /** @brief Constructor
    * @param m [in] message for the exception

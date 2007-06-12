@@ -13,11 +13,11 @@ ServiceFromXML::ServiceFromXML(const SimpleString file_name)
   XMLTreeParser xmlTreeParser;
   xmlDocPtr doc = xmlTreeParser.ParseFile(file_name);
   if(doc != NULL)
-    {
-        //delete doc;
-      InitServiceFromXml(xmlDocGetRootElement(doc));
-      xmlFreeDoc( doc );
-    }
+	{
+		//delete doc;
+	  InitServiceFromXml(xmlDocGetRootElement(doc));
+	  xmlFreeDoc( doc );
+	}
 }
 
 void ServiceFromXML::InitServiceFromXml(xmlNodePtr root_node)
@@ -27,26 +27,26 @@ void ServiceFromXML::InitServiceFromXml(xmlNodePtr root_node)
 
   xmlNodePtr cur_node = root_node->children;
   for(; cur_node; cur_node = cur_node->next)
-    {
-      if (cur_node->type == XML_ELEMENT_NODE)
-    {
-      SimpleString cur_name = (const char*)cur_node->name;
-      if( cur_name == VariableAttribute::variable_str )
-        {
-          ProcessVariableAttribute(cur_node);
-        }
-      else if( cur_name == InOutputAttribute::input_str ||
-           cur_name == InOutputAttribute::output_str ||
-          cur_name == InOutputAttribute::inoutput_str )
-        {
-          ProcessInOutputAttribute(cur_node);
-        }
-      else
-        {
-          fprintf(stderr, "unknown node : %s\n", cur_name.GetStr() );
-        }
-    }
-    }
+	{
+	  if (cur_node->type == XML_ELEMENT_NODE)
+	{
+	  SimpleString cur_name = (const char*)cur_node->name;
+	  if( cur_name == VariableAttribute::variable_str )
+		{
+		  ProcessVariableAttribute(cur_node);
+		}
+	  else if( cur_name == InOutputAttribute::input_str ||
+		   cur_name == InOutputAttribute::output_str ||
+		  cur_name == InOutputAttribute::inoutput_str )
+		{
+		  ProcessInOutputAttribute(cur_node);
+		}
+	  else
+		{
+		  fprintf(stderr, "unknown node : %s\n", cur_name.GetStr() );
+		}
+	}
+	}
 }
 
 void ServiceFromXML::ProcessVariableAttribute(xmlNodePtr node)
@@ -54,8 +54,8 @@ void ServiceFromXML::ProcessVariableAttribute(xmlNodePtr node)
   xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", node);
   if(attr_name)
   {
-    VariableAttribute* va = AddVariable((const char*)attr_name->children->content);
-    va->ExtractDataFromXml(node);
+	VariableAttribute* va = AddVariable((const char*)attr_name->children->content);
+	va->ExtractDataFromXml(node);
   }
 }
 
@@ -65,17 +65,17 @@ void ServiceFromXML::ProcessInOutputAttribute(xmlNodePtr node)
   SimpleString node_name = (const char*)node->name;
   if ( node_name == InOutputAttribute::input_str )
   {
-    kind_of_input = AnInput;
+	kind_of_input = AnInput;
   }
   else if ( node_name == InOutputAttribute::output_str )
   {
-    kind_of_input = AnOutput;
+	kind_of_input = AnOutput;
   }
 
   xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", node);
   if(attr_name)
   {
-    InOutputAttribute* ioa = AddInOutput((const char*)attr_name->children->content, NULL, kind_of_input);
-    ioa->ExtractDataFromXml(node);
+	InOutputAttribute* ioa = AddInOutput((const char*)attr_name->children->content, NULL, kind_of_input);
+	ioa->ExtractDataFromXml(node);
   }
 }

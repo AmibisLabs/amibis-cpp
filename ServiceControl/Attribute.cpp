@@ -18,78 +18,78 @@ Attribute::~Attribute()
 
 void Attribute::AddTagDescriptionToStr(SimpleString& str)
 {
-    if(description !=  "")
-    {
-        str = str
-            + "<description>"
-            + description
-            + "</description>";
-    }
+	if(description !=  "")
+	{
+		str = str
+			+ "<description>"
+			+ description
+			+ "</description>";
+	}
 
-    if(formatDescription != "")
-    {
-        str += "<formatDescription>";
-        PutAValueInCData(formatDescription, str);
-        str += "</formatDescription>";
-    }
+	if(formatDescription != "")
+	{
+		str += "<formatDescription>";
+		PutAValueInCData(formatDescription, str);
+		str += "</formatDescription>";
+	}
 }
 
 void Attribute::PutAValueInCData(const SimpleString val, SimpleString& str)
 {
-    str += "<![CDATA[";
-    str += val;
-    str += "]]>";
+	str += "<![CDATA[";
+	str += val;
+	str += "]]>";
 }
 
 const SimpleString& Attribute::GetName() const
 {
-    return name;
+	return name;
 }
 
 const SimpleString& Attribute::GetDescription() const
 {
-    return description;
+	return description;
 }
 
 void Attribute::SetName(const SimpleString str)
 {
-    name = str;
+	name = str;
 }
 
 void Attribute::SetDescription(const SimpleString str)
 {
-    description = str;
+	description = str;
 }
 
 void Attribute::GenerateHeaderDescription(const SimpleString& type,
-                                          const SimpleString& name,
-                                          SimpleString& str,
-                                          bool end)
+										  const SimpleString& name,
+										  SimpleString& str,
+										  bool end)
 {
-    // "<"+ type + " name=\"" + name + "\"/>" at max
-    TemporaryMemoryBuffer MemBuff( 1 + type.GetLength() + 7 + name.GetLength() + 4 );
-    if ( end == true )
-    {
-        snprintf( (char*)MemBuff, MemBuff.GetLength(), "<%s name=\"%s\"/>", type.GetStr(), name.GetStr() );
-    }
-    else
-    {
-        snprintf( (char*)MemBuff, MemBuff.GetLength(), "<%s name=\"%s\">", type.GetStr(), name.GetStr() );
-    }
+	// "<"+ type + " name=\"" + name + "\"/>" at max
+	TemporaryMemoryBuffer MemBuff( 1 + type.GetLength() + 7 + name.GetLength() + 4 );
+	if ( end == true )
+	{
+		snprintf( (char*)MemBuff, MemBuff.GetLength(), "<%s name=\"%s\"/>", type.GetStr(), name.GetStr() );
+	}
+	else
+	{
+		snprintf( (char*)MemBuff, MemBuff.GetLength(), "<%s name=\"%s\">", type.GetStr(), name.GetStr() );
+	}
 
-    str += (char*)MemBuff;
+	str += (char*)MemBuff;
 
-    //str = str + "<"+ type + " name=\"" + name;
-    //if(end) str = str + "\"/>";
-    //else  str = str + "\">";
+	//str = str + "<"+ type + " name=\"" + name;
+	//if(end) str = str + "\"/>";
+	//else  str = str + "\">";
 }
 
 const SimpleString& Attribute::GetFormatDescription() const
 {
-    return formatDescription;
+	return formatDescription;
 }
 
 void Attribute::SetFormatDescription(const SimpleString str)
 {
-    formatDescription = str;
+	formatDescription = str;
 }

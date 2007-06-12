@@ -280,11 +280,11 @@ protected:
   /** @brief Add to a string a short global description
    *
    * @verbatim
-     str = str + <br>
-       <variable name="..."/> ...
-       <input name="..."/> ...
-       <output name="..."/> ...
-     @endverbatim
+	 str = str + <br>
+	   <variable name="..."/> ...
+	   <input name="..."/> ...
+	   <output name="..."/> ...
+	 @endverbatim
    * @param str [in, out] SimpleString where add ths short descriptions.
    */
   void GenerateGlobalShortDescription(SimpleString& str);
@@ -310,7 +310,7 @@ protected:
  private:
   /** @brief Only one function for all constructors
    */
-    void InitInstance();
+	void InitInstance();
 
   /** @brief Add a peer interested in variable modification
    * @param var the intersting variable for the peer

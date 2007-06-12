@@ -19,5 +19,5 @@ SimpleListException::SimpleListException(const SimpleListException& ExceptionToC
 
 SimpleString SimpleListException::GetExceptionType() const
 {
-    return SimpleString( "SimpleListException" );
+	return SimpleString( "SimpleListException" );
 }

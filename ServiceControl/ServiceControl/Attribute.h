@@ -96,9 +96,9 @@ class Attribute
    * \param end [in] define if the tag is closed or not.
    */
   static void GenerateHeaderDescription(const SimpleString& type,
-                    const SimpleString& name,
-                    SimpleString& str,
-                    bool end = true);
+					const SimpleString& name,
+					SimpleString& str,
+					bool end = true);
   /**
    * \brief Add to a SimpleString the xml tag for description.
    *

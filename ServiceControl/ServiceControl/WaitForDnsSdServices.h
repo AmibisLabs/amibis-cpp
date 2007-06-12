@@ -5,7 +5,7 @@
  * @author Special thanks to Sébastien Pesnel for debugging and testing
  * @author Special thanks to Julien Letessier for his kind help about DNS-SD
  * @version 1.0
- * @date    2004-2006
+ * @date	2004-2006
  */
 
 #ifndef __WAIT_FOR_DNS_SD_SERVICES_H__
@@ -36,69 +36,69 @@ class WaitForDnsSdServices;
 
 class SearchService : public DnsSdService, public DnsSdProxyClient
 {
-    friend class WaitForDnsSdServices;
-    friend class Service;
-    friend class DnsSdProxy;
+	friend class WaitForDnsSdServices;
+	friend class Service;
+	friend class DnsSdProxy;
 
 public:
-    SearchService();
+	SearchService();
 
-    // Virtual destructor always
-    virtual ~SearchService();
+	// Virtual destructor always
+	virtual ~SearchService();
 
-    bool StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
+	bool StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 
-    bool IsAvailable();
+	bool IsAvailable();
 
 private:
-    SimpleString SearchName;
-    int SearchNameLength;
-    char Regtype[RegtypeLength];
-    WaitForDnsSdServices * Parent;
-    bool DNSSDConnection;
-    bool IsResolved;
-    IsServiceValidForMe CallBack;
-    void * UserData;
+	SimpleString SearchName;
+	int SearchNameLength;
+	char Regtype[RegtypeLength];
+	WaitForDnsSdServices * Parent;
+	bool DNSSDConnection;
+	bool IsResolved;
+	IsServiceValidForMe CallBack;
+	void * UserData;
 
-    // Call by other classes to say if a new service appears or desappears
-    virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
+	// Call by other classes to say if a new service appears or desappears
+	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
 };
 
 class WaitForDnsSdServices
 {
-    friend class SearchService;
+	friend class SearchService;
 public:
-    WaitForDnsSdServices();
-    virtual ~WaitForDnsSdServices(void);
+	WaitForDnsSdServices();
+	virtual ~WaitForDnsSdServices(void);
 
-    int NeedService( const SimpleString eName, const SimpleString eType, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
+	int NeedService( const SimpleString eName, const SimpleString eType, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
 
-    /* DelayMax en milliseconds*/
-    bool WaitAll(unsigned int DelayMax = 0 );
+	/* DelayMax en milliseconds*/
+	bool WaitAll(unsigned int DelayMax = 0 );
 
-    int GetNbOfSearchedServices();
+	int GetNbOfSearchedServices();
 
-      //int GetNbOfAvailableServices();
-    SearchService & operator[](int nPos);
+	  //int GetNbOfAvailableServices();
+	SearchService & operator[](int nPos);
 
 protected:
-    bool LockService( const SimpleString ServiceName );
-    void UnlockService( const SimpleString ServiceName );
-    bool IsServiceLocked( const SimpleString ServiceName );
+	bool LockService( const SimpleString ServiceName );
+	void UnlockService( const SimpleString ServiceName );
+	bool IsServiceLocked( const SimpleString ServiceName );
 
-    AtomicCounter NbServicesReady;
+	AtomicCounter NbServicesReady;
 
-    ReentrantMutex ThreadSafeSection;
+	ReentrantMutex ThreadSafeSection;
 
-    // Review
-    // enum SEARCHLIMITS { MaxSearchServices = 10 };
-    // int NbSearchServices;
-    // SearchService SearchServices[MaxSearchServices];
-    SimpleList<SearchService*> SearchServices;
+	// Review
+	// enum SEARCHLIMITS { MaxSearchServices = 10 };
+	// int NbSearchServices;
+	// SearchService SearchServices[MaxSearchServices];
+	SimpleList<SearchService*> SearchServices;
 
-    // To validate that a single service is used once !
-    Mutex mutexServicesUsed;
-    ServiceProperties ServicesUsed;
+	// To validate that a single service is used once !
+	Mutex mutexServicesUsed;
+	ServiceProperties ServicesUsed;
 };
 
 } // namespace Omiscid
