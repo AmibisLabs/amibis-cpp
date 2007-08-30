@@ -65,7 +65,7 @@ const char* MsgSocket::tag_start1 = "BIP/1.0";
 const char* MsgSocket::tag_start2 = "\r\n";
 const char* MsgSocket::tag_end = "\r\n";
 const char* MsgSocket::tag_str = "BIP/1.0 %08x %08x %08x\r\n";
-const char* MsgSocket::tag_prepared_hdr = "BIP/1.0				   %08x\r\n";
+const char* MsgSocket::tag_prepared_hdr = "BIP/1.0                   %08x\r\n";
 const char* MsgSocket::tag_prepared_serv = "%08x %08x";
 
 const int MsgSocket::pid_size = 8;
@@ -1009,7 +1009,7 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 #endif
 
 		protectSend.LeaveMutex();
-		return TotalLen;
+		return (TotalLen-tag_end_size-tag_size);
 	}
 	catch(SocketException& e)
 	{

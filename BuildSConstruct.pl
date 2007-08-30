@@ -50,18 +50,41 @@ sub PrintHeaders()
 
 sub CreateInitTables()
 {
-	my $Folder = shift @_;
+	my @Folders = @_;
+	my $Folder;
+	my $Premier = 1;
 
-	print $SconsInit "# Layer $Folder\n";
-	print $SconsInit "${Folder}Headers=[";
-	&PrintHeaders( $Folder );
+	print $SconsInit "# Layer $Folders[0]\n";
+	print $SconsInit "$Folders[0]Headers=[";
+	foreach $Folder (@Folders)
+	{
+		if ( $Premier == 1 )
+		{
+			$Premier = 0;
+		}
+		else
+		{
+			print $SconsInit ",";
+		}
+		&PrintHeaders( $Folder );
+	}
 	print $SconsInit "]\n";
 
-	print $SconsInit "${Folder}Sources=[";
-	&PrintSources( $Folder );
+	$Premier = 1;
+	print $SconsInit "$Folders[0]Sources=[";
+	foreach $Folder (@Folders)
+	{
+		if ( $Premier == 1 )
+		{
+			$Premier = 0;
+		}
+		else
+		{
+			print $SconsInit ",";
+		}
+		&PrintSources( $Folder );
+	}
 	print $SconsInit "]\n\n";
-	
-	
 }
 
 $OmiscidInitfileShortName = "OmiscidInit";
@@ -76,8 +99,8 @@ print $SconsInit "# Tables of layers files\n\n";
 print $SconsInit "import os\n\n";
 
 &CreateInitTables('System');
-&CreateInitTables('Com');
-&CreateInitTables('ServiceControl');
+&CreateInitTables('Com','System');
+&CreateInitTables('ServiceControl','Com','System');
 
 close( $SconsInit );
 

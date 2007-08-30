@@ -13,7 +13,10 @@ sub Reformat()
 	while( $ligne = <$fd> )
 	{
 		$ligne =~ s/[\r\n\s]+$//g;
-		$ligne =~ s/$ToReplace/$ReplaceBy/g;
+		while( $ligne =~ /^(($ReplaceBy)*)($ToReplace)(.*)$/ )
+		{
+			$ligne = $1 . $ReplaceBy . $4;
+		}
 		$contenu .= $ligne . '_#_#_#_#_';
 	}
 	close( $fd );
@@ -61,17 +64,29 @@ sub EnterDirectory()
 $ToReplace = "\t";
 $ReplaceBy = '    ';
 
-if ( defined $ARGV[0] )
+$FolderToWorkOn = '';
+
+$ParamPos = 0;
+while ( defined $ARGV[$ParamPos] )
 {
-	if ( $ARGV[0] eq '-reverse' )
+	if ( $ARGV[$ParamPos] eq '-reverse' )
 	{
 		$ToReplace = '    ';
 		$ReplaceBy = "\t";
+		$ParamPos++;
+		next;
 	}
-	else
+	if ( $FolderToWorkOn ne '' )
 	{
-		die "Bad parameter\n";
+		die "Bad parameter : folder already defined.\n";
 	}
+	$FolderToWorkOn = $ARGV[$ParamPos];
+	$ParamPos++;
 }
 
-&RecurseWork::RecurseWork('.','');
+if ( $FolderToWorkOn eq '' )
+{
+	die "Missing parameter : working folder not defined.\n";
+}
+
+&RecurseWork::RecurseWork($FolderToWorkOn,'');

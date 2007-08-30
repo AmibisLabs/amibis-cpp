@@ -487,7 +487,10 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			{
 				try
 				{
-					ms->Send((int)str.GetLength(), str.GetStr());
+					if ( ms->Send((int)str.GetLength(), str.GetStr()) != str.GetLength() )
+					{
+						OmiscidTrace( "Send probleme when replying request.\n" );
+					}
 				}
 				catch( SocketException& e )
 				{

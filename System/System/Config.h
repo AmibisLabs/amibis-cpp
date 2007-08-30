@@ -163,7 +163,7 @@
 	 *	In order to be sure to have the correct WIN32 symbol.
 	 */
 	#if defined WIN32
-		#define WIN32	// WIN32 is more interesting for us
+		// #define WIN32	// WIN32 is more interesting for us
 	#endif
 
 	/*! @def strcasecmp

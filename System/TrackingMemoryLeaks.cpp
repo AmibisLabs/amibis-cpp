@@ -175,7 +175,7 @@ public:
 
 
 	/** \brief  Empty (so empty) the whole list */
-	virtual void Empty();
+	void Empty();
 
 
  protected:
@@ -183,14 +183,14 @@ public:
 	 *
 	 * Create a new instance of struct SimpleMemoryElement object
 	 */
-	virtual struct SimpleMemoryElement* GetNewSimpleListElement(size_t SizeOfBlock) const;
+	struct SimpleMemoryElement* GetNewSimpleListElement(size_t SizeOfBlock) const;
 
 	/** \brief Release a struct SimpleMemoryElement object
 	 *
 	 * Delete the struct SimpleMemoryElement object
 	 * @param elt the element to release
 	 */
-	virtual void ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const;
+	void ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const;
 
  public:
 	struct SimpleMemoryElement * Head, * Tail; /*!< pointers on head and tail of the list */

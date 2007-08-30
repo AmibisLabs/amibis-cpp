@@ -181,6 +181,7 @@ SimpleString Omiscid::GetLoggedUser()
 	SimpleString Login;
 
 #ifdef WIN32
+	// Just for visibility reason
 	#define MAX_LOGIN_LEN 512
 
 	DWORD len;
@@ -197,6 +198,12 @@ SimpleString Omiscid::GetLoggedUser()
 #else
 	// alternatively we could use getpwuid( geteuid() );
 	Login = getenv("LOGNAME");
+
+	// Backward compatibility
+	if ( Login.IsEmpty() )
+	{
+		Login = getenv("USER");
+	}
 #endif
 
 	return Login;

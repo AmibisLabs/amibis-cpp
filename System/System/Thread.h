@@ -100,6 +100,11 @@ protected:
 	 */
 	void WaitForStop();
 
+	/** @brief return an Id for the Thread
+	 *
+	 */
+	unsigned long GetThreadId();
+
 private:
 	bool  StopWasAsked;			/*!< store if stop is required, pseudo active wait */
 	Event StopWasAskedEvent;	/*!< store if stop is required, full unactive wait */

@@ -15,30 +15,30 @@ env.AppendUnique(CXXFLAGS = ['-g','-Werror','-Wall','-pedantic','-std=c++98'])
 binToInstall = []
 libToInstall = []
 
-env_system = env.Copy()
-env_system.Append(CPPPATH='System')
-target_system = env_system.SharedLibrary(
+# env_system = env.Copy()
+env.Append(CPPPATH='System')
+target_system = env.SharedLibrary(
     target='OmiscidSystem',
     source=SystemSources
 )
 libToInstall += target_system
 
-env_com = env.Copy()
-env_com.Append(CPPPATH=['System', 'Com'])
-env_com.Prepend(LIBPATH=['.'])
-env_com.Append(LIBS = ['OmiscidSystem'])
-target_com = env_com.SharedLibrary(
+# env_com = env.Copy()
+env.Append(CPPPATH=['System', 'Com'])
+env.Prepend(LIBPATH=['.'])
+# env_com.Append(LIBS = ['OmiscidSystem'])
+target_com = env.SharedLibrary(
     target='OmiscidCom',
     source=ComSources
 )
 
 libToInstall += target_com
 
-env_control = env.Copy()
-env_control.Append(CPPPATH=['System', 'Com', 'ServiceControl'])
-env_control.Prepend(LIBPATH=['.'])
-env_control.Append(LIBS = ['OmiscidCom', 'OmiscidSystem'])
-target_control = env_control.SharedLibrary(
+# env_control = env.Copy()
+env.Append(CPPPATH=['System', 'Com', 'ServiceControl'])
+env.Prepend(LIBPATH=['.'])
+# env_control.Append(LIBS = ['OmiscidCom', 'OmiscidSystem'])
+target_control = env.SharedLibrary(
     target='OmiscidControl',
     source=ServiceControlSources
 )
@@ -50,8 +50,8 @@ env.Depends(target_control, target_com)
 
 
 hToInstall = []
-hToInstall += SystemHeaders
-hToInstall += ComHeaders
+# hToInstall += SystemHeaders
+# hToInstall += ComHeaders
 hToInstall += ServiceControlHeaders
 
 binToInstall += OmiscidDotInFileTarget(env, 'Com/OmiscidCom-config', OmiscidMapping())

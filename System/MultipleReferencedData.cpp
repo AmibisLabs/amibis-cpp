@@ -4,8 +4,8 @@ using namespace Omiscid;
 
 MultipleReferencedData::MultipleReferencedData(MethodForRelease method_for_release)
 {
-  methodForRelease = method_for_release;
-  Init();
+	methodForRelease = method_for_release;
+	Init();
 }
 
 MultipleReferencedData::~MultipleReferencedData()
@@ -13,23 +13,23 @@ MultipleReferencedData::~MultipleReferencedData()
 
 void MultipleReferencedData::Init()
 {
-  NbCurrentRef = 0;
+	NbCurrentRef = 0;
 }
 
 void MultipleReferencedData::ReleaseData(MultipleReferencedData* multiple_referenced_data)
 {
-  multiple_referenced_data->RemoveRef();
-  if(!( multiple_referenced_data->IsStillUseful()))
+	multiple_referenced_data->RemoveRef();
+	if(!( multiple_referenced_data->IsStillUseful()))
 	{
-	  MethodForRelease method_for_release = multiple_referenced_data->methodForRelease;
-	  if(method_for_release == NULL)
-	{
-	  delete multiple_referenced_data;
-	}
-	  else
-	{
-	  method_for_release(multiple_referenced_data);
-	}
+		MethodForRelease method_for_release = multiple_referenced_data->methodForRelease;
+		if(method_for_release == NULL)
+		{
+			delete multiple_referenced_data;
+		}
+		else
+		{
+			method_for_release(multiple_referenced_data);
+		}
 	}
 }
 

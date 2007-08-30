@@ -65,6 +65,7 @@ const SimpleString CommonServiceValues::GetOmiscidServiceDnsSdType()
 			return OmiscidServiceDnsSdType;
 		}
 
+		// OmiscidServiceDnsSdType = DefaultDomain;
 		OmiscidServiceDnsSdType = Option;
 		OmiscidTrace( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
 	}

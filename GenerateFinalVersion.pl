@@ -490,7 +490,7 @@ if ( &LogOk() == 0 )
 	exit();
 }
 
-print STDERR "\n\n\t=> $VersionFile successfully generated.\n";
+print STDERR "\n\n\t=> $VersionFile successfully tested.\n";
 `echo $Version > ../LastVersion.info`;
 print STDERR "Generate final version of $VersionFile.\n";
 
@@ -526,22 +526,21 @@ print $fd "\n";
 close( $fd );
 
 # reset file list
-undef %FilesToAdd;
+undef(%FilesToAdd);
+
+if ( -e 'Doc' && -d 'Doc' )
+{
+	print "Remove Doc\n";
+	`rm -rf Doc`;
+}
 
 if ( $DoDoc == 1 )
 {
-	
-	if ( -e 'Doc' && -d 'Doc' )
-	{
-		print "Remove Doc\n";
-		`rm -rf Doc`;
-	}
-	
 	print "Generate Doc\n";
 	`doxygen`;
 }
 
-`perl RecursiveDos2Unix.pl`;
+`perl RecursiveDos2Unix.pl .`;
 
 # generate testing archive
 &RecurseWork::RecurseWork("System/");
@@ -554,8 +553,8 @@ if ( $DoDoc == 1 )
 }
 
 print STDERR "Remove BipService.cpp & TimeoutProg.cpp from list\n";
-undef $FilesToAdd{'Examples/BipService.cpp'};
-undef $FilesToAdd{'Examples/TimeoutProg.cpp'};
+undef($FilesToAdd{'Examples/BipService.cpp'});
+undef($FilesToAdd{'Examples/TimeoutProg.cpp'});
 
 $command = "zip -9 $VersionFile ";
 foreach $file ( @UsualFiles )
@@ -564,6 +563,10 @@ foreach $file ( @UsualFiles )
 }
 foreach $file ( keys %FilesToAdd )
 {
+	if ( $FilesToAdd{$file} == 0 )
+	{
+		next;
+	}
 	$command .= "$WorkingRep/$file ";
 }
 

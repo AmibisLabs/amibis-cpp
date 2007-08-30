@@ -34,9 +34,6 @@ int main(int argc, char*argv[] )
 	unsigned int i;
 	int j;
 
-	Event StopMyself;
-	StopMyself.Wait();
-
 	// Constant values
 	// The number of service to register
 	unsigned int NumberOfServicesToRegister = 10;

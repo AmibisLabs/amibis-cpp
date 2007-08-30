@@ -167,7 +167,7 @@ public:
 
 
 	/** \brief  Empty (so empty) the whole list */
-	virtual void Empty();
+	void Empty();
 
 
  protected:
@@ -175,14 +175,14 @@ public:
 	 *
 	 * Create a new instance of SimpleListElement object
 	 */
-	virtual SimpleListElement<TYPE>* GetNewSimpleListElement() const;
+	SimpleListElement<TYPE>* GetNewSimpleListElement() const;
 
 	/** \brief Release a SimpleListElement object
 	 *
 	 * Delete the SimpleListElement object
 	 * @param elt the element to release
 	 */
-	virtual void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const;
+	void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const;
 
  private:
 	SimpleListElement<TYPE> * Head, * Tail; /*!< pointers on head and tail of the list */
