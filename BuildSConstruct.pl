@@ -99,8 +99,8 @@ print $SconsInit "# Tables of layers files\n\n";
 print $SconsInit "import os\n\n";
 
 &CreateInitTables('System');
-&CreateInitTables('Com','System');
-&CreateInitTables('ServiceControl','Com','System');
+&CreateInitTables('Com');
+&CreateInitTables('ServiceControl');
 
 close( $SconsInit );
 

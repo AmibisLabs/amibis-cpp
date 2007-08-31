@@ -505,20 +505,38 @@ const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Mod
 
 const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, bool& Modified )
 {
-	int PosDeb;
+	int PosDeb;			// Position of '-\d+' in the string
 
 	// Say that we do not modify it
 	Modified = false;
 
+	bool PreviousSequenceOfNumber = false;	// give information about the fact we have numbers before
+	int SizeOfNum = 0;						// number of characters in the sequence '-\d+'
 	// Start from end
 	for( PosDeb = Name.GetLength()-1; PosDeb >= 2; PosDeb-- )
 	{
-		if ( Name[PosDeb] >= '0' && Name[PosDeb] <= '9' && Name[PosDeb-1] == '-' )
+		if ( Name[PosDeb] == '-' )
 		{
-			// Ok we do a modification
-			Modified = true;
-			return Name.SubString(0,PosDeb-1) + Name.SubString(PosDeb+1,Name.GetLength() );
+			if ( PreviousSequenceOfNumber == true )
+			{
+				// Ok, we've got '-\d+', do the modification
+				Modified = true;
+				return Name.SubString(0,PosDeb) + Name.SubString(PosDeb+1+SizeOfNum,Name.GetLength() );
+			}
+			// ok, the next previous is '-', so not a number
+			PreviousSequenceOfNumber = false;
+			SizeOfNum = 0;
 		}
+		if ( Name[PosDeb] >= '0' && Name[PosDeb] <= '9' )
+		{
+			// Ok, we've got a number
+			PreviousSequenceOfNumber = true;
+			SizeOfNum++;
+			continue;
+		}
+		// ok, this is not a number
+		PreviousSequenceOfNumber = false;
+		SizeOfNum = 0;
 	}
 
 	return Name;

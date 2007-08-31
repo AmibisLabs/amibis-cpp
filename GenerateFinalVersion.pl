@@ -144,7 +144,13 @@ while( defined $ARGV[$PosArgv] )
 	}
 	if ( $ARGV[$PosArgv] eq '-minor' )
 	{
-		$IncrVersionType = 0; # major number
+		$IncrVersionType = 0; # minor number
+		$PosArgv++;
+		next;
+	}
+	if ( $ARGV[$PosArgv] eq '-last' )
+	{
+		$IncrVersionType = -1; # regenerate the same version
 		$PosArgv++;
 		next;
 	}
@@ -196,6 +202,10 @@ if ( -e '../LastVersion.info' )
 		$majorn = $1;
 		$middlen = $2;
 		$lastn = $3;
+		if ( $IncrVersionType == -1 )
+		{
+			# Nothing
+		}
 		if ( $IncrVersionType == 0 )
 		{
 			$lastn++;
@@ -327,8 +337,8 @@ if ( $DoTest == 1 )
 	$Computers{'desdemona'}  = '000bcd624fa9';
 	$Options{'desdemona'}   = '("zeroconf=mdns")';
 	# $Options{'desdemona'}   = '("")';
-	$Computers{'deimos'}  = '000d561ff276';
-	$Options{'deimos'}   = '("zeroconf=avahi")';
+	$Computers{'protee'}  = '000d561ff276';
+	$Options{'protee'}   = '("zeroconf=avahi")';
 
 	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';

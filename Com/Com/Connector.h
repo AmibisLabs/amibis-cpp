@@ -159,18 +159,19 @@ class Connector : public TcpServer, public UdpExchange
 
   /** \brief Define the callback for message reception
    *
-   * define the callback function to call when message are received.
-   * This callback function is used for all the connection.
-   * \param fct [in] the callback function
-   * \param user_data1 the value for the second parameter of the callback function
-   * \param user_data2 the value for the third parameter of the callback function
+   * @param CallbackObject the object that will be used as callback
    */
   bool AddCallbackObject(MsgSocketCallbackObject * CallbackObject);
 
   /** \brief Retrieve the callback for message reception
    *
+   * @param CallbackObject the callback object to remove
    */
   bool RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject);
+
+  /** @brief Remove all callback object from this connector
+   */
+  void RemoveAllCallbackObjects();
 
 
   /** \brief Set a MsgManager object as callback for message reception

@@ -546,6 +546,131 @@ bool Service::RemoveConnectorListener(SimpleString ConnectorName, ConnectorListe
 	return pConnector->RemoveCallbackObject( MsgListener );
 }
 
+	/**
+     * Removes all listeners on a given connector.
+     * @param ConnectorName the connector on which listeners will be removed.
+     */
+void Service::RemoveAllConnectorListeners(SimpleString ConnectorName)
+{
+	// Search connector
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
+	if ( pAtt == NULL )
+	{
+		OmiscidError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
+		return;
+	}
+
+	// Get the connector
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
+
+	// Just remove all callback objects
+	pConnector->RemoveAllCallbackObjects();
+}
+
+	/**
+     * Removes all listeners on a all connectors.
+     */
+void Service::RemoveAllConnectorListeners()
+{
+	// Walk amoung all connector
+	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next() )
+	{
+		// Get the connector
+		Connector * pConnector = dynamic_cast<Connector *>(listInOutput.GetCurrent()->GetComTool());
+
+		// Retrieve all PeerIds
+		pConnector->RemoveAllCallbackObjects();
+	}
+}
+
+    /**
+     * Closes a connection on a given connector to a given remote peer.
+     * @param connectorName the connector on which connection will be closed
+     * @param peerId the id of the remote peer which connection is to be closed
+ 	 * @return a boolean to say if we managed to close the connection
+    */
+bool Service::CloseConnection(SimpleString ConnectorName, unsigned int PeerId)
+{
+	// Search connector
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
+	if ( pAtt == NULL )
+	{
+		OmiscidError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
+		return false;
+	}
+
+	// Get the connector
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
+
+	return pConnector->DisconnectPeerId( PeerId );
+}
+
+    /**
+     * Closes a connection on a given connector to a given remote peer.
+     * @param ConnectorName the connector on which connection will be closed
+     * @param SrvProxy a ServiceProxy we want to close connection to.
+	 * @return a boolean to say if we managed to close the connection
+     */
+bool Service::CloseConnection(SimpleString ConnectorName, ServiceProxy * SrvProxy)
+{
+	if ( SrvProxy == (ServiceProxy *)NULL )
+	{
+		OmiscidTrace( "Wrong parameter (NULL) for SrvProxy in Service::CloseConnection\n" );
+		return false;
+	}
+
+	// call myself with the Srv
+	return CloseConnection( ConnectorName, SrvProxy->GetPeerId() );
+}
+
+    /**
+     * Closes all connections on a given connector.
+     * @param connectorName the connector on which connections will be closed
+     */
+void Service::CloseAllConnections(SimpleString ConnectorName)
+{
+	// Search connector
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
+	if ( pAtt == NULL )
+	{
+		OmiscidError( "Could not find local connector '%s'.\n", ConnectorName.GetStr() );
+		return;
+	}
+
+	// Get the connector
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
+
+	// Retrieve all PeerIds
+	SimpleList<unsigned int> PeerIdsList;
+	pConnector->GetListPeerId( PeerIdsList );
+	while( PeerIdsList.IsNotEmpty() )
+	{
+		pConnector->DisconnectPeerId( PeerIdsList.ExtractFirst() );
+	}
+}
+
+    /**
+     * Closes all connections on all connectors.
+     */
+void Service::CloseAllConnections()
+{
+	SimpleList<unsigned int> PeerIdsList;
+
+	// Walk amoung all connector
+	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next() )
+	{
+		// Get the connector
+		Connector * pConnector = dynamic_cast<Connector *>(listInOutput.GetCurrent()->GetComTool());
+
+		// Retrieve all PeerIds
+		pConnector->GetListPeerId( PeerIdsList );
+		while( PeerIdsList.IsNotEmpty() )
+		{
+			pConnector->DisconnectPeerId( PeerIdsList.ExtractFirst() );
+		}
+	}
+}
+
 // Utility function
 
 

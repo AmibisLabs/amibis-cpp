@@ -405,6 +405,14 @@ bool Connector::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	return true;
 }
 
+/** @brief Remove all callback object from this connector
+  */
+void Connector::RemoveAllCallbackObjects()
+{
+	TcpServer::RemoveAllCallbackObjects();
+	UdpExchange::RemoveAllCallbackObjects();
+}
+
 UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, bool NewConnection )
 {
 	// OmiscidTrace( "in Connector::acceptConnection(UdpConnection*)\n");
