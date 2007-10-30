@@ -5,10 +5,46 @@
 
 #include <System/Thread.h>
 #include <System/Portage.h>
+#include <System/ElapsedTime.h>
 
 #include <errno.h>
 
 using namespace Omiscid;
+
+	/** @brief Constructor
+	 *
+	 */
+ThreadMessage::ThreadMessage()
+{
+	Code   = 0;
+	Param1 = (void*)NULL;
+	Param2 = (void*)NULL;
+}
+
+	/** @brief Constructor
+	 *
+	 */
+ThreadMessage::ThreadMessage(int cCode, void * cParam1, void* cParam2 /* = (void*)NULL */ )
+{
+	Code   = cCode;
+	Param1 = cParam1;
+	Param2 = cParam2;
+}
+
+/** @brief Constructor
+	 *
+	 */
+ThreadMessage::~ThreadMessage()
+{
+}
+
+const ThreadMessage& ThreadMessage::operator=(const ThreadMessage& ToCopy)
+{
+	Code   = ToCopy.Code;
+	Param1 = ToCopy.Param1;
+	Param2 = ToCopy.Param2;
+	return *this;
+}
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -175,4 +211,116 @@ unsigned long Thread::GetThreadId()
 #else
 	return (unsigned long)pthread_self();
 #endif
+}
+
+	/** @brief Send message to a Thread
+	 *
+	 * Send a message to a thread
+	 */
+void Thread::SendMessage( int Code, void * Param1, void* Param2 /* = (void*)NULL */ )
+{
+	ThreadMessage MsgToSend( Code, Param1, Param2 );
+
+	MsgQueue.Lock();
+	MsgQueue.AddTail(MsgToSend);
+	MsgQueue.Unlock();
+}
+
+	/** @brief Send message to a Thread
+	 *
+	 * Send a message to a thread
+	 */
+void Thread::SendMessage( const ThreadMessage& MsgToSend )
+{
+	MsgQueue.Lock();
+	MsgQueue.AddTail(MsgToSend);
+	MsgQueue.Unlock();
+}
+
+	/** @brief Retrieve message for a thread with timeout
+	 *
+	 * Retrieve message for a thread
+	 */
+bool Thread::WaitAndGetMessage( ThreadMessage& MsgToGet, unsigned int DelayMax /* = (unsigned int)DEFAULT_MESSAGE_TIMEOUT */ )
+{
+	bool Done;
+
+	if ( DelayMax == 0 )
+	{
+		// INFINITE wait
+		Done = false;
+		while( true ) // was for(;;) but new version of MS compiler do no like it
+		{
+			// Is there a message ?
+			MsgQueue.Lock();
+			if ( MsgQueue.GetNumberOfElements() != 0 )
+			{
+				MsgToGet = MsgQueue.ExtractFirst();
+				Done = true;
+			}
+			MsgQueue.Unlock();
+
+			if ( Done == true )
+			{
+				return true;
+			}
+
+			// Wait
+			Sleep( 10 );
+		}
+		// never here
+		return true;
+	}
+	else
+	{
+		ElapsedTime CountWaitedTime;
+		Done = false;
+		while( true ) // was for(;;) but new version of MS compiler do no like it
+		{
+			// Is there a message ?
+			MsgQueue.Lock();
+			if ( MsgQueue.GetNumberOfElements() != 0 )
+			{
+				MsgToGet = MsgQueue.ExtractFirst();
+				Done = true;
+			}
+			MsgQueue.Unlock();
+
+			if ( Done == true )
+			{
+				return true;
+			}
+
+			if ( Done == true || CountWaitedTime.Get() >= DelayMax )
+			{
+				return Done;
+			}
+
+			Sleep( 10 );
+		}
+		// never here
+		return true;
+	}
+
+	return false;
+}
+
+	/** @brief Get a message for a thread
+	 *
+	 * Get message for a thread
+	 */
+bool Thread::GetMessage( ThreadMessage& MsgToSend )
+{
+	MsgQueue.Lock();
+	if ( MsgQueue.GetNumberOfElements() == 0 )
+	{
+		// No message
+		MsgQueue.Unlock();
+		return false;
+	}
+
+	// get first message
+	MsgToSend = MsgQueue.ExtractFirst();
+	MsgQueue.Unlock();
+	return true;
 }

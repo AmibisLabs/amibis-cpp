@@ -565,6 +565,7 @@ bool MsgSocket::SendSyncLinkMsg()
 	}
 	catch(SocketException& e)
 	{
+		protectSend.LeaveMutex();
 		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
@@ -582,7 +583,6 @@ bool MsgSocket::SendSyncLinkMsg()
 			CallbackObjects.Unlock();
 			connected = false;
 		}
-		protectSend.LeaveMutex();
 		return false;
 	}
 }

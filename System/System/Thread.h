@@ -10,12 +10,50 @@
 #include <System/Config.h>
 #include <System/Event.h>
 #include <System/Mutex.h>
+#include <System/SimpleList.h>
 
 #ifdef DEBUG
 #include <System/SimpleString.h>
 #endif
 
 namespace Omiscid {
+
+/**
+ * @class ThreadMessage Thread.h System/Thread.h
+ * @brief ThreadMessage Implementation
+ *
+ * Class used to exchange Messages between thread.
+ * @author Dominique Vaufreydaz
+ */
+class ThreadMessage
+{
+public:
+	/** @brief Constructor
+	 *
+	 */
+	ThreadMessage();
+
+
+	/** @brief Constructor
+	 *
+	 */
+	ThreadMessage( int cCode, void * cParam1, void* cParam2 = (void*)NULL );
+
+	/** @brief Constructor
+	 *
+	 */
+	virtual ~ThreadMessage();
+
+	/** @brief Copy operator
+	 *
+	 */
+	const ThreadMessage& operator=(const ThreadMessage& ToCopy);
+
+public:
+	int		Code;	
+	void *	Param1;
+	void *	Param2;
+};
 
 /**
  * @class Thread Thread.h System/Thread.h
@@ -80,8 +118,33 @@ public:
 	 */
 	bool IsRunning() const;
 
+	/** @brief Send message to a Thread
+	 *
+	 * Send a message to a thread
+	 */
+	void SendMessage( int cCode, void * cParam1, void* cParam2 = (void*)NULL );
+
+	/** @brief Send message to a Thread
+	 *
+	 * Send a message to a thread
+	 */
+	void SendMessage( const ThreadMessage& MsgToSend );
+
 protected:
-	enum TIMEOUTS { DEFAULT_THREAD_DESTRUCTOR_TIMEOUT = 1000 }; // 1 second
+
+	enum TIMEOUTS { DEFAULT_THREAD_DESTRUCTOR_TIMEOUT = 1000, DEFAULT_MESSAGE_TIMEOUT = 100 }; // 1 second, 100 ms
+
+	/** @brief Retrieve message for a thread with timeout
+	 *
+	 * Retrieve message for a thread
+	 */
+	bool WaitAndGetMessage( ThreadMessage& MsgToSend, unsigned int TimeOut = (unsigned int)DEFAULT_MESSAGE_TIMEOUT );
+
+	/** @brief Get a message for a thread
+	 *
+	 * Get message for a thread
+	 */
+	bool GetMessage( ThreadMessage& MsgToSend );
 
 	/** @brief Method executed in a thread.
 	 *
@@ -111,6 +174,8 @@ private:
 	bool  ThreadIsRunning;		/*!< state of the thread */
 
 	Event IsEnded;				/*!< To say I am ended */
+
+	MutexedSimpleList<ThreadMessage> MsgQueue;	/*!< To store message to me */
 
 #ifdef WIN32
 	unsigned long	ThreadID;

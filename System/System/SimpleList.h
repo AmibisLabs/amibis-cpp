@@ -54,7 +54,7 @@ public:
 
 private:
 	TYPE ElementContainer; /*!< the data contains by the cell */
-	 SimpleListElement<TYPE> * NextElement; /*!< a pointer on the next cell in the list */
+	SimpleListElement<TYPE> * NextElement; /*!< a pointer on the next cell in the list */
 };
 
 /** \brief Default Constructor */
