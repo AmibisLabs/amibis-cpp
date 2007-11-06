@@ -116,9 +116,19 @@ void Service::Start()
 	* @param connectorName the name of the connector
 	* @param connectorDescription the description of the connector
 	* @param connectorKind connector type. This can be input, output or input-output
+	* @param TcpPort optionnal : the TcpPort to use fotr this conenctor. Please note
+	* that specifying this port may lead to problem if this port is already in use.
+	* Usage reserved to very specific conditions, when using Services over several
+	* local area network for example.
 	*/
-bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind ConnectorKind)
+bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind ConnectorKind, unsigned int TcpPort /* = 0 */)
 {
+	if ( GetStatus() == STATUS_RUNNING )
+	{
+		OmiscidError( "Could not add connector while running.\n" );
+		return false;
+	}
+
 	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt != NULL )
 	{
@@ -135,7 +145,7 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 
 	// Create TCP and UDP ports
 	pConnector->SetName(ConnectorName);
-	pConnector->Create();
+	pConnector->Create((int)TcpPort);
 	pAtt = AddInOutput( ConnectorName, pConnector, ConnectorKind );
 	pAtt->SetDescription( ConnectorDescription );
 
@@ -495,6 +505,42 @@ bool Service::ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, Si
 		return false;
 	}
 	return ConnectTo(LocalConnector, *ServProxy, RemoteConnector);
+}
+
+	/**
+	 * Connects a local connector to a remote connector of a remote Service Add the ability to connect
+	 * to undiscovered Services (like Services not on local area network).
+	 * @param LocalConnector
+	 * @param HostName of the service (IP or DNS name)
+	 * @param Port (TCP Port of the remote connector).
+	 */
+bool Service::ConnectTo(SimpleString LocalConnector, SimpleString HostName, unsigned int TcpPort )
+{
+	InOutputAttribute * pAtt = FindInOutput( LocalConnector );
+	if ( pAtt == NULL )
+	{
+		OmiscidError( "Could not find local connector '%s'.\n", LocalConnector.GetStr() );
+		return false;
+	}
+
+	// Ok, here we go
+	Connector * pConnector = dynamic_cast<Connector *>(pAtt->GetComTool());
+
+	// Let's connect to him
+	try
+	{
+		if ( pConnector->ConnectTo( HostName, TcpPort ) == 0 )
+		{
+			return false;
+		}
+	}
+	catch(SimpleException& e)
+	{
+		OmiscidError( "%s (%d)\n.", e.msg.GetStr(), e.err );
+		return false;
+	}
+
+	return true;
 }
 
 	/**

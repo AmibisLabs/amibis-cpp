@@ -72,8 +72,12 @@ public:
 	 * @param ConnectorName the name of the connector
 	 * @param ConnectorDescription the description of the connector
 	 * @param KindOfConnector the connector type. This can be AnInput, AnOutput or AnInOutput
-	 */
-	bool AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind KindOfConnector);
+	 * @param TcpPort optionnal : the TcpPort to use fotr this conenctor. Please note
+	 * that specifying this port may lead to problem if this port is already in use.
+	 * Usage reserved to very specific conditions, when using Services over several
+	 * local area network for example.
+	*/
+	bool AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind KindOfConnector, unsigned int TcpPort = 0 );
 
 	/**
 	 * Sends a message to all the clients connected to a specific connector of the service
@@ -83,7 +87,6 @@ public:
 	 * @param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
 	 */
 	bool SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool UnreliableButFastSend = false );
-
 
 	/**
 	 * Sends a message to a particular client. This client is identified by its Peer id (pid).
@@ -242,6 +245,16 @@ public:
 	 * @param RemoteConnector the name of the remote connector on the remote service
 	 */
 	bool ConnectTo(SimpleString LocalConnector, ServiceProxy* ServProxy, SimpleString RemoteConnector);
+
+	/**
+	 * Connects a local connector to a remote connector of a remote Service Add the ability to connect
+	 * to undiscovered Services (like Services not on local area network).
+	 * !!!! Warning, we can not ensure that remote connector type are compatible !!!!
+	 * @param LocalConnector
+	 * @param HostName of the service (IP or DNS name)
+	 * @param TcpPort (TCP Port of the remote connector).
+	 */
+	bool ConnectTo(SimpleString LocalConnector, SimpleString HostName, unsigned int TcpPort);
 
 	/**
 	 * Add a message listener to a variable
