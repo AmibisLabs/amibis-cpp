@@ -5,16 +5,31 @@
 In this files, you will find changes between OMiSCID versions.
 
 %Version%	%Date%
-	[Global modifications]
-	- you can now have any number for you DnsSD daemon. So, you can
-	  hibernate/wake up as you want.
 	[API]
-	- Add disconnect facilities for Connector at Service level. You
-	  can also remove all callback object for a Connector in one
-	  call.
-	[Known features]
-	- look at previous version, features using avahi are still
-	  active.
+	- Add ability to connect to undiscovered services connectors
+	  (using hostname and port) in order to facilitate communications
+	  on non local area network
+	- Add a port number parameter to AddConnector function in order
+	  to decide on which port we want to run it. Usefull to work
+	  with previous adding.
+	[Bug corrections]
+	- Correct memory correction when adding a connector after starting
+	  the service.
+
+1.3.0	2007-8-31
+    [Global modifications]
+    - you can now have any number for you DnsSD daemon. So, you can
+      hibernate/wake up as you want.
+    [API]
+    - Add disconnect facilities for Connector at Service level. You
+      can also remove all callback objects for a Connector in one
+      call. You can do both operations for the whole service at once.
+    - Add DateAndTime class to retrieve date and time (up to ms)
+      on all plateforms (Linux/MacOSX/Win32) in System layer.
+    - Add a GetTheadId() member to the Thread class (System layer).
+    [Known features]
+    - look at previous version, features using avahi seems to
+      be solved by version 0.6.61 of avahi (Test ok).
 	  
 1.2.0    2007-6-12
     [Global modifications]
