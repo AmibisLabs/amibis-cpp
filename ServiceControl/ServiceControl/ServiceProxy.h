@@ -117,6 +117,20 @@ public:
 	SimpleString GetVariableValue(const SimpleString VarName);
 
 	/**
+	 * Gets the type of a remote variable
+	 * @param VarName the name of the remote variable
+	 * @param value the value (SimpleString format)
+	 */
+	SimpleString GetVariableType(const SimpleString VarName);
+
+	/**
+	 * Gets the description of a remote variable
+	 * @param VarName the name of the remote variable
+	 * @param value the value (SimpleString format)
+	 */
+	SimpleString GetVariableDescription(const SimpleString VarName);
+
+	/**
 	 * Gets the value of a remote variable
 	 * @param VarName the name of the remote variable
 	 * @param value the value (SimpleString format)
@@ -148,6 +162,11 @@ public:
 	 * Find a connector using its full or local PeerId
 	 */
 	SimpleString FindConnector( unsigned int PeerId );
+
+	/**
+	 * Find a connector using its full or local PeerId
+	 */
+	SimpleString GetConnectorDescription(const SimpleString ConnectorName);
 
 private:
 

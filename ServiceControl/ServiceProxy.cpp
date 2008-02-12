@@ -448,6 +448,94 @@ SimpleString ServiceProxy::GetVariableValue(const SimpleString VarName)
 }
 
 	/**
+	 * Gets the type of a remote variable
+	 * @param VarName the name of the remote variable
+	 * @param value the value (SimpleString format)
+	 */
+SimpleString ServiceProxy::GetVariableType(const SimpleString VarName)
+{
+	VariableAttribute * pVar = FindVariable(VarName);
+	if ( pVar == NULL )
+	{
+		SimpleString ErrMesg;
+		ErrMesg = "Unknown variable '";
+		ErrMesg += VarName;
+		ErrMesg += "'. Call HasVariableFirst.";
+		throw  SimpleException( ErrMesg );
+	}
+
+	// If the variable is initialised
+	if ( pVar->IsInitialised() )
+	{
+		// return the current type
+		return pVar->GetType();
+	}
+
+	if ( IsConnected() == false )
+	{
+		// Update description if needed
+		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+		{
+			throw SimpleException("Can not connect to the Service.");
+		}
+	}
+
+	// Il all other cases
+	pVar = QueryVariableDescription( VarName );
+	if ( pVar == NULL )
+	{
+		// This one *here* should not appear
+		throw SimpleException( "Could not retrieve variable '" + VarName + "'." );
+	}
+
+	return pVar->GetType();
+}
+
+	/**
+	 * Gets the description of a remote variable
+	 * @param VarName the name of the remote variable
+	 * @param value the value (SimpleString format)
+	 */
+SimpleString ServiceProxy::GetVariableDescription(const SimpleString VarName)
+{
+	VariableAttribute * pVar = FindVariable(VarName);
+	if ( pVar == NULL )
+	{
+		SimpleString ErrMesg;
+		ErrMesg = "Unknown variable '";
+		ErrMesg += VarName;
+		ErrMesg += "'. Call HasVariableFirst.";
+		throw  SimpleException( ErrMesg );
+	}
+
+	// If the variable is initialised
+	if ( pVar->IsInitialised() )
+	{
+		// return the current description
+		return pVar->GetDescription();
+	}
+
+	if ( IsConnected() == false )
+	{
+		// Update description if needed
+		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+		{
+			throw SimpleException("Can not connect to the Service.");
+		}
+	}
+
+	// Il all other cases
+	pVar = QueryVariableDescription( VarName );
+	if ( pVar == NULL )
+	{
+		// This one *here* should not appear
+		throw SimpleException( "Could not retrieve variable '" + VarName + "'." );
+	}
+
+	return pVar->GetDescription();
+}
+
+	/**
 	 * Add a listener to monitor variable changes
 	 * @param VarName the name of the remote variable
 	 * @param value the value (SimpleString format)
@@ -611,10 +699,31 @@ SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 	return SimpleString::EmptyString;
 }
 
+	/**
+	 * Retrieve the description of a remote controler
+	 * @param ConnectorName the name of the remote connector
+	 * @return the description in a SimpleString
+	 */
+SimpleString ServiceProxy::GetConnectorDescription(const SimpleString ConnectorName)
+{
+	InOutputAttribute * pAtt;
+	pAtt = FindConnector( ConnectorName );
+	if ( pAtt == (InOutputAttribute *)NULL )
+	{
+		SimpleString ErrMesg;
+		ErrMesg = "Unknown Connector '";
+		ErrMesg += ConnectorName;
+		ErrMesg += "'. Call HasConnector First.";
+		throw  SimpleException( ErrMesg );
+	}
+
+	return pAtt->GetDescription();
+}
+
 bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection )
 {
 	InOutputAttribute * pAtt = FindConnector( Connector );
-	if ( pAtt == NULL )
+	if ( pAtt == (InOutputAttribute *)NULL )
 	{
 		OmiscidError( "Could not find connector nammed '%s'\n", Connector.GetStr() );
 		return false;

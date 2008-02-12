@@ -47,7 +47,7 @@ void ControlServer::InitInstance()
 
 	va = AddVariable(CommonServiceValues::GetNameForLockString());
 	va->SetType("integer");
-	va->SetAccess(ReadWriteAccess);
+	va->SetAccess(ReadAccess);
 	va->SetDescription("Use for locking access");
 	lockIntVariable = new OMISCID_TLM IntVariableAttribute(va, 0);
 

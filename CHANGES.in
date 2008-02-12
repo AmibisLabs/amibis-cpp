@@ -5,15 +5,23 @@
 In this files, you will find changes between OMiSCID versions.
 
 %Version%	%Date%
+	[Global modifications]
+	- Change remote access rigth to the "Lock" variable in order to be compliant
+	  with the Java version.
 	[API]
 	- Add ability to connect to undiscovered services connectors
 	  (using hostname and port) in order to facilitate communications
-	  on non local area network
+	  on non local area network.
 	- Add a port number parameter to AddConnector function in order
 	  to decide on which port we want to run it. Usefull to work
-	  with previous adding.
+	  with previous adding. This parameter is not mandatory.
+	- Add filtering facilities when registering listener
+	  to a ServiceRepository. It inproves service event
+	  notification by filtering.
+	- Add access to Variable Type and description, to Connector
+	  description in ServiceProxy
 	[Bug corrections]
-	- Correct memory correction when adding a connector after starting
+	- Correct memory leak when trying to add a connector after starting
 	  the service.
 
 1.3.0	2007-8-31

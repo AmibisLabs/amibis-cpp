@@ -12,6 +12,7 @@
 #include <System/SimpleList.h>
 #include <ServiceControl/DnsSdProxy.h>
 #include <ServiceControl/ServiceProxy.h>
+#include <ServiceControl/ServiceFilter.h>
 
 namespace Omiscid {
 
@@ -39,8 +40,17 @@ public:
 	virtual void ServiceAdded( ServiceProxy& ProxyForService   ) = 0;
 	virtual void ServiceRemoved( ServiceProxy& ProxyForService ) = 0;
 
+private:
+	// function used to set/unset filter on this listener. Used only by ServiceRepository
+	bool SetFilter( ServiceFilter * Filter );
+	bool UnsetFilter();
+
 protected:
-	virtual void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
+	// Callback to receive notification.
+	void FUNCTION_CALL_TYPE DnsSdProxyServiceBrowseReply( unsigned int flags, const DnsSdService& ServiceInfo );
+
+	ServiceFilter * FilterForMonitoring;
+	SimpleList<unsigned int> MonitoredServicesForRemovals; // Used to check is service has to be monitored for removals
 };
 
 } // namespace Omiscid

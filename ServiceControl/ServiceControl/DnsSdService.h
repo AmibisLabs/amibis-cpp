@@ -60,13 +60,13 @@ public:
 	SimpleString Name;						// Name of the service (63 bytes + '\0')
 	SimpleString Protocol;					// type of service (63 bytes + '\0')
 	SimpleString Transport;					// transport protocol ("tcp" or "_udp")
-	TransportProtocol nTransport;					// numerical value for transport protocol
+	TransportProtocol nTransport;			// numerical value for transport protocol
 	SimpleString Domain;					//[DNSServiceMaxDomainName];			// DNS domain name
 
-	uint16_t Port;									// On which port the service is running
+	uint16_t Port;							// On which port the service is running
 	SimpleString HostName;					// On which host the service is running
 
-	SimpleString ToString();						// print a human readable description of service
+	SimpleString ToString();				// print a human readable description of service
 };
 
 /**

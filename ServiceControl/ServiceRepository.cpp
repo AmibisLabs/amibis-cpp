@@ -17,7 +17,7 @@ ServiceRepository::~ServiceRepository()
 	Stop();
 }
 
-bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, bool NotifyOnlyNewEvents /* = false */ )
+bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, ServiceFilter * Filter, bool NotifyOnlyNewEvents /* = false */ )
 {
 	if ( Listener != (ServiceRepositoryListener*)NULL )
 	{
@@ -25,6 +25,11 @@ bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, bool No
 
 		// Add listener and start its browse
 		RepoListeners.AddTail(Listener);
+
+		if ( Filter != (ServiceFilter *)NULL )
+		{
+			Listener->SetFilter( Filter );
+		}
 
 		RepoListeners.Unlock();
 
@@ -34,6 +39,11 @@ bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, bool No
 	}
 
 	return false;
+}
+
+bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, bool NotifyOnlyNewEvents /* = false */ )
+{
+	return AddListener( Listener, (ServiceFilter*)NULL, NotifyOnlyNewEvents );
 }
 
 bool ServiceRepository::RemoveListener(ServiceRepositoryListener* Listener, bool NotifyAsIfExistingServicesDisappear /* = false */ )
@@ -62,7 +72,11 @@ bool ServiceRepository::RemoveListener(ServiceRepositoryListener* Listener, bool
 
 	if ( Found == true )
 	{
+		// Stop browse
 		Listener->StopBrowse( NotifyAsIfExistingServicesDisappear );
+
+		// Remove its listener
+		Listener->UnsetFilter();
 		return true;
 	}
 
