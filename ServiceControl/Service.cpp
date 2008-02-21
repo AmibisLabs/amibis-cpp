@@ -809,6 +809,7 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 	// Let's serach for the services
 	bool ret = WFOS->WaitAll(WaitTime);
 
+	// Here all search threads have stopped
 	if ( ret == true && (ResultServicesProxy = new OMISCID_TLM ServiceProxyList) != NULL )
 	{
 		// We found what we need and we manadge to construct a list
@@ -819,15 +820,15 @@ ServiceProxyList * Service::FindServices(ServiceFilterList& Filters, unsigned in
 		}
 	}
 
-	// delete search object
-	delete WFOS;
-
 	// Delete all OmiscidServiceSearchData used
 	for( i = 0; i < WFOS->GetNbOfSearchedServices(); i++ )
 	{
 		// delete the current i-th OmiscidServiceSearchData
 		delete static_cast<OmiscidServiceSearchData*>(WFOS->operator [](i).UserData);
 	}
+
+	// delete search object
+	delete WFOS;
 
 	return ResultServicesProxy;
 }

@@ -284,7 +284,7 @@ int main(int argc, char*argv[] )
 #ifdef WIN32
 	// Create an even in order to Stop here forever
 	Event Forever;
-	Forever.Wait();
+	// Forever.Wait();
 #endif
 
 	// exit

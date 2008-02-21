@@ -392,8 +392,10 @@ bool Connector::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
-		if((ListClients.GetCurrent())->tcpClient->IsConnected())
+		if( ListClients.GetCurrent()->tcpClient->IsConnected() == true )
+		{
 			(ListClients.GetCurrent())->tcpClient->RemoveCallbackObject(CallbackObject);
+		}
 		else
 		{
 			delete ListClients.GetCurrent();
@@ -520,7 +522,7 @@ int Connector::GetNbConnection()
 	ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
-		if(!(ListClients.GetCurrent())->tcpClient->IsConnected())
+		if( ListClients.GetCurrent()->tcpClient->IsConnected() == false )
 		{
 			delete ListClients.GetCurrent();
 			ListClients.RemoveCurrent();

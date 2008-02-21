@@ -26,8 +26,10 @@ Mutex::Mutex()
 		OwnerId = 0;
 	#endif
 #else
-	if(pthread_mutex_init(&mutex, NULL) != 0)
+	if ( pthread_mutex_init(&mutex, NULL) != 0 )
+	{
 		throw  SimpleException("Error Mutex Init");
+	}
 #endif
 }
 

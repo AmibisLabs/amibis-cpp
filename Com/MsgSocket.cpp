@@ -77,9 +77,7 @@ const int MsgSocket::tag_end_size = (const int)strlen(MsgSocket::tag_end);
 const int MsgSocket::tag_size = (const int)(strlen(tag_start1) + 1 + MsgSocket::pid_size + 1 + MsgSocket::mid_size + 1 + MsgSocket::len_size + strlen(tag_start2));
 
 #ifdef DEBUG
-
-MsgSocket::DEBUGFLAGS MsgSocket::Debug = MsgSocket::DBG_NONE;
-
+	MsgSocket::DEBUGFLAGS MsgSocket::Debug = MsgSocket::DBG_NONE;
 #endif
 
 MsgSocket::MsgSocket(Socket* s) :

@@ -47,6 +47,7 @@ public:
 	virtual ~SearchService();
 
 	bool StartSearch( const SimpleString eName, const SimpleString eRegType, WaitForDnsSdServices * eParent, IsServiceValidForMe eCallBack = NULL, void * eUserData = NULL );
+	void StopSearch();
 
 	bool IsAvailable();
 
@@ -82,6 +83,9 @@ public:
 	SearchService & operator[](int nPos);
 
 protected:
+	// Call after we decided not to wait anymore, ie after a call to WaitAll
+	void StopWaiting();
+
 	bool LockService( const SimpleString ServiceName );
 	void UnlockService( const SimpleString ServiceName );
 	bool IsServiceLocked( const SimpleString ServiceName );

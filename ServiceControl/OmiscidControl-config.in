@@ -78,7 +78,7 @@ case "$1" in
 #	exit 0
 	;;
     --all)
-	echo "`@bindir@/OmiscidCom-config --all` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ -lOmiscidControl `xml2-config --libs` @OmiscidTraceFlags@"
+	echo "`@bindir@/OmiscidCom-config --libs-only-L --cflags-only-I` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ -lOmiscidControl `xml2-config --libs` @OmiscidTraceFlags@"
 #	exit 0
 	;;	    
     *)

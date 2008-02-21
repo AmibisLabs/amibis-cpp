@@ -286,21 +286,6 @@ public:
 // External object
 extern OmiscidSystemLayerInitClass OmiscidSystemLayerInit;
 
-#ifdef DEBUG
-
-// Define Debug objet
-class ClassToDebug
-{
-public:
-	// Constructor where to pu a break point
-	ClassToDebug();
-
-	// Destructor where to pu a break point
-	~ClassToDebug();
-};
-
-#endif
-
 } // namespace Omiscid
 
 #endif	// __SYSTEM_CONFIG_H__

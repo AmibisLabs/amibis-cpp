@@ -98,7 +98,7 @@ sub AddLog()
 	
 	# Empty problem file.
 	open( $fdpb, ">>$NameOfLogFile" );
-	print $fdpb "$ToAdd\n";
+	print $fdpb "$ToAdd\n"; 
 	close( $fdpb );	
 }
 
@@ -174,6 +174,13 @@ while( defined $ARGV[$PosArgv] )
 		print "do not generate documentation\n";
 		$PosArgv++;
 		next;
+	}
+	if ( $ARGV[$PosArgv] eq '-emptylog' )
+	{
+		&EmptyLog();
+		print "log is empty\n";
+		$PosArgv++;
+		next;
 	}	
 	die "Wrong parameter\n";
 }
@@ -232,6 +239,9 @@ if ( -e '../LastVersion.info' )
 
 print "=> $Version\n";
 
+&AddLog( "-----------------------------------------\n  Start test phase on $Version version\n-----------------------------------------" );
+# die;
+
 $VersionFile = "Omiscid-$Version.zip";
 if ( -e "../$VersionFile" )
 {
@@ -269,8 +279,6 @@ if ( $ZipAfterZip == 1 )
 {
 	exit();
 }
-
-&EmptyLog();
 
 $TestSuite  = "###########################################################\n";
 $TestSuite .= "#\n";
@@ -334,8 +342,8 @@ if ( $DoTest == 1 )
 	$Options{'metis'}   = '("")';
 	# $Computers{'junon'}  = '0013202e4fea';
 	# $Options{'junon'}   = '("zeroconf=mdns")';
-	$Computers{'desdemona'}  = '000bcd624fa9';
-	$Options{'desdemona'}   = '("zeroconf=mdns")';
+	# $Computers{'desdemona'}  = '000bcd624fa9';
+	# $Options{'desdemona'}   = '("zeroconf=mdns")';
 	# $Options{'desdemona'}   = '("")';
 	$Computers{'protee'}  = '000d561ff276';
 	$Options{'protee'}   = '("zeroconf=avahi")';
@@ -344,7 +352,7 @@ if ( $DoTest == 1 )
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';
 	
-	# $PutInEnv = "setenv LD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv DYLD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv PATH /tmp/OmiscidInstall/bin:\${PATH}:/tmp/OmiscidInstall/bin/";
+	$PutInEnv = "setenv LD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv DYLD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv PATH /tmp/OmiscidInstall/bin:\${PATH}:/tmp/OmiscidInstall/bin/";
 	
 	$NumComputer = 0;
 	
@@ -355,6 +363,7 @@ if ( $DoTest == 1 )
 	{
 		# Check if computer if available
 		print STDERR "Trying to connect to $TestComputer.\n";
+		&AddLog( "TRY: Trying to connect to $TestComputer." );
 		print STDERR "Send an etherwake command to $TestComputer.\n";
 		if ( &WakeOnLan($TestComputer) == 0 )
 		{
@@ -362,6 +371,8 @@ if ( $DoTest == 1 )
 			&AddLog( "ERR: Could not connect to $TestComputer" );
 			next;
 		}
+		
+		&AddLog( "TOK: Connected to $TestComputer." );
 		
 		# incr num of computer 1
 		$NumComputer++;
@@ -400,7 +411,7 @@ if ( $DoTest == 1 )
 		# set that it is not tested successfully
 		$Tested = 0;
 		
-		foreach $DebugFlag ( ('0', 'valgrind', '1') )
+		foreach $DebugFlag ( ('0', '1', 'valgrind') )
 		{
 			foreach $TraceFlag ( ('0', '1') )
 			{
@@ -414,12 +425,13 @@ if ( $DoTest == 1 )
 					$TestSuite .= "CMT: Test Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option' flags.\n";
 					
 					print STDERR "$TestComputer: Try to install Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option' flags.\n";
+					&AddLog( "TRY: $TestComputer: Try to install Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option' flags." );
 					$LastTry = "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileOmiscid.sh $WorkingRep 'debug=$DebugFlag trace=$TraceFlag $Option install prefix=/tmp/OmiscidInstall'\""; 
+					&AddLog( "CMD: ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileOmiscid.sh $WorkingRep 'debug=$DebugFlag trace=$TraceFlag $Option install prefix=/tmp/OmiscidInstall'\"" ); 
 					$Tested = &CheckCommand( "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileOmiscid.sh $WorkingRep 'debug=$DebugFlag trace=$TraceFlag $Option install prefix=/tmp/OmiscidInstall'\"", 'scons: done building targets.' );
 					if ( $Tested == 0 )
 					{
 						&AddLog( "ERR: Could not compile Omiscid on $TestComputer" );
-						&AddLog( "CMT: $LastTry" );
 						$TestSuite .= "IFA: Could not compile and install Omiscid.\n";
 						next;
 					}
@@ -443,6 +455,8 @@ if ( $DoTest == 1 )
 							$NbTestsTried++;
 							# &WakeOnLan($TestComputer);
 							print STDERR "$TestComputer: Test $NbTestsTried.\n";
+							&AddLog( "TRY: $TestComputer: Test $NbTestsTried." );
+							&AddLog( "CMD: \"ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test TimeoutProg.cpp'\"\"" );
 							$res = &CheckCommand( "ssh $TestComputer \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test TimeoutProg.cpp'\"", 'Test ok\.' );
 							if ( $res == 1 )
 							{
@@ -458,11 +472,13 @@ if ( $DoTest == 1 )
 							
 							$Tested = 1;
 							$TestSuite .= "TOK: Compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'\n";
+							&AddLog( "TOK: Compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'" );
 						}
 					
 						if ( $Tested == 0 )
 						{
 							$TestSuite .= "TFA: Could not compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'\n";
+							&AddLog( "TFA: Could not compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'" );
 							if ( $Option =~ /avahi/ )
 							{
 								&AddLog( "WRN: Could not run test ('debug=$DebugFlag trace=$TraceFlag $Option') on $TestComputer" );
@@ -493,7 +509,7 @@ else
 	$TestSuite .= "No test done.\n";
 }
 
-`rm ../$VersionFile`;
+# `rm ../$VersionFile`;
 if ( &LogOk() == 0 )
 {
 	print STDERR "\n\n\t=> Problem when testing $VersionFile.\n";

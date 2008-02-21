@@ -6,6 +6,7 @@ using namespace Omiscid;
 
 ServiceProxyList::~ServiceProxyList()
 {
+	Empty();
 }
 
 void ServiceProxyList::Empty()

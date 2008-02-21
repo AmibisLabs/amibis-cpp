@@ -36,7 +36,7 @@ SearchService::SearchService()
 SearchService::~SearchService()
 {
 	// Try to stop browse
-	StopBrowse();
+	StopSearch();
 }
 
 WaitForDnsSdServices::WaitForDnsSdServices()
@@ -223,6 +223,11 @@ bool SearchService::StartSearch( const SimpleString eName, const SimpleString eR
 	return StartBrowse();
 }
 
+void SearchService::StopSearch()
+{
+	StopBrowse();
+}
+
 int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleString eRegType, IsServiceValidForMe eCallBack, void * eUserData )
 {
 	int PosOfNewSearchService;
@@ -255,6 +260,19 @@ int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleStr
 	return PosOfNewSearchService; // Information about the service pos in the table
 }
 
+void WaitForDnsSdServices::StopWaiting()
+{
+	int i;
+
+	ThreadSafeSection.EnterMutex();
+	for( i = 0; i < GetNbOfSearchedServices(); i++ )
+	{
+		// stop the current i-th OmiscidServiceSearchData
+		this->operator[](i).StopSearch();
+	}
+	ThreadSafeSection.LeaveMutex();
+}
+
 bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 {
 	bool Done;
@@ -267,13 +285,18 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 		{
 			// Is the work done ?
 			ThreadSafeSection.EnterMutex();
-			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
-			ThreadSafeSection.LeaveMutex();
+			Done = (NbServicesReady == (int)SearchServices.GetNumberOfElements());
+			
 
 			if ( Done == true )
 			{
+				// We ask our thread to stop to wait for services
+				StopWaiting();
+				ThreadSafeSection.LeaveMutex();
 				return true;
 			}
+			// We wait longer
+			ThreadSafeSection.LeaveMutex();
 
 			// Wait
 			Thread::Sleep( 10 );
@@ -290,12 +313,18 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 			// Is the work done ?
 			ThreadSafeSection.EnterMutex();
 			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
-			ThreadSafeSection.LeaveMutex();
+			
 
 			if ( Done == true || CountWaitedTime.Get() >= DelayMax )
 			{
+				// We ask our thread to stop to wait for services
+				StopWaiting();
+				ThreadSafeSection.LeaveMutex();
 				return Done;
 			}
+
+			// We wait longer
+			ThreadSafeSection.LeaveMutex();
 
 			Thread::Sleep( 10 );
 		}

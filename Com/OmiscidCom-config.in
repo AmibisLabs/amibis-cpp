@@ -78,7 +78,7 @@ case "$1" in
 #	exit 0
 	;;
     --all)
-	echo "`@bindir@/OmiscidSystem-config --all` -L@libdir@ -lOmiscidCom -lOmiscidSystem @OmiscidTraceFlags@"
+	echo "`@bindir@/OmiscidSystem-config --libs-only-L --cflags-only-I` -L@libdir@ -lOmiscidCom @OmiscidTraceFlags@"
 	;;
 
 	   
