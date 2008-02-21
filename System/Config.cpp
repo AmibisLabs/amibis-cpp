@@ -13,9 +13,18 @@ using namespace Omiscid;
 // Initialise All stuff needed by the System Layer
 namespace Omiscid {
 
-// Objects to prevent multiple access
-static Mutex OmiscidSystemLayerInitMutex;
-static unsigned int OmiscidSystemLayerInitInstanceCount = 0;
+// static Objects to prevent multiple access
+inline static Mutex& OmiscidSystemLayerInitMutex()
+{
+	static Mutex Internal_OmiscidSystemLayerInitMutex;
+	return Internal_OmiscidSystemLayerInitMutex;
+}
+
+inline static unsigned int& OmiscidSystemLayerInitInstanceCount()
+{
+	static unsigned int Internal_OmiscidSystemLayerInitInstanceCount = 0;
+	return Internal_OmiscidSystemLayerInitInstanceCount;
+}
 
 
 // Function to do mandatory initialisation
@@ -34,16 +43,13 @@ static void	OmiscidSocketInit()
 	Socket::GetDnsNameSolvingOption();
 }
 
-// Object used to initialise
-OmiscidSystemLayerInitClass OmiscidSystemLayerInit;
-
 OmiscidSystemLayerInitClass::OmiscidSystemLayerInitClass()
 {
 	// Enter locker
-	OmiscidSystemLayerInitMutex.EnterMutex();
+	OmiscidSystemLayerInitMutex().EnterMutex();
 
-	OmiscidSystemLayerInitInstanceCount++;
-	if ( OmiscidSystemLayerInitInstanceCount == 1 )
+	OmiscidSystemLayerInitInstanceCount()++;
+	if ( OmiscidSystemLayerInitInstanceCount() == 1 )
 	{
 		// First instance, do init for Layer System
 		OmiscidTrace( "Init System layer\n" );
@@ -56,16 +62,16 @@ OmiscidSystemLayerInitClass::OmiscidSystemLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidSystemLayerInitMutex.LeaveMutex();
+	OmiscidSystemLayerInitMutex().LeaveMutex();
 }
 
 OmiscidSystemLayerInitClass::~OmiscidSystemLayerInitClass()
 {
 	// Enter locker
-	OmiscidSystemLayerInitMutex.EnterMutex();
+	OmiscidSystemLayerInitMutex().EnterMutex();
 
-	OmiscidSystemLayerInitInstanceCount--;
-	if ( OmiscidSystemLayerInitInstanceCount == 0 )
+	OmiscidSystemLayerInitInstanceCount()--;
+	if ( OmiscidSystemLayerInitInstanceCount() == 0 )
 	{
 		// Last instance, do reset for Layer System
 		OmiscidTrace( "Free System layer\n" );
@@ -74,7 +80,10 @@ OmiscidSystemLayerInitClass::~OmiscidSystemLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidSystemLayerInitMutex.LeaveMutex();
+	OmiscidSystemLayerInitMutex().LeaveMutex();
 }
+
+// Object used to initialise
+OmiscidSystemLayerInitClass OmiscidSystemLayerInit;
 
 } // namespace Omiscid

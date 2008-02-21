@@ -23,7 +23,11 @@ In this files, you will find changes between OMiSCID versions.
 	[Bug corrections]
 	- Correct memory leak when trying to add a connector after starting
 	  the service.
-
+	- correct static object paradigm to prevent bad initialization
+	- correct linking problems on Linux/MacOS
+	- correct memory leaks
+	- some other minor bug corrections
+	
 1.3.0	2007-8-31
     [Global modifications]
     - you can now have any number for you DnsSD daemon. So, you can

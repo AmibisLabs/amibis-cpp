@@ -9,8 +9,17 @@ using namespace Omiscid;
 namespace Omiscid {
 
 // Objects to prevent multiple access
-static Mutex OmiscidComLayerInitMutex;
-static unsigned int OmiscidComLayerInitInstanceCount = 0;
+inline static Mutex& OmiscidComLayerInitMutex()
+{
+	static Mutex Internal_OmiscidComLayerInitMutex;
+	return Internal_OmiscidComLayerInitMutex;
+}
+
+inline static unsigned int& OmiscidComLayerInitInstanceCount()
+{
+	static unsigned int Internal_OmiscidComLayerInitInstanceCount = 0;
+	return Internal_OmiscidComLayerInitInstanceCount;
+}
 
 // Function to do mandatory initialisation
 
@@ -20,10 +29,10 @@ OmiscidComLayerInitClass OmiscidComLayerInit;
 OmiscidComLayerInitClass::OmiscidComLayerInitClass()
 {
 	// Enter locker
-	OmiscidComLayerInitMutex.EnterMutex();
+	OmiscidComLayerInitMutex().EnterMutex();
 
-	OmiscidComLayerInitInstanceCount++;
-	if ( OmiscidComLayerInitInstanceCount == 1 )
+	OmiscidComLayerInitInstanceCount()++;
+	if ( OmiscidComLayerInitInstanceCount() == 1 )
 	{
 		// First instance, do init for Layer System
 
@@ -32,16 +41,16 @@ OmiscidComLayerInitClass::OmiscidComLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidComLayerInitMutex.LeaveMutex();
+	OmiscidComLayerInitMutex().LeaveMutex();
 }
 
 OmiscidComLayerInitClass::~OmiscidComLayerInitClass()
 {
 	// Enter locker
-	OmiscidComLayerInitMutex.EnterMutex();
+	OmiscidComLayerInitMutex().EnterMutex();
 
-	OmiscidComLayerInitInstanceCount--;
-	if ( OmiscidComLayerInitInstanceCount == 0 )
+	OmiscidComLayerInitInstanceCount()--;
+	if ( OmiscidComLayerInitInstanceCount() == 0 )
 	{
 		// Last instance, do reset for Layer System
 
@@ -50,7 +59,7 @@ OmiscidComLayerInitClass::~OmiscidComLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidComLayerInitMutex.LeaveMutex();
+	OmiscidComLayerInitMutex().LeaveMutex();
 }
 
 } // namespace Omiscid

@@ -73,6 +73,7 @@ int MsgManager::ProcessMessages()
   for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
 	{
 	  msg = listMsg.GetCurrent();
+	  listMsg.RemoveCurrent();
 	  try
 	  {
 		ProcessAMessage(msg);
@@ -82,7 +83,6 @@ int MsgManager::ProcessMessages()
 		  OmiscidTrace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
 	  }
 	  delete msg;
-	  listMsg.RemoveCurrent();
 	  nb++;
 	}
   listMsg.Unlock();

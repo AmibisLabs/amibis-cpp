@@ -288,6 +288,7 @@ $TestSuite .= "###########################################################\n";
 $TestSuite .= "# You will find a list of test computers, and\n";
 $TestSuite .= "# for each one, you may have the following flags:\n";
 $TestSuite .= "#    CMT: comments\n";
+$TestSuite .= "#    CMD: commande lauched\n";
 $TestSuite .= "#    C++: version of C++ compiler installed on test computer\n";
 $TestSuite .= "#    SCO: scons version\n";
 $TestSuite .= "#    XML: lib XML version\n";
@@ -352,7 +353,7 @@ if ( $DoTest == 1 )
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';
 	
-	$PutInEnv = "setenv LD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv DYLD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv PATH /tmp/OmiscidInstall/bin:\${PATH}:/tmp/OmiscidInstall/bin/";
+	# $PutInEnv = "setenv LD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv DYLD_LIBRARY_PATH /tmp/OmiscidInstall/lib/:\$LD_LIBRARY_PATH;setenv PATH /tmp/OmiscidInstall/bin:\${PATH}:/tmp/OmiscidInstall/bin/";
 	
 	$NumComputer = 0;
 	

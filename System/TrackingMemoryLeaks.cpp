@@ -690,6 +690,7 @@ void TrackMemoryLeaks::DumpUnfreed()
 	// Free the memory
 	for( AllocList.First(); AllocList.NotAtEnd(); AllocList.Next() )
 	{
+		delete AllocList.GetCurrent();
 		AllocList.RemoveCurrent();
 	}
 

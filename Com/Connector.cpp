@@ -575,8 +575,9 @@ ClientConnection* Connector::FindClientConnectionFromId(unsigned int pid)
 	// Check first for a specific connection
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
-		if( (ListClients.GetCurrent())->tcpClient->IsConnected() == false )
+		if( ListClients.GetCurrent()->tcpClient->IsConnected() == false )
 		{
+			delete ListClients.GetCurrent();
 			ListClients.RemoveCurrent();
 		}
 		else if((ListClients.GetCurrent())->GetPeerPid() == pid)
@@ -590,8 +591,11 @@ ClientConnection* Connector::FindClientConnectionFromId(unsigned int pid)
 	// Fallback, search for a port
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
-		if(!(ListClients.GetCurrent())->tcpClient->IsConnected())
+		if( ListClients.GetCurrent()->tcpClient->IsConnected() == false )
+		{
+			delete ListClients.GetCurrent();
 			ListClients.RemoveCurrent();
+		}
 		else if((ListClients.GetCurrent()->GetPeerPid()& ComTools::SERVICE_PEERID) == lpid)
 		{
 			return ListClients.GetCurrent();
@@ -672,6 +676,7 @@ bool Connector::DisconnectPeerId(unsigned int PeerId)
 		if ( SearchId == (ListClients.GetCurrent()->tcpClient->GetPeerId() & ComTools::SERVICE_PEERID ) )
 		{
 			ret = true;
+			delete ListClients.GetCurrent();
 			ListClients.RemoveCurrent();
 		}
 	}

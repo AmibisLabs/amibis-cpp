@@ -282,7 +282,7 @@ int TcpServer::GetNbConnections()
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next())
 	{
 		ms = listConnections.GetCurrent();
-		if( !ms->IsConnected() )
+		if( ms->IsConnected() == false )
 		{
 			listConnections.RemoveCurrent();
 			delete ms;
@@ -428,7 +428,7 @@ int TcpServer::GetListPeerId(SimpleList<unsigned int>& list_peer)
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
-		if( !ms->IsConnected() )
+		if( ms->IsConnected() == false )
 		{
 			listConnections.RemoveCurrent();
 			delete ms;

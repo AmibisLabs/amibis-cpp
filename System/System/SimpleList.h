@@ -482,7 +482,9 @@ TYPE SimpleList<TYPE>::ExtractFirst()
 	if(Head == Tail)
 	{
 		Head = NULL; Tail = NULL;
-	}else{
+	}
+	else
+	{
 		Head = elt->NextElement;
 	}
 	NumberOfElements--;

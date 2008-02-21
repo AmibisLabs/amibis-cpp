@@ -18,8 +18,17 @@ namespace Omiscid {
 
 
 // Objects to prevent multiple access
-static Mutex OmiscidServiceControlLayerInitMutex;
-static unsigned int OmiscidServiceControlLayerInitInstanceCount = 0;
+inline static Mutex& OmiscidServiceControlLayerInitMutex()
+{
+	static Mutex Internal_OmiscidServiceControlLayerInitMutex;
+	return Internal_OmiscidServiceControlLayerInitMutex;
+}
+
+inline static unsigned int& OmiscidServiceControlLayerInitInstanceCount()
+{
+	static unsigned int Internal_OmiscidServiceControlLayerInitInstanceCount = 0;
+	return Internal_OmiscidServiceControlLayerInitInstanceCount;
+}
 
 
 // Function to do mandatory init/reset operations
@@ -64,10 +73,10 @@ OmiscidServiceControlLayerInitClass OmiscidServiceControlLayerInit;
 OmiscidServiceControlLayerInitClass::OmiscidServiceControlLayerInitClass()
 {
 	// Enter locker
-	OmiscidServiceControlLayerInitMutex.EnterMutex();
+	OmiscidServiceControlLayerInitMutex().EnterMutex();
 
-	OmiscidServiceControlLayerInitInstanceCount++;
-	if ( OmiscidServiceControlLayerInitInstanceCount == 1 )
+	OmiscidServiceControlLayerInitInstanceCount()++;
+	if ( OmiscidServiceControlLayerInitInstanceCount() == 1 )
 	{
 		// First instance, do init for Layer System
 
@@ -86,16 +95,16 @@ OmiscidServiceControlLayerInitClass::OmiscidServiceControlLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidServiceControlLayerInitMutex.LeaveMutex();
+	OmiscidServiceControlLayerInitMutex().LeaveMutex();
 }
 
 OmiscidServiceControlLayerInitClass::~OmiscidServiceControlLayerInitClass()
 {
 	// Enter locker
-	OmiscidServiceControlLayerInitMutex.EnterMutex();
+	OmiscidServiceControlLayerInitMutex().EnterMutex();
 
-	OmiscidServiceControlLayerInitInstanceCount--;
-	if ( OmiscidServiceControlLayerInitInstanceCount == 0 )
+	OmiscidServiceControlLayerInitInstanceCount()--;
+	if ( OmiscidServiceControlLayerInitInstanceCount() == 0 )
 	{
 		// Last instance, do reset for Layer System
 
@@ -110,7 +119,7 @@ OmiscidServiceControlLayerInitClass::~OmiscidServiceControlLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidServiceControlLayerInitMutex.LeaveMutex();
+	OmiscidServiceControlLayerInitMutex().LeaveMutex();
 }
 
 } // namespace Omiscid
