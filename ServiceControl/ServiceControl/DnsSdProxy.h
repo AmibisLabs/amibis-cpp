@@ -107,7 +107,7 @@ private:
 	}
 
 	// A list to contain all the services
-	inline static SimpleList<DnsSdServiceInstanceManager*>& DnsSdProxy::ServicesList()
+	inline static SimpleList<DnsSdServiceInstanceManager*>& ServicesList()
 	{
 		static SimpleList<DnsSdServiceInstanceManager*> Internal_ServicesList;
 		return Internal_ServicesList;
