@@ -339,15 +339,17 @@ if ( $DoTest == 1 )
 {
 	# $Computers{'astree'} = '000e0c5e4586';
 	# $Options{'astree'}   = '("zeroconf=avahi")';
-	$Computers{'metis'}  = '000d936fc38c';
-	$Options{'metis'}   = '("")';
+	# $Computers{'metis'}  = '000d936fc38c';
+	# $Options{'metis'}   = '("")';
 	# $Computers{'junon'}  = '0013202e4fea';
 	# $Options{'junon'}   = '("zeroconf=mdns")';
 	# $Computers{'desdemona'}  = '000bcd624fa9';
 	# $Options{'desdemona'}   = '("zeroconf=mdns")';
 	# $Options{'desdemona'}   = '("")';
-	$Computers{'protee'}  = '000d561ff276';
-	$Options{'protee'}   = '("zeroconf=avahi")';
+	# $Computers{'protee'}  = '000d561ff276';
+	# $Options{'protee'}   = '("zeroconf=avahi")';
+	$Computers{'puck'}  = '0019b94b4902';
+	$Options{'puck'}   = '("")';
 
 	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';

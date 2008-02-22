@@ -79,54 +79,54 @@ private:
 	// Init static data for the DnsSdProx class
 
 	// To protect all my private stuff...
-	inline static ReentrantMutex& DnsSdProxy::Locker()
+	inline static ReentrantMutex& Locker()
 	{
 		static ReentrantMutex Internal_Locker;
 		return Internal_Locker;
 	}
 
 	// A counter of instances
-	inline static unsigned int& DnsSdProxy::InstancesCount()
+	inline static unsigned int& InstancesCount()
 	{
 		static unsigned int Internal_InstancesCount = 0; // Start with 0 instances
 		return Internal_InstancesCount;
 	}
 
 	// Number of "copies" of the service in use
-	inline static unsigned int& DnsSdProxy::CurrentNumberOfServicesListCopies()
+	inline static unsigned int& CurrentNumberOfServicesListCopies()
 	{
 		static unsigned int Internal_CurrentNumberOfServicesListCopies = 0; // Start with 0 customers
 		return Internal_CurrentNumberOfServicesListCopies;
 	}
 
 	// A boolean saying that we need to remove services in the list
-	inline static bool& DnsSdProxy::NeedToCleanupServicesList()
+	inline static bool& NeedToCleanupServicesList()
 	{
 		static bool Internal_NeedToCleanupServicesList= false;	// At start we do not need to cleanup everything
 		return Internal_NeedToCleanupServicesList;
 	}
 
 	// A list to contain all the services
-	inline static SimpleList<DnsSdProxy::DnsSdServiceInstanceManager*>& DnsSdProxy::ServicesList()
+	inline static SimpleList<DnsSdServiceInstanceManager*>& DnsSdProxy::ServicesList()
 	{
-		static SimpleList<DnsSdProxy::DnsSdServiceInstanceManager*> Internal_ServicesList;
+		static SimpleList<DnsSdServiceInstanceManager*> Internal_ServicesList;
 		return Internal_ServicesList;
 	}
 
-	inline static Event& DnsSdProxy::Changes()
+	inline static Event& Changes()
 	{
 		static Event Internal_Changes;
 		return Internal_Changes;
 	}
 
-	inline static BrowseForDNSSDService *& DnsSdProxy::ServiceBroswer()
+	inline static BrowseForDNSSDService *& ServiceBroswer()
 	{
 		static BrowseForDNSSDService * Internal_ServiceBroswer = NULL;	// protected by a mutex
 		return Internal_ServiceBroswer;
 	}
 
 	// manage futur notification paradigm
-	inline static SimpleList<DnsSdProxyClient*>& DnsSdProxy::ClientsList()
+	inline static SimpleList<DnsSdProxyClient*>& ClientsList()
 	{
 		static SimpleList<DnsSdProxyClient*> Internal_ClientsList;
 		return Internal_ClientsList;
