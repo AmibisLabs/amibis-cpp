@@ -9,6 +9,8 @@
 // Standard includes
 #include <ServiceControl/UserFriendlyAPI.h>
 
+#include "ClientAccumulator.h"
+
 using namespace std;
 
 using namespace Omiscid;
@@ -47,19 +49,23 @@ public:
 	/* @ brief callback for variable changes notification */
 	void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
 	{
-		cout << "Current Accu value: " << NewValue << endl;
+		// cout << "Current Accu value: " << NewValue << endl;
 	};
 };
 
 } // namespace Omiscid
 
+#ifdef OMISCID_RUNING_TEST
+// Call test in a separate function
+int DoClientAccumulator( int argc, char*argv[] )
+#else
 /* @brief main program entry for the Accumulator. No need to give parameter */
-int main(int argc, char*argv[] )
+int main( int argc, char*argv[] )
+#endif // OMISCID_RUNING_TEST
 {
 	// Instanciate a Connector and a Variable listener (must *not* be destroyed before it has
 	// been removed for the connector or until the service is destroyed).
 	ClientConnectorAndVariableListener MyListener;
-
 
 	// Ask to the service factory to create a Service. The service is not
 	// register yet. We do not provide the service class, the default value 'Service'
@@ -129,6 +135,44 @@ int main(int argc, char*argv[] )
 
 		// Do my work
 		SimpleString LocalCommand;
+#ifdef OMISCID_RUNING_TEST
+		// Do it automatically, first compute EllapseTime, test must take almost 30 seconds
+		ElapsedTime TotalRunTime;
+
+		do
+		{
+			// choose randomly operation
+			int Operation = random() % 4;
+			switch( Operation )
+			{
+				case 1:
+					LocalCommand = "+";
+					break;
+				case 2:
+					LocalCommand = "-";
+					break;
+				case 3:
+					LocalCommand = "*";
+					break;
+				default:
+					LocalCommand = "/";
+					break;
+			}
+
+			// Choose a common value (range 1 to 10);
+			int Value = 1 + (random() % 10);
+			LocalCommand += Value;
+
+			pAccuClient->SendToAllClients( "SendCommands", LocalCommand, false );
+
+			// Go to sleep for 50 ms
+			Sleep( 50 );
+		}
+		while( TotalRunTime.Get() < 30*1000 /* 30 seconds */ );
+
+		fprintf( stderr, "AccumulatorClient stops.\n" );
+#else
+		// run it interactively
 		for(;;)
 		{
 			// Get the local command at keyboard
@@ -138,6 +182,7 @@ int main(int argc, char*argv[] )
 			// we can also use SentToOneClient...
 			pAccuClient->SendToAllClients( "SendCommands", (char*)LocalCommand.GetStr(), LocalCommand.GetLength(), false );
 		}
+#endif
 	}
 	else
 	{

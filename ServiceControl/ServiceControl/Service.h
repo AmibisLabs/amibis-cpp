@@ -80,6 +80,15 @@ public:
 	bool AddConnector(SimpleString ConnectorName, SimpleString ConnectorDescription, ConnectorKind KindOfConnector, unsigned int TcpPort = 0 );
 
 	/**
+	 * Gets the number of clients currently connected to the given connector.
+	 * This number is indicative has there can be connections and disconnections at any time.
+	 *
+	 * @param localConnectorName the name of the local connector
+	 * @return
+	 */
+	unsigned int GetConnectorClientCount(SimpleString ConnectorName) ;
+
+	/**
 	 * Sends a message to all the clients connected to a specific connector of the service
 	 * @param ConnectorName the name of the connector sending the message
 	 * @param Buffer the message to send
@@ -87,6 +96,73 @@ public:
 	 * @param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
 	 */
 	bool SendToAllClients(SimpleString ConnectorName, char * Buffer, int BufferLen, bool UnreliableButFastSend = false );
+
+	/**
+	 * Sends a message to all the clients connected to a specific connector of the service
+	 * @param ConnectorName the name of the connector sending the message
+	 * @param MessageAsString the string containing the message
+	 * @param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
+	 */
+	inline bool SendToAllClients(SimpleString ConnectorName, SimpleString MessageAsString, bool UnreliableButFastSend = false )
+	{
+		// Just call the previous one
+		return SendToAllClients( ConnectorName, (char*)MessageAsString.GetStr(), MessageAsString.GetLength(), UnreliableButFastSend );
+	};
+
+	/**
+	 * Sends a mesage to a particular client. This client is identified by ServiceProxy because
+	 * we have been looking for it to create the connexion. We will send message to the first connector
+	 * connected to this service.
+	 * @param ConnectorName the name of the connector that will send the message
+	 * @param Buffer the message to send
+	 * @param BufferLen the length of message to send
+	 * @param ServProxy the service proxy we want to send data
+	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+	 */
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool UnreliableButFastSend = false );
+
+	/**
+	 * Sends a mesage to a particular client. This client is identified by ServiceProxy because
+	 * we have been looking for it to create the connexion. We will send message to the first connector
+	 * connected to this service.
+	 * @param ConnectorName the name of the connector that will send the message
+	 * @param Buffer the message to send
+	 * @param BufferLen the length of message to send
+	 * @param ServProxy the service proxy we want to send data
+	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+	 */
+	inline bool SendToOneClient(SimpleString ConnectorName, SimpleString MessageAsString, ServiceProxy& ServProxy, bool UnreliableButFastSend = false )
+	{
+		// Just call the previous one
+		return SendToOneClient( ConnectorName, (char*)MessageAsString.GetStr(), MessageAsString.GetLength(), ServProxy, UnreliableButFastSend );
+	};
+
+	/**
+	 * Sends a message to a particular client. This client is identified by ServiceProxy because
+	 * we have been looking for it to create the connexion. We will send message to the first connector
+	 * connected to this service.
+	 * @param ConnectorName the name of the connector that will send the message
+	 * @param Buffer the message to send
+	 * @param BufferLen the length of message to send
+	 * @param ServProxy the service proxy we want to send data
+	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+	 */
+	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy * ServProxy, bool UnreliableButFastSend = false );
+
+	/**
+	 * Sends a message contained in a string to a particular client. This client is identified by ServiceProxy because
+	 * we have been looking for it to create the connexion. We will send message to the first connector
+	 * connected to this service.
+	 * @param ConnectorName the name of the connector that will send the message
+	 * @param MessageAsString the string containing the message
+	 * @param ServProxy the service proxy we want to send data
+	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+	 */
+	inline bool SendToOneClient(SimpleString ConnectorName, SimpleString MessageAsString, ServiceProxy * ServProxy, bool UnreliableButFastSend = false )
+	{
+		// Just call the previous one
+		return SendToOneClient( ConnectorName, (char*)MessageAsString.GetStr(), MessageAsString.GetLength(), ServProxy, UnreliableButFastSend );
+	};
 
 	/**
 	 * Sends a message to a particular client. This client is identified by its Peer id (pid).
@@ -104,28 +180,22 @@ public:
 	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, int PeerId, bool UnreliableButFastSend = false );
 
 	/**
-	 * Sends a mesage to a particular client. This client is identified by ServiceProxy because
-	 * we have been looking for it to create the connexion. We will send message to the first connector
-	 * connected to this service.
+	 * Sends a message to a particular client. This client is identified by its Peer id (pid).
+	 * This method is usually used to answer a request coming from another service that
+	 * has requested a connexion with us. We know this service from its pid inside its request message (see Message#). We
+	 * do not have a ServiceProxy for it because we have not found this service to initiate the connexion. If the
+	 * Peer Id is a service peerid and not a connector one, the message will be sent to the
+	 * first connector of the service.
 	 * @param ConnectorName the name of the connector that will send the message
-	 * @param Buffer the message to send
-	 * @param BufferLen the length of message to send
-	 * @param ServProxy the service proxy we want to send data
-	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+	 * @param MessageAsString the string containing the message
+	 * @param PeerId : the identification of the client that must receive the message
+	 * @param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
 	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy& ServProxy, bool UnreliableButFastSend = false );
-
-	/**
-	 * Sends a message to a particular client. This client is identified by ServiceProxy because
-	 * we have been looking for it to create the connexion. We will send message to the first connector
-	 * connected to this service.
-	 * @param ConnectorName the name of the connector that will send the message
-	 * @param Buffer the message to send
-	 * @param BufferLen the length of message to send
-	 * @param ServProxy the service proxy we want to send data
-	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
-	 */
-	bool SendToOneClient(SimpleString ConnectorName, char * Buffer, int BufferLen, ServiceProxy * ServProxy, bool UnreliableButFastSend = false );
+	bool SendToOneClient(SimpleString ConnectorName, SimpleString MessageAsString, int PeerId, bool UnreliableButFastSend = false )
+	{
+		// Just call the previous one
+		return SendToOneClient( ConnectorName, (char*)MessageAsString.GetStr(), MessageAsString.GetLength(), PeerId, UnreliableButFastSend );
+	}
 
 	/**
 	 * Sends a message back to the sender of a message just received.
@@ -142,6 +212,22 @@ public:
 
 	/**
 	 * Sends a message back to the sender of a message just received.
+	 * Allows to specify on which connector to send the answer.
+	 * Defaults to reliable send.
+	 * @param ConnectorName the name of the connector sending the message
+	 * @param MessageAsString the string containing the message
+	 * @param Msg the message to reply to
+	 * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+	 * @return true if the answer was successfully send
+	 */
+	inline bool SendReplyToMessage( SimpleString ConnectorName, SimpleString MessageAsString, const Message& Msg, bool UnreliableButFastSend = false )
+	{
+		// just call the previous one
+		return SendReplyToMessage( ConnectorName, (char*)MessageAsString.GetStr(), MessageAsString.GetLength(), Msg, UnreliableButFastSend );
+	}
+
+	/**
+	 * Sends a message back to the sender of a message just received.
 	 * Defaults to reliable send.
 	 * @param Buffer the message to send
 	 * @param BufferLen the length of message to send
@@ -150,6 +236,20 @@ public:
 	 * @return true if the answer was successfully send
 	 */
 	bool SendReplyToMessage( char * Buffer, int BufferLen, const Message& Msg, bool UnreliableButFastSend = false );
+
+	/**
+	 * Sends a message back to the sender of a message just received.
+	 * Defaults to reliable send.
+	 * @param MessageAsString the string containing the message
+	 * @param Msg the message to reply to
+	  * @param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
+	 * @return true if the answer was successfully send
+	 */
+	inline bool SendReplyToMessage( SimpleString MessageAsString, const Message& Msg, bool UnreliableButFastSend = false )
+	{
+		// Just call the previous one
+		return SendReplyToMessage( (char*)MessageAsString.GetStr(), MessageAsString.GetLength(), Msg, UnreliableButFastSend );
+	}
 
 public:
 	/**
@@ -184,9 +284,10 @@ public:
 	 * Sets the value of a service variable
 	 * @param VarName the variable name
 	 * @param VarValue the new variable value
+	 * @param SkipValidationPhase whether to prevent LocalVariableListener#isValid to be called
 	 * @see Service#AddVariable
 	 */
-	bool SetVariableValue(SimpleString VarName, SimpleString VarValue);
+	bool SetVariableValue(SimpleString VarName, SimpleString VarValue, bool SkipValidationPhase = false );
 
 	/**
 	 * Returns the variable value

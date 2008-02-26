@@ -368,7 +368,7 @@ SimpleString ServiceProxy::GetPeerIdAsString()
 	{
 	}
 
-	return SimpleString::EmptyString;
+	return SimpleString::EmptyString();
 }
 
 	/**
@@ -696,7 +696,7 @@ SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 		}
 	}
 
-	return SimpleString::EmptyString;
+	return SimpleString::EmptyString();
 }
 
 	/**

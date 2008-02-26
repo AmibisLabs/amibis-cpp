@@ -50,7 +50,7 @@ public:
 	// If we do not plan to filter with the name, ask for all services
 	int NeedService( IsServiceValidForMe eCallBack, void * eUserData = NULL )
 	{
-		return WaitForDnsSdServices::NeedService( SimpleString::EmptyString, GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
+		return WaitForDnsSdServices::NeedService( SimpleString::EmptyString(), GetOmiscidServiceDnsSdType(), eCallBack, eUserData );
 	}
 };
 

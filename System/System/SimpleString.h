@@ -246,7 +246,7 @@ public:
 	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer );
 
 	/*! All empty string refer to this unique value, can be used by user */
-	static const SimpleString EmptyString;
+	static const SimpleString& EmptyString();
 
 	/** @brief Extract a string of  this string
 	 * @param [in] begin index of the first character included in the result string

@@ -97,7 +97,7 @@ bool WaitForDnsSdServices::LockService( const SimpleString ServiceName )
 		return false;
 	}
 
-	ServicesUsed[ShortName] = SimpleString::EmptyString;	// identical to ServicesUsed[ServiceName] = NULL
+	ServicesUsed[ShortName] = SimpleString::EmptyString();	// identical to ServicesUsed[ServiceName] = NULL
 	// OmiscidTrace( "Lock '%s' set.\n", ServiceName.GetStr() );
 
 	mutexServicesUsed.LeaveMutex();

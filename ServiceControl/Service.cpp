@@ -153,6 +153,28 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 }
 
 	/**
+	 * Gets the number of clients currently connected to the given connector.
+	 * This number is indicative has there can be connections and disconnections at any time.
+	 *
+	 * @param localConnectorName the name of the local connector
+	 * @return
+	 */
+unsigned int Service::GetConnectorClientCount(SimpleString ConnectorName) 
+{
+	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
+	if ( pAtt == (InOutputAttribute *)NULL )
+	{
+		SimpleString Msg = "Unknown connector '";
+		Msg += ConnectorName;
+		Msg += "'\n";
+		throw SimpleException(  Msg );
+		return false;
+	}
+
+	return pAtt->GetListPeerId().GetNumberOfElements();
+}
+
+	/**
 	 * Sends a message to all the clients connected to the service I
 	 * @param connectorName the name of the connector sending the message
 	 * @param msg the message to send
@@ -307,7 +329,7 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 	 */
 SimpleString Service::GetVariableDescription(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString);
+	SimpleString Empty(SimpleString::EmptyString());
 
 	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -325,7 +347,7 @@ SimpleString Service::GetVariableDescription(SimpleString VarName)
 	 * @param varValue the variable value
 	 * @see Service#addVariable
 	 */
-bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
+bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue, bool SkipValidationPhase /* = false */ )
 {
 	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -334,7 +356,14 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 		return false;
 	}
 
-	pVar->SetValue( VarValue );
+	if ( SkipValidationPhase == true )
+	{
+		pVar->SetValueFromControl( VarValue );
+	}
+	else
+	{
+		pVar->SetValue( VarValue );
+	}
 	return true;
 }
 
@@ -346,7 +375,7 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue)
 	 */
 SimpleString Service::GetVariableValue(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString);
+	SimpleString Empty(SimpleString::EmptyString());
 
 	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -370,7 +399,7 @@ SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 	if ( pVar == NULL )
 	{
 		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
-		return SimpleString::EmptyString;
+		return SimpleString::EmptyString();
 	}
 
 	return VariableAttribute::AccessToStr(pVar->GetAccess());
@@ -385,7 +414,7 @@ SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 	 */
 SimpleString Service::GetVariableType(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString);
+	SimpleString Empty(SimpleString::EmptyString());
 
 	return Empty;
 }

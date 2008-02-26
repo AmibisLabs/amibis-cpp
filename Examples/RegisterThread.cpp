@@ -44,8 +44,9 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 
 	// Just add a Variable of ConstantAccess that can not be modifies after the
 	// service registration. Set its value to the number given in the constructor
+	// We ask not to check the value with internal control
 	pServ->AddVariable( "Number", "interger", "My number", ConstantAccess );
-	pServ->SetVariableValue( "Number", Number );
+	pServ->SetVariableValue( "Number", Number, true );
 
 	// Start the service, i.e. register it and run all processing threads
 	pServ->Start();

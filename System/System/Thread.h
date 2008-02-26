@@ -75,7 +75,7 @@ public:
 	SimpleString ThreadName;
 
 public:
-	Thread(const SimpleString Name = SimpleString::EmptyString );
+	Thread(const SimpleString Name = SimpleString::EmptyString() );
 
 #else
 

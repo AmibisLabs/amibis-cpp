@@ -6,60 +6,74 @@
  /**
  * @file Examples/Accumulator.cpp
  * @ingroup Examples
- * @brief Demonstartion of an accumulator server.
+ * @brief Demonstration of an accumulator server.
  *
  * @author Dominique Vaufreydaz
  */
 
 // Standard includes
-#include <ServiceControl/UserFriendlyAPI.h>
+#include "Accumulator.h"
 
 #include <iostream>
 using namespace std;
 
 using namespace Omiscid;
 
-namespace Omiscid {
-
-/**
- * @class AccumulatorConnectorListener
- * @ingroup Examples
- * @brief this class is used to monitor incomming activity from intput connector of a service
- */
-class AccumulatorConnectorListener : public ConnectorListener
-{
-public:
 	/* @brief constructor */
-	AccumulatorConnectorListener();
-	/* @brief destructor */
-	virtual ~AccumulatorConnectorListener();
-
-	/* @brief callback function to receive data */
-	virtual void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
-
-private:
-	Mutex Locker;		/*!< Lock access to my variable */
-
-	float Accu;			/*!< my accumulator */
-};
-
-} // namespace Omiscid
-
-
-	/* @brief constructor */
-AccumulatorConnectorListener::AccumulatorConnectorListener()
+Accumulator::Accumulator()
 {
-	// set initial value to the Accu
+	// set initial value to the internal Accu variable
 	Accu = 0.0f;
+
+	// Ask to the service factory to create a Service. The service is not
+	// register yet.
+	MyAssociatedService = ServiceFactory.Create( "Accumulator" );
+	if ( MyAssociatedService == (Service *)NULL )
+	{
+		OmiscidError( "Could not register the Accumulator service.\n" );
+		return;
+	}
+
+	/*
+	// Service is created, add multiples variables for testing purpose
+	for( int i = 0 ; i < 200 ; i++ )
+	{
+		SimpleString var = "v";
+		var += i;
+		MyAssociatedService->AddVariable(var, "bla", "bla", ReadWriteAccess);
+		// Set the variable value without checking it with internal controls
+		MyAssociatedService->SetVariableValue(var, "a", true);
+	} */
+
+	// Just add an Omiscid Variable in ReadAccess mode (read only) that can not
+	// be modifies by other services.
+	MyAssociatedService->AddVariable( "Accu", "float", "Accumulator value", ReadWriteAccess );
+	// Set its value to the starting value
+	MyAssociatedService->SetVariableValue( "Accu", 0.0f, true );
+
+	// Add a Connector to receive and send messages (AnInOutput) and set myself as callback
+	// object to receive notification of messages
+	MyAssociatedService->AddConnector( "Commands", "Input for commands. output of errors.", AnInOutput );
+	MyAssociatedService->AddConnectorListener( "Commands", this );
+
+	// register the service and launch everything
+	MyAssociatedService->Start();
+
+	// Trace
+	OmiscidError( "Accumulator service started.\n" );
 }
 
 	/* @brief destructor */
-AccumulatorConnectorListener::~AccumulatorConnectorListener()
+Accumulator::~Accumulator()
 {
+	if ( MyAssociatedService != (Service *)NULL )
+	{
+		delete MyAssociatedService;
+	}
 }
 
 	/* @brief callback function to receive data */
-void AccumulatorConnectorListener::MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
+void Accumulator::MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg)
 {
 	// Error management
 	bool IsWrong = true;	// by default, the command is wrong
@@ -157,59 +171,21 @@ void AccumulatorConnectorListener::MessageReceived(Service& TheService, const Si
 }
 
 
-
+#ifndef OMISCID_RUNING_TEST
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int main(int argc, char*argv[] )
 {
 	// TrackMemoryLeaks TML;
 
-	// Instanciate a Connector listener (must *not* be destroyed before it has
-	// been removed for the connector or until the service is destroyed).
-	AccumulatorConnectorListener MyCommandsListener;
+	// Create an Accumulator
+	Accumulator AccumulatorService;
 
-	// Ask to the service factory to create a Service. The service is not
-	// register yet. We do not provide the service class, the default value 'Service'
-	// will be used
-	Service * pAccuServer = ServiceFactory.Create( "Accumulator" );
-
-	// If something tricky occurred, exit
-	if ( pAccuServer == NULL )
-	{
-		fprintf( stderr, "Could not register the Accumulator service.\n" );
-
-		// Exit the thread
-		return -1;
-	}
-
-	for (int i = 0 ; i < 1400 ; i++)
-	{
-	   SimpleString var = "v";
-	   var += i;
-	   pAccuServer->AddVariable(var, "bla", "bla", ReadWriteAccess);
-	   pAccuServer->SetVariableValue(var, "a");
-	 }
-
-	// Just add a Variable of ReadAccess (read only) that can not be modifies by other services.
-	// Set its value to the starting value
-	pAccuServer->AddVariable( "Accu", "float", "Accumulator value", ReadWriteAccess );
-	pAccuServer->SetVariableValue( "Accu", 0.0f );
-
-	// Add a Connector to receive and send messages (AnInOutput) and set my callback
-	// object to receive notification of messages
-	pAccuServer->AddConnector( "Commands", "Input for commands. output of errors.", AnInOutput );
-	pAccuServer->AddConnectorListener( "Commands", &MyCommandsListener );
-
-	// register the service and launch everything
-	pAccuServer->Start();
-
-	// Trace
-	fprintf( stderr, "Accumulator service started.\n" );
-
-	// Create an Event and wait for it. As no one will signal it, we will
-	// stay forever stuck here.
-	Event Forever;
-	Forever.Wait();
+	// Wait for the event. As no one will signal it, we will
+	// stay forever stuck here. 
+	Event ForEver;
+	ForEver.Wait();
 
 	// exit
 	return 0;
 }
+#endif // OMISCID_RUNING_TEST

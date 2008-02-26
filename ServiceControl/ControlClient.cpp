@@ -651,7 +651,7 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 		{
 			SimpleString name((const char*)attr_name->children->content);
 
-			if( VariableAttribute::variable_str == node_name )
+			if( VariableAttribute::VariableStr() == node_name )
 			{
 				listVariableName.Add(name);
 			}
@@ -715,7 +715,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 				listInOutputAttr.Add( pAtt );
 			}
 		}
-		else if( name == VariableAttribute::variable_str.GetStr() )
+		else if( name == VariableAttribute::VariableStr().GetStr() )
 		{
 			pVar = ProcessVariableDescription( cur_node, NULL );
 			if ( pVar != NULL )
@@ -736,7 +736,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 VariableAttribute* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 															VariableAttribute* var_attr)
 {
-	if( !node || VariableAttribute::variable_str != (const char*)node->name )
+	if( !node || VariableAttribute::VariableStr() != (const char*)node->name )
 		return NULL;
 
 #if defined DEBUG
@@ -783,7 +783,7 @@ InOutputAttribute* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOu
 	}
 	else
 	{
-		outattr = new OMISCID_TLM InOutputAttribute(SimpleString::EmptyString, AnOutput);
+		outattr = new OMISCID_TLM InOutputAttribute(SimpleString::EmptyString(), AnOutput);
 	}
 	outattr->ExtractDataFromXml(node);
 
@@ -938,7 +938,7 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 	for(; current != NULL; current = current->next)
 	{
 		const char* cur_name = (const char*)current->name;
-		if( VariableAttribute::variable_str == cur_name )
+		if( VariableAttribute::VariableStr() == cur_name )
 		{
 			xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", current);
 			VariableAttribute* va = FindVariable((const char*)attr_name->children->content);

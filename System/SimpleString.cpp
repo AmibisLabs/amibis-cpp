@@ -397,7 +397,11 @@ bool SimpleString::StringData::NotEqualsCaseInsensitive(const StringData& sd)
 
 ///////////////////////////////////////////////////////
 
-const SimpleString SimpleString::EmptyString("");
+const SimpleString& SimpleString::EmptyString()
+{
+	static const SimpleString Internal_EmptyString("");
+	return Internal_EmptyString;
+}
 
 void SimpleString::CopyStringData(StringData* to_copy)
 {
@@ -417,7 +421,7 @@ void SimpleString::CopyStringData(StringData* to_copy)
 SimpleString::SimpleString()
 {
 	stringData = NULL;
-	CopyStringData( SimpleString::EmptyString.stringData );
+	CopyStringData( SimpleString::EmptyString().stringData );
 }
 
 SimpleString::SimpleString(const char* str)
@@ -429,7 +433,7 @@ SimpleString::SimpleString(const char* str)
 	}
 	else
 	{
-		CopyStringData( SimpleString::EmptyString.stringData );
+		CopyStringData( SimpleString::EmptyString().stringData );
 	}
 }
 
@@ -437,9 +441,13 @@ SimpleString::SimpleString(const char* str1, const char* str2)
 {
 	stringData = NULL;
 	if(str1 == (const char*)NULL && str2 == (const char*)NULL)
-		CopyStringData( SimpleString::EmptyString.stringData );
+	{
+		CopyStringData( SimpleString::EmptyString().stringData );
+	}
 	else
+	{
 		stringData = new OMISCID_TLM StringData(str1, str2);
+	}
 }
 
 SimpleString::SimpleString(const SimpleString& to_copy)
@@ -522,7 +530,7 @@ void SimpleString::SetStringData(StringData* to_set)
 	if ( to_set == NULL )
 	{
 		// Set me as empty
-		*this = EmptyString;
+		*this = EmptyString();
 		return;
 	}
 
@@ -545,7 +553,7 @@ const SimpleString& SimpleString::operator= (const char* str)
 	DestroyStringData();
 	if(str == NULL)
 	{
-		CopyStringData( SimpleString::EmptyString.stringData );
+		CopyStringData( SimpleString::EmptyString().stringData );
 	}
 	else
 	{
@@ -684,19 +692,19 @@ SimpleString SimpleString::SubString(int begin, int end) const
 		}
 		else
 		{
-			return SimpleString::EmptyString;
+			return SimpleString::EmptyString();
 		}
 	}
 
 	if ( begin > lend )	// The Could not do the job, return an empty string
 	{
-		return SimpleString::EmptyString;
+		return SimpleString::EmptyString();
 	}
 
 	StringData* sd = new OMISCID_TLM StringData(GetStr(), begin, lend);
 	if ( sd == NULL )
 	{
-		return EmptyString;
+		return EmptyString();
 	}
 	else
 	{

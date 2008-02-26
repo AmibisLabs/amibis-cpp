@@ -43,7 +43,7 @@ void Connector::Create(int port_tcp, int port_udp)
 	// REVIEW add support of UDP Port
 	UdpExchange::Create(port_udp);
 
-	SimpleString tmps = MagicUdp;
+	SimpleString tmps = MagicUdp();
 	tmps +=	":";
 	tmps += UdpExchange::GetUdpPort();
 	TcpServer::SetSyncLinkData( tmps );
@@ -86,7 +86,7 @@ void FUNCTION_CALL_TYPE Connector::ProcessLyncSyncMsg( MsgSocketCallBackData * M
 	{
 		// Ok, we've got the Linc Data
 		SimpleString tmpBuf((const char*)MsgData->Msg.GetBuffer());
-		SimpleString tmpUdp = MagicUdp;
+		SimpleString tmpUdp = MagicUdp();
 
 		SimpleString UDPPort = ValueFromKey( tmpBuf, tmpUdp );
 
@@ -134,7 +134,7 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 	{
 		UdpExchange::Create(0);
 
-		SimpleString tmps = MagicUdp;
+		SimpleString tmps = MagicUdp();
 		tmps +=	":";
 		tmps += UdpExchange::GetUdpPort();
 		TcpServer::SetSyncLinkData( tmps );
@@ -228,35 +228,35 @@ void Connector::SendToAll(int len, const char* buf, bool fastsend)
 	{
 		TcpServer::listConnections.Lock();
 		UdpExchange::listUdpConnections.Lock();
-				try
-				{
-				for(TcpServer::listConnections.First();  TcpServer::listConnections.NotAtEnd();
-			TcpServer::listConnections.Next())
+		try
 		{
-			unsigned int tcp_pid = (TcpServer::listConnections.GetCurrent())->GetPeerPid();
-
-			if(!(TcpServer::listConnections.GetCurrent())->IsConnected())
+			for(TcpServer::listConnections.First();  TcpServer::listConnections.NotAtEnd();
+				TcpServer::listConnections.Next())
 			{
-				delete TcpServer::listConnections.GetCurrent();
-				TcpServer::listConnections.RemoveCurrent();
+				unsigned int tcp_pid = (TcpServer::listConnections.GetCurrent())->GetPeerPid();
 
-				UdpExchange::RemoveConnectionWithId(tcp_pid);
-			}
-			else
-			{
-				UdpConnection* udp_found =  UdpExchange::FindConnectionFromId(tcp_pid);
-				if (udp_found)
+				if(!(TcpServer::listConnections.GetCurrent())->IsConnected())
 				{
-					UdpExchange::SendTo(len, buf, udp_found);
+					delete TcpServer::listConnections.GetCurrent();
+					TcpServer::listConnections.RemoveCurrent();
+
+					UdpExchange::RemoveConnectionWithId(tcp_pid);
 				}
 				else
 				{
-					TcpServer::listConnections.GetCurrent()->Send(len, buf);
+					UdpConnection* udp_found =  UdpExchange::FindConnectionFromId(tcp_pid);
+					if (udp_found)
+					{
+						UdpExchange::SendTo(len, buf, udp_found);
+					}
+					else
+					{
+						TcpServer::listConnections.GetCurrent()->Send(len, buf);
+					}
 				}
 			}
+		} catch(...) {
 		}
-				} catch(...) {
-				}
 
 		UdpExchange::listUdpConnections.Unlock();
 		TcpServer::listConnections.Unlock();
@@ -460,51 +460,51 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 
 	//std::cout << "recherche dans server connexion\n";
 	TcpServer::listConnections.Lock();
-		try
-		{
-
-	for(TcpServer::listConnections.First(); (tcp_found == NULL) && TcpServer::listConnections.NotAtEnd();
-		TcpServer::listConnections.Next())
+	try
 	{
-		// OmiscidTrace( "among  connexion server : %u\n", (*its)->GetPeerPid());
-		if ( udp_connect.pid == (TcpServer::listConnections.GetCurrent())->GetPeerPid())
-		{
-			tcp_found = TcpServer::listConnections.GetCurrent();
-		}
-	}
 
-	if ( tcp_found )
-	{
-		if( tcp_found->IsConnected() )
+		for(TcpServer::listConnections.First(); (tcp_found == NULL) && TcpServer::listConnections.NotAtEnd();
+			TcpServer::listConnections.Next())
 		{
-			udp_found = UdpExchange::FindConnectionFromId(udp_connect.pid);
-			if ( NewConnection )
+			// OmiscidTrace( "among  connexion server : %u\n", (*its)->GetPeerPid());
+			if ( udp_connect.pid == (TcpServer::listConnections.GetCurrent())->GetPeerPid())
 			{
-				if ( udp_found != NULL )
+				tcp_found = TcpServer::listConnections.GetCurrent();
+			}
+		}
+
+		if ( tcp_found )
+		{
+			if( tcp_found->IsConnected() )
+			{
+				udp_found = UdpExchange::FindConnectionFromId(udp_connect.pid);
+				if ( NewConnection )
 				{
-					udp_found->SetAddr( udp_connect.getAddr() );
-				}
-				else
-				{
-					// OmiscidTrace("Creation connection udp associe TcpServer\n");
-					udp_found = new OMISCID_TLM UdpConnection(udp_connect);
-					if ( udp_found )
+					if ( udp_found != NULL )
 					{
-						UdpExchange::listUdpConnections.Add(udp_found);
+						udp_found->SetAddr( udp_connect.getAddr() );
+					}
+					else
+					{
+						// OmiscidTrace("Creation connection udp associe TcpServer\n");
+						udp_found = new OMISCID_TLM UdpConnection(udp_connect);
+						if ( udp_found )
+						{
+							UdpExchange::listUdpConnections.Add(udp_found);
+						}
 					}
 				}
 			}
+			else
+			{
+				// The peer is not connected anymore, remove it from my list
+				TcpServer::listConnections.Remove(tcp_found);
+				UdpExchange::RemoveConnectionWithId( udp_connect.pid );
+				delete tcp_found;
+			}
 		}
-		else
-		{
-			// The peer is not connected anymore, remove it from my list
-			TcpServer::listConnections.Remove(tcp_found);
-			UdpExchange::RemoveConnectionWithId( udp_connect.pid );
-			delete tcp_found;
-		}
+	} catch(...) {
 	}
-		} catch(...) {
-		}
 
 	TcpServer::listConnections.Unlock();
 

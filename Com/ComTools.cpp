@@ -54,7 +54,7 @@ SimpleString ComTools::PeerIdAsString(unsigned int PeerId)
 	return SimpleString(tmp);
 }
 
-const SimpleString ComTools::MagicUdp("udp-port");
+// const SimpleString ComTools::MagicUdp("udp-port");
 
 SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString key)
 {
@@ -88,7 +88,7 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
 
 	 if (len == 0)
 	 {
-		 return SimpleString::EmptyString;
+		 return SimpleString::EmptyString();
 	 }
 
 	 switch (array[idx])
@@ -128,7 +128,7 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
 
 	 if (len == 0)
 	 {
-		 return SimpleString::EmptyString;
+		 return SimpleString::EmptyString();
 	 }
 
 	 switch (array[idx])

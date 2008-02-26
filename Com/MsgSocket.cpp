@@ -387,7 +387,7 @@ void MsgSocket::InitForTcpClient(const SimpleString addr, int port)
 
 void MsgSocket::InitForTcpServer(int port)
 {
-	socket->Bind(SimpleString::EmptyString, port);
+	socket->Bind(SimpleString::EmptyString(), port);
 	socket->Listen();
 	kind = TCP_SERVER_KIND;
 	connected = true;
@@ -402,7 +402,7 @@ void MsgSocket::InitForTcpServer(int port)
 
 void MsgSocket::InitForUdpExchange(int port)
 {
-	socket->Bind(SimpleString::EmptyString, port);
+	socket->Bind(SimpleString::EmptyString(), port);
 	bufferSize = TCP_BUFFER_SIZE;
 	buffer = new OMISCID_TLM unsigned char[bufferSize];
 	buffer_udp_send = new OMISCID_TLM char[UDP_MAX_MSG_SIZE];

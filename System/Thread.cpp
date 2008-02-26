@@ -50,7 +50,7 @@ const ThreadMessage& ThreadMessage::operator=(const ThreadMessage& ToCopy)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 #ifdef DEBUG_THREAD
-Thread::Thread(const SimpleString Name /* = SimpleString::EmptyString */)
+Thread::Thread(const SimpleString Name /* = SimpleString::EmptyString() */)
 #else
 Thread::Thread()
 #endif

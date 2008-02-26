@@ -430,7 +430,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 					// OmiscidTrace( " process io : %s \n", (*it)->name.GetStr());
 					ProcessInOutputQuery(cur_node, str);
 				}
-				else if( name == VariableAttribute::variable_str.GetStr() )
+				else if( name == VariableAttribute::VariableStr() )
 				{
 					ProcessVariableQuery(cur_node, msg->pid,  str);
 				}
@@ -483,7 +483,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 
 			TcpServer::listConnections.Lock();
 			MsgSocket* ms = FindClientFromId( msg->pid );
-			if( ms )
+			if( ms != (MsgSocket*)NULL )
 			{
 				try
 				{
@@ -1022,7 +1022,7 @@ const SimpleString& ControlServer::GetRegisteredServiceName()
 	}
 	else
 	{
-		return SimpleString::EmptyString;
+		return SimpleString::EmptyString();
 	}
 }
 

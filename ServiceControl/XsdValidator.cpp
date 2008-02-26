@@ -40,7 +40,7 @@ void XsdValidator::DestroySchema()
 	}
 }
 
-bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidate /* = SimpleString::EmptyString */ )
+bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidate /* = SimpleString::EmptyString() */ )
 {
 	if ( ValidCtxt != NULL )
 	{
@@ -49,7 +49,7 @@ bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidat
 		return false;
 	}
 
-	if ( XsdSchemaToValidate == SimpleString::EmptyString )
+	if ( XsdSchemaToValidate == SimpleString::EmptyString() )
 	{
 		OmiscidError( "CreateSchemaFromFile: Invalid parameter.\n" );
 		return false;
@@ -95,7 +95,7 @@ bool XsdValidator::CreateSchemaFromFile( const SimpleString XsdSchemaFile )
 		return false;
 	}
 
-	if ( XsdSchemaFile == SimpleString::EmptyString )
+	if ( XsdSchemaFile == SimpleString::EmptyString() )
 	{
 		OmiscidError( "CreateSchemaFromFile: Invalid parameter.\n" );
 		return false;

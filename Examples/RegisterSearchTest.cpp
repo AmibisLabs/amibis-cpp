@@ -28,8 +28,13 @@ void RegisterAndSearchUsage(char * ProgramName)
 	exit(-1);
 }
 
+#ifdef OMISCID_RUNING_TEST
+// Call test in a separate function
+int DoRegisterSearchTest(int argc, char*argv[] )
+#else
 /* @brief main program entry. No need to give parameter */
 int main(int argc, char*argv[] )
+#endif // OMISCID_RUNING_TEST
 {
 	unsigned int i;
 	int j;
@@ -263,10 +268,6 @@ int main(int argc, char*argv[] )
 	// Delete answer
 	delete MultipleServices;
 
-	// printf use for autotest
-	printf( "Test ok.\n" );
-	fflush( stdout );
-
 // Unregister service and close all connections
 	OmiscidMessage( "Unregister service and close all connections.\n" );
 	// Reset time counter
@@ -280,6 +281,12 @@ int main(int argc, char*argv[] )
 
 	// delete the Search service
 	delete Searcher;
+
+#ifndef OMISCID_RUNING_TEST
+	// printf use for autotest, except when using GlobalTest procedure
+	printf( "Test ok.\n" );
+	fflush( stdout );
+#endif
 
 #ifdef WIN32
 	// Create an even in order to Stop here forever

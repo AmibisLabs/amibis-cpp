@@ -213,14 +213,16 @@ const SimpleString Socket::GetConnectedHost()
 	socklen_t namelen = sizeof(struct sockaddr_in);
 
 	if ( descriptor < 0 || socketType != TCP ) // All kind of errors
-		return SimpleString::EmptyString;
+	{
+		return SimpleString::EmptyString();
+	}
 
 	if ( ConnectedHost.GetLength() == 0 )
 	{
 		// Try to get the peername
 		if ( getpeername( descriptor, (sockaddr*)&addr, &namelen ) == SOCKET_ERROR )
 		{
-			return SimpleString::EmptyString;
+			return SimpleString::EmptyString();
 		}
 
 		// Ok, let's get the name of the connected host
@@ -228,7 +230,7 @@ const SimpleString Socket::GetConnectedHost()
 		he = gethostbyaddr((char *) &addr.sin_addr, 4, AF_INET);
 		if ( he == NULL )
 		{
-			return SimpleString::EmptyString;
+			return SimpleString::EmptyString();
 		}
 
 		ConnectedHost = he->h_name;

@@ -6,8 +6,12 @@ In this files, you will find changes between OMiSCID versions.
 
 %Version%	%Date%
 	[Global modifications]
-	- Change remote access rigth to the "Lock" variable in order to be compliant
+	- change remote access rigth to the "Lock" variable in order to be compliant
 	  with the Java version.
+	- add defines in the Examples in order to comile launch them
+	  in only one main.
+	- for the same reason, change Accumulator example source code.
+	- uninitialized variables are now considered as empty by default.
 	[API]
 	- Add ability to connect to undiscovered services connectors
 	  (using hostname and port) in order to facilitate communications
@@ -20,6 +24,10 @@ In this files, you will find changes between OMiSCID versions.
 	  notification by filtering.
 	- Add access to Variable Type and description, to Connector
 	  description in ServiceProxy
+	- Add the ability to skip validation phase when changing a variable
+	  value localy.
+	- You can now get the number of connected clients to one connector
+	  using Service::GetConnectorClientCount
 	[Bug corrections]
 	- Correct memory leak when trying to add a connector after starting
 	  the service.

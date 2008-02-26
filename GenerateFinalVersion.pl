@@ -337,17 +337,17 @@ $TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
 
 if ( $DoTest == 1 )
 {
-	# $Computers{'astree'} = '000e0c5e4586';
-	# $Options{'astree'}   = '("zeroconf=avahi")';
-	# $Computers{'metis'}  = '000d936fc38c';
-	# $Options{'metis'}   = '("")';
+	$Computers{'astree'} = '000e0c5e4586';
+	$Options{'astree'}   = '("zeroconf=avahi")';
+	$Computers{'metis'}  = '000d936fc38c';
+	$Options{'metis'}   = '("")';
 	# $Computers{'junon'}  = '0013202e4fea';
 	# $Options{'junon'}   = '("zeroconf=mdns")';
-	# $Computers{'desdemona'}  = '000bcd624fa9';
-	# $Options{'desdemona'}   = '("zeroconf=mdns")';
+	$Computers{'desdemona'}  = '000bcd624fa9';
+	$Options{'desdemona'}   = '("zeroconf=mdns")';
 	# $Options{'desdemona'}   = '("")';
-	# $Computers{'protee'}  = '000d561ff276';
-	# $Options{'protee'}   = '("zeroconf=avahi")';
+	$Computers{'protee'}  = '000d561ff276';
+	$Options{'protee'}   = '("zeroconf=avahi")';
 	$Computers{'puck'}  = '0019b94b4902';
 	$Options{'puck'}   = '("")';
 
@@ -512,12 +512,13 @@ else
 	$TestSuite .= "No test done.\n";
 }
 
-# `rm ../$VersionFile`;
 if ( &LogOk() == 0 )
 {
 	print STDERR "\n\n\t=> Problem when testing $VersionFile.\n";
 	exit();
 }
+
+`rm ../$VersionFile`;
 
 print STDERR "\n\n\t=> $VersionFile successfully tested.\n";
 `echo $Version > ../LastVersion.info`;

@@ -163,13 +163,17 @@ public:
  /** \brief Extract data from a XML node.
    *
    * Extract attribute 'name', and child node.
-   * \param node A node of service description with the tag VariableAttribute::variable_str
+   * \param node A node of service description with the tag VariableAttribute::VariableStr()
    */
   void ExtractDataFromXml(xmlNodePtr node);
 
   /**  \brief to parse/generate XML data.
    */
-  static const SimpleString variable_str;
+	inline static const SimpleString& VariableStr()
+	{
+			static const SimpleString Internal_variable_str("variable");
+			return Internal_variable_str;
+	}
 
 protected:
   SimpleString type; /*!< type of the variable */
@@ -177,9 +181,32 @@ protected:
   VariableAccessType access; /*!< kind of access.*/
   SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
 
-  static const SimpleString access_constant_str; /*<! SimpleString representation for 'constant' access (used in XML description)*/
-  static const SimpleString access_read_str; /*<! SimpleString representation for 'read' access (used in XML description)*/
-  static const SimpleString access_readwrite_str; /*<! SimpleString representation for 'read-write' access (used in XML description)*/
+    /**
+	 * SimpleString representation for 'constant' access (used in XML description)
+	 */
+	inline static const SimpleString& AccessConstantStr()
+	{
+			static const SimpleString Internal_access_constant_str("constant");
+			return Internal_access_constant_str;
+	}
+
+	/**
+	 * SimpleString representation for 'read' access (used in XML description)
+	 */
+	inline static const SimpleString& AccessReadStr()
+	{
+			static const SimpleString Internal_access_read_str("read");
+			return Internal_access_read_str;
+	}
+
+	/**
+	 * SimpleString representation for 'read-write' access (used in XML description)
+	 */
+	inline static const SimpleString& AccessReadWriteStr()
+	{
+			static const SimpleString Internal_access_readwrite_str("readWrite");
+			return Internal_access_readwrite_str;
+	}
 
 private:
   MutexedSimpleList<VariableAttributeListener*> Listeners;

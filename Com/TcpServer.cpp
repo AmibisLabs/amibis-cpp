@@ -61,7 +61,7 @@ int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 	listConnections.Lock();
 	MsgSocket* ms = FindClientFromId(pid);
 	int nb_send = 0;
-	if(ms)
+	if ( ms != (MsgSocket*)NULL )
 	{
 		//ms->IsConnected()  : tested by FindClientFromId
 		try
@@ -84,7 +84,7 @@ int TcpServer::SendToClient(int* tab_len, const char** tab_buf, int nb_buf, unsi
 	MsgSocket* ms = FindClientFromId(pid);
 	int nb_send = 0;
 
-	if(ms)
+	if ( ms != (MsgSocket*)NULL )
 	{
 		//ms->IsConnected() tested by FindClientFromId
 		try
@@ -209,7 +209,7 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 	if ( TotalLen > maxBIPMessageSize )
 	{
 		listConnections.Lock();
-		for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+		for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 		{
 			ms = listConnections.GetCurrent();
 			if( ms->IsConnected() )
@@ -245,7 +245,7 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 	}
 
 	listConnections.Lock();
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
+	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
 		if( ms->IsConnected() )
@@ -279,7 +279,7 @@ int TcpServer::GetNbConnections()
 	MsgSocket * ms;
 
 	listConnections.Lock();
-	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next())
+	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next())
 	{
 		ms = listConnections.GetCurrent();
 		if( ms->IsConnected() == false )

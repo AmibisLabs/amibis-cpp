@@ -36,7 +36,7 @@ void DnsSdService::Init()
 	RegisteredName.Empty();
 }
 
-void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
+void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
 {
 	int LastFind;
 	int CurrentFind;
@@ -113,7 +113,7 @@ SimpleString DnsSdService::GetDNSSDServiceNameFromFullName( const SimpleString N
 
 	if ( Name.IsEmpty() )
 	{
-		return SimpleString::EmptyString;
+		return SimpleString::EmptyString();
 	}
 
 	if ( (LastFind=Name.Find("._tcp.")) >= 0 )
@@ -215,12 +215,12 @@ DnsSdService::DnsSdService( const DnsSdService* ToCopy )
 	Properties.ImportTXTRecord( ToCopy->Properties.GetTXTRecordLength(), ToCopy->Properties.ExportTXTRecord() );
 }
 
-DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
+DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
 {
 	Init( eFullName, ePort, eHostName );
 }
 
-DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
+DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
 {
 	// Create full name.
 	SimpleString TmpString = ServiceName;
@@ -238,7 +238,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	Init( TmpString, ePort, eHostName );
 }
 
-DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtocol, TransportProtocol enTransport, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
+DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtocol, TransportProtocol enTransport, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
 {
 	Empty();
 
@@ -311,6 +311,8 @@ SimpleString DnsSdService::ToString()
 
 	return Generate;
 }
+
+//PbStatic
 
 #ifdef OMISCID_USE_MDNS
 	// As express in doc, should use one connection for every register using mDNS

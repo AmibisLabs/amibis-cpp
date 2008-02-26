@@ -124,7 +124,7 @@ const SimpleString ServiceProperty::operator= ( const SimpleString rvalue )
 const SimpleString ServiceProperty::GetValue()
 {
 	if ( Value.GetLength() == 0 )
-		return SimpleString::EmptyString;
+		return SimpleString::EmptyString();
 
 	return Value;
 }
@@ -132,7 +132,7 @@ const SimpleString ServiceProperty::GetValue()
 const SimpleString ServiceProperty::GetName()
 {
 	if ( Name.GetLength() == 0 )
-		return SimpleString::EmptyString;
+		return SimpleString::EmptyString();
 
 	return Name;
 }
@@ -328,7 +328,7 @@ ServiceProperty& ServiceProperties::operator[]( const SimpleString Name )
 		Properties = tmpProperties;
 	}
 
-	Properties[NbProperties].SetProperty( Name, SimpleString::EmptyString );
+	Properties[NbProperties].SetProperty( Name, SimpleString::EmptyString() );
 
 	NbProperties++;
 
@@ -500,7 +500,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 			// Is it a simple flag ?
 			if ( value == NULL || valueLen == 0 )
 			{
-				(*this)[KeyName] = SimpleString::EmptyString;
+				(*this)[KeyName] = SimpleString::EmptyString();
 				continue;
 			}
 

@@ -18,15 +18,14 @@ Attribute::~Attribute()
 
 void Attribute::AddTagDescriptionToStr(SimpleString& str)
 {
-	if(description !=  "")
+	if ( description !=  "" )
 	{
-		str = str
-			+ "<description>"
+		str += "<description>"
 			+ description
 			+ "</description>";
 	}
 
-	if(formatDescription != "")
+	if ( formatDescription != "" )
 	{
 		str += "<formatDescription>";
 		PutAValueInCData(formatDescription, str);

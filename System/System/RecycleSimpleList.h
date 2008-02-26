@@ -86,6 +86,9 @@ class SimpleRecycleList : public SimpleList<TYPE>
 		mutexAvailable.LeaveMutex();
 		return elt;
 	  }
+
+	//PbStatic
+
 	/** @brief Begining of the list of available cells */
 	static SimpleListElement<TYPE>* availableCells;
 	/** @brief Protect the access to the list of available cells */

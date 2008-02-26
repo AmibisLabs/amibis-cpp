@@ -6,12 +6,6 @@ using namespace Omiscid;
 
 
 
-const SimpleString VariableAttribute::access_constant_str = "constant";
-const SimpleString VariableAttribute::access_read_str = "read";
-const SimpleString VariableAttribute::access_readwrite_str = "readWrite";
-
-const SimpleString VariableAttribute::variable_str = "variable";
-
 VariableAttribute::VariableAttribute()
 {
 	access = ReadAccess;
@@ -27,9 +21,9 @@ VariableAttribute::VariableAttribute(const SimpleString a_name)
 
 const SimpleString& VariableAttribute::AccessToStr(VariableAccessType a)
 {
-	if(a == ConstantAccess) return access_constant_str;
-	if(a == ReadAccess) return access_read_str;
-	return access_readwrite_str;
+	if(a == ConstantAccess) return AccessConstantStr();
+	if(a == ReadAccess) return AccessReadStr();
+	return AccessReadWriteStr();
 }
 
 bool VariableAttribute::IsInitialised()
@@ -39,12 +33,12 @@ bool VariableAttribute::IsInitialised()
 
 void VariableAttribute::GenerateShortDescription(SimpleString& str)
 {
-	GenerateHeaderDescription(variable_str, GetName(), str);
+	GenerateHeaderDescription(VariableStr(), GetName(), str);
 }
 
 void VariableAttribute::GenerateLongDescription(SimpleString& str)
 {
-	GenerateHeaderDescription(variable_str, GetName(), str, false);
+	GenerateHeaderDescription(VariableStr(), GetName(), str, false);
 
 	str += "<value>";
 	PutAValueInCData(GetValue(), str);
@@ -65,7 +59,7 @@ void VariableAttribute::GenerateLongDescription(SimpleString& str)
 /*
 void VariableAttribute::GenerateValueMessage(SimpleString& str)
 {
-	GenerateHeaderDescription(variable_str, GetName(), str, false);
+	GenerateHeaderDescription(VariableStr(), GetName(), str, false);
 
 	str += "<value>";
 	PutAValueInCData(GetValue(), str);
@@ -175,15 +169,15 @@ void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
 			else if ( cur_name == "access" )
 			{
 				SimpleString content = XMLMessage::ExtractTextContent(cur_node->children);
-				if( content == access_read_str )
+				if( content == AccessReadStr() )
 				{
 					SetAccessRead();
 				}
-				else if( content == access_readwrite_str )
+				else if( content == AccessReadWriteStr() )
 				{
 					SetAccessReadWrite();
 				}
-				else if( content == access_constant_str )
+				else if( content == AccessConstantStr() )
 				{
 					SetAccessConstant();
 				}
@@ -233,10 +227,13 @@ SimpleString& VariableAttribute::GetValue()
 {
 	if ( Initialised == false )
 	{
-		SimpleString TmpString;
-		TmpString = GetName();
-		TmpString += " not initialised";
-		throw  SimpleException( TmpString );
+		// SimpleString TmpString;
+		// TmpString = GetName();
+		// TmpString += " not initialised";
+		// throw  SimpleException( TmpString );
+
+		// return empty string for uninitialized values
+		return (SimpleString&)SimpleString::EmptyString();
 	}
 	return valueStr;
 }

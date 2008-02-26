@@ -26,6 +26,8 @@ namespace Omiscid {
  */
 class InOutputAttribute : public Attribute
 {
+//PbStatic
+
  public:
   static const SimpleString input_str; /*!< String associated to the kind AnInput*/
   static const SimpleString output_str; /*!< String associated to the kind AnOutput*/
