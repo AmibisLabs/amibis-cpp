@@ -29,20 +29,35 @@ public:
 	/** @brief Destructor */
 	virtual ~ReentrantMutex();
 
-		/**
-	 * @brief Lock the mutex.
+	/**
+	 * @brief Lock the mutex. Deprecated, use ReentrantMutex#Lock instead
 	 *
 	 * Wait if the mutex is already locked, until it is unlocked, and then locks the mutex
 	 * @return false if an error occured
 	 */
-	bool EnterMutex();
+	bool Lock();
 
 	/**
-	 * @brief Unlock the mutex
+	 * @brief Lock the mutex. Deprecated, use ReentrantMutex#Lock instead
+	 *
+	 * Wait if the mutex is already locked, until it is unlocked, and then locks the mutex
+	 * @return false if an error occured
+	 */
+	inline bool EnterMutex() { return Lock(); };
+
+	/**
+	 * @brief Unlock the mutex. Deprecated, use ReentrantMutex#Unlock instead
 	 *
 	 * Enables other clients to use the critical section protected by this mutex.
 	 */
-	bool LeaveMutex();
+	bool Unlock();
+
+	/**
+	 * @brief Unlock the mutex. Deprecated, use ReentrantMutex#Unlock instead
+	 *
+	 * Enables other clients to use the critical section protected by this mutex.
+	 */
+	inline bool LeaveMutex() { return Unlock(); };
 
 private:
 #ifdef WIN32
@@ -52,6 +67,9 @@ private:
 	#endif
 #else
 	pthread_mutex_t mutex; /*!< Posix Mutex*/
+	#ifdef DEBUG
+		unsigned long OwnerId;
+	#endif
 #endif /* WIN32 */
 };
 

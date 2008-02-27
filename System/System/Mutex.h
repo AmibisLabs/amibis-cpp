@@ -34,14 +34,29 @@ public:
 	 * Wait if the mutex is already locked, until it is unlocked, and then locks the mutex
 	 * @return false if an error occured
 	 */
-	bool EnterMutex();
+	bool Lock();
+
+	/**
+	 * @brief Lock the mutex. Deprecated, use Mutex#Lock instead.
+	 *
+	 * Wait if the mutex is already locked, until it is unlocked, and then locks the mutex
+	 * @return false if an error occured
+	 */
+	inline bool EnterMutex() { return Lock(); };
 
 	/**
 	 * @brief Unlock the mutex
 	 *
 	 * Enables other clients to use the critical section protected by this mutex.
 	 */
-	bool LeaveMutex();
+	bool Unlock();
+
+		/**
+	 * @brief Unlock the mutex. Deprecated, use Mutex#Unlock instead.
+	 *
+	 * Enables other clients to use the critical section protected by this mutex.
+	 */
+	inline bool LeaveMutex() { return Unlock(); };
 
 private:
 #ifdef WIN32
