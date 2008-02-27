@@ -1281,8 +1281,6 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 	}
 }
 
-
-
 int MsgSocket::GoodBeginning(unsigned char* buf, int len, unsigned int& lengthmsg, unsigned int& pid, unsigned int& mid)
 {
 	if(len < tag_size)

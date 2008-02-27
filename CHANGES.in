@@ -112,6 +112,11 @@ In this files, you will find changes between OMiSCID versions.
 	- add UserFriendly API in order to provide browsing fonctionnality
 	  ServiceRepository and ServiceRepositoryBrowser. Add an example
 	  showing this functionality : BrowsingTest.cpp.
+	- Thread::GetThreadId() is now a public static function. It returns
+	  the Id of the calling thread.
+	- Mutex::EnterMutex() and Mutex::LeaveMutex() are replaced
+	  respectively by Lock() and Unlock() funtions. Identically for
+	  ReentrantMutex.
 	[Bug corrections]
 	- Change Event::Wait() bug when asking for subsecond timers
 		under Linux/OSX

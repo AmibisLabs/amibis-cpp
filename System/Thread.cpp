@@ -201,13 +201,13 @@ void Thread::WaitForStop()
 	StopWasAskedEvent.Wait(0);
 }
 
-/** @brief return an Id for the Thread
+/** @brief return an Id for the calling Thread
  *
  */
 unsigned long Thread::GetThreadId()
 {
 #ifdef WIN32
-	return ThreadID;
+	return (unsigned long)GetCurrentThreadId();
 #else
 	return (unsigned long)pthread_self();
 #endif

@@ -5,6 +5,7 @@
 
 #include <System/ReentrantMutex.h>
 #include <System/SimpleException.h>
+#include <System/Thread.h>
 
 using namespace Omiscid;
 
@@ -16,9 +17,6 @@ ReentrantMutex::ReentrantMutex()
 {
 #ifdef WIN32
 	mutex = CreateMutex(NULL, false, NULL );
-	#ifdef DEBUG
-		OwnerId = 0;
-	#endif
 #else
 	pthread_mutexattr_t attr;
 	pthread_mutexattr_init (&attr);
@@ -29,6 +27,9 @@ ReentrantMutex::ReentrantMutex()
 	{
 		throw  SimpleException("Error Mutex Init");
 	}
+#endif
+#ifdef DEBUG
+	OwnerId = 0;
 #endif
 }
 
@@ -44,7 +45,7 @@ ReentrantMutex::~ReentrantMutex()
 #endif
 }
 
-bool ReentrantMutex::EnterMutex()
+bool ReentrantMutex::Lock()
 {
 #ifdef WIN32
 	unsigned int Result = WaitForSingleObject( mutex, INFINITE );
@@ -52,7 +53,7 @@ bool ReentrantMutex::EnterMutex()
 	{
 #ifdef DEBUG
 		// In debug mode, set the owner id
-		OwnerId = GetCurrentThreadId();
+		OwnerId = Thread::GetThreadId();
 #endif
 		// Here we go, we've got the mutex
 		return true;
@@ -60,6 +61,10 @@ bool ReentrantMutex::EnterMutex()
 #else
 	if( pthread_mutex_lock(&mutex) == 0 )
 	{
+#ifdef DEBUG
+		// In debug mode, set the owner id
+		OwnerId = GetThreadId();
+#endif
 		return true;
 	}
 #endif
@@ -67,22 +72,21 @@ bool ReentrantMutex::EnterMutex()
 	return false;
 }
 
-bool ReentrantMutex::LeaveMutex()
+bool ReentrantMutex::Unlock()
 {
 #ifdef WIN32
 	if ( !ReleaseMutex(mutex) )
 	{
 		return false;
 	}
-	#ifdef DEBUG
-		OwnerId = 0;
-	#endif
-
 #else
 	if( pthread_mutex_unlock(&mutex) != 0 )
 	{
 		return false;
 	}
+#endif
+#ifdef DEBUG
+	OwnerId = 0;
 #endif
 
 	return true;

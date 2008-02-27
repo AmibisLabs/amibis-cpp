@@ -1,4 +1,5 @@
 #include <System/Portage.h>
+#include <System/Thread.h>
 
 #ifdef WIN32
 
@@ -170,9 +171,9 @@ void Omiscid::RandomInit()
 		gettimeofday(&t, NULL);
 
 #ifdef WIN32
-		srand(t.tv_sec ^ t.tv_usec ^ (long int)GetCurrentThreadId());
+		srand(t.tv_sec ^ t.tv_usec ^ (long int)Thread::GetThreadId());
 #else	// WIN32
-		srandom(t.tv_sec ^ t.tv_usec ^ (long int)pthread_self() );
+		srandom(t.tv_sec ^ t.tv_usec ^ (long int)GetThreadId() );
 #endif	// WIN32
 }
 
