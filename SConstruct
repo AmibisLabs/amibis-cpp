@@ -50,8 +50,8 @@ env.Depends(target_control, target_com)
 
 
 hToInstall = []
-# hToInstall += SystemHeaders
-# hToInstall += ComHeaders
+hToInstall += SystemHeaders
+hToInstall += ComHeaders
 hToInstall += ServiceControlHeaders
 
 binToInstall += OmiscidDotInFileTarget(env, 'Com/OmiscidCom-config', OmiscidMapping())

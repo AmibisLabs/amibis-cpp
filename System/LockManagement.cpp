@@ -26,7 +26,7 @@ SmartLocker::~SmartLocker()
 {
 	if ( LockCount > 0 )
 	{
-		DevOmiscidTrace( "SmartLocker::SmartLocker~: warning object not unlock before exiting the scope\n" );
+		OmiscidError( "SmartLocker::SmartLocker~: warning object not unlock before exiting the scope\n" );
 		while( LockCount > 0 )
 		{
 			ManagedLoackableObject.Unlock();
