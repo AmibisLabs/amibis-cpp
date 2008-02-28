@@ -11,7 +11,7 @@
 #ifndef __DNS_SD_SERVICE_H__
 #define __DNS_SD_SERVICE_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/Event.h>
 #include <System/Mutex.h>

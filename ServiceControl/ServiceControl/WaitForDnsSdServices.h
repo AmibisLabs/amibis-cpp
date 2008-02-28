@@ -11,7 +11,7 @@
 #ifndef __WAIT_FOR_DNS_SD_SERVICES_H__
 #define __WAIT_FOR_DNS_SD_SERVICES_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/Socket.h>
 #include <System/Event.h>

@@ -6,9 +6,6 @@
  * @author Dominique Vaufreydaz
  */
 
-// Standard includes
-#include <ServiceControl/UserFriendlyAPI.h>
-
 #include "ClientAccumulator.h"
 
 using namespace std;

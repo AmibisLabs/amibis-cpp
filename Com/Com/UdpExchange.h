@@ -7,7 +7,7 @@
 #ifndef __UDP_EXCHANGE_H__
 #define __UDP_EXCHANGE_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <System/SimpleList.h>
 #include <System/Mutex.h>

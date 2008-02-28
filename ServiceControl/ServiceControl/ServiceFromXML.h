@@ -7,7 +7,7 @@
 #ifndef __SERVICE_FROM_XML_H__
 #define __SERVICE_FROM_XML_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 #include <ServiceControl/ControlServer.h>

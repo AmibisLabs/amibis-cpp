@@ -1,12 +1,21 @@
+/**
+* @file System/AtomicCounter.cpp
+* @ingroup System
+* @brief Implementation of AtomicCounter class
+*/
+
 #include <System/AtomicCounter.h>
+
+#include <System/LockManagement.h>
 
 using namespace Omiscid;
 
 AtomicCounter::AtomicCounter(int init_value)
 {
-	mutex.EnterMutex();
+	SmartLocker SL_mutex(mutex);
+	SL_mutex.Lock();
 	counter = init_value;
-	mutex.LeaveMutex();
+	SL_mutex.Unlock();
 }
 
 AtomicCounter::~AtomicCounter()
@@ -15,43 +24,51 @@ AtomicCounter::~AtomicCounter()
 
 int AtomicCounter::operator++()
 {
-	mutex.EnterMutex();
+	SmartLocker SL_mutex(mutex);
+	SL_mutex.Lock();
 	++counter;
-	mutex.LeaveMutex();
+	SL_mutex.Unlock();
 	return counter;
 }
 
 int AtomicCounter::operator++(int)
 {
-	mutex.EnterMutex();
+	SmartLocker SL_mutex(mutex);
+	SL_mutex.Lock();
 	int val = counter++;
-	mutex.LeaveMutex();
+	SL_mutex.Unlock();
 	return val;
 }
 
 int AtomicCounter::operator--()
 {
-	mutex.EnterMutex();
+	SmartLocker SL_mutex(mutex);
+	SL_mutex.Lock();
 	--counter;
-	mutex.LeaveMutex();
+	SL_mutex.Unlock();
 	return counter;
 }
 
 int AtomicCounter::operator--(int)
 {
-	mutex.EnterMutex();
+	SmartLocker SL_mutex(mutex);
+	SL_mutex.Lock();
 	int val = counter--;
-	mutex.LeaveMutex();
+	SL_mutex.Unlock();
 	return val;
 }
 
 AtomicCounter::operator int() const
-{ return counter; }
+{
+	return counter;
+}
 
 int AtomicCounter::operator=(int value)
 {
-  mutex.EnterMutex();
-  counter = value;
-  mutex.LeaveMutex();
-  return value;
+	SmartLocker SL_mutex(mutex);
+	SL_mutex.Lock();
+	counter = value;
+	SL_mutex.Unlock();
+
+	return value;
 }

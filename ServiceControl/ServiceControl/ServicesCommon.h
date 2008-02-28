@@ -11,7 +11,7 @@
 #ifndef __SERVICES_COMMON_H__
 #define __SERVICES_COMMON_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/Socket.h>
 #include <System/SimpleString.h>

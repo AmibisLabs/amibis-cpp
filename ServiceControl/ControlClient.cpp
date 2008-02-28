@@ -1,5 +1,6 @@
 #include <ServiceControl/ControlClient.h>
 
+#include <System/LockManagement.h>
 #include <System/Portage.h>
 #include <System/SocketException.h>
 #include <Com/MsgManager.h>
@@ -17,7 +18,8 @@ using namespace Omiscid;
 
 AnswerWaiter::AnswerWaiter()
 {
-	ObjectMutex.EnterMutex();
+	SmartLocker SL_ObjectMutex(ObjectMutex);
+	SL_ObjectMutex.Lock();
 
 	// Initialise object
 	Waiter.Reset();
@@ -25,25 +27,27 @@ AnswerWaiter::AnswerWaiter()
 	MessageId = 0;
 	AnswerMessage = NULL;
 
-	ObjectMutex.LeaveMutex();
+	SL_ObjectMutex.Unlock();
 }
 
 AnswerWaiter::~AnswerWaiter()
 {
-	// ObjectMutex.EnterMutex(); will be done in free
+	// SmartLocker SL_ObjectMutex(ObjectMutex);
+	// SL_ObjectMutex.Lock(); will be done in free
 
 	Free();
 
-	// ObjectMutex.LeaveMutex();
+	// SL_ObjectMutex.Unlock();
 }
 
 bool AnswerWaiter::Use( unsigned int eMessageId )
 {
-	ObjectMutex.EnterMutex();
+	SmartLocker SL_ObjectMutex(ObjectMutex);
+	SL_ObjectMutex.Lock();
 
 	if ( IsFree != true )
 	{
-		ObjectMutex.LeaveMutex();
+		SL_ObjectMutex.Unlock();
 		return false;
 	}
 
@@ -63,14 +67,15 @@ bool AnswerWaiter::Use( unsigned int eMessageId )
 	// Reset event
 	Waiter.Reset();
 
-	ObjectMutex.LeaveMutex();
+	SL_ObjectMutex.Unlock();
 
 	return true;
 }
 
 void AnswerWaiter::Free()
 {
-	ObjectMutex.EnterMutex();
+	SmartLocker SL_ObjectMutex(ObjectMutex);
+	SL_ObjectMutex.Lock();
 
 	// Delete message if any
 	if ( AnswerMessage != NULL )
@@ -82,7 +87,7 @@ void AnswerWaiter::Free()
 	// Say I am free...
 	IsFree = true;
 
-	ObjectMutex.LeaveMutex();
+	SL_ObjectMutex.Unlock();
 }
 
 XMLMessage * AnswerWaiter::GetAnswer(unsigned int TimeToWait)
@@ -94,7 +99,8 @@ XMLMessage * AnswerWaiter::GetAnswer(unsigned int TimeToWait)
 	for( NbLoop = 0; ; NbLoop++ )
 	{
 		// Is the message already here ?
-		ObjectMutex.EnterMutex();
+		SmartLocker SL_ObjectMutex(ObjectMutex);
+		SL_ObjectMutex.Lock();
 		if ( AnswerMessage != NULL )
 		{
 			// Get the message pointer
@@ -104,12 +110,12 @@ XMLMessage * AnswerWaiter::GetAnswer(unsigned int TimeToWait)
 			// This place is free, we got the message
 			Free();
 
-			ObjectMutex.LeaveMutex();
+			SL_ObjectMutex.Unlock();
 			return tmpMessage;
 		}
 
-		// Let's me AnswerManager complete me...
-		ObjectMutex.LeaveMutex();
+		// Let's my AnswerManager complete me...
+		SL_ObjectMutex.Unlock();
 
 		if ( NbLoop > 0 )
 		{
@@ -134,7 +140,8 @@ AnswersManager::~AnswersManager()
 {
 	AnswerWaiter * pWaiter;
 
-	WaitersList.Lock();
+	SmartLocker SL_WaitersList(WaitersList);
+	SL_WaitersList.Lock();
 
 	// Destroy all waiters information
 	while( WaitersList.GetNumberOfElements() > 0 )
@@ -146,14 +153,15 @@ AnswersManager::~AnswersManager()
 		 }
 	}
 
-	WaitersList.Unlock();
+	SL_WaitersList.Unlock();
 }
 
 AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 {
 	AnswerWaiter * pWaiterInfo = NULL;
 
-	WaitersList.Lock();
+	SmartLocker SL_WaitersList(WaitersList);
+	SL_WaitersList.Lock();
 
 	// Is there any free waiterinfo in my list ?
 	for( WaitersList.First(); WaitersList.NotAtEnd(); WaitersList.Next() )
@@ -173,7 +181,7 @@ AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 		if ( pWaiterInfo == NULL )
 		{
 			OmiscidError( "AnswersManager::WaitAndGetAnswer: no more memory.\n" );
-			WaitersList.Unlock();
+			SL_WaitersList.Unlock();
 			return NULL;
 		}
 		pWaiterInfo->Use(MessageId);
@@ -183,7 +191,7 @@ AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 	}
 
 	// Unlock the list
-	WaitersList.Unlock();
+	SL_WaitersList.Unlock();
 
 	return pWaiterInfo;
 }
@@ -209,7 +217,8 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 		return false;
 	}
 
-	WaitersList.Lock();
+	SmartLocker SL_WaitersList(WaitersList);
+	SL_WaitersList.Lock();
 
 	// Is there AnswerWaiter for this message ?
 	for( WaitersList.First(); WaitersList.NotAtEnd(); WaitersList.Next() )
@@ -217,18 +226,19 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 		pWaiter = WaitersList.GetCurrent();
 
 		// Lock this waiter
-		pWaiter->ObjectMutex.EnterMutex();
+		SmartLocker SL_pWaiter_ObjectMutex(pWaiter->ObjectMutex);
+		SL_pWaiter_ObjectMutex.Lock();
 
 		if ( pWaiter->IsFree == false && CheckMessage(Msg, pWaiter->MessageId) )
 		{
 			// We've got a waiter info for this waiter...
 			// Copy the message for the waiter
 			pWaiter->AnswerMessage = new OMISCID_TLM XMLMessage(*Msg);
-			pWaiter->ObjectMutex.LeaveMutex();
+			SL_pWaiter_ObjectMutex.Unlock();
 
 			pWaiter->Waiter.Signal();
 
-			WaitersList.Unlock();
+			SL_WaitersList.Unlock();
 
 			// OmiscidTrace( "AnswersManager::PushAnswer: PushMessage ok.\n" );
 
@@ -236,14 +246,14 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 		}
 
 		// Unlock the waiter
-		pWaiter->ObjectMutex.LeaveMutex();
+		SL_pWaiter_ObjectMutex.Unlock();
 	}
 
 	// Do nothing with this message... probably timeout...
 	OmiscidTrace( "AnswersManager::PushAnswer: no waiters (probably timeout).\n" );
 
 	// Unlock the list
-	WaitersList.Unlock();
+	SL_WaitersList.Unlock();
 
 	return false;
 }

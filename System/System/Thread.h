@@ -7,7 +7,7 @@
 #ifndef __THREAD_H__
 #define __THREAD_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/Event.h>
 #include <System/Mutex.h>
 #include <System/SimpleList.h>

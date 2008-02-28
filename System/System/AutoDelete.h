@@ -6,7 +6,7 @@
 #ifndef __AUTO_DELETE_H__
 #define __AUTO_DELETE_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 
 #include <System/SimpleException.h>
 

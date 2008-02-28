@@ -7,7 +7,7 @@
 #ifndef __TCP_CLIENT_H__
 #define __TCP_CLIENT_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <Com/ComTools.h>
 #include <Com/MsgSocket.h>

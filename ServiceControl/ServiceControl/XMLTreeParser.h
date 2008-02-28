@@ -7,7 +7,7 @@
 #ifndef __XMLTREE_PARSER_H__
 #define __XMLTREE_PARSER_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/Event.h>
 #include <System/Thread.h>

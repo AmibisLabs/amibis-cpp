@@ -130,52 +130,52 @@ $ZipAfterZip = 0;
 $PosArgv = 0;
 while( defined $ARGV[$PosArgv] )
 {
-	if ( $ARGV[$PosArgv] eq '-middle' )
+	if ( $ARGV[$PosArgv] =~ /^-middle/i )
 	{
 		$IncrVersionType = 1; # middle number
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] eq '-major' )
+	if ( $ARGV[$PosArgv] =~ /^-major/i )
 	{
 		$IncrVersionType = 2; # major number
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] eq '-minor' )
+	if ( $ARGV[$PosArgv] =~ /^-minor/i )
 	{
 		$IncrVersionType = 0; # minor number
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] eq '-last' )
+	if ( $ARGV[$PosArgv] =~ /^-last/i )
 	{
 		$IncrVersionType = -1; # regenerate the same version
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] eq '-notest' )
+	if ( $ARGV[$PosArgv] =~ /^-notest/i )
 	{
 		$DoTest = 0; # major number
 		print "do not test\n";
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] eq '-stopafterfirstzip' )
+	if ( $ARGV[$PosArgv] =~ /^-stopafterfirstzip/i )
 	{
 		$ZipAfterZip = 1; # major number
 		print "just generate zip\n";
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] eq '-nodoc' )
+	if ( $ARGV[$PosArgv] =~ /^-nodoc/i )
 	{
 		$DoDoc = 0; # major number
 		print "do not generate documentation\n";
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] eq '-emptylog' )
+	if ( $ARGV[$PosArgv] =~ /^-emptylog/i )
 	{
 		&EmptyLog();
 		print "log is empty\n";

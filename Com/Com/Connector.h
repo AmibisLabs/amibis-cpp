@@ -7,7 +7,7 @@
 #ifndef __CONNECTOR_H__
 #define __CONNECTOR_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <System/SimpleList.h>
 #include <System/Mutex.h>

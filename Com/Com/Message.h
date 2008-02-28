@@ -8,7 +8,7 @@
 #ifndef __MESSAGE_H__
 #define __MESSAGE_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <System/SimpleString.h>
 

@@ -1,5 +1,6 @@
 #include <Com/UdpExchange.h>
 
+#include <System/LockManagement.h>
 #include <System/SocketException.h>
 
 using namespace Omiscid;
@@ -29,14 +30,15 @@ void UdpExchange::Create(int port)
 
 void UdpExchange::Disconnect()
 {
-	listUdpConnections.Lock();
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
 		listUdpConnections.Next())
 	{
 		delete (listUdpConnections.GetCurrent());
 		listUdpConnections.RemoveCurrent();
 	}
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 }
 
 void UdpExchange::Close()
@@ -65,7 +67,9 @@ int UdpExchange::SendTo(int len, const char* buf, const char* addr, int port)
 int UdpExchange::SendTo(int len, const char* buf, unsigned int pid)
 {
 	int nb_send = 0;
-	listUdpConnections.Lock();
+
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
 
 	UdpConnection* ptr = FindConnectionFromId(pid);
 	if(ptr)
@@ -80,15 +84,15 @@ int UdpExchange::SendTo(int len, const char* buf, unsigned int pid)
 		}
 	}
 
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 	return nb_send;
 }
 
 void UdpExchange::SendToAll(int len, const char* buf)
 {
-	listUdpConnections.Lock();
-	for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
-		listUdpConnections.Next())
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
+	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		try
 		{
@@ -99,14 +103,15 @@ void UdpExchange::SendToAll(int len, const char* buf)
 			OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
 		}
 	}
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 }
 
 int UdpExchange::GetNbConnections()
 {
-	listUdpConnections.Lock();
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
 	int nb = listUdpConnections.GetNumberOfElements();
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 	return nb;
 }
 
@@ -114,10 +119,10 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
 {
 	//std::cerr << "in UdpExchange::acceptConnection(UdpConnection*)\n";
 
-	listUdpConnections.Lock();
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
 	UdpConnection* udp_found = NULL;
-	for(listUdpConnections.First(); !udp_found && listUdpConnections.NotAtEnd();
-		listUdpConnections.Next())
+	for ( listUdpConnections.First(); !udp_found && listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		if(udp_connect == *(listUdpConnections.GetCurrent()))
 		{
@@ -134,21 +139,22 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
 	{
 		OmiscidTrace( "Connection UDP from refused (Unknown, not initialized with empty message)\n");
 	}
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 	return udp_found;
 }
 
 int UdpExchange::GetListPeerId(SimpleList<unsigned int>& listId)
 {
 	int nb =0;
-	listUdpConnections.Lock();
-	for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
-		listUdpConnections.Next())
+
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
+	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		listId.Add((listUdpConnections.GetCurrent())->pid);
 		nb++;
 	}
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 	return nb;
 }
 
@@ -156,12 +162,13 @@ UdpConnection* UdpExchange::FindConnectionFromId(unsigned int id)
 {
 	unsigned int SearchId = id;
 
-	listUdpConnections.Lock();
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		if( listUdpConnections.GetCurrent()->pid == SearchId )
 		{
-			listUdpConnections.Unlock();
+			SL_listUdpConnections.Unlock();
 			return listUdpConnections.GetCurrent();
 		}
 	}
@@ -173,12 +180,12 @@ UdpConnection* UdpExchange::FindConnectionFromId(unsigned int id)
 	{
 		if ( SearchId == (listUdpConnections.GetCurrent()->pid & ComTools::SERVICE_PEERID) )
 		{
-			listUdpConnections.Unlock();
+			SL_listUdpConnections.Unlock();
 			return listUdpConnections.GetCurrent();
 		}
 	}
 
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 	return NULL;
 }
 
@@ -190,7 +197,8 @@ bool UdpExchange::DisconnectPeerId(unsigned int PeerId)
 	// remove all connection from a service !
 	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
 
-	listUdpConnections.Lock();
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		if( SearchId == (listUdpConnections.GetCurrent()->pid & ComTools::SERVICE_PEERID))
@@ -201,26 +209,26 @@ bool UdpExchange::DisconnectPeerId(unsigned int PeerId)
 		}
 	}
 
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 	return ret;
 }
 
 bool UdpExchange::RemoveConnectionWithId(unsigned int pid)
 {
-	listUdpConnections.Lock();
+	SmartLocker SL_listUdpConnections(listUdpConnections);
+	SL_listUdpConnections.Lock();
 
-	for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
-		listUdpConnections.Next())
+	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		if(listUdpConnections.GetCurrent()->pid == pid)
 		{
 			delete listUdpConnections.GetCurrent();
 			listUdpConnections.RemoveCurrent();
-			listUdpConnections.Unlock();
+			SL_listUdpConnections.Unlock();
 			return true;
 		}
 	}
-	listUdpConnections.Unlock();
+	SL_listUdpConnections.Unlock();
 	return false;
 }
 

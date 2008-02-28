@@ -7,7 +7,7 @@
 #ifndef __VARIABLE_ATTRIBUTE_H__
 #define __VARIABLE_ATTRIBUTE_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleList.h>
 #include <ServiceControl/Attribute.h>

@@ -7,7 +7,7 @@
 #ifndef __MSG_MANAGER_H__
 #define __MSG_MANAGER_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <System/SimpleList.h>
 #include <System/Event.h>

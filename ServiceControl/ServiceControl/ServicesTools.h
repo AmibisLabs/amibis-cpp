@@ -11,7 +11,7 @@
 #ifndef __SERVICES_TOOLS_H__
 #define __SERVICES_TOOLS_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 #include <ServiceControl/DnsSdService.h>

@@ -6,7 +6,7 @@
 #ifndef __SERVICE_REPOSITORY_H__
 #define __SERVICE_REPOSITORY_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleList.h>
 #include <ServiceControl/ServiceProxy.h>

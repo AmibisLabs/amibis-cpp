@@ -10,7 +10,7 @@
 #ifndef __SERVICE_PROXY_H__
 #define __SERVICE_PROXY_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>

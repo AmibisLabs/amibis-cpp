@@ -7,7 +7,7 @@
 #ifndef __ELAPSED_TIME_H__
 #define __ELAPSED_TIME_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/Portage.h>
 
 namespace Omiscid {

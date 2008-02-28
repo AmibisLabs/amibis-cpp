@@ -7,7 +7,7 @@
 #ifndef __SOCKET_EXCEPTION_H__
 #define __SOCKET_EXCEPTION_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/SimpleException.h>
 
 namespace Omiscid {

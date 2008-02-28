@@ -7,7 +7,7 @@
 #ifndef __SOCKET_H__
 #define __SOCKET_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/SimpleString.h>
 
 #ifndef WIN32

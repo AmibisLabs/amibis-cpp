@@ -9,6 +9,7 @@
 
 #include <ServiceControl/DnsSdService.h>
 
+#include <System/LockManagement.h>
 #include <System/Portage.h>
 #include <System/Socket.h>
 #include <System/Thread.h>
@@ -395,7 +396,8 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 #ifdef OMISCID_USE_AVAHI
 
 	// Lock Avahi connection
-	AvahiRegisteringLocker.EnterMutex();
+	SmartLocker SL_AvahiRegisteringLocker(AvahiRegisteringLocker);
+	SL_AvahiRegisteringLocker.Lock();
 
 	if ( FromConstructor == true )
 	{
@@ -416,7 +418,7 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			if ( AvahiPollWithThread == (AvahiThreadedPoll *)NULL )
 			{
 				OmiscidError( "Could not create Avahi poll\n" );
-				AvahiRegisteringLocker.LeaveMutex();
+				SL_AvahiRegisteringLocker.Unlock();
 				return;
 			}
 
@@ -427,7 +429,7 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			{
 				OmiscidError( "Could not create Avahi client %s\n", avahi_strerror(error) );
 				avahi_threaded_poll_free(AvahiPollWithThread);
-				AvahiRegisteringLocker.LeaveMutex();
+				SL_AvahiRegisteringLocker.Unlock();
 				return;
 			}
 
@@ -441,7 +443,7 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 				AvahiConnection = (AvahiClient *)NULL;
 				avahi_threaded_poll_free(AvahiPollWithThread);
 				AvahiPollWithThread =(AvahiThreadedPoll *)NULL;
-				AvahiRegisteringLocker.LeaveMutex();
+				SL_AvahiRegisteringLocker.Unlock();
 				return;
 			}
 			avahi_threaded_poll_unlock(AvahiPollWithThread);
@@ -504,7 +506,7 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 	}
 
 	// Unlock Avahi connection
-	AvahiRegisteringLocker.LeaveMutex();
+	SL_AvahiRegisteringLocker.Unlock();
 #endif
 #endif
 }
@@ -555,7 +557,7 @@ void RegisterService::LaunchRegisterProcess( bool FromAvahiPollThread )
 	if ( AvahiGroup == (AvahiEntryGroup *)NULL )
 	{
 		OmiscidError( "Could not create Avahi group (%s).\n", avahi_strerror(avahi_client_errno(AvahiConnection)) );
-		// AvahiRegisteringLocker.LeaveMutex();
+		// SL_AvahiRegisteringLocker.Unlock();
 		// return false;
 		goto EndOfLaunchRegisterProcess;
 	}
@@ -711,12 +713,13 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 #else
 #ifdef OMISCID_USE_AVAHI
 
-	AvahiRegisteringLocker.EnterMutex();
+	SmartLocker SL_AvahiRegisteringLocker(AvahiRegisteringLocker);
+	SL_AvahiRegisteringLocker.Lock();
 
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		OmiscidError( "Avahi connection not initialised.\n" );
-		AvahiRegisteringLocker.LeaveMutex();
+		SL_AvahiRegisteringLocker.Unlock();
 		return false;
 	}
 
@@ -735,7 +738,7 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 	RegistrationProcessDone = false;
 
 	// Avahi static members unlock
-	AvahiRegisteringLocker.LeaveMutex();
+	SL_AvahiRegisteringLocker.Unlock();
 
 	// We are connected, add the service
 	LaunchRegisterProcess(false);

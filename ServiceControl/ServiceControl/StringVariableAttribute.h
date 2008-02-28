@@ -7,7 +7,7 @@
 #ifndef __STRING_VARIABLE_ATTRIBUTE_H__
 #define __STRING_VARIABLE_ATTRIBUTE_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 #include <Com/ComTools.h>

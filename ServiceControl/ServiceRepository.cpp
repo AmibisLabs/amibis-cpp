@@ -3,6 +3,7 @@
 #include <ServiceControl/ServiceRepository.h>
 
 #include <System/AutoDelete.h>
+#include <System/LockManagement.h>
 
 
 using namespace Omiscid;
@@ -21,7 +22,8 @@ bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, Service
 {
 	if ( Listener != (ServiceRepositoryListener*)NULL )
 	{
-		RepoListeners.Lock();
+		SmartLocker SL_RepoListeners(RepoListeners);
+		SL_RepoListeners.Lock();
 
 		// Add listener and start its browse
 		RepoListeners.AddTail(Listener);
@@ -31,7 +33,7 @@ bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, Service
 			Listener->SetFilter( Filter );
 		}
 
-		RepoListeners.Unlock();
+		SL_RepoListeners.Unlock();
 
 		Listener->StartBrowse( NotifyOnlyNewEvents );
 
@@ -55,7 +57,8 @@ bool ServiceRepository::RemoveListener(ServiceRepositoryListener* Listener, bool
 		return false;
 	}
 
-	RepoListeners.Lock();
+	SmartLocker SL_RepoListeners(RepoListeners);
+	SL_RepoListeners.Lock();
 
 	Found = false;
 	for( RepoListeners.First(); RepoListeners.NotAtEnd(); RepoListeners.Next() )
@@ -68,7 +71,7 @@ bool ServiceRepository::RemoveListener(ServiceRepositoryListener* Listener, bool
 		}
 	}
 
-	RepoListeners.Unlock();
+	SL_RepoListeners.Unlock();
 
 	if ( Found == true )
 	{
@@ -124,7 +127,8 @@ void ServiceRepository::Stop()
 	ServiceRepositoryListener * pListener;
 
 	// Remove all entry from my list and remove them from the DnsSdProxy
-	RepoListeners.Lock();
+	SmartLocker SL_RepoListeners(RepoListeners);
+	SL_RepoListeners.Lock();
 
 	// While we have ServiceRepositoryListeners
 	while( RepoListeners.GetNumberOfElements() > 0 )
@@ -136,5 +140,5 @@ void ServiceRepository::Stop()
 		}
 	}
 
-	RepoListeners.Unlock();
+	SL_RepoListeners.Unlock();
 }

@@ -7,7 +7,7 @@
 #ifndef __PORTAGE_H__
 #define __PORTAGE_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/SimpleString.h>
 #include <System/SimpleException.h>
 

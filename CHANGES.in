@@ -12,6 +12,8 @@ In this files, you will find changes between OMiSCID versions.
 	  in only one main.
 	- for the same reason, change Accumulator example source code.
 	- uninitialized variables are now considered as empty by default.
+	- in System Layer, Config.h and .cpp become ConfigSystem.h and .cpp.
+	  Identically for the Com and ServiceControlLayer
 	[API]
 	- Add ability to connect to undiscovered services connectors
 	  (using hostname and port) in order to facilitate communications

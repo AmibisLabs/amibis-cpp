@@ -8,7 +8,7 @@
 #ifndef __SERVICE_H__
 #define __SERVICE_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <ServiceControl/ControlServer.h>
 #include <ServiceControl/LocalVariableListener.h>

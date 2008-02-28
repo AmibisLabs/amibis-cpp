@@ -7,7 +7,7 @@
 #ifndef __INT_VARIABLE_ATTRIBUTE_H__
 #define __INT_VARIABLE_ATTRIBUTE_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <Com/ComTools.h>
 #include <ServiceControl/ControlUtils.h>

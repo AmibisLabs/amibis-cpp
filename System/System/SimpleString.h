@@ -8,8 +8,9 @@
 #ifndef __SIMPLE_STRING_H__
 #define __SIMPLE_STRING_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/AtomicReentrantCounter.h>
+#include <System/LockManagement.h>
 
 #include <string.h>
 
@@ -37,7 +38,7 @@ private:
 	/**
 	 * @brief Storage of characters, with a counter of reference.
 	 */
-	class StringData
+	class StringData : public LockableObject
 	{
 	public:
 		/** @name Constructors
@@ -110,8 +111,11 @@ private:
 		 */
 		// static StringData* GetEmptyStringData();
 
-		void Lock(); // Lock my Protect mutex
-		void Unlock(); // Unlock my Protect mutex
+		// Lock my Protect mutex
+		inline bool Lock() { return Protect.Lock(); };	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+
+		// Unlock my Protect mutex
+		inline bool Unlock() { return Protect.Unlock(); };	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
 		StringData& operator=(const StringData& Right);
 
@@ -246,7 +250,11 @@ public:
 	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer );
 
 	/*! All empty string refer to this unique value, can be used by user */
-	static const SimpleString& EmptyString();
+	inline static const SimpleString& EmptyString()
+	{
+		static const SimpleString Internal_EmptyString("");
+		return Internal_EmptyString;
+	}
 
 	/** @brief Extract a string of  this string
 	 * @param [in] begin index of the first character included in the result string

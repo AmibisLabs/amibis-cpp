@@ -8,7 +8,7 @@
 #ifndef __MSG_SOCKET_H__
 #define __MSG_SOCKET_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <System/Thread.h>
 #include <System/Mutex.h>

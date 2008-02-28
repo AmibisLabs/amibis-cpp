@@ -8,7 +8,7 @@
 #define __USER_FRIENDLY_API_H__
 
 // To be compliant with usual OMiSCID include schema
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 // System classes used in User Friendly API (layer 0)
 // In this contexte, let's say that everything is used...

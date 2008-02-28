@@ -7,7 +7,7 @@
 #ifndef __CONTROL_CLIENT_H__
 #define __CONTROL_CLIENT_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleList.h>
 #include <System/AtomicCounter.h>

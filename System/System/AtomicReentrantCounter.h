@@ -1,5 +1,5 @@
 /**
- * @file System/AtomicReentrantCounter.h
+ * @file System/System/AtomicReentrantCounter.h
  * @ingroup System
  * @brief Definition of Mutexed Counter class using reentrant mutex
  */
@@ -7,7 +7,7 @@
 #ifndef __ATOMIC_REENTRANT_COUNTER_H__
 #define __ATOMIC_REENTRANT_COUNTER_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/ReentrantMutex.h>
 
 namespace Omiscid {

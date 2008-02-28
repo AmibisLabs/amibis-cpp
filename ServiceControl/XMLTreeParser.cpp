@@ -1,4 +1,6 @@
 #include <ServiceControl/XMLTreeParser.h>
+
+#include <System/LockManagement.h>
 #include <Com/Message.h>
 #include <Com/MsgSocket.h>
 #include <ServiceControl/XsdSchema.h>
@@ -176,16 +178,18 @@ void XMLTreeParser::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& c
 
 void XMLTreeParser::PushMessage(XMLMessage* msg)
 {
-	listXMLMsg.Lock();
+	SmartLocker SL_listXMLMsg(listXMLMsg);
+	SL_listXMLMsg.Lock();
 	listXMLMsg.Add(msg);
 	event.Signal();
 	event.Reset();
-	listXMLMsg.Unlock();
+	SL_listXMLMsg.Unlock();
 }
 
 int XMLTreeParser::ProcessMessages()
 {
-	listXMLMsg.Lock();
+	SmartLocker SL_listXMLMsg(listXMLMsg);
+	SL_listXMLMsg.Lock();
 	int nb = 0;
 	XMLMessage* msg = NULL;
 	while( listXMLMsg.IsNotEmpty() )
@@ -203,7 +207,7 @@ int XMLTreeParser::ProcessMessages()
 		// listXMLMsg.RemoveCurrent();
 		nb++;
 	}
-	listXMLMsg.Unlock();
+	SL_listXMLMsg.Unlock();
 	return nb;
 }
 
@@ -217,33 +221,37 @@ void XMLTreeParser::ProcessAMessage(XMLMessage* msg)
 XMLMessage* XMLTreeParser::GetMessage()
 {
 	XMLMessage* msg = NULL;
-	listXMLMsg.Lock();
-	if(listXMLMsg.GetNumberOfElements())
+
+	SmartLocker SL_listXMLMsg(listXMLMsg);
+	SL_listXMLMsg.Lock();
+	if ( listXMLMsg.GetNumberOfElements() )
 	{
 		listXMLMsg.First();
 		msg = listXMLMsg.GetCurrent();
 		listXMLMsg.RemoveCurrent();
 	}
-	listXMLMsg.Unlock();
+	SL_listXMLMsg.Unlock();
 	return msg;
 }
 
 void XMLTreeParser::ClearMessages()
 {
-	listXMLMsg.Lock();
-	for(listXMLMsg.First(); listXMLMsg.NotAtEnd(); listXMLMsg.Next())
+	SmartLocker SL_listXMLMsg(listXMLMsg);
+	SL_listXMLMsg.Lock();
+	for ( listXMLMsg.First(); listXMLMsg.NotAtEnd(); listXMLMsg.Next() )
 	{
 		delete listXMLMsg.GetCurrent();
 		listXMLMsg.RemoveCurrent();
 	}
-	listXMLMsg.Unlock();
+	SL_listXMLMsg.Unlock();
 }
 
 unsigned int XMLTreeParser::GetNbMessages()
 {
-	listXMLMsg.Lock();
+	SmartLocker SL_listXMLMsg(listXMLMsg);
+	SL_listXMLMsg.Lock();
 	int nb = listXMLMsg.GetNumberOfElements();
-	listXMLMsg.Unlock();
+	SL_listXMLMsg.Unlock();
 	return nb;
 }
 

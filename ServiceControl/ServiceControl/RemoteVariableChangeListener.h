@@ -8,7 +8,7 @@
 #ifndef __REMOTE_VARIABLE_CHANGE_LISTENER_H__
 #define __REMOTE_VARIABLE_CHANGE_LISTENER_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 #include <ServiceControl/ServiceProxy.h>

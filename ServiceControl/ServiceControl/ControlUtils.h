@@ -7,7 +7,7 @@
 #ifndef __CONTROL_UTILS_H__
 #define __CONTROL_UTILS_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 

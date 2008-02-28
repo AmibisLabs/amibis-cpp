@@ -1,97 +1,105 @@
 #include <Com/MsgManager.h>
+
+#include <System/LockManagement.h>
+
 #include <Com/Message.h>
 #include <Com/MsgSocket.h>
 
 using namespace Omiscid;
 
 MsgManager::MsgManager(unsigned int max)
-  : maxMessage(max)
+: maxMessage(max)
 {}
 
 MsgManager::~MsgManager()
 {
-  ClearMessages();
+	ClearMessages();
 }
 
 void MsgManager::PushMessage(Message* msg)
 {
-  listMsg.Lock();
-  if(maxMessage && listMsg.GetNumberOfElements() == maxMessage)
-  {
-	listMsg.First();
-	Message* m = listMsg.GetCurrent();
-	listMsg.RemoveCurrent();
-	delete m;
-  }
-  listMsg.Add(msg);
-  listMsg.Unlock();
-  event.Signal();
-  event.Reset();
+	SmartLocker SL_listMsg(listMsg);
+	SL_listMsg.Lock();
+	if(maxMessage && listMsg.GetNumberOfElements() == maxMessage)
+	{
+		listMsg.First();
+		Message* m = listMsg.GetCurrent();
+		listMsg.RemoveCurrent();
+		delete m;
+	}
+	listMsg.Add(msg);
+	SL_listMsg.Unlock();
+	event.Signal();
+	event.Reset();
 }
 
 unsigned int MsgManager::GetNbMessages()
 {
-  listMsg.Lock();
-  int nb =listMsg.GetNumberOfElements();
-  listMsg.Unlock();
-  return nb;
+	SmartLocker SL_listMsg(listMsg);
+	SL_listMsg.Lock();
+	int nb =listMsg.GetNumberOfElements();
+	SL_listMsg.Unlock();
+	return nb;
 }
 
 Message* MsgManager::GetMessage()
 {
-  Message* msg = NULL;
+	Message* msg = NULL;
 
-  listMsg.Lock();
-  if(listMsg.GetNumberOfElements())
+	SmartLocker SL_listMsg(listMsg);
+	SL_listMsg.Lock();
+	if(listMsg.GetNumberOfElements())
 	{
 		listMsg.First();
 		msg = listMsg.GetCurrent();
 		listMsg.RemoveCurrent();
 	}
-  listMsg.Unlock();
+	SL_listMsg.Unlock();
 
-  return msg;
+	return msg;
 }
 
 void MsgManager::ClearMessages()
 {
-  listMsg.Lock();
-  for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
+	SmartLocker SL_listMsg(listMsg);
+	SL_listMsg.Lock();
+	for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
 	{
-	  delete listMsg.GetCurrent();
-	  listMsg.RemoveCurrent();
+		delete listMsg.GetCurrent();
+		listMsg.RemoveCurrent();
 	}
-  listMsg.Unlock();
+	SL_listMsg.Unlock();
 }
 
 int MsgManager::ProcessMessages()
 {
-  Message* msg;
+	Message* msg;
 
-  listMsg.Lock();
-  int nb = 0;
-  for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
+	SmartLocker SL_listMsg(listMsg);
+	SL_listMsg.Lock();
+	int nb = 0;
+	for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
 	{
-	  msg = listMsg.GetCurrent();
-	  listMsg.RemoveCurrent();
-	  try
-	  {
-		ProcessAMessage(msg);
-	  }
-	  catch(SimpleException &e) // Catch every Omiscid exception within this, can break the whole system
-	  {
-		  OmiscidTrace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
-	  }
-	  delete msg;
-	  nb++;
+		msg = listMsg.GetCurrent();
+		listMsg.RemoveCurrent();
+		try
+		{
+			ProcessAMessage(msg);
+		}
+		catch(SimpleException &e) // Catch every Omiscid exception within this, can break the whole system
+		{
+			OmiscidTrace( "'%s' exception occurs while processing message : %s (%d)\n", e.GetExceptionType().GetStr(), e.msg.GetStr(), e.err );
+		}
+		delete msg;
+		nb++;
 	}
-  listMsg.Unlock();
-  return nb;
+	SL_listMsg.Unlock();
+	return nb;
 }
 
 void MsgManager::ProcessAMessage(Message* msg)
 {
-  OmiscidTrace( "processAMessage (pid= %u, mid=%u)\n", msg->GetPeerId(), msg->GetMsgId());
+	OmiscidTrace( "processAMessage (pid= %u, mid=%u)\n", msg->GetPeerId(), msg->GetMsgId());
 }
 
 
@@ -114,18 +122,18 @@ void MsgManager::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& cd)
 
 bool MsgManager::WaitForMessage(unsigned long timer)
 {
-  event.Reset();
-  if(!HasMessages())
+	event.Reset();
+	if(!HasMessages())
 	{
-	  if(timer)
-	return event.Wait(timer);
-	  else
-	return event.Wait();
+		if(timer)
+			return event.Wait(timer);
+		else
+			return event.Wait();
 	}
-  return true;
+	return true;
 }
 
 bool MsgManager::HasMessages()
 {
-  return GetNbMessages() != 0;
+	return GetNbMessages() != 0;
 }

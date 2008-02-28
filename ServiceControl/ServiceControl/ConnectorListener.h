@@ -8,7 +8,7 @@
 #ifndef __CONNECTOR_LISTENER_H__
 #define __CONNECTOR_LISTENER_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/Thread.h>
 #include <Com/MsgSocket.h>

@@ -11,6 +11,7 @@
 #include <ServiceControl/DnsSdProxy.h>
 
 #include <System/ElapsedTime.h>
+#include <System/LockManagement.h>
 #include <System/Portage.h>
 
 #ifndef WIN32
@@ -50,12 +51,13 @@ WaitForDnsSdServices::WaitForDnsSdServices()
 WaitForDnsSdServices::~WaitForDnsSdServices()
 {
 	// Delete all search service
-	ThreadSafeSection.EnterMutex();
+	SmartLocker SL_ThreadSafeSection(ThreadSafeSection);
+	SL_ThreadSafeSection.Lock();
 	while( SearchServices.GetNumberOfElements() > 0 )
 	{
 		delete SearchServices.ExtractFirst();
 	}
-	ThreadSafeSection.LeaveMutex();
+	SL_ThreadSafeSection.Unlock();
 }
 
 bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
@@ -67,15 +69,16 @@ bool WaitForDnsSdServices::IsServiceLocked( const SimpleString ServiceName )
 
 	SimpleString ShortName = DnsSdService::GetDNSSDServiceNameFromFullName( ServiceName );
 
-	mutexServicesUsed.EnterMutex();
+	SmartLocker SL_mutexServicesUsed(mutexServicesUsed);
+	SL_mutexServicesUsed.Lock();
 	if ( ServicesUsed.IsDefined( ShortName ) )
 	{
-		mutexServicesUsed.LeaveMutex();
+		SL_mutexServicesUsed.Unlock();
 		// OmiscidTrace( "	 '%s' is locked.\n", ServiceName.GetStr() );
 		return true;
 	}
 
-	mutexServicesUsed.LeaveMutex();
+	SL_mutexServicesUsed.Unlock();
 	// OmiscidTrace( "	 '%s' is not locked.\n", ServiceName.GetStr() );
 	return false;
 }
@@ -89,10 +92,11 @@ bool WaitForDnsSdServices::LockService( const SimpleString ServiceName )
 
 	SimpleString ShortName = DnsSdService::GetDNSSDServiceNameFromFullName( ServiceName );
 
-	mutexServicesUsed.EnterMutex();
+	SmartLocker SL_mutexServicesUsed(mutexServicesUsed);
+	SL_mutexServicesUsed.Lock();
 	if ( ServicesUsed.IsDefined( ShortName ) )
 	{
-		mutexServicesUsed.LeaveMutex();
+		SL_mutexServicesUsed.Unlock();
 		// OmiscidTrace( "Lock '%s' is already set.\n", ServiceName.GetStr() );
 		return false;
 	}
@@ -100,7 +104,7 @@ bool WaitForDnsSdServices::LockService( const SimpleString ServiceName )
 	ServicesUsed[ShortName] = SimpleString::EmptyString();	// identical to ServicesUsed[ServiceName] = NULL
 	// OmiscidTrace( "Lock '%s' set.\n", ServiceName.GetStr() );
 
-	mutexServicesUsed.LeaveMutex();
+	SL_mutexServicesUsed.Unlock();
 
 	return true;
 }
@@ -114,9 +118,10 @@ void WaitForDnsSdServices::UnlockService( const SimpleString ServiceName )
 
 	SimpleString ShortName = DnsSdService::GetDNSSDServiceNameFromFullName( ServiceName );
 
-	mutexServicesUsed.EnterMutex();
+	SmartLocker SL_mutexServicesUsed(mutexServicesUsed);
+	SL_mutexServicesUsed.Lock();
 	ServicesUsed.Undefine( ShortName );
-	mutexServicesUsed.LeaveMutex();
+	SL_mutexServicesUsed.Unlock();
 
 	// OmiscidTrace( "Lock '%s' removed.\n", ServiceName.GetStr() );
 	return;
@@ -233,11 +238,12 @@ int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleStr
 	int PosOfNewSearchService;
 	SearchService * pNewSearchService = new OMISCID_TLM SearchService;
 
-	ThreadSafeSection.EnterMutex();
+	SmartLocker SL_ThreadSafeSection(ThreadSafeSection);
+	SL_ThreadSafeSection.Lock();
 
 	if ( pNewSearchService == NULL )
 	{
-		ThreadSafeSection.LeaveMutex();
+		SL_ThreadSafeSection.Unlock();
 		return -1;
 	}
 
@@ -245,7 +251,7 @@ int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleStr
 	{
 		// Could not start search, destroy search service
 		delete pNewSearchService;
-		ThreadSafeSection.LeaveMutex();
+		SL_ThreadSafeSection.Unlock();
 		return -1;
 	}
 
@@ -255,7 +261,7 @@ int WaitForDnsSdServices::NeedService( const SimpleString eName, const SimpleStr
 	// compute virtual position of service
 	PosOfNewSearchService = SearchServices.GetNumberOfElements() - 1;
 
-	ThreadSafeSection.LeaveMutex();
+	SL_ThreadSafeSection.Unlock();
 
 	return PosOfNewSearchService; // Information about the service pos in the table
 }
@@ -264,18 +270,21 @@ void WaitForDnsSdServices::StopWaiting()
 {
 	int i;
 
-	ThreadSafeSection.EnterMutex();
+	SmartLocker SL_ThreadSafeSection(ThreadSafeSection);
+	SL_ThreadSafeSection.Lock();
 	for( i = 0; i < GetNbOfSearchedServices(); i++ )
 	{
 		// stop the current i-th OmiscidServiceSearchData
 		this->operator[](i).StopSearch();
 	}
-	ThreadSafeSection.LeaveMutex();
+	SL_ThreadSafeSection.Unlock();
 }
 
 bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 {
 	bool Done;
+
+	SmartLocker SL_ThreadSafeSection(ThreadSafeSection);
 
 	if ( DelayMax == 0 )
 	{
@@ -284,7 +293,7 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 		while( Done == false ) // was for(;;) but new version of MS compiler do no like it
 		{
 			// Is the work done ?
-			ThreadSafeSection.EnterMutex();
+			SL_ThreadSafeSection.Lock();
 			Done = (NbServicesReady == (int)SearchServices.GetNumberOfElements());
 			
 
@@ -292,11 +301,11 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 			{
 				// We ask our thread to stop to wait for services
 				StopWaiting();
-				ThreadSafeSection.LeaveMutex();
+				SL_ThreadSafeSection.Unlock();
 				return true;
 			}
 			// We wait longer
-			ThreadSafeSection.LeaveMutex();
+			SL_ThreadSafeSection.Unlock();
 
 			// Wait
 			Thread::Sleep( 10 );
@@ -311,7 +320,7 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 		while( Done == false ) // was for(;;) but new version of MS compiler do no like it
 		{
 			// Is the work done ?
-			ThreadSafeSection.EnterMutex();
+			SL_ThreadSafeSection.Lock();
 			Done = NbServicesReady == (int)SearchServices.GetNumberOfElements();
 			
 
@@ -319,12 +328,12 @@ bool WaitForDnsSdServices::WaitAll( unsigned int DelayMax )
 			{
 				// We ask our thread to stop to wait for services
 				StopWaiting();
-				ThreadSafeSection.LeaveMutex();
+				SL_ThreadSafeSection.Unlock();
 				return Done;
 			}
 
 			// We wait longer
-			ThreadSafeSection.LeaveMutex();
+			SL_ThreadSafeSection.Unlock();
 
 			Thread::Sleep( 10 );
 		}
@@ -337,9 +346,10 @@ int WaitForDnsSdServices::GetNbOfSearchedServices()
 {
 	int res;
 
-	ThreadSafeSection.EnterMutex();
+	SmartLocker SL_ThreadSafeSection(ThreadSafeSection);
+	SL_ThreadSafeSection.Lock();
 	res = (int)SearchServices.GetNumberOfElements();
-	ThreadSafeSection.LeaveMutex();
+	SL_ThreadSafeSection.Unlock();
 
 	return res;
 }
@@ -349,11 +359,12 @@ SearchService & WaitForDnsSdServices::operator[](int nPos)
 	int i;
 	SearchService * pSearchService = NULL;
 
-	ThreadSafeSection.EnterMutex();
+	SmartLocker SL_ThreadSafeSection(ThreadSafeSection);
+	SL_ThreadSafeSection.Lock();
 
 	if ( nPos < 0 || nPos >= (int)SearchServices.GetNumberOfElements() )
 	{
-		ThreadSafeSection.LeaveMutex();
+		SL_ThreadSafeSection.Unlock();
 		throw ServiceException( "Out of band" ) ;
 	}
 
@@ -365,7 +376,7 @@ SearchService & WaitForDnsSdServices::operator[](int nPos)
 			pSearchService = SearchServices.GetCurrent();
 		}
 	}
-	ThreadSafeSection.LeaveMutex();
+	SL_ThreadSafeSection.Unlock();
 
 	return *pSearchService;
 }

@@ -11,7 +11,7 @@
 #ifndef __BROWSE_FOR_DNS_SD_SERVICE_H__
 #define __BROWSE_FOR_DNS_SD_SERVICE_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/Thread.h>
 #include <System/SimpleString.h>

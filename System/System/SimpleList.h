@@ -9,10 +9,11 @@
 #ifndef __SIMPLE_LIST_H__
 #define __SIMPLE_LIST_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/ReentrantMutex.h>
 #include <System/AtomicReentrantCounter.h>
 #include <System/SimpleListException.h>
+#include <System/LockManagement.h>
 
 namespace Omiscid {
 
@@ -516,7 +517,7 @@ void SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) co
 * \author Dominique Vaufreydaz
 */
 template <typename TYPE>
-class MutexedSimpleList : public SimpleList<TYPE>
+class MutexedSimpleList : public SimpleList<TYPE>, public LockableObject
 {
 public:
 #ifdef DEBUG_MSL
@@ -699,7 +700,7 @@ bool MutexedSimpleList<TYPE>::Lock()
 {
 #ifdef DEBUG_MSL
 	// Only for MutexedSimpleList debugging
-	bool ret = mutex.EnterMutex();
+	bool ret = mutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
 	if ( ret == true )
 	{
@@ -707,7 +708,7 @@ bool MutexedSimpleList<TYPE>::Lock()
 	}
 	return ret;
 #else
-	return mutex.EnterMutex();
+	return mutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 #endif
 }
 
@@ -721,7 +722,7 @@ bool MutexedSimpleList<TYPE>::Unlock()
 	}
 
 	// Only for MutexedSimpleList debugging
-	bool ret = mutex.LeaveMutex();
+	bool ret = mutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
 	if ( ret == true && NbLocks > 0)
 	{
@@ -729,7 +730,7 @@ bool MutexedSimpleList<TYPE>::Unlock()
 	}
 	return ret;
 #else
-	return mutex.LeaveMutex();
+	return mutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 #endif
 }
 

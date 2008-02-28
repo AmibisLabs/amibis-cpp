@@ -1,5 +1,7 @@
 
 #include <ServiceControl/VariableAttribute.h>
+
+#include <System/LockManagement.h>
 #include <ServiceControl/XMLTreeParser.h>
 
 using namespace Omiscid;
@@ -82,14 +84,15 @@ void VariableAttribute::Display()
 void VariableAttribute::SetValue(const SimpleString value_str)
 {
 	// ask to all listener if we can change the value
-	Listeners.Lock();
+	SmartLocker SL_Listeners(Listeners);
+	SL_Listeners.Lock();
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
 		VariableAttributeListener * pListener = Listeners.GetCurrent();
 		if ( pListener->IsValid( this, value_str ) == false )
 		{
 			// someone disagree
-			Listeners.Unlock();
+			SL_Listeners.Unlock();
 			// OmiscidError( "VariableAttribute::SetValue: someone disagree on variable change\n");
 			return;
 		}
@@ -107,7 +110,7 @@ void VariableAttribute::SetValue(const SimpleString value_str)
 		Listeners.GetCurrent()->VariableChanged( this );
 	}
 
-	Listeners.Unlock();
+	SL_Listeners.Unlock();
 }
 
 void VariableAttribute::SetValueFromControl(const SimpleString value_str)
@@ -119,13 +122,14 @@ void VariableAttribute::SetValueFromControl(const SimpleString value_str)
 	Initialised = true;
 
 	// Ok the value has change, send information back to people
-	Listeners.Lock();
+	SmartLocker SL_Listeners(Listeners);
+	SL_Listeners.Lock();
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
 		Listeners.GetCurrent()->VariableChanged( this );
 	}
 
-	Listeners.Unlock();
+	SL_Listeners.Unlock();
 }
 
 void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
@@ -277,13 +281,14 @@ bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
 		return false;
 	}
 
-	Listeners.Lock();
+	SmartLocker SL_Listeners(Listeners);
+	SL_Listeners.Lock();
 	// look if it is already there..
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
 		if ( Listeners.GetCurrent() == ListenerToAdd )
 		{
-			Listeners.Unlock();
+			SL_Listeners.Unlock();
 			return false;
 		}
 	}
@@ -291,7 +296,7 @@ bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
 	// add it
 	Listeners.Add( ListenerToAdd );
 
-	Listeners.Unlock();
+	SL_Listeners.Unlock();
 
 	return true;
 }
@@ -309,9 +314,10 @@ bool VariableAttribute::RemoveListener( VariableAttributeListener *  ListenerToA
 	}
 
 	// Remove it if any
-	Listeners.Lock();
+	SmartLocker SL_Listeners(Listeners);
+	SL_Listeners.Lock();
 	ret = Listeners.Remove(ListenerToAdd);
-	Listeners.Unlock();
+	SL_Listeners.Unlock();
 
 	return ret;
 }
@@ -320,9 +326,10 @@ unsigned int VariableAttribute::GetNumberOfListeners()
 {
 	unsigned int ret;
 
-	Listeners.Lock();
+	SmartLocker SL_Listeners(Listeners);
+	SL_Listeners.Lock();
 	ret = Listeners.GetNumberOfElements();
-	Listeners.Unlock();
+	SL_Listeners.Unlock();
 
 	return ret;
 }

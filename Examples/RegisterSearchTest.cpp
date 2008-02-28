@@ -8,8 +8,7 @@
  * @author Dominique Vaufreydaz
  */
 
-// Standard includes
-#include <ServiceControl/UserFriendlyAPI.h>
+#include "RegisterSearchTest.h"
 
 // Add local class RegisterThread
 #include "RegisterThread.h"
@@ -297,3 +296,4 @@ int main(int argc, char*argv[] )
 	// exit
 	return 0;
 }
+

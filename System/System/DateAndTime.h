@@ -7,7 +7,7 @@
 #ifndef __DATE_AND_TIME_H__
 #define __DATE_AND_TIME_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/Portage.h>
 #include <System/SimpleString.h>
 

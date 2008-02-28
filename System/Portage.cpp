@@ -173,7 +173,7 @@ void Omiscid::RandomInit()
 #ifdef WIN32
 		srand(t.tv_sec ^ t.tv_usec ^ (long int)Thread::GetThreadId());
 #else	// WIN32
-		srandom(t.tv_sec ^ t.tv_usec ^ (long int)GetThreadId() );
+		srandom(t.tv_sec ^ t.tv_usec ^ (long int)Thread::GetThreadId() );
 #endif	// WIN32
 }
 

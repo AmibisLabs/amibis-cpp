@@ -221,9 +221,10 @@ void Thread::SendMessage( int Code, void * Param1, void* Param2 /* = (void*)NULL
 {
 	ThreadMessage MsgToSend( Code, Param1, Param2 );
 
-	MsgQueue.Lock();
+	SmartLocker SL_MsgQueue(MsgQueue);
+	SL_MsgQueue.Lock();
 	MsgQueue.AddTail(MsgToSend);
-	MsgQueue.Unlock();
+	SL_MsgQueue.Unlock();
 }
 
 	/** @brief Send message to a Thread
@@ -232,9 +233,10 @@ void Thread::SendMessage( int Code, void * Param1, void* Param2 /* = (void*)NULL
 	 */
 void Thread::SendMessage( const ThreadMessage& MsgToSend )
 {
-	MsgQueue.Lock();
+	SmartLocker SL_MsgQueue(MsgQueue);
+	SL_MsgQueue.Lock();
 	MsgQueue.AddTail(MsgToSend);
-	MsgQueue.Unlock();
+	SL_MsgQueue.Unlock();
 }
 
 	/** @brief Retrieve message for a thread with timeout
@@ -245,6 +247,8 @@ bool Thread::WaitAndGetMessage( ThreadMessage& MsgToGet, unsigned int DelayMax /
 {
 	bool Done;
 
+	SmartLocker SL_MsgQueue(MsgQueue);
+
 	if ( DelayMax == 0 )
 	{
 		// INFINITE wait
@@ -252,13 +256,13 @@ bool Thread::WaitAndGetMessage( ThreadMessage& MsgToGet, unsigned int DelayMax /
 		while( true ) // was for(;;) but new version of MS compiler do no like it
 		{
 			// Is there a message ?
-			MsgQueue.Lock();
+			SL_MsgQueue.Lock();
 			if ( MsgQueue.GetNumberOfElements() != 0 )
 			{
 				MsgToGet = MsgQueue.ExtractFirst();
 				Done = true;
 			}
-			MsgQueue.Unlock();
+			SL_MsgQueue.Unlock();
 
 			if ( Done == true )
 			{
@@ -278,13 +282,13 @@ bool Thread::WaitAndGetMessage( ThreadMessage& MsgToGet, unsigned int DelayMax /
 		while( true ) // was for(;;) but new version of MS compiler do no like it
 		{
 			// Is there a message ?
-			MsgQueue.Lock();
+			SL_MsgQueue.Lock();
 			if ( MsgQueue.GetNumberOfElements() != 0 )
 			{
 				MsgToGet = MsgQueue.ExtractFirst();
 				Done = true;
 			}
-			MsgQueue.Unlock();
+			SL_MsgQueue.Unlock();
 
 			if ( Done == true )
 			{
@@ -311,16 +315,17 @@ bool Thread::WaitAndGetMessage( ThreadMessage& MsgToGet, unsigned int DelayMax /
 	 */
 bool Thread::GetMessage( ThreadMessage& MsgToSend )
 {
-	MsgQueue.Lock();
+	SmartLocker SL_MsgQueue(MsgQueue);
+	SL_MsgQueue.Lock();
 	if ( MsgQueue.GetNumberOfElements() == 0 )
 	{
 		// No message
-		MsgQueue.Unlock();
+		SL_MsgQueue.Unlock();
 		return false;
 	}
 
 	// get first message
 	MsgToSend = MsgQueue.ExtractFirst();
-	MsgQueue.Unlock();
+	SL_MsgQueue.Unlock();
 	return true;
 }

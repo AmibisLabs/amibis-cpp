@@ -14,6 +14,8 @@
 // Standard includes
 #include "Accumulator.h"
 
+#include <System/LockManagement.h>
+
 #include <iostream>
 using namespace std;
 
@@ -88,7 +90,8 @@ void Accumulator::MessageReceived(Service& TheService, const SimpleString LocalC
 
 	// parse string to understand command
 	// Start lock myself using my mutex (needed if multiple clients)
-	Locker.EnterMutex();
+	SmartLocker SL_Locker(Locker);
+	SL_Locker.Lock();
 
 	// Get the pointer to the data
 	Command = Msg.GetBuffer();
@@ -167,7 +170,7 @@ void Accumulator::MessageReceived(Service& TheService, const SimpleString LocalC
 	}
 
 	// Unlock myself
-	Locker.LeaveMutex();
+	SL_Locker.Unlock();
 }
 
 

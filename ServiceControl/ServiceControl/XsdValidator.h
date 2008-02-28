@@ -7,7 +7,7 @@
 #ifndef __XSD_VALIDATOR_H__
 #define __XSD_VALIDATOR_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 #include <System/SimpleString.h>
 
 #include <libxml/xmlschemas.h>

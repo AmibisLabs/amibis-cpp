@@ -63,7 +63,7 @@ bool ReentrantMutex::Lock()
 	{
 #ifdef DEBUG
 		// In debug mode, set the owner id
-		OwnerId = GetThreadId();
+		OwnerId = Thread::GetThreadId();
 #endif
 		return true;
 	}

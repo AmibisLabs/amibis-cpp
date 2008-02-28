@@ -7,7 +7,8 @@
 #ifndef __REENTRANT_MUTEX_H__
 #define __REENTRANT_MUTEX_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
+#include <System/LockManagement.h>
 
 namespace Omiscid {
 
@@ -20,7 +21,7 @@ namespace Omiscid {
  * @author Dominique Vaufreydaz
  */
 
-class ReentrantMutex
+class ReentrantMutex : public LockableObject
 {
 public:
 	/** @brief Constructor */

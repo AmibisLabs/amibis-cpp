@@ -1,6 +1,7 @@
 #include <Com/MsgSocket.h>
 
 #include <System/ElapsedTime.h>
+#include <System/LockManagement.h>
 #include <System/Portage.h>
 #include <System/Socket.h>
 #include <System/SocketException.h>
@@ -186,7 +187,8 @@ bool MsgSocket::SetSyncLinkData( SimpleString DataForSL )
 	if ( DataForSL.GetLength() <= 0 )
 		return false;
 
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 
 	if ( receivedSyncLinkMsg == true || sendSyncLinkMsg == true )
 	{
@@ -197,14 +199,14 @@ bool MsgSocket::SetSyncLinkData( SimpleString DataForSL )
 			fprintf( stderr, "MsgSocket::SetSyncLinkData: connexion already open. Can not set SyncLink data.\n" );
 		}
 #endif
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return false;
 	}
 
 	// Copy data and set Length
 	SyncLinkData = DataForSL;
 
-	protectSend.LeaveMutex();
+	SL_protectSend.Unlock();
 	return true;
 }
 
@@ -213,7 +215,8 @@ bool MsgSocket::SetPeerSyncLinkData( char* DataForSL, int DataLength )
 	if ( DataForSL == NULL || DataLength <= 0 )
 		return false;
 
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 
 	if ( PeerSyncLinkData.GetLength() != 0 )
 	{
@@ -224,7 +227,7 @@ bool MsgSocket::SetPeerSyncLinkData( char* DataForSL, int DataLength )
 			fprintf( stderr, "MsgSocket::SetPeerSyncLinkData: Peer SyncLink data already set.\n" );
 		}
 #endif
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return false;
 	}
 
@@ -234,7 +237,7 @@ bool MsgSocket::SetPeerSyncLinkData( char* DataForSL, int DataLength )
 
 	PeerSyncLinkData = Buffer;
 
-	protectSend.LeaveMutex();
+	SL_protectSend.Unlock();
 	return true;
 }
 
@@ -244,9 +247,10 @@ SimpleString MsgSocket::GetSyncLinkData()
 	SimpleString ReturnValue;
 
 	// Copy the data
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 	ReturnValue = SyncLinkData;
-	protectSend.LeaveMutex();
+	SL_protectSend.Unlock();
 
 	return ReturnValue;
 }
@@ -256,9 +260,10 @@ SimpleString MsgSocket::GetPeerSyncLinkData()
 	SimpleString ReturnValue;
 
 	// Copy the data
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 	ReturnValue = PeerSyncLinkData;
-	protectSend.LeaveMutex();
+	SL_protectSend.Unlock();
 
 	return ReturnValue;
 }
@@ -415,7 +420,8 @@ void MsgSocket::InitForUdpExchange(int port)
 bool MsgSocket::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 {
 	// lock the list
-	CallbackObjects.Lock();
+	SmartLocker SL_CallbackObjects(CallbackObjects);
+	SL_CallbackObjects.Lock();
 
 	// Is the Callback object already in the list ?
 	for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
@@ -423,7 +429,7 @@ bool MsgSocket::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 		if ( CallbackObjects.GetCurrent() == CallbackObject )
 		{
 			// unlock the list
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 
 			// Could not add trice the same listener
 			return false;
@@ -434,7 +440,7 @@ bool MsgSocket::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	CallbackObjects.Add( CallbackObject );
 
 	// unlock the list
-	CallbackObjects.Unlock();
+	SL_CallbackObjects.Unlock();
 
 	return true;
 }
@@ -446,7 +452,8 @@ bool MsgSocket::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 bool MsgSocket::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 {
 	// lock the list
-	CallbackObjects.Lock();
+	SmartLocker SL_CallbackObjects(CallbackObjects);
+	SL_CallbackObjects.Lock();
 
 	// Is the Callback object already in the list ?
 	for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
@@ -457,7 +464,7 @@ bool MsgSocket::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 			CallbackObjects.RemoveCurrent();
 
 			// unlock the list
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 
 			// ok, we remove it
 			return true;
@@ -465,7 +472,7 @@ bool MsgSocket::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	}
 
 	// unlock the list
-	CallbackObjects.Unlock();
+	SL_CallbackObjects.Unlock();
 
 	// We did not find it
 	return false;
@@ -474,18 +481,19 @@ bool MsgSocket::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 void MsgSocket::RemoveAllCallbackObjects()
 {
 	// lock the list
-	CallbackObjects.Lock();
+	SmartLocker SL_CallbackObjects(CallbackObjects);
+	SL_CallbackObjects.Lock();
 
 	// Empty the list
 	CallbackObjects.Empty();
 
 	// unlock the list
-	CallbackObjects.Unlock();
+	SL_CallbackObjects.Unlock();
 }
 
 void MsgSocket::SetCallbackSyncLink(Callback_SyncLink cr, void* user_data1, void* user_data2)
 {
-	mutex.EnterMutex();
+	mutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
 	callbackSyncLinkFct = cr;
 
@@ -494,14 +502,15 @@ void MsgSocket::SetCallbackSyncLink(Callback_SyncLink cr, void* user_data1, void
 	callbackSyncLinkData.userData1 = user_data1;
 	callbackSyncLinkData.userData2 = user_data2;
 
-	mutex.LeaveMutex();
+	mutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 }
 
 bool MsgSocket::SendSyncLinkMsg()
 {
 	int TotalLen;
 
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 
 	if ( SyncLinkMsgSent() )
 	{
@@ -511,14 +520,14 @@ bool MsgSocket::SendSyncLinkMsg()
 			fprintf( stderr, "SendSyncLinkMsg: warning SyncLinkMsg already sent.\n" );
 		}
 #endif
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return false;
 	}
 
 	if ( message_id != 0 )
 	{
 		fprintf( stderr, "SendSyncLinkMsg: error SyncLinkMsg should be numbered as 0 not %u.\n", message_id );
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		throw SocketException( "MsgSocket::SendSyncLinkMsg: error SyncLinkMsg should be numbered as 0." );
 	}
 
@@ -534,7 +543,7 @@ bool MsgSocket::SendSyncLinkMsg()
 		}
 		if ( TotalLen == -1 )
 		{
-			protectSend.LeaveMutex();
+			SL_protectSend.Unlock();
 			return false;
 		}
 
@@ -557,18 +566,19 @@ bool MsgSocket::SendSyncLinkMsg()
 		}
 
 		sendSyncLinkMsg = true;
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 
 		return (TotalLen > 0);
 	}
 	catch(SocketException& e)
 	{
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
 			// Send disconnected message
-			CallbackObjects.Lock();
+			SmartLocker SL_CallbackObjects(CallbackObjects);
+			SL_CallbackObjects.Lock();
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
@@ -578,7 +588,7 @@ bool MsgSocket::SendSyncLinkMsg()
 				}
 				catch(SocketException&) {} // Discard it
 			}
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 			connected = false;
 		}
 		return false;
@@ -623,7 +633,8 @@ void MsgSocket::Stop()
 	if ( connected )
 	{
 		// Send disconnected message
-		CallbackObjects.Lock();
+		SmartLocker SL_CallbackObjects(CallbackObjects);
+		SL_CallbackObjects.Lock();
 		// Send info to all listener
 		for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 		{
@@ -633,7 +644,7 @@ void MsgSocket::Stop()
 			}
 			catch(SocketException&) {} // Discard it
 		}
-		CallbackObjects.Unlock();
+		SL_CallbackObjects.Unlock();
 		connected = false;
 	}
 	Thread::StopThread(0);
@@ -641,6 +652,7 @@ void MsgSocket::Stop()
 
 void MsgSocket::Receive()
 {
+	SmartLocker SL_CallbackObjects(CallbackObjects);
 	try
 	{
 		if(socket->Select())
@@ -652,7 +664,7 @@ void MsgSocket::Receive()
 				if ( connected )
 				{
 					// Send disconnected message
-					CallbackObjects.Lock();
+					SL_CallbackObjects.Lock();
 					// Send info to all listener
 					for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 					{
@@ -662,7 +674,7 @@ void MsgSocket::Receive()
 						}
 						catch(SocketException&) {} // Discard it
 					}
-					CallbackObjects.Unlock();
+					SL_CallbackObjects.Unlock();
 					connected = false;
 				}
 				return ;
@@ -697,7 +709,8 @@ void MsgSocket::Receive()
 #endif
 						peer_pid = pid;
 
-						mutex.EnterMutex();
+						SmartLocker SL_mutex(mutex);
+						SL_mutex.Lock();
 						if ( callbackSyncLinkFct )
 						{
 							*(buffer+offset+tag_size+length_msg)='\0';
@@ -719,11 +732,11 @@ void MsgSocket::Receive()
 							}
 							catch( SocketException& e )
 							{
-								mutex.LeaveMutex();
+								SL_mutex.Unlock();
 								throw e;
 							}
 						}
-						mutex.LeaveMutex();
+						SL_mutex.Unlock();
 
 						//std::cout << "Link connexion Msg from "<<pid<<"\n";
 						receivedSyncLinkMsg = true;
@@ -738,7 +751,7 @@ void MsgSocket::Receive()
 						}
 
 						// Let's say we have a new connected peer
-						CallbackObjects.Lock();
+						SL_CallbackObjects.Lock();
 						// Send info to all listener
 						for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 						{
@@ -749,13 +762,13 @@ void MsgSocket::Receive()
 							catch(SocketException& e)
 							{
 								// Unlock the list
-								CallbackObjects.Unlock();
+								SL_CallbackObjects.Unlock();
 
 								// Thow the exception
 								throw e;
 							}
 						}
-						CallbackObjects.Unlock();
+						SL_CallbackObjects.Unlock();
 
 						offset += length_header + tag_end_size;
 						size =  occupiedSize - offset;
@@ -824,7 +837,7 @@ void MsgSocket::Receive()
 							}
 #endif
 							// Send info to all receiver
-							CallbackObjects.Lock();
+							SL_CallbackObjects.Lock();
 							if ( CallbackObjects.GetNumberOfElements() )
 							{
 								// Prepare data
@@ -852,14 +865,14 @@ void MsgSocket::Receive()
 									catch(SocketException& e)
 									{
 										// Unlock the list
-										CallbackObjects.Unlock();
+										SL_CallbackObjects.Unlock();
 
 										// Throw the exception
 										throw e;
 									}
 								}
 							}
-							CallbackObjects.Unlock();
+							SL_CallbackObjects.Unlock();
 						}
 					}
 				}
@@ -894,7 +907,7 @@ void MsgSocket::Receive()
 		if ( connected )
 		{
 			// Send disconnected message
-			CallbackObjects.Lock();
+			SL_CallbackObjects.Lock();
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
@@ -904,7 +917,7 @@ void MsgSocket::Receive()
 				}
 				catch(SocketException&) {} // Discard
 			}
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 			connected = false;
 		}
 	}
@@ -931,7 +944,8 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 {
 	int TotalLen = 0;
 
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 	try
 	{
 		if ( Sendlen > maxBIPMessageSize )
@@ -945,7 +959,7 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 			TotalLen = PrepareBufferForBip( (char*)SendBuffer, NULL, Sendlen, true );
 			if ( TotalLen == -1 )
 			{
-				protectSend.LeaveMutex();
+				SL_protectSend.Unlock();
 				return -1;
 			}
 
@@ -982,7 +996,7 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 		TotalLen = PrepareBufferForBip( (char*)SendBuffer, buf, Sendlen );
 		if ( TotalLen == -1 )
 		{
-			protectSend.LeaveMutex();
+			SL_protectSend.Unlock();
 			return -1;
 		}
 
@@ -1006,7 +1020,7 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 		}
 #endif
 
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return (TotalLen-tag_end_size-tag_size);
 	}
 	catch(SocketException& e)
@@ -1015,7 +1029,8 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 		if ( connected )
 		{
 			// Send disconnected message
-			CallbackObjects.Lock();
+			SmartLocker SL_CallbackObjects(CallbackObjects);
+			SL_CallbackObjects.Lock();
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
@@ -1025,10 +1040,10 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 				}
 				catch(SocketException&) {}	// Discard it...
 			}
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 			connected = false;
 		}
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return -1;
 	}
 }
@@ -1044,8 +1059,9 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	{
 		SendLen += tab_length[i];
 	}
-
-	protectSend.EnterMutex();
+	
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 	try
 	{
 		if ( SendLen > maxBIPMessageSize )
@@ -1061,7 +1077,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 			TotalLen = PrepareBufferForBip( (char*)SendBuffer, NULL, SendLen, true );
 			if ( TotalLen == -1 )
 			{
-				protectSend.LeaveMutex();
+				SL_protectSend.Unlock();
 				return -1;
 			}
 
@@ -1106,7 +1122,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 		TotalLen = PrepareBufferForBipFromCuttedMsg( (char*)SendBuffer, tab_length, tab_buf, nb_buf);
 		if ( TotalLen == -1 )
 		{
-			protectSend.LeaveMutex();
+			SL_protectSend.Unlock();
 			return -1;
 		}
 		// We complete the header
@@ -1126,7 +1142,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 		{
 			TotalLen = -1;
 		}
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return TotalLen;
 	}
 	catch(SocketException& e)
@@ -1135,7 +1151,8 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 		if ( connected )
 		{
 			// Send disconnected message
-			CallbackObjects.Lock();
+			SmartLocker SL_CallbackObjects(CallbackObjects);
+			SL_CallbackObjects.Lock();
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
@@ -1145,10 +1162,10 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 				}
 				catch(SocketException&) {} // Discard it
 			}
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 			connected = false;
 		}
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return -1;
 	}
 }
@@ -1167,7 +1184,8 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 		throw MsgSocketException("Message too big for TCP");
 	}
 
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 	try
 	{
 		// Here we've got a full buffer and we can (must) write our header at the in at the beginning !
@@ -1185,11 +1203,11 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 		int res;
 		if((res = socket->Send(len, l_buffer)) != -1)
 		{
-			protectSend.LeaveMutex();
+			SL_protectSend.Unlock();
 			return res;
 		}
 		OmiscidTrace( "Erreur Send (-1)\n" );
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return -1;
 
 	}
@@ -1199,7 +1217,8 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 		if ( connected )
 		{
 			// Send disconnected message
-			CallbackObjects.Lock();
+			SmartLocker SL_CallbackObjects(CallbackObjects);
+			SL_CallbackObjects.Lock();
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
@@ -1209,10 +1228,10 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 				}
 				catch(SocketException&) {} // Discard it
 			}
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 			connected = false;
 		}
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return -1;
 	}
 }
@@ -1227,13 +1246,14 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 		throw MsgSocketException("Message too big for UDP");
 	}
 
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 	if ( buffer_udp_send == NULL )
 	{
 		buffer_udp_send = new OMISCID_TLM char[2048];
 		if ( buffer_udp_send == NULL )
 		{
-			protectSend.LeaveMutex();
+			SL_protectSend.Unlock();
 			return 0;
 		}
 	}
@@ -1249,7 +1269,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 		memcpy(buffer_udp_send+tag_size, buf, len);
 
 		int TotalLen = socket->SendTo(total, buffer_udp_send, destptr);
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return TotalLen;
 
 		//	  socket->SendTo(strlen(start_tag), start_tag, destptr);
@@ -1263,7 +1283,8 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 		if ( connected )
 		{
 			// Send disconnected message
-			CallbackObjects.Lock();
+			SmartLocker SL_CallbackObjects(CallbackObjects);
+			SL_CallbackObjects.Lock();
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
@@ -1273,10 +1294,10 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 				}
 				catch(SocketException&) {} // Discard it
 			}
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 			connected = false;
 		}
-		protectSend.LeaveMutex();
+		SL_protectSend.Unlock();
 		return -1;
 	}
 }
@@ -1337,6 +1358,7 @@ UdpConnection* MsgSocket::AcceptConnection(const UdpConnection& udp_connect, boo
 
 void MsgSocket::ReceiveUdpExchange()
 {
+	SmartLocker SL_CallbackObjects(CallbackObjects);
 	try
 	{
 		if(socket->Select())
@@ -1400,7 +1422,7 @@ void MsgSocket::ReceiveUdpExchange()
 							size =  occupiedSize - offset;
 							if(length_msg != 0)
 							{
-								CallbackObjects.Lock();
+								SL_CallbackObjects.Lock();
 								if( connection && CallbackObjects.GetNumberOfElements() )
 								{
 									*(msgptr+length_msg)='\0';
@@ -1418,14 +1440,14 @@ void MsgSocket::ReceiveUdpExchange()
 										catch(SocketException& e)
 										{
 											// Unlock the list
-											CallbackObjects.Unlock();
+											SL_CallbackObjects.Unlock();
 
 											// Throw the exception
 											throw e;
 										}
 									}
 								}
-								CallbackObjects.Unlock();
+								SL_CallbackObjects.Unlock();
 							}
 
 						}
@@ -1461,7 +1483,7 @@ void MsgSocket::ReceiveUdpExchange()
 		if ( connected )
 		{
 			// Send disconnected message
-			CallbackObjects.Lock();
+			SL_CallbackObjects.Lock();
 			// Send info to all listener
 			for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 			{
@@ -1471,7 +1493,7 @@ void MsgSocket::ReceiveUdpExchange()
 				}
 				catch(SocketException&) {} // Discard it
 			}
-			CallbackObjects.Unlock();
+			SL_CallbackObjects.Unlock();
 			connected = false;
 		}
 	}
@@ -1520,9 +1542,10 @@ unsigned int MsgSocket::GetPeerPid() const
 bool MsgSocket::ReceivedSyncLinkMsg()
 {
 	bool tmpb;
-	protectSend.EnterMutex();
+	SmartLocker SL_protectSend(protectSend);
+	SL_protectSend.Lock();
 	tmpb = receivedSyncLinkMsg;
-	protectSend.LeaveMutex();
+	SL_protectSend.Unlock();
 	return tmpb;
 }
 

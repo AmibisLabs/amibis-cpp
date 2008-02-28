@@ -1,4 +1,6 @@
 #include <System/SimpleString.h>
+
+#include <System/LockManagement.h>
 #include <System/Portage.h>
 
 #include <string.h>
@@ -67,7 +69,7 @@ SimpleString::StringData& SimpleString::StringData::operator=(const StringData& 
 	StringData& TheOther = (StringData&)Right;
 
 	Lock();
-	TheOther.Lock();
+	TheOther.Lock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
 
 	data = Right.data;
 	length = Right.length;
@@ -76,7 +78,7 @@ SimpleString::StringData& SimpleString::StringData::operator=(const StringData& 
 	// Add references to the shared atomic counter
 	AddReference();
 
-	TheOther.Unlock();
+	TheOther.Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
 	Unlock();
 
 	return (*this);
@@ -92,7 +94,7 @@ SimpleString::StringData::StringData(const StringData& base, int begin, int end)
 	StringData& TheOther = (StringData&)base;
 
 	Lock();
-	TheOther.Lock();
+	TheOther.Lock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
 
 	data = NULL;
 	nbReferences = NULL;
@@ -104,7 +106,7 @@ SimpleString::StringData::StringData(const StringData& base, int begin, int end)
 
 	AddReference();
 
-	TheOther.Unlock();
+	TheOther.Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
 	Unlock();
 }
 
@@ -171,16 +173,6 @@ void SimpleString::StringData::SetData(const char* str)
 	}
 
 	Unlock();
-}
-
-void SimpleString::StringData::Lock()
-{
-	Protect.EnterMutex();
-}
-
-void SimpleString::StringData::Unlock()
-{
-	Protect.LeaveMutex();
 }
 
 int SimpleString::StringData::RemoveReference()
@@ -397,11 +389,6 @@ bool SimpleString::StringData::NotEqualsCaseInsensitive(const StringData& sd)
 
 ///////////////////////////////////////////////////////
 
-const SimpleString& SimpleString::EmptyString()
-{
-	static const SimpleString Internal_EmptyString("");
-	return Internal_EmptyString;
-}
 
 void SimpleString::CopyStringData(StringData* to_copy)
 {

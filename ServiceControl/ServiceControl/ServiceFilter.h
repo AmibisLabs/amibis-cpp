@@ -8,7 +8,7 @@
 #ifndef __SERVICE_FILTER_H__
 #define __SERVICE_FILTER_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 #include <System/SimpleList.h>

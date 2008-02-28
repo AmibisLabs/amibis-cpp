@@ -7,8 +7,9 @@
 #ifndef __RECYCLE_SIMPLE_LIST_H__
 #define __RECYCLE_SIMPLE_LIST_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/SimpleList.h>
+#include <System/LockManagement.h>
 
 namespace Omiscid {
 
@@ -64,28 +65,31 @@ class SimpleRecycleList : public SimpleList<TYPE>
 	/** @brief Add an available cell
 	 * @param elt the cell to add
 	 */
-	static void AddAvailableCells(SimpleListElement<TYPE>* elt)
-	  {
-		mutexAvailable.EnterMutex();
-		elt->NextElement = availableCells;
-		availableCells = elt;
-		mutexAvailable.LeaveMutex();
-	  }
+	 static void AddAvailableCells(SimpleListElement<TYPE>* elt)
+	 {
+		 SmartLocker SL_mutexAvailable(mutexAvailable);
+		 SL_mutexAvailable.Lock();
+		 elt->NextElement = availableCells;
+		 availableCells = elt;
+		 SL_mutexAvailable.Unlock();
+	 }
 
 	/** @brief Extract an available cell
 	 * @return an available cell, NULL if no available cell */
-	static SimpleListElement<TYPE>* ExtractAvailableCells()
-	  {
-		SimpleListElement<TYPE>* elt = NULL;
-		mutexAvailable.EnterMutex();
-		if(availableCells != NULL)
-		  {
-		elt = availableCells;
-		availableCells = availableCells->NextElement;
-		  }
-		mutexAvailable.LeaveMutex();
-		return elt;
-	  }
+	 static SimpleListElement<TYPE>* ExtractAvailableCells()
+	 {
+		 SimpleListElement<TYPE>* elt = NULL;
+
+		 SmartLocker SL_mutexAvailable(mutexAvailable);
+		 SL_mutexAvailable.Lock();
+		 if ( availableCells != NULL )
+		 {
+			 elt = availableCells;
+			 availableCells = availableCells->NextElement;
+		 }
+		 SL_mutexAvailable.Unlock();
+		 return elt;
+	 }
 
 	//PbStatic
 
@@ -120,11 +124,6 @@ SimpleListElement<TYPE>* SimpleRecycleList<TYPE>::GetNewSimpleListElement() cons
   return elt;
 }
 
-
-
-
-
-
 /**
  * @class MutexedSimpleRecycleList RecycleSimpleList.h System/RecycleSimpleList.h
  * @brief Combination of a simple recyvle list with a mutex.
@@ -133,7 +132,7 @@ SimpleListElement<TYPE>* SimpleRecycleList<TYPE>::GetNewSimpleListElement() cons
  * When the user want to lock an access, he can call Lock and Unlock method.
  */
 template <typename TYPE>
-class MutexedSimpleRecycleList : public SimpleRecycleList<TYPE>
+class MutexedSimpleRecycleList : public SimpleRecycleList<TYPE>, public LockableObject
 {
 public:
 	// Virtual destructor always
@@ -165,13 +164,13 @@ MutexedSimpleRecycleList<TYPE>::~MutexedSimpleRecycleList()
 template <typename TYPE>
 bool MutexedSimpleRecycleList<TYPE>::Lock()
 {
-	return mutex.EnterMutex();
+	return mutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 }
 
 template <typename TYPE>
 bool MutexedSimpleRecycleList<TYPE>::Unlock()
 {
-	return mutex.LeaveMutex();
+	return mutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 }
 
 } // namespace Omiscid

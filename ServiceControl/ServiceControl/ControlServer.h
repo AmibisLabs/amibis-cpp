@@ -7,7 +7,7 @@
 #ifndef __CONTROL_SERVER_H__
 #define __CONTROL_SERVER_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>

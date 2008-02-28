@@ -6,7 +6,7 @@
 #ifndef __FACTORY_H__
 #define __FACTORY_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 #include <ServiceControl/Service.h>

@@ -7,7 +7,7 @@
 #ifndef __COM_TOOLS_H__
 #define __COM_TOOLS_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
@@ -83,11 +83,11 @@ class ComTools
    *
    */
   
-inline static const SimpleString& MagicUdp()
-{
-        static const SimpleString Internal_MagicUdp;
-        return Internal_MagicUdp;
-}
+	inline static const SimpleString& MagicUdp()
+	{
+			static const SimpleString Internal_MagicUdp;
+			return Internal_MagicUdp;
+	}
 
   static SimpleString ValueFromKey(const SimpleString array, const SimpleString key);
 };

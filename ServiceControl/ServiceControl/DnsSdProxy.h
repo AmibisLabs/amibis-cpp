@@ -7,7 +7,7 @@
 #ifndef __DNS_SD_PROXY_H__
 #define __DNS_SD_PROXY_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/ReentrantMutex.h>
 #include <System/Event.h>

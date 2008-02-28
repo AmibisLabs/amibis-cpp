@@ -7,7 +7,7 @@
 #ifndef __SHARED_MEM_SEGMENT_H__
 #define __SHARED_MEM_SEGMENT_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/Portage.h>
 #include <System/SimpleException.h>
 #include <System/SimpleString.h>

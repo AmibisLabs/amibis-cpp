@@ -7,7 +7,7 @@
 #ifndef __ATTRIBUTE_H__
 #define __ATTRIBUTE_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleString.h>
 

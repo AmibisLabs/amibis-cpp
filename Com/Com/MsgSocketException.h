@@ -7,7 +7,7 @@
 #ifndef __MSG_SOCKET_EXCEPTION_H__
 #define __MSG_SOCKET_EXCEPTION_H__
 
-#include <Com/Config.h>
+#include <Com/ConfigCom.h>
 
 #include <System/SimpleException.h>
 

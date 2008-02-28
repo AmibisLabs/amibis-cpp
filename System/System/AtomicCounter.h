@@ -1,5 +1,5 @@
 /**
- * @file System/AtomicCounter.h
+ * @file System/System/AtomicCounter.h
  * @ingroup System
  * @brief Definition of AtomicCounter class
  */
@@ -7,7 +7,7 @@
 #ifndef __ATOMIC_COUNTER_H__
 #define __ATOMIC_COUNTER_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 #include <System/Mutex.h>
 
 namespace Omiscid {

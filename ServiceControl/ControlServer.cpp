@@ -1,6 +1,7 @@
 #include <ServiceControl/ControlServer.h>
 
 #include <System/ElapsedTime.h>
+#include <System/LockManagement.h>
 #include <System/Portage.h>
 #include <System/Socket.h>
 #include <System/SocketException.h>
@@ -91,14 +92,15 @@ ControlServer::~ControlServer()
 	TcpServer::Close();
 	XMLTreeParser::StopThread(0);
 
-	listValueListener.Lock();
+	SmartLocker SL_listValueListener(listValueListener);
+	SL_listValueListener.Lock();
 	for(listValueListener.First(); listValueListener.NotAtEnd();
 		listValueListener.Next())
 	{
 		delete listValueListener.GetCurrent();
 		listValueListener.RemoveCurrent();
 	}
-	listValueListener.Unlock();
+	SL_listValueListener.Unlock();
 
 	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
 	{
@@ -481,7 +483,8 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 			}
 	#endif
 
-			TcpServer::listConnections.Lock();
+			SmartLocker SL_TcpServer_listConnections(TcpServer::listConnections);
+			SL_TcpServer_listConnections.Lock();
 			MsgSocket* ms = FindClientFromId( msg->pid );
 			if( ms != (MsgSocket*)NULL )
 			{
@@ -494,7 +497,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 					OmiscidError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
 				}
 			}
-			TcpServer::listConnections.Unlock();
+			SL_TcpServer_listConnections.Unlock();
 		}
 	}
 	else
@@ -846,7 +849,8 @@ InOutputAttribute* ControlServer::AddInOutput(const SimpleString InOutputName, C
 
 void ControlServer::NotifyValueChanged(VariableAttribute* var)
 {
-	listValueListener.Lock();
+	SmartLocker SL_listValueListener(listValueListener);
+	SL_listValueListener.Lock();
 	ValueListener* vl = FindValueListener(var);
 	if(vl && vl->HasListener())
 	{
@@ -864,9 +868,10 @@ void ControlServer::NotifyValueChanged(VariableAttribute* var)
 		}
 #endif
 
+		SmartLocker SL_listConnections(listConnections);
 		for(vl->listListener.First(); vl->listListener.NotAtEnd(); vl->listListener.Next())
 		{
-			listConnections.Lock();
+			SL_listConnections.Lock();
 			MsgSocket* sock = FindClientFromId(vl->listListener.GetCurrent());
 			if( sock )
 			{
@@ -883,40 +888,49 @@ void ControlServer::NotifyValueChanged(VariableAttribute* var)
 			{
 				vl->listListener.RemoveCurrent();
 			}
-			listConnections.Unlock();
+			SL_listConnections.Unlock();
 		}
 	}
-	listValueListener.Unlock();
+	SL_listValueListener.Unlock();
 }
 
 
 void ControlServer::AddListener(VariableAttribute* var, unsigned listener_id)
 {
-	listValueListener.Lock();
+	SmartLocker SL_listValueListener(listValueListener);
+	SL_listValueListener.Lock();
 	ValueListener* vl = FindValueListener(var);
-	if(vl) vl->AddListener(listener_id);
+	if ( vl != (ValueListener*)NULL )
+	{
+		vl->AddListener(listener_id);
+	}
 	else
 	{
 		listValueListener.Add(new ValueListener(var, listener_id));
 	}
-	listValueListener.Unlock();
+	SL_listValueListener.Unlock();
 }
 
 void ControlServer::RemoveListener(VariableAttribute* var, unsigned int pid)
 {
-	listValueListener.Lock();
-	if(var)
+	SmartLocker SL_listValueListener(listValueListener);
+	SL_listValueListener.Lock();
+	if ( var != (VariableAttribute*)NULL )
 	{
-		ValueListener* vl = FindValueListener(var);
-		if(vl) vl->RemoveListener(pid);
+		ValueListener * vl = FindValueListener(var);
+		if ( vl != (ValueListener *)NULL )
+		{
+			vl->RemoveListener(pid);
+		}
 	}
 	else
 	{
-		for(listValueListener.First(); listValueListener.NotAtEnd();
-			listValueListener.Next())
-			(listValueListener.GetCurrent())->RemoveListener(pid);
+		for ( listValueListener.First(); listValueListener.NotAtEnd(); listValueListener.Next() )
+		{
+			listValueListener.GetCurrent()->RemoveListener(pid);
+		}
 	}
-	listValueListener.Unlock();
+	SL_listValueListener.Unlock();
 }
 
 ValueListener* ControlServer::FindValueListener(VariableAttribute* var)

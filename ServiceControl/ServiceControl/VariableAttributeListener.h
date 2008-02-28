@@ -9,7 +9,7 @@
 #ifndef __VARIABLE_ATTRIBUTE_LISTENER_H__
 #define __VARIABLE_ATTRIBUTE_LISTENER_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 
 #include <ServiceControl/VariableAttribute.h>
 

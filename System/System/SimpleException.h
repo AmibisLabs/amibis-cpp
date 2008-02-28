@@ -7,7 +7,7 @@
 #ifndef __SIMPLE_EXCEPTION_H__
 #define __SIMPLE_EXCEPTION_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
 
 #include <System/SimpleString.h>
 

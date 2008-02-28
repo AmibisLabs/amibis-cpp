@@ -7,7 +7,8 @@
 #ifndef __MUTEX_H__
 #define __MUTEX_H__
 
-#include <System/Config.h>
+#include <System/ConfigSystem.h>
+#include <System/LockManagement.h>
 
 namespace Omiscid {
 
@@ -20,7 +21,7 @@ namespace Omiscid {
  * @author Dominique Vaufreydaz
  * @author Sebastien Pesnel
  */
-class Mutex
+class Mutex : public LockableObject
 {
 public:
 	/** @brief Constructor */
@@ -51,7 +52,7 @@ public:
 	 */
 	bool Unlock();
 
-		/**
+	/**
 	 * @brief Unlock the mutex. Deprecated, use Mutex#Unlock instead.
 	 *
 	 * Enables other clients to use the critical section protected by this mutex.
@@ -66,6 +67,9 @@ private:
 	#endif
 #else
 	pthread_mutex_t mutex; /*!< Posix Mutex*/
+	#ifdef DEBUG
+		unsigned long OwnerId;
+	#endif
 #endif /* WIN32 */
 };
 

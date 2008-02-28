@@ -55,15 +55,7 @@ sub CheckIfDef()
  	$FileName =~ /([^\/]+)\/[^\/]+$/;
  	$Folder = $1;
 
-	if ( $FileName =~ /\/Config.h$/ )
-	{
- 		$ExpectedHeader = "${Folder}$ShortFileName";
- 	}
- 	else
- 	{
- 		$ExpectedHeader = $ShortFileName;
- 	}
- 	
+	$ExpectedHeader = $ShortFileName;
  	$ExpectedHeader =~ s/([A-Z]+)/_$1/g;
  	$ExpectedHeader =~ s/.h$/_H__/;
  	$ExpectedHeader = '_' . $ExpectedHeader;
@@ -131,8 +123,13 @@ sub FirstIncludeofHeaderFileisConfig()
  	my $FirstIncludedFile;
  	my $Folder;
  
-  	my @ExcludedFiles = ( 'System/Config.h', 'Com/Config.h', 'ServiceControl/Config.h', 'System/TrackingMemoryLeaks.h' );
+  	my @ExcludedFiles = ( 'System/ConfigSystem.h', 'Com/ConfigCom.h', 'ServiceControl/ConfigServiceControl.h', 'System/TrackingMemoryLeaks.h' );
  	my $CurrentFile;
+ 	
+ 	if ( $FileName =~ /^Examples\// )
+ 	{
+ 		return;
+ 	}
  	
  	foreach $CurrentFile ( @ExcludedFiles )
  	{
@@ -155,12 +152,12 @@ sub FirstIncludeofHeaderFileisConfig()
 		if ( $CurrentLine =~ /^\#include\s+\<([^\>]+)\>/ )
 		{
 			$FirstIncludedFile = $1;
-			if ( $FirstIncludedFile =~ /$Folder\/Config.h$/ )
+			if ( $FirstIncludedFile =~ /$Folder\/Config${Folder}.h$/ )
 			{
 				last;
 			}
 			# print "$CurrentLine : '$FirstIncludedFile'\n";
-			print "$FileName: the first include of an header file *must* be '$Folder/Config.h'\n";
+			print "$FileName: the first include of an header file *must* be '$Folder/Config${Folder}.h'\n";
 		}
 		else
 		{
@@ -178,6 +175,7 @@ sub FirstIncludeofSourceFileisItsHeader()
  	my $CurrentLine;
  	my $FirstIncludedFile;
  	my $ExpectedInclude;
+ 	my $ExpectedIncludeWithQuotes;
  	my $Rep;
  	my $ShortFileName;
  	
@@ -188,6 +186,7 @@ sub FirstIncludeofSourceFileisItsHeader()
  	
  	 	# print "$FileName\n$Rep\n$ShortFileName\n" ;
  	 	$ExpectedInclude = "$Rep/$ShortFileName.h";
+ 	 	$ExpectedIncludeWithQuotes = "$ShortFileName.h";
  	 }
  	 else
  	 {
@@ -200,10 +199,19 @@ sub FirstIncludeofSourceFileisItsHeader()
 	{
 		# $CurrentLine =~ s/[\r\n]+$//;
 		# print "##\n$CurrentLine\n##\n";
+		if ( $CurrentLine =~ /^\#include\s+\"([^\"]+)\"/ )
+		{
+			$FirstIncludedFile = $1;
+			if ( $FirstIncludedFile ne $ExpectedIncludeWithQuotes )
+			{
+				print "$FileName: the first include *must* be '$ExpectedIncludeWithQuotes' (is '$FirstIncludedFile')\n";
+			}
+			last;
+		}
 		if ( $CurrentLine =~ /^\#include\s+\<([^\>]+)\>/ )
 		{
 			$FirstIncludedFile = $1;
-			if ( $FirstIncludedFile ne $ExpectedInclude )
+			if ( $FirstIncludedFile ne $ExpectedInclude && -e $ExpectedInclude )
 			{
 				# print "$CurrentLine : '$FirstIncludedFile'\n";
 				print "$FileName: the first include *must* be '$ExpectedInclude' (is '$FirstIncludedFile')\n";
@@ -228,7 +236,7 @@ sub FirstDoesNotIncludeStdLibs()
  	my $CurrentLine;
  	my $lib;
  	
- 	my @ExcludedFiles = ( 'System/Config.h', 'System/TrackingMemoryLeaks.h', 'System/TrackingMemoryLeaks.cpp' );
+ 	my @ExcludedFiles = ( 'System/ConfigSystem.h', 'System/TrackingMemoryLeaks.h', 'System/TrackingMemoryLeaks.cpp' );
  	my $CurrentFile;
  	
  	foreach $CurrentFile ( @ExcludedFiles )
@@ -346,6 +354,19 @@ sub CheckExceptionConsistancy()
  	my $FileName = shift @_;
    	my $CurrentLine;
   	my $CurrentLineNumber = 0;
+  	
+   	my @ExcludedFiles = ( 'System/TrackingMemoryLeaks.h', 'System/TrackingMemoryLeaks.cpp' );
+ 	my $CurrentFile;
+ 	
+ 	foreach $CurrentFile ( @ExcludedFiles )
+ 	{
+ 		# '/' => '\/'
+ 		$CurrentFile =~ s/\//\\\//g;
+	 	if ( $FileName =~ /$CurrentFile$/ )
+	 	{
+	 		return;
+	 	}
+	}	
 	
  	open( $fd, "<$FileName" ) or return;
 	while( $CurrentLine = <$fd> )
@@ -379,6 +400,48 @@ sub CheckExceptionConsistancy()
 			next;
 		}
 		
+	}
+	close( $fd );
+}
+
+sub LockAndUnlockAreProtectedUsingSmartLocker()
+{
+ 	my $FileName = shift @_;
+ 	my $CurrentLine;
+  	my $CurrentLineNumber = 0;
+  	
+  	my @ExcludedFiles = ( 'System/LockManagement.cpp', 'System/LockManagement.h', 'System/TrackingMemoryLeaks.cpp' );
+ 	my $CurrentFile;
+ 	
+ 	foreach $CurrentFile ( @ExcludedFiles )
+ 	{
+ 		# '/' => '\/'
+ 		$CurrentFile =~ s/\//\\\//g;
+	 	if ( $FileName =~ /$CurrentFile$/ )
+	 	{
+	 		return;
+	 	}
+	}	
+	
+ 	open( $fd, "<$FileName" ) or return;
+	while( $CurrentLine = <$fd> )
+	{
+		$CurrentLineNumber++;
+		
+		# We do not remove comments for this (see SimpleString.cpp SL_ comments)
+		# $CurrentLine =~ s/(\/\/.*)$//;
+		# $CurrentLine =~ s/(\/\*.*)$//;
+
+		if ( $CurrentLine =~ /(\.|->)(Lock|Unlock|EnterMutex|LeaveMutex)\(\)/ )
+		{
+			if ( $CurrentLine =~ /SL_/ )
+			{
+			}
+			else
+			{
+				print "$FileName ($CurrentLineNumber): bad Lock/Unlock or EnterMutex/LeaveMutex Patern ?\n";
+			}
+		}
 	}
 	close( $fd );
 }
@@ -441,7 +504,10 @@ sub WorkOnFile()
 		# check thow consistancy
 		&CheckExceptionConsistancy($CompleteFileName);
 		
-		# Convert files to Windows CD/LR mode in order to prevent
+		# check Lock/Unlock paradigms
+		&LockAndUnlockAreProtectedUsingSmartLocker($CompleteFileName);
+		
+		# Convert files to Windows CR/LF mode in order to prevent
 		# problems using VC2003 and VC2005
 		&ConvertFiles($CompleteFileName);
 	}
