@@ -25,6 +25,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  global TraceMode
  global DoValgrind
  global OSis
+ global DoDebugThread
  
  if 'xml2' in options:
   env.ParseConfig('xml2-config --cflags')
@@ -95,7 +96,22 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
   elif arguments['chmem'] not in ['0','no','false'] :
    OmiscidMessage("Bad value for chmem flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
    sys.exit(1)
+ 
+ if 'insure' in arguments :
+  if arguments['insure'] in ['1','yes','true'] :
+   env.Replace( UseInsure = 'yes' )
+  elif arguments['insure'] not in ['0','no','false'] :
+   OmiscidMessage("Bad value for insure flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
+   sys.exit(1)
    
+ DoDebugThread = False;
+ if 'debugthread' in arguments :
+  if arguments['debugthread'] in ['1','yes','true'] :
+   DoDebugThread = True
+  elif arguments['debugthread'] not in ['0','no','false'] :
+   OmiscidMessage("Bad value for debugthread flag. Must be '1', 'yes', 'true' for tracing mode or '0', 'no', 'false' for non tracing mode")
+   sys.exit(1) 
+       
  # Do what we ask
  if WhichZeroConfLibrary == 'OMISCID_USE_AVAHI' :
   OmiscidMessage('compiling using avahi')
@@ -103,7 +119,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
  elif WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
   OmiscidMessage('compiling using mdns (DNS-SD, Zeroconf, Bonjour, rendez-vous...)')
   env.AppendUnique(CXXFLAGS = ['-DOMISCID_USE_MDNS'])
-  
+
  if ChMemMode == True :   
   OmiscidMessage('compiling using memory leak detection mode')
   env.AppendUnique(CXXFLAGS = ['-DTRACKING_MEMORY_LEAKS'])
