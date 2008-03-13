@@ -1,9 +1,6 @@
 /**
- * @file Examples/BrowsingTest.cpp
+ * @file Examples/RegisterThread.h
  * @ingroup Examples
- * @brief Illustration of the use of a #Thread, #Event and of the Registration
- * of a #Service. Illustration os searches using #Service::FindService, #Service::FindServices
- * and using #ServiceProxy to comunicate/interact with distant service.
  *
  * @author Dominique Vaufreydaz
  */
@@ -35,6 +32,11 @@ public:
 
 	/* @brief The Run procedure of the thread, so what he must do */
 	void FUNCTION_CALL_TYPE Run();
+
+	void Start()
+	{
+		StartThread();
+	}
 
 	static AtomicCounter NbRegistered; /*!< @brief A static value to count registered services */
 	static Event NewServiceIsRegistered; /*!< @brief A static value to count registered services */

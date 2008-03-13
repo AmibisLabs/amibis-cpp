@@ -30,6 +30,8 @@ In this files, you will find changes between OMiSCID versions.
 	  value localy.
 	- You can now get the number of connected clients to one connector
 	  using Service::GetConnectorClientCount
+	- Remove autostart from BrowseForDNSSDService constructor (virtual
+	  members problems).
 	[Bug corrections]
 	- Correct memory leak when trying to add a connector after starting
 	  the service.

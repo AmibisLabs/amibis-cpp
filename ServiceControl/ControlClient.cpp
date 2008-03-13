@@ -19,15 +19,12 @@ using namespace Omiscid;
 AnswerWaiter::AnswerWaiter()
 {
 	SmartLocker SL_ObjectMutex(ObjectMutex);
-	SL_ObjectMutex.Lock();
 
 	// Initialise object
 	Waiter.Reset();
 	IsFree = true;
 	MessageId = 0;
 	AnswerMessage = NULL;
-
-	SL_ObjectMutex.Unlock();
 }
 
 AnswerWaiter::~AnswerWaiter()
@@ -43,11 +40,9 @@ AnswerWaiter::~AnswerWaiter()
 bool AnswerWaiter::Use( unsigned int eMessageId )
 {
 	SmartLocker SL_ObjectMutex(ObjectMutex);
-	SL_ObjectMutex.Lock();
 
 	if ( IsFree != true )
 	{
-		SL_ObjectMutex.Unlock();
 		return false;
 	}
 
@@ -67,15 +62,12 @@ bool AnswerWaiter::Use( unsigned int eMessageId )
 	// Reset event
 	Waiter.Reset();
 
-	SL_ObjectMutex.Unlock();
-
 	return true;
 }
 
 void AnswerWaiter::Free()
 {
 	SmartLocker SL_ObjectMutex(ObjectMutex);
-	SL_ObjectMutex.Lock();
 
 	// Delete message if any
 	if ( AnswerMessage != NULL )
@@ -86,8 +78,6 @@ void AnswerWaiter::Free()
 
 	// Say I am free...
 	IsFree = true;
-
-	SL_ObjectMutex.Unlock();
 }
 
 XMLMessage * AnswerWaiter::GetAnswer(unsigned int TimeToWait)
@@ -96,11 +86,12 @@ XMLMessage * AnswerWaiter::GetAnswer(unsigned int TimeToWait)
 	int NbLoop;
 
 	//
+	SmartLocker SL_ObjectMutex(ObjectMutex, false);
 	for( NbLoop = 0; ; NbLoop++ )
 	{
 		// Is the message already here ?
-		SmartLocker SL_ObjectMutex(ObjectMutex);
 		SL_ObjectMutex.Lock();
+
 		if ( AnswerMessage != NULL )
 		{
 			// Get the message pointer
@@ -110,7 +101,6 @@ XMLMessage * AnswerWaiter::GetAnswer(unsigned int TimeToWait)
 			// This place is free, we got the message
 			Free();
 
-			SL_ObjectMutex.Unlock();
 			return tmpMessage;
 		}
 
@@ -141,7 +131,6 @@ AnswersManager::~AnswersManager()
 	AnswerWaiter * pWaiter;
 
 	SmartLocker SL_WaitersList(WaitersList);
-	SL_WaitersList.Lock();
 
 	// Destroy all waiters information
 	while( WaitersList.GetNumberOfElements() > 0 )
@@ -152,8 +141,6 @@ AnswersManager::~AnswersManager()
 			delete pWaiter;
 		 }
 	}
-
-	SL_WaitersList.Unlock();
 }
 
 AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
@@ -161,7 +148,6 @@ AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 	AnswerWaiter * pWaiterInfo = NULL;
 
 	SmartLocker SL_WaitersList(WaitersList);
-	SL_WaitersList.Lock();
 
 	// Is there any free waiterinfo in my list ?
 	for( WaitersList.First(); WaitersList.NotAtEnd(); WaitersList.Next() )
@@ -181,7 +167,6 @@ AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 		if ( pWaiterInfo == NULL )
 		{
 			OmiscidError( "AnswersManager::WaitAndGetAnswer: no more memory.\n" );
-			SL_WaitersList.Unlock();
 			return NULL;
 		}
 		pWaiterInfo->Use(MessageId);
@@ -189,9 +174,6 @@ AnswerWaiter * AnswersManager::CreateAnswerWaiter(unsigned int MessageId)
 		// Add it to the list
 		WaitersList.AddTail(pWaiterInfo);
 	}
-
-	// Unlock the list
-	SL_WaitersList.Unlock();
 
 	return pWaiterInfo;
 }
@@ -218,7 +200,6 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 	}
 
 	SmartLocker SL_WaitersList(WaitersList);
-	SL_WaitersList.Lock();
 
 	// Is there AnswerWaiter for this message ?
 	for( WaitersList.First(); WaitersList.NotAtEnd(); WaitersList.Next() )
@@ -227,33 +208,23 @@ bool AnswersManager::PushAnswer(XMLMessage * Msg)
 
 		// Lock this waiter
 		SmartLocker SL_pWaiter_ObjectMutex(pWaiter->ObjectMutex);
-		SL_pWaiter_ObjectMutex.Lock();
 
 		if ( pWaiter->IsFree == false && CheckMessage(Msg, pWaiter->MessageId) )
 		{
 			// We've got a waiter info for this waiter...
 			// Copy the message for the waiter
 			pWaiter->AnswerMessage = new OMISCID_TLM XMLMessage(*Msg);
-			SL_pWaiter_ObjectMutex.Unlock();
 
 			pWaiter->Waiter.Signal();
-
-			SL_WaitersList.Unlock();
 
 			// OmiscidTrace( "AnswersManager::PushAnswer: PushMessage ok.\n" );
 
 			return true;
 		}
-
-		// Unlock the waiter
-		SL_pWaiter_ObjectMutex.Unlock();
 	}
 
 	// Do nothing with this message... probably timeout...
 	OmiscidTrace( "AnswersManager::PushAnswer: no waiters (probably timeout).\n" );
-
-	// Unlock the list
-	SL_WaitersList.Unlock();
 
 	return false;
 }
@@ -637,7 +608,7 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& request, bool wait_answer
 unsigned int ControlClient::BeginEndTag(SimpleString& str)
 {
 	TemporaryMemoryBuffer tmp(10);
-	snprintf((char*)tmp, 10, "%08x", id);
+	snprintf((char*)tmp, 10, "%8.8x", id);
 	id++;
 	SimpleString tmp_str(tmp);
 	str = "<controlQuery id=\"" + tmp_str + "\">"
@@ -661,7 +632,7 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 		{
 			SimpleString name((const char*)attr_name->children->content);
 
-			if( VariableAttribute::VariableStr() == node_name )
+			if( VariableAttribute::VariableStr == node_name )
 			{
 				listVariableName.Add(name);
 			}
@@ -725,7 +696,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 				listInOutputAttr.Add( pAtt );
 			}
 		}
-		else if( name == VariableAttribute::VariableStr().GetStr() )
+		else if( name == VariableAttribute::VariableStr.GetStr() )
 		{
 			pVar = ProcessVariableDescription( cur_node, NULL );
 			if ( pVar != NULL )
@@ -746,7 +717,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 VariableAttribute* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 															VariableAttribute* var_attr)
 {
-	if( !node || VariableAttribute::VariableStr() != (const char*)node->name )
+	if( !node || VariableAttribute::VariableStr != (const char*)node->name )
 		return NULL;
 
 #if defined DEBUG
@@ -793,7 +764,7 @@ InOutputAttribute* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOu
 	}
 	else
 	{
-		outattr = new OMISCID_TLM InOutputAttribute(SimpleString::EmptyString(), AnOutput);
+		outattr = new OMISCID_TLM InOutputAttribute(SimpleString::EmptyString, AnOutput);
 	}
 	outattr->ExtractDataFromXml(node);
 
@@ -948,7 +919,7 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 	for(; current != NULL; current = current->next)
 	{
 		const char* cur_name = (const char*)current->name;
-		if( VariableAttribute::VariableStr() == cur_name )
+		if( VariableAttribute::VariableStr == cur_name )
 		{
 			xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", current);
 			VariableAttribute* va = FindVariable((const char*)attr_name->children->content);

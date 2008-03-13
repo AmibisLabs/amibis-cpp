@@ -40,7 +40,7 @@ public:
 	 * to search for services. By default, class is Service.
 	 * @return the Omiscid service. All access to the service will be through this object
 	 */
-	static Service * Create(const SimpleString ServiceName, const SimpleString ClassName = CommonServiceValues::GetDefaultServiceClassName() );
+	static Service * Create(const SimpleString ServiceName, const SimpleString ClassName = CommonServiceValues::DefaultServiceClassName );
 
 	/**
 	 * Create a new Omiscid service. This service will not be advertised in DSN-SD

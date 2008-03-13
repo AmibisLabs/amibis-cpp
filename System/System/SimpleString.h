@@ -9,7 +9,7 @@
 #define __SIMPLE_STRING_H__
 
 #include <System/ConfigSystem.h>
-#include <System/AtomicReentrantCounter.h>
+#include <System/ReentrantMutex.h>
 #include <System/LockManagement.h>
 
 #include <string.h>
@@ -32,15 +32,19 @@ namespace Omiscid {
  * @author Sebastien Pesnel
  * @author Dominique Vaufreydaz
  */
-class SimpleString
+class SimpleString // : public LockableObject
 {
 private:
 	/**
 	 * @brief Storage of characters, with a counter of reference.
 	 */
-	class StringData : public LockableObject
+	class StringData
 	{
 	public:
+
+		// My container class SimpleString is a friend class
+		friend class SimpleString;
+
 		/** @name Constructors
 		 *
 		 * Add automatically one reference on the object
@@ -48,9 +52,11 @@ private:
 		//@{
 		StringData();
 		StringData(const char*);
-		StringData(const StringData&);
-		StringData(const StringData&, int begin, int end);
+		StringData(const StringData* base, int begin, int end);
 		StringData(const char* str1, const char* str2);
+		StringData(const StringData* base);
+		StringData(const StringData* StringData1, const char* str2);
+		StringData(const StringData* StringData1, const StringData* StringData2);
 
 		//@}
 
@@ -59,24 +65,6 @@ private:
 		 * free the buffer of character allocated for the string
 		 */
 		/* virtual */ ~StringData();
-
-		/** \return the pointer on the buffer of characters */
-		char* GetDataPtr();
-
-		/** \return the length of the string */
-		unsigned int GetLength();
-
-		/** \brief add one reference to the string
-		 * \return the number of reference
-		 */
-		int AddReference();
-		/** \brief remove a reference on the string
-		 * \return the number of reference existing yet
-		 */
-		int RemoveReference();
-
-		/** \return the number of reference on the string */
-		int GetNbReference();
 
 		/** \brief Change the string contained by the object if possible
 		 *
@@ -105,20 +93,6 @@ private:
 		bool NotEqualsCaseInsensitive(const char* str);
 		//@}
 
-		/**
-		 * return an object StringData containing an empty string : "".
-		 * Add a reference on this object.
-		 */
-		// static StringData* GetEmptyStringData();
-
-		// Lock my Protect mutex
-		inline bool Lock() { return Protect.Lock(); };	// Add SL_ as comment in order to prevent false alarm in code checker on locks
-
-		// Unlock my Protect mutex
-		inline bool Unlock() { return Protect.Unlock(); };	// Add SL_ as comment in order to prevent false alarm in code checker on locks
-
-		StringData& operator=(const StringData& Right);
-
 	private:
 		/** \brief set the buffer value
 		 *
@@ -127,14 +101,24 @@ private:
 		 */
 		void SetData(const char* b);
 
-		// Protect acces to the internal members
-		ReentrantMutex Protect;
+		/** \brief generate an empty string
+		 *
+		 */
+		inline char * GetEmptyBuffer()
+		{
+			char * tmpc = new char[1];
+			if ( tmpc == (char*)NULL )
+			{
+				return (char*)NULL;
+			}
+			tmpc[0] = '\0';
+			return tmpc;
+		}
 
 	protected:
-		AtomicReentrantCounter * nbReferences; /*!< number of reference on the buffer */
+		// everything will be protected by the SimpleString mutex
 		char * data; /*!< the character buffer */
 		unsigned int length;/*!< the length of the string */
-		// static StringData EmptyStringData; /*!< object StringData for empty string "" */
 	};
 
 public:
@@ -144,6 +128,8 @@ public:
 	SimpleString(const char* str1, const char* str2);
 	/*! Copy constructor of the string */
 	SimpleString(const SimpleString& to_copy);
+	/*! Copy constructor for 2 strings */
+	SimpleString(const SimpleString& to_copy1, const SimpleString& to_copy2);
 	/*! Creating a string representing an interger */
 	SimpleString(int i);
 	/*! Creating a string representing an unsigned interger */
@@ -154,6 +140,7 @@ public:
 	SimpleString(float f);
 	/*! Creating a string representing a double */
 	SimpleString(double d);
+
 protected:
 	SimpleString(StringData*); /*!< used by SubString*/
 
@@ -170,6 +157,7 @@ public:
 	//@{
 	/** @return the character string */
 	const char* GetStr() const;
+
 	/** @return the length of the string */
 	unsigned int GetLength() const;
 
@@ -247,14 +235,18 @@ public:
 	// bool CompareNoCase(const SimpleString& str) const;
 	//@}
 
+	/** \name Comparaison */
+	//@{
+	/** Lock my internal data */
+	bool Lock() const;
+	/** Unlock my internal data */
+	bool Unlock() const;
+	//@}
+
 	static bool Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int SizeOfBuffer );
 
-	/*! All empty string refer to this unique value, can be used by user */
-	inline static const SimpleString& EmptyString()
-	{
-		static const SimpleString Internal_EmptyString("");
-		return Internal_EmptyString;
-	}
+	/*! All empty string refer to this unique instance, can be used by user */
+	static const SimpleString EmptyString;
 
 	/** @brief Extract a string of  this string
 	 * @param [in] begin index of the first character included in the result string
@@ -265,8 +257,17 @@ public:
 
 	int Find(const SimpleString SearchPattern, bool Backward = false) const;
 
-	bool ReplaceFirst(const SimpleString SearchPattern, const SimpleString ReplacedPattern);
-	bool ReplaceAll(const SimpleString SearchPattern, const SimpleString ReplacedPattern);
+private:
+	bool InternalReplaceFirst(const SimpleString& SearchPattern, const SimpleString& ReplacedPattern);
+
+public:
+	bool ReplaceFirst(const SimpleString& SearchPattern, const SimpleString& ReplacedPattern);
+	bool ReplaceAll(const SimpleString& SearchPattern, const SimpleString& ReplacedPattern);
+
+#ifdef OMISCID_RUNING_TEST
+	// a function in order to test
+	static int TestFunction();
+#endif
 
 private:
 	/** \brief Remove the reference on the StringData object.
@@ -280,9 +281,10 @@ private:
 	 */
 	void SetStringData(StringData* to_set);
 
-	void CopyStringData(StringData* to_copy);
-
 	StringData* stringData; /*!< pointer on the object containing the characters*/
+
+	// Protect acces to the internal members
+	ReentrantMutex Protect;
 };
 
 /*
@@ -292,13 +294,13 @@ private:
  * @return Returns a SimpleString
  */
 const SimpleString operator+(const SimpleString& str1, const SimpleString& str2);
+
 /*
  * @brief An operator+ to collapse a char buffer and a string string
  * @param [in] str1, a char * buffer (ended by '0')
  * @param [in] str2, a SimpleString
  * @return Returns a SimpleString
  */
-
 const SimpleString operator+(const char* str1, const SimpleString& str2);
 
 /*

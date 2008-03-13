@@ -283,8 +283,8 @@ public:
 	~OmiscidSystemLayerInitClass();
 };
 
-// External object
-extern OmiscidSystemLayerInitClass OmiscidSystemLayerInit;
+// External function to initialise this layer
+extern void OmiscidSystemLayerInit();
 
 } // namespace Omiscid
 

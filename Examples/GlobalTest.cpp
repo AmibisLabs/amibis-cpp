@@ -16,6 +16,7 @@
 #include "RegisterSearchTest.h"
 #include "Accumulator.h"
 #include "ClientAccumulator.h"
+#include "BrowsingTest.h"
 
 using namespace Omiscid;
 
@@ -25,41 +26,65 @@ int main(int argc, char* argv[])
 	// Array used to give parameters
 	char* LocalArgv[10];
 
+	// Return code from pseudo main function call
+	int ReturnCode;
+
+#ifdef DEBUG
+	// MsgSocket::Debug = MsgSocket::DBG_ALL;
+#endif
+
+	/***********************************************************
+		Unitary SimpleString Test
+	***********************************************************/
+
+	SimpleString::TestFunction();
+
 	/***********************************************************
 		RegisterSearchTest
 	***********************************************************/
 
-	// Call RegisterSearchTest, first set paramater Array
-	LocalArgv[0] = "RegisterSearchTest";
+	// Call DoRegisterSearchTest, first set paramater Array
+	LocalArgv[0] = "DoRegisterSearchTest";
 	LocalArgv[1] = "-n";
 	LocalArgv[2] = "20";
 	LocalArgv[3] = NULL;
 
-	DoRegisterSearchTest( 3, LocalArgv );
-
-	/***********************************************************
-		Accumulator test
-	***********************************************************/
-	// Create dynamically an accumulator sever
-	Accumulator * pAccuServer = new Accumulator;
-
-	if ( pAccuServer == (Accumulator *)NULL )
+	ReturnCode = DoRegisterSearchTest( 3, LocalArgv );
+	if ( ReturnCode != 0 )
 	{
 		printf( "Test failed.\n" );
 		return -1;
 	}
 
-	// Create clients for accumulators
-	RunClientAccumulator * ClientsAccu = new RunClientAccumulator[2];
+	/***********************************************************
+		Accumulator test
+	***********************************************************/
 
-	// Sleep for 60 seconds, clients runs for 30 seconds
-	Sleep( 60*1000 );
+	// Call DoAccumulatorTest, first set paramater Array
+	LocalArgv[0] = "DoAccumulatorTest";
+	LocalArgv[1] = NULL;
 
-	// delete the Cliens
-	delete [] ClientsAccu;
+	ReturnCode = DoAccumulatorTest( 1, LocalArgv );
+	if ( ReturnCode != 0 )
+	{
+		printf( "Test failed.\n" );
+		return -1; 
+	}
 
-	// Delete the accu server
-	delete pAccuServer;
+	/***********************************************************
+		Browsing test using listeners
+	***********************************************************/
+
+	// Call DTest, first set paramater Array
+	LocalArgv[0] = "DoBrowsingTest";
+	LocalArgv[1] = NULL;
+
+	ReturnCode = DoBrowsingTest( 1, LocalArgv );
+	if ( ReturnCode != 0 )
+	{
+		printf( "Test failed.\n" );
+		return -1; 
+	}
 
 	printf( "Test ok.\n" );
 	return 0;

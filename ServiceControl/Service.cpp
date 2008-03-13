@@ -80,7 +80,7 @@ Service::Service(const SimpleString ServiceName, const SimpleString ClassName)
 {
 	if ( ClassName.IsEmpty() )
 	{
-		SetClass( CommonServiceValues::GetDefaultServiceClassName() );
+		SetClass( CommonServiceValues::DefaultServiceClassName );
 	}
 	else
 	{
@@ -329,7 +329,7 @@ bool Service::SetVariableDescription(SimpleString VarName, SimpleString VarDescr
 	 */
 SimpleString Service::GetVariableDescription(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString());
+	SimpleString Empty(SimpleString::EmptyString);
 
 	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -375,7 +375,7 @@ bool Service::SetVariableValue(SimpleString VarName, SimpleString VarValue, bool
 	 */
 SimpleString Service::GetVariableValue(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString());
+	SimpleString Empty(SimpleString::EmptyString);
 
 	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
@@ -399,7 +399,7 @@ SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 	if ( pVar == NULL )
 	{
 		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
-		return SimpleString::EmptyString();
+		return SimpleString::EmptyString;
 	}
 
 	return VariableAttribute::AccessToStr(pVar->GetAccess());
@@ -414,7 +414,7 @@ SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
 	 */
 SimpleString Service::GetVariableType(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString());
+	SimpleString Empty(SimpleString::EmptyString);
 
 	return Empty;
 }

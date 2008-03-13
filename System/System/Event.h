@@ -47,8 +47,10 @@ private:
 #ifdef WIN32
 	HANDLE handle;
 #else
+	unsigned int before;	/*!< to prevent memory correption by pthread_* functions */
 	pthread_cond_t condition; /*!< the condition object */
 	pthread_mutex_t mutex; /*!< mutex to protect the access to the condition */
+	unsigned int after;		/*!< to prevent memory correption by pthread_* functions */
 #endif
 };
 

@@ -10,23 +10,44 @@ using namespace Omiscid;
 	/** @brief Constructor
 	 *
 	 */
-SmartLocker::SmartLocker( LockableObject& LockableObjectToManage )
+SmartLocker::SmartLocker( LockableObject& LockableObjectToManage, bool LockAtInit /* = true */ )
 	: ManagedLoackableObject(LockableObjectToManage)
 {
 	// Initiate the LockCount
 	LockCount = 0;
 
 	// Here, we are ready to work
+	if ( LockAtInit == true )
+	{
+		Lock();
+	}
 }
 
 	/** @brief Constructor
+	 *
+	 */
+SmartLocker::SmartLocker( const LockableObject& LockableObjectToManage, bool LockAtInit /* = true */ )
+	: ManagedLoackableObject(dynamic_cast<LockableObject&>((LockableObject&)LockableObjectToManage))
+{
+	// Initiate the LockCount
+	LockCount = 0;
+
+	// Here, we are ready to work
+	if ( LockAtInit == true )
+	{
+		Lock();
+	}
+}
+
+
+	/** @brief Desonstructor
 	 *
 	 */
 SmartLocker::~SmartLocker()
 {
 	if ( LockCount > 0 )
 	{
-		OmiscidError( "SmartLocker::SmartLocker~: warning object not unlock before exiting the scope\n" );
+		// OmiscidError( "SmartLocker::SmartLocker~: warning object not unlock before exiting the scope\n" );
 		while( LockCount > 0 )
 		{
 			ManagedLoackableObject.Unlock();

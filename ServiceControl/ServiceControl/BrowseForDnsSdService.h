@@ -40,7 +40,7 @@ class BrowseForDNSSDService : public Thread
 {
 public:
 	BrowseForDNSSDService();
-	BrowseForDNSSDService(const SimpleString eRegType, BrowseCallBack eCallBack, void * eUserData, bool AutoStart = false);
+	BrowseForDNSSDService(const SimpleString eRegType, BrowseCallBack eCallBack, void * eUserData );
 
 	virtual ~BrowseForDNSSDService();
 

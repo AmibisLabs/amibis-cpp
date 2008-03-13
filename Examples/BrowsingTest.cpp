@@ -12,6 +12,7 @@
 #include <ServiceControl/UserFriendlyAPI.h>
 
 // Add local class RegisterThread
+#include "BrowsingTest.h"
 #include "RegisterThread.h"
 
 using namespace std;
@@ -49,13 +50,16 @@ void BrowseListener::ServiceRemoved( ServiceProxy& ProxyForService )
 
 
 /* @brief main program entry. No need to give parameter */
+#ifdef OMISCID_RUNING_TEST
+// Call test in a separate function
+int Omiscid::DoBrowsingTest(int argc, char*argv[] )
+#else
+/* @brief main program entry. No need to give parameter */
 int main(int argc, char*argv[] )
+#endif // OMISCID_RUNING_TEST
 {
 	unsigned int i;
 	int j;
-
-	// Create an even in order to Stop when we want
-	Event Forever;
 
 	// Constant values
 	// The number of service to register
@@ -111,8 +115,11 @@ int main(int argc, char*argv[] )
 		pRegThread = new OMISCID_TLM RegisterThread(i);
 
 		// if ok
-		if ( pRegThread )
+		if ( pRegThread != (RegisterThread*)NULL )
 		{
+			// Start the Thread
+			pRegThread->Start();
+
 			// add it to my list of threads
 			ListOfRegisterThreads.Add( pRegThread );
 		}
@@ -191,8 +198,11 @@ int main(int argc, char*argv[] )
 	pRegThread = new OMISCID_TLM RegisterThread(i);
 
 	// if ok
-	if ( pRegThread )
+	if ( pRegThread != (RegisterThread*)NULL )
 	{
+		// Start the thead
+		pRegThread->Start();
+
 		// add it to my list of threads
 		ListOfRegisterThreads.Add( pRegThread );
 	}
@@ -236,11 +246,6 @@ FreeAndExit:
 		delete ListOfRegisterThreads.ExtractFirst();
 	}
 	fprintf( stderr, "=> done in %u ms.\n", TimeCounter.Get() );
-
-#ifdef WIN32
-	// Stop here forever as express in the folowing code
-	Forever.Wait();
-#endif
 
 	// exit
 	return 0;

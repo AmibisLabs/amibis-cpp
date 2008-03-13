@@ -10,13 +10,15 @@ Event		  RegisterThread::NewServiceIsRegistered; /* A static value to count regi
 	/* @brief Create a new thread that will register a thread
 	 * give its number
 	 */
-RegisterThread::RegisterThread(unsigned int MyNumber)
+RegisterThread::RegisterThread(unsigned int MyNumber) :
+#ifdef DEBUG_THREAD
+	Thread( "RegisterThread" )
+#else
+	Thread()
+#endif
 {
 	// Set my Number and Start
 	Number = MyNumber;
-
-	// Start
-	StartThread();
 }
 
 /* @brief destructor (all destructor must be virtual !) */
@@ -31,6 +33,7 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 	// Ask to the service factory to create a Service. The service is not
 	// register yet. We do not provide the service class, the default value 'Service'
 	// will be used
+
 	Omiscid::Service * pServ = ServiceFactory.Create( "RegisterThread" );
 
 	// If something tricky occurred, exit
@@ -44,8 +47,8 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 
 	// Just add a Variable of ConstantAccess that can not be modifies after the
 	// service registration. Set its value to the number given in the constructor
-	// We ask not to check the value with internal control
-	pServ->AddVariable( "Number", "interger", "My number", ConstantAccess );
+	// We ask not to check the value with internal contron
+	pServ->AddVariable( "Number", "integer", "My number", ConstantAccess );
 	pServ->SetVariableValue( "Number", Number, true );
 
 	// Start the service, i.e. register it and run all processing threads

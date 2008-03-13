@@ -163,17 +163,13 @@ public:
  /** \brief Extract data from a XML node.
    *
    * Extract attribute 'name', and child node.
-   * \param node A node of service description with the tag VariableAttribute::VariableStr()
+   * \param node A node of service description with the tag VariableAttribute::VariableStr
    */
   void ExtractDataFromXml(xmlNodePtr node);
 
   /**  \brief to parse/generate XML data.
    */
-	inline static const SimpleString& VariableStr()
-	{
-			static const SimpleString Internal_variable_str("variable");
-			return Internal_variable_str;
-	}
+	static const SimpleString VariableStr;	// = "variable"
 
 protected:
   SimpleString type; /*!< type of the variable */
@@ -184,29 +180,17 @@ protected:
     /**
 	 * SimpleString representation for 'constant' access (used in XML description)
 	 */
-	inline static const SimpleString& AccessConstantStr()
-	{
-			static const SimpleString Internal_access_constant_str("constant");
-			return Internal_access_constant_str;
-	}
+	static const SimpleString AccessConstantStr;	// "constant"
 
 	/**
 	 * SimpleString representation for 'read' access (used in XML description)
 	 */
-	inline static const SimpleString& AccessReadStr()
-	{
-			static const SimpleString Internal_access_read_str("read");
-			return Internal_access_read_str;
-	}
+	static const SimpleString AccessReadStr;	// "read"
 
 	/**
 	 * SimpleString representation for 'read-write' access (used in XML description)
 	 */
-	inline static const SimpleString& AccessReadWriteStr()
-	{
-			static const SimpleString Internal_access_readwrite_str("readWrite");
-			return Internal_access_readwrite_str;
-	}
+	static const SimpleString AccessReadWriteStr;	// "readWrite"
 
 private:
   MutexedSimpleList<VariableAttributeListener*> Listeners;

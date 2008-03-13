@@ -106,14 +106,14 @@ public:
 		};
 
 
-	static const SimpleString GetNameForLockString();		// = "lock"
-	static const SimpleString GetNameForNameString();		// = "name"
-	static const SimpleString GetNameForOwnerString();		// = "owner"
-	static const SimpleString GetNameForClassString();		// = "class"
-	static const SimpleString GetNameForPeerIdString();		// = "peerId"
+	static const SimpleString NameForLockString;		// = "lock"
+	static const SimpleString NameForNameString;		// = "name"
+	static const SimpleString NameForOwnerString;		// = "owner"
+	static const SimpleString NameForClassString;		// = "class"
+	static const SimpleString NameForPeerIdString;		// = "peerId"
 
 	static const SimpleString GetOmiscidServiceDnsSdType();
-	static const SimpleString GetDefaultServiceClassName();
+	static const SimpleString DefaultServiceClassName;		// = "Service"
 
 private:
 	// In order to propose InitFunction to the LayerManager

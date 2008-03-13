@@ -19,7 +19,6 @@ MsgManager::~MsgManager()
 void MsgManager::PushMessage(Message* msg)
 {
 	SmartLocker SL_listMsg(listMsg);
-	SL_listMsg.Lock();
 	if(maxMessage && listMsg.GetNumberOfElements() == maxMessage)
 	{
 		listMsg.First();
@@ -28,7 +27,7 @@ void MsgManager::PushMessage(Message* msg)
 		delete m;
 	}
 	listMsg.Add(msg);
-	SL_listMsg.Unlock();
+
 	event.Signal();
 	event.Reset();
 }
@@ -36,9 +35,9 @@ void MsgManager::PushMessage(Message* msg)
 unsigned int MsgManager::GetNbMessages()
 {
 	SmartLocker SL_listMsg(listMsg);
-	SL_listMsg.Lock();
+
 	int nb =listMsg.GetNumberOfElements();
-	SL_listMsg.Unlock();
+
 	return nb;
 }
 
@@ -47,14 +46,14 @@ Message* MsgManager::GetMessage()
 	Message* msg = NULL;
 
 	SmartLocker SL_listMsg(listMsg);
-	SL_listMsg.Lock();
+
 	if(listMsg.GetNumberOfElements())
 	{
 		listMsg.First();
 		msg = listMsg.GetCurrent();
 		listMsg.RemoveCurrent();
 	}
-	SL_listMsg.Unlock();
+
 
 	return msg;
 }
@@ -62,13 +61,13 @@ Message* MsgManager::GetMessage()
 void MsgManager::ClearMessages()
 {
 	SmartLocker SL_listMsg(listMsg);
-	SL_listMsg.Lock();
+
 	for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
 	{
 		delete listMsg.GetCurrent();
 		listMsg.RemoveCurrent();
 	}
-	SL_listMsg.Unlock();
+
 }
 
 int MsgManager::ProcessMessages()
@@ -76,7 +75,7 @@ int MsgManager::ProcessMessages()
 	Message* msg;
 
 	SmartLocker SL_listMsg(listMsg);
-	SL_listMsg.Lock();
+
 	int nb = 0;
 	for(listMsg.First(); listMsg.NotAtEnd(); listMsg.Next() )
 	{
@@ -93,7 +92,7 @@ int MsgManager::ProcessMessages()
 		delete msg;
 		nb++;
 	}
-	SL_listMsg.Unlock();
+
 	return nb;
 }
 

@@ -37,7 +37,7 @@ void DnsSdService::Init()
 	RegisteredName.Empty();
 }
 
-void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
+void DnsSdService::Init( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	int LastFind;
 	int CurrentFind;
@@ -114,7 +114,7 @@ SimpleString DnsSdService::GetDNSSDServiceNameFromFullName( const SimpleString N
 
 	if ( Name.IsEmpty() )
 	{
-		return SimpleString::EmptyString();
+		return SimpleString::EmptyString;
 	}
 
 	if ( (LastFind=Name.Find("._tcp.")) >= 0 )
@@ -216,12 +216,12 @@ DnsSdService::DnsSdService( const DnsSdService* ToCopy )
 	Properties.ImportTXTRecord( ToCopy->Properties.GetTXTRecordLength(), ToCopy->Properties.ExportTXTRecord() );
 }
 
-DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
+DnsSdService::DnsSdService( const SimpleString eFullName, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	Init( eFullName, ePort, eHostName );
 }
 
-DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
+DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString eRegType, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	// Create full name.
 	SimpleString TmpString = ServiceName;
@@ -239,7 +239,7 @@ DnsSdService::DnsSdService( const SimpleString ServiceName, const SimpleString e
 	Init( TmpString, ePort, eHostName );
 }
 
-DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtocol, TransportProtocol enTransport, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString() */ )
+DnsSdService::DnsSdService( const SimpleString eName, const SimpleString eProtocol, TransportProtocol enTransport, const SimpleString eDomain, uint16_t ePort, const SimpleString eHostName /* = SimpleString::EmptyString */ )
 {
 	Empty();
 
@@ -397,7 +397,6 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 
 	// Lock Avahi connection
 	SmartLocker SL_AvahiRegisteringLocker(AvahiRegisteringLocker);
-	SL_AvahiRegisteringLocker.Lock();
 
 	if ( FromConstructor == true )
 	{
@@ -418,7 +417,6 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			if ( AvahiPollWithThread == (AvahiThreadedPoll *)NULL )
 			{
 				OmiscidError( "Could not create Avahi poll\n" );
-				SL_AvahiRegisteringLocker.Unlock();
 				return;
 			}
 
@@ -429,7 +427,6 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			{
 				OmiscidError( "Could not create Avahi client %s\n", avahi_strerror(error) );
 				avahi_threaded_poll_free(AvahiPollWithThread);
-				SL_AvahiRegisteringLocker.Unlock();
 				return;
 			}
 
@@ -443,7 +440,6 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 				AvahiConnection = (AvahiClient *)NULL;
 				avahi_threaded_poll_free(AvahiPollWithThread);
 				AvahiPollWithThread =(AvahiThreadedPoll *)NULL;
-				SL_AvahiRegisteringLocker.Unlock();
 				return;
 			}
 			avahi_threaded_poll_unlock(AvahiPollWithThread);
@@ -505,8 +501,6 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 		}
 	}
 
-	// Unlock Avahi connection
-	SL_AvahiRegisteringLocker.Unlock();
 #endif
 #endif
 }
@@ -557,8 +551,6 @@ void RegisterService::LaunchRegisterProcess( bool FromAvahiPollThread )
 	if ( AvahiGroup == (AvahiEntryGroup *)NULL )
 	{
 		OmiscidError( "Could not create Avahi group (%s).\n", avahi_strerror(avahi_client_errno(AvahiConnection)) );
-		// SL_AvahiRegisteringLocker.Unlock();
-		// return false;
 		goto EndOfLaunchRegisterProcess;
 	}
 
@@ -714,12 +706,10 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 #ifdef OMISCID_USE_AVAHI
 
 	SmartLocker SL_AvahiRegisteringLocker(AvahiRegisteringLocker);
-	SL_AvahiRegisteringLocker.Lock();
 
 	if ( AvahiConnection == (AvahiClient *)NULL )
 	{
 		OmiscidError( "Avahi connection not initialised.\n" );
-		SL_AvahiRegisteringLocker.Unlock();
 		return false;
 	}
 

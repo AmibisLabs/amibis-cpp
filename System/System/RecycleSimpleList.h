@@ -68,10 +68,9 @@ class SimpleRecycleList : public SimpleList<TYPE>
 	 static void AddAvailableCells(SimpleListElement<TYPE>* elt)
 	 {
 		 SmartLocker SL_mutexAvailable(mutexAvailable);
-		 SL_mutexAvailable.Lock();
+
 		 elt->NextElement = availableCells;
 		 availableCells = elt;
-		 SL_mutexAvailable.Unlock();
 	 }
 
 	/** @brief Extract an available cell
@@ -81,13 +80,13 @@ class SimpleRecycleList : public SimpleList<TYPE>
 		 SimpleListElement<TYPE>* elt = NULL;
 
 		 SmartLocker SL_mutexAvailable(mutexAvailable);
-		 SL_mutexAvailable.Lock();
+
 		 if ( availableCells != NULL )
 		 {
 			 elt = availableCells;
 			 availableCells = availableCells->NextElement;
 		 }
-		 SL_mutexAvailable.Unlock();
+
 		 return elt;
 	 }
 

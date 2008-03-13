@@ -7,33 +7,20 @@
 
 using namespace Omiscid;
 
-namespace Omiscid {
-
-// Objects to prevent multiple access
-inline static Mutex& OmiscidComLayerInitMutex()
-{
-	static Mutex Internal_OmiscidComLayerInitMutex;
-	return Internal_OmiscidComLayerInitMutex;
-}
-
-inline static unsigned int& OmiscidComLayerInitInstanceCount()
-{
-	static unsigned int Internal_OmiscidComLayerInitInstanceCount = 0;
-	return Internal_OmiscidComLayerInitInstanceCount;
-}
+// Objects to prevent multiple access and count instances
+static Mutex OmiscidComLayerInitMutex;
+static unsigned int OmiscidComLayerInitInstanceCount = 0;
 
 // Function to do mandatory initialisation
 
-// Object used to initialise
-OmiscidComLayerInitClass OmiscidComLayerInit;
-
 OmiscidComLayerInitClass::OmiscidComLayerInitClass()
+	: OmiscidSystemLayerInitClass()
 {
 	// Enter locker
-	OmiscidComLayerInitMutex().Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidComLayerInitMutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
-	OmiscidComLayerInitInstanceCount()++;
-	if ( OmiscidComLayerInitInstanceCount() == 1 )
+	OmiscidComLayerInitInstanceCount++;
+	if ( OmiscidComLayerInitInstanceCount == 1 )
 	{
 		// First instance, do init for Layer System
 
@@ -42,16 +29,16 @@ OmiscidComLayerInitClass::OmiscidComLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidComLayerInitMutex().Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidComLayerInitMutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 }
 
 OmiscidComLayerInitClass::~OmiscidComLayerInitClass()
 {
 	// Enter locker
-	OmiscidComLayerInitMutex().Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidComLayerInitMutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
-	OmiscidComLayerInitInstanceCount()--;
-	if ( OmiscidComLayerInitInstanceCount() == 0 )
+	OmiscidComLayerInitInstanceCount--;
+	if ( OmiscidComLayerInitInstanceCount == 0 )
 	{
 		// Last instance, do reset for Layer System
 
@@ -60,10 +47,19 @@ OmiscidComLayerInitClass::~OmiscidComLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidComLayerInitMutex().Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidComLayerInitMutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 }
 
-} // namespace Omiscid
+namespace Omiscid {
+
+// function used to initialised this layer
+void OmiscidComLayerInit()
+{
+	// Just create a static object
+	static OmiscidComLayerInitClass OmiscidComLayerInitObject;
+}
+
+} // Omiscid
 
 
 // Need to be moved elsewhere

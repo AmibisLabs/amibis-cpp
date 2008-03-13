@@ -46,31 +46,31 @@ void ControlServer::InitInstance()
 
 	VariableAttribute* va = NULL;
 
-	va = AddVariable(CommonServiceValues::GetNameForLockString());
+	va = AddVariable(CommonServiceValues::NameForLockString);
 	va->SetType("integer");
 	va->SetAccess(ReadAccess);
 	va->SetDescription("Use for locking access");
 	lockIntVariable = new OMISCID_TLM IntVariableAttribute(va, 0);
 
-	va = AddVariable(CommonServiceValues::GetNameForNameString());
+	va = AddVariable(CommonServiceValues::NameForNameString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Registered name of this service");
 	NameVariable = new OMISCID_TLM StringVariableAttribute( va, serviceName );
 
-	va = AddVariable(CommonServiceValues::GetNameForOwnerString());
+	va = AddVariable(CommonServiceValues::NameForOwnerString);
 	va->SetType("string");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Login which launches this service");
 	OwnerVariable = new OMISCID_TLM StringVariableAttribute( va, "none" );
 
-	va = AddVariable(CommonServiceValues::GetNameForClassString());
+	va = AddVariable(CommonServiceValues::NameForClassString);
 	va->SetType("class");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("Class of this service");
-	ClassVariable = new OMISCID_TLM StringVariableAttribute( va, CommonServiceValues::GetDefaultServiceClassName() );
+	ClassVariable = new OMISCID_TLM StringVariableAttribute( va, CommonServiceValues::DefaultServiceClassName );
 
-	va = AddVariable(CommonServiceValues::GetNameForPeerIdString());
+	va = AddVariable(CommonServiceValues::NameForPeerIdString);
 	va->SetType("hexadecimal");
 	va->SetAccess(ConstantAccess);
 	va->SetDescription("PeerId of this service");
@@ -79,8 +79,26 @@ void ControlServer::InitInstance()
 	registerDnsSd = NULL;
 }
 
-ControlServer::ControlServer(const SimpleString service_name)
-:	serviceName( service_name )
+ControlServer::ControlServer(const SimpleString service_name): 
+  port(0),
+  serviceId(0),
+  localConnectorId(0),
+  serviceName(service_name),
+  Status(STATUS_INIT),
+  lockIntVariable((IntVariableAttribute*)NULL),
+  NameVariable((StringVariableAttribute*)NULL),
+  OwnerVariable((StringVariableAttribute*)NULL),
+  ClassVariable((StringVariableAttribute*)NULL),
+  PeerIdVariable((StringVariableAttribute*)NULL),
+  listInOutput(),
+  listVariable(),
+  registerDnsSd((RegisterOmiscidService*)NULL),
+  listValueListener(),
+  ControlQueryValidator()
+  // If we are in debug mode, check also outgoing answer
+#ifdef DEBUG
+  , ControlAnswerValidator()
+#endif
 {
 	InitInstance();
 }
@@ -93,7 +111,6 @@ ControlServer::~ControlServer()
 	XMLTreeParser::StopThread(0);
 
 	SmartLocker SL_listValueListener(listValueListener);
-	SL_listValueListener.Lock();
 	for(listValueListener.First(); listValueListener.NotAtEnd();
 		listValueListener.Next())
 	{
@@ -172,7 +189,7 @@ bool ControlServer::StartServer()
 		{
 			// Add peerID value
 			TemporaryMemoryBuffer tmp_peerid(30);	// To prevent buffer overflow
-			snprintf( tmp_peerid, 30, "%08x", GetServiceId());
+			snprintf( tmp_peerid, 30, "%8.8x", GetServiceId());
 			PeerIdVariable->SetValue( (char*)tmp_peerid );
 
 			// Create an object to register the service
@@ -302,7 +319,7 @@ bool ControlServer::StartServer()
 			}
 
 			// Remove Name variable from TxtRecord list, when using DNS-SD, we've got the "id" as service name
-			registerDnsSd->Properties.Undefine( CommonServiceValues::GetNameForPeerIdString() );
+			registerDnsSd->Properties.Undefine( CommonServiceValues::NameForPeerIdString );
 
 			// Actually register
 			registerDnsSd->Register(false);
@@ -432,7 +449,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 					// OmiscidTrace( " process io : %s \n", (*it)->name.GetStr());
 					ProcessInOutputQuery(cur_node, str);
 				}
-				else if( name == VariableAttribute::VariableStr() )
+				else if( name == VariableAttribute::VariableStr )
 				{
 					ProcessVariableQuery(cur_node, msg->pid,  str);
 				}
@@ -484,7 +501,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 	#endif
 
 			SmartLocker SL_TcpServer_listConnections(TcpServer::listConnections);
-			SL_TcpServer_listConnections.Lock();
+
 			MsgSocket* ms = FindClientFromId( msg->pid );
 			if( ms != (MsgSocket*)NULL )
 			{
@@ -497,7 +514,6 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 					OmiscidError( "Error when responding to a client request : %s (%d)\n", e.msg.GetStr(), e.err );
 				}
 			}
-			SL_TcpServer_listConnections.Unlock();
 		}
 	}
 	else
@@ -697,7 +713,7 @@ void ControlServer::ProcessLockQuery(xmlNodePtr node, unsigned int pid, bool loc
 	}
 
 	TemporaryMemoryBuffer tmp_peerid(10);
-	snprintf(tmp_peerid, 10, "%08x",  (unsigned int)lockIntVariable->GetValue());
+	snprintf(tmp_peerid, 10, "%8.8x",  (unsigned int)lockIntVariable->GetValue());
 	result += "\" peer=\"";
 	result += tmp_peerid;
 	result += "\"/>";
@@ -850,7 +866,7 @@ InOutputAttribute* ControlServer::AddInOutput(const SimpleString InOutputName, C
 void ControlServer::NotifyValueChanged(VariableAttribute* var)
 {
 	SmartLocker SL_listValueListener(listValueListener);
-	SL_listValueListener.Lock();
+
 	ValueListener* vl = FindValueListener(var);
 	if(vl && vl->HasListener())
 	{
@@ -868,7 +884,7 @@ void ControlServer::NotifyValueChanged(VariableAttribute* var)
 		}
 #endif
 
-		SmartLocker SL_listConnections(listConnections);
+		SmartLocker SL_listConnections(listConnections, false);
 		for(vl->listListener.First(); vl->listListener.NotAtEnd(); vl->listListener.Next())
 		{
 			SL_listConnections.Lock();
@@ -898,7 +914,7 @@ void ControlServer::NotifyValueChanged(VariableAttribute* var)
 void ControlServer::AddListener(VariableAttribute* var, unsigned listener_id)
 {
 	SmartLocker SL_listValueListener(listValueListener);
-	SL_listValueListener.Lock();
+
 	ValueListener* vl = FindValueListener(var);
 	if ( vl != (ValueListener*)NULL )
 	{
@@ -908,13 +924,12 @@ void ControlServer::AddListener(VariableAttribute* var, unsigned listener_id)
 	{
 		listValueListener.Add(new ValueListener(var, listener_id));
 	}
-	SL_listValueListener.Unlock();
 }
 
 void ControlServer::RemoveListener(VariableAttribute* var, unsigned int pid)
 {
 	SmartLocker SL_listValueListener(listValueListener);
-	SL_listValueListener.Lock();
+
 	if ( var != (VariableAttribute*)NULL )
 	{
 		ValueListener * vl = FindValueListener(var);
@@ -930,7 +945,6 @@ void ControlServer::RemoveListener(VariableAttribute* var, unsigned int pid)
 			listValueListener.GetCurrent()->RemoveListener(pid);
 		}
 	}
-	SL_listValueListener.Unlock();
 }
 
 ValueListener* ControlServer::FindValueListener(VariableAttribute* var)
@@ -1036,7 +1050,7 @@ const SimpleString& ControlServer::GetRegisteredServiceName()
 	}
 	else
 	{
-		return SimpleString::EmptyString();
+		return SimpleString::EmptyString;
 	}
 }
 

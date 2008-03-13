@@ -51,8 +51,8 @@ public:
 	~OmiscidComLayerInitClass();
 };
 
-// External object
-extern OmiscidComLayerInitClass OmiscidComLayerInit;
+// External function to initialise this layer
+extern void OmiscidComLayerInit();
 
 
 } // namespace Omiscid

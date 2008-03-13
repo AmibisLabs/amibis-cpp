@@ -59,12 +59,14 @@ void BrowseForDNSSDService::InitZeroconfSubsystem( bool FromConstructor )
 #endif
 }
 
-BrowseForDNSSDService::BrowseForDNSSDService()
+BrowseForDNSSDService::BrowseForDNSSDService() :
 #ifdef DEBUG_THREAD
-	: Thread( false, "BrowseForDNSSDService" )
+	Thread( "BrowseForDNSSDService" )
+#else
+	Thread()
 #endif
 {
-	RegType[0] = '\0';
+	// RegType = "";
 	CallBack = NULL;
 	UserData = 0;
 
@@ -72,9 +74,11 @@ BrowseForDNSSDService::BrowseForDNSSDService()
 	InitZeroconfSubsystem( true );
 }
 
-BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, BrowseCallBack eCallBack, void * eUserData, bool AutoStart /* = false */)
+BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, BrowseCallBack eCallBack, void * eUserData ) :
 #ifdef DEBUG_THREAD
-	: Thread( false, "BrowseForDNSSDService" )
+	Thread( "BrowseForDNSSDService" )
+#else
+	Thread()
 #endif
 {
 	RegType  = eRegtype;
@@ -83,11 +87,6 @@ BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, Browse
 
 	// Init DNS-SD stuff
 	InitZeroconfSubsystem( true );
-
-	if ( AutoStart )
-	{
-		Start();
-	}
 }
 
 BrowseForDNSSDService::~BrowseForDNSSDService()
@@ -116,7 +115,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 	ServiceInfo.Properties.ImportTXTRecord( txtLen, txtRecord );
 
 	// Add ServiceShortName as PeerId in a pseudo variable
-	ServiceInfo.Properties[CommonServiceValues::GetNameForPeerIdString()] = "c/" + ServiceInfo.Name;
+	ServiceInfo.Properties[CommonServiceValues::NameForPeerIdString] = "c/" + ServiceInfo.Name;
 
 	MyThis->CallbackClient( ServiceInfo, flags | OmiscidDNSServiceFlagsAdd );
 }
@@ -200,7 +199,7 @@ void FUNCTION_CALL_TYPE BrowseForDNSSDService::SearchCallBackDNSServiceResolveRe
 				}
 
 				// Add ServiceShortName as PeerId in a pseudo variable
-				ServiceInfo.Properties[CommonServiceValues::GetNameForPeerIdString()] = "c/" + ServiceInfo.Name;
+				ServiceInfo.Properties[CommonServiceValues::NameForPeerIdString] = "c/" + ServiceInfo.Name;
 
 				MyThis->CallbackClient( ServiceInfo, OmiscidDNSServiceFlagsAdd );
 			}

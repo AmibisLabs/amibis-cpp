@@ -18,10 +18,10 @@ ReentrantMutex::ReentrantMutex()
 #ifdef WIN32
 	mutex = CreateMutex(NULL, false, NULL );
 #else
-	pthread_mutexattr_t attr;
+	pthread_mutexattr_t attr; /*!< Posix Mutex init data */
+
 	pthread_mutexattr_init (&attr);
 	pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
-	// pthread_mutex_init (&mutex, &attr);
 
 	if ( pthread_mutex_init(&mutex, &attr) != 0 )
 	{

@@ -8,116 +8,47 @@
 
 using namespace Omiscid;
 
-//SimpleString::StringData SimpleString::StringData::EmptyStringData("");
-//
-//SimpleString::StringData* SimpleString::StringData::GetEmptyStringData()
-//{
-//	// EmptyStringData.AddReference();
-//	return &EmptyStringData;
-//}
+// Empty SimpleString
+const SimpleString SimpleString::EmptyString;
 
 SimpleString::StringData::StringData()
 {
-	Lock();
-
-	data = NULL;
+	data = GetEmptyBuffer();
 	length = 0;
-	nbReferences = NULL;
-
-	Unlock();
-}
-
-int SimpleString::StringData::AddReference()
-{
-	int res;
-
-	Lock();
-
-	if ( nbReferences == NULL )
-	{
-		nbReferences = new OMISCID_TLM AtomicReentrantCounter(1);
-		res = 1;
-	}
-	else
-	{
-		res = ++(*nbReferences);
-	}
-
-	Unlock();
-
-	return res;
 }
 
 SimpleString::StringData::StringData(const char* str)
 {
-	Lock();
-
-	data = NULL;
+	data = NULL;	// in order to call SetData
 	length = 0;
-	nbReferences = NULL;
 
 	SetData(str);
-
-	// Create a new AtomicCounter for all these buffer
-	AddReference();
-
-	Unlock();
 }
 
-SimpleString::StringData& SimpleString::StringData::operator=(const StringData& Right)
+SimpleString::StringData::StringData(const StringData* base)
 {
-	StringData& TheOther = (StringData&)Right;
-
-	Lock();
-	TheOther.Lock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
-
-	data = Right.data;
-	length = Right.length;
-	nbReferences = Right.nbReferences;
-
-	// Add references to the shared atomic counter
-	AddReference();
-
-	TheOther.Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
-	Unlock();
-
-	return (*this);
+	length = base->length;
+	data = new OMISCID_TLM char[length + 1];
+	memcpy(data, base->data, length);
+	*(data+length) = '\0';
 }
 
-SimpleString::StringData::StringData(const StringData& to_copy)
+SimpleString::StringData::StringData(const StringData* base, int begin, int end)
 {
-	operator=(to_copy);
-}
-
-SimpleString::StringData::StringData(const StringData& base, int begin, int end)
-{
-	StringData& TheOther = (StringData&)base;
-
-	Lock();
-	TheOther.Lock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
-
-	data = NULL;
-	nbReferences = NULL;
+	int tmplen = end-begin;
+	if ( base == (const StringData*)NULL || tmplen <= 0 || (tmplen+begin) > (int)base->length  )
+	{
+		throw SimpleException( "Bad parameter for SimpleString::StringData::StringData" );
+	}
 
 	length = end-begin;
 	data = new OMISCID_TLM char[length + 1];
-	memcpy(data, TheOther.GetDataPtr()+begin, length);
+	memcpy(data, base->data+begin, length);
 	*(data+length) = '\0';
-
-	AddReference();
-
-	TheOther.Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on Lock
-	Unlock();
 }
 
 SimpleString::StringData::StringData(const char* str1, const char* str2)
 {
-	Lock();
-
-	data = NULL;
-	length = 0;
-	nbReferences = NULL;
-
 	int l1 = (int)strlen(str1);
 	int l2 = (int)strlen(str2);
 	length = l1+l2;
@@ -125,391 +56,303 @@ SimpleString::StringData::StringData(const char* str1, const char* str2)
 	memcpy(data, str1, l1);
 	memcpy(data+l1, str2, l2);
 	*(data+length) = '\0';
+}
 
-	AddReference();
+SimpleString::StringData::StringData(const StringData* StringData1, const char* str2)
+{
+	int l2 = (int)strlen(str2);
+	length = StringData1->length + l2;
+	data = new OMISCID_TLM char[length + 1];
+	memcpy(data, StringData1->data, StringData1->length);
+	memcpy(data+StringData1->length, str2, l2);
+	*(data+length) = '\0';
+}
 
-	Unlock();
+SimpleString::StringData::StringData(const StringData* StringData1, const StringData* StringData2)
+{
+	length = StringData1->length + StringData2->length;
+	data = new OMISCID_TLM char[length + 1];
+	memcpy(data, StringData1->data, StringData1->length);
+	memcpy(data+StringData1->length, StringData2->data, StringData2->length);
+	*(data+length) = '\0';
 }
 
 SimpleString::StringData::~StringData()
 {
-	Lock();
-
-	if (data)
+	if ( data != (char*)NULL )
 	{
 		delete [] data;
 	}
 	data = NULL;
-
-	if ( nbReferences )
-	{
-		delete nbReferences;
-	}
-	nbReferences = NULL;
-
-	Unlock();
 }
 
 void SimpleString::StringData::SetData(const char* str)
 {
-	Lock();
-
-	if ( data )
+	if ( data != (char*)NULL )
 	{
 		delete [] data;
 	}
 
-	if ( str )
+	if ( str != (const char*)NULL )
 	{
-		// data = strdup(str);
 		length = (unsigned int)strlen(str);
 		data = new OMISCID_TLM char[length+1];
 		memcpy( data, str, length+1 ); // +1 for the '\0'
 	}
 	else
 	{
-		data = NULL;
+		data = GetEmptyBuffer();
 		length = 0;
 	}
-
-	Unlock();
-}
-
-int SimpleString::StringData::RemoveReference()
-{
-	int res;
-
-	Lock();
-	if ( nbReferences == NULL )
-	{
-		return -1;
-	}
-	res = --(*nbReferences);
-	Unlock();
-
-	return res;
-}
-
-int SimpleString::StringData::GetNbReference()
-{
-	int res;
-
-	Lock();
-	if ( nbReferences == NULL )
-	{
-		return -1;
-	}
-	res = *nbReferences;
-	Unlock();
-
-	return res;
-}
-
-char* SimpleString::StringData::GetDataPtr()
-{
-	char * res;
-
-	Lock();
-	res = data;
-	Unlock();
-
-	return res;
-}
-
-unsigned int SimpleString::StringData::GetLength()
-{
-	unsigned int res;
-
-	Lock();
-	res = length;
-	Unlock();
-
-	return res;
 }
 
 bool SimpleString::StringData::Equals(const char* str)
 {
-	bool res;
-
-	if ( str == NULL )
+	if ( str == (const char*)NULL )
 	{
+		if ( length == 0 )
+		{
+			// Both are empty, so they are equals
+			return true;
+		}
 		return false;
 	}
 
-	Lock();
-	res = (strcmp(str, data) == 0);
-	Unlock();
-
-	return res;
+	return (strcmp(str, data) == 0);
 }
 
 bool SimpleString::StringData::Equals(const StringData& sd)
 {
-	bool res;
-
-	StringData& other = (StringData&)sd;
-
-	Lock();
-	res = (this == &sd) || Equals(other.GetDataPtr());
-	Unlock();
-
-	return res;
+	return ((this == &sd) || Equals(sd.data));
 }
 
 bool SimpleString::StringData::EqualsCaseInsensitive(const char* str)
 {
-	bool res;
-
-	if ( str == NULL )
+	if ( str == (const char*)NULL )
 	{
+		if ( data == (char*)NULL )
+		{
+			// Both are NULL, so they are equals
+			return true;
+		}
 		return false;
 	}
 
-	Lock();
-	res = (strcasecmp(str, data) == 0);
-	Unlock();
-
-	return res;
+	return (strcasecmp(str, data) == 0);
 }
 
 bool SimpleString::StringData::EqualsCaseInsensitive(const StringData& sd)
 {
-	bool res;
-
-	StringData& other = (StringData&)sd;
-
-	Lock();
-	res = (this == &sd) || Equals(other.GetDataPtr());
-	Unlock();
-
-	return res;
+	return ((this == &sd) || EqualsCaseInsensitive(sd.data));
 }
 
 bool SimpleString::StringData::NotEquals(const char* str)
 {
-	bool res;
-
-	if ( str == NULL )
+	if ( str == (const char*)NULL )
 	{
-		return true;
+		if ( data == (char*)NULL )
+		{
+			// Both are NULL, so they are equals
+			return true;
+		}
+		return false;
 	}
 
-	Lock();
-	res = (strcmp(str, data) != 0);
-	Unlock();
-
-	return res;
+	return (strcmp(str, data) != 0);
 }
 
 bool SimpleString::StringData::NotEquals(const StringData& sd)
 {
-	bool res;
-
-	StringData& other = (StringData&)sd;
-
-	Lock();
-	res = (this != &sd) && NotEquals(other.GetDataPtr());
-	Unlock();
-
-	return res;
+	return ((this != &sd) && NotEquals(sd.data));
 }
 
 bool SimpleString::StringData::NotEqualsCaseInsensitive(const char* str)
 {
-	bool res;
-
-	if ( str == NULL )
+	if ( str == (const char*)NULL )
 	{
-		return true;
+		if ( data == (char*)NULL )
+		{
+			// Both are NULL, so they are equals
+			return true;
+		}
+		return false;
 	}
 
-	Lock();
-	res = (strcasecmp(str, data) != 0);
-	Unlock();
-
-	return res;
+	return (strcasecmp(str, data) != 0);
 }
 
 bool SimpleString::StringData::NotEqualsCaseInsensitive(const StringData& sd)
 {
-	bool res;
-
-	StringData& other = (StringData&)sd;
-
-	Lock();
-	res = (this != &sd) && NotEquals(other.GetDataPtr());
-	Unlock();
-
-	return res;
+	return ((this != &sd) && NotEquals(sd.data));
 }
 
-
-//bool SimpleString::StringData::ChangeData(const char* str)
-//{
-//	Lock();
-//
-//	if ( nbReferences
-//
-//	if(*nbReferences == 1)
-//	{
-//		if(str == NULL)
-//		{
-//			if (data)
-//			{
-//				delete data;
-//			}
-//			data = NULL;
-//			length = 0;
-//		}
-//		else
-//		{
-//			length = (unsigned int)strlen(str);
-//			if ( data )
-//			{
-//				delete data;
-//			}
-//			data = new OMISCID_TLM char[length+1];
-//			if ( data == NULL )
-//			{
-//				length = 0;
-//			}
-//			else
-//			{
-//				strcpy(data, str);
-//			}
-//		}
-//		Unlock();
-//		return true;
-//	}
-//
-//	Unlock();
-//	return false;
-//}
 
 
 ///////////////////////////////////////////////////////
 
-
-void SimpleString::CopyStringData(StringData* to_copy)
+/** Lock my internal data */
+bool SimpleString::Lock() const
 {
-	DestroyStringData();
-	// Nothing to copy, set an empty string...
-	if ( to_copy == NULL )
-	{
-		stringData = new OMISCID_TLM StringData( "" );
-	}
-	else
-	{
-		to_copy->AddReference();
-		stringData = to_copy;
-	}
+	return ((Omiscid::ReentrantMutex&)Protect).Lock();
+}
+
+/** Unlock my internal data */
+bool SimpleString::Unlock() const
+{
+	return ((Omiscid::ReentrantMutex&)Protect).Unlock();
 }
 
 SimpleString::SimpleString()
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	CopyStringData( SimpleString::EmptyString().stringData );
+	Lock();
+
+	stringData = new OMISCID_TLM StringData();
+
+	Unlock();
 }
 
 SimpleString::SimpleString(const char* str)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	if ( str && str[0] != '\0' )
-	{
-		stringData = new OMISCID_TLM StringData(str);
-	}
-	else
-	{
-		CopyStringData( SimpleString::EmptyString().stringData );
-	}
+	Lock();
+
+	stringData = new OMISCID_TLM StringData(str);
+
+	Unlock();
 }
 
 SimpleString::SimpleString(const char* str1, const char* str2)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	if(str1 == (const char*)NULL && str2 == (const char*)NULL)
-	{
-		CopyStringData( SimpleString::EmptyString().stringData );
-	}
-	else
-	{
-		stringData = new OMISCID_TLM StringData(str1, str2);
-	}
+	Lock();
+
+	stringData = new OMISCID_TLM StringData(str1, str2);
+
+	Unlock();
 }
 
 SimpleString::SimpleString(const SimpleString& to_copy)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	CopyStringData(to_copy.stringData);
+	Lock();
+	to_copy.Lock();
+
+	// Set data as usual
+	// stringData = to_copy.stringData;
+	// incr reference count
+	// to_copy.stringData->AddReference();
+
+	// Set data as usual
+	stringData = new OMISCID_TLM StringData(to_copy.stringData);
+
+	to_copy.Unlock();
+	Unlock();
+}
+
+/*! Copy constructor for 2 strings */
+SimpleString::SimpleString(const SimpleString& to_copy1, const SimpleString& to_copy2)
+	: stringData((StringData*)NULL), Protect()
+{
+	Lock();
+	to_copy1.Lock();
+	to_copy2.Lock();
+
+	stringData = new OMISCID_TLM StringData((StringData*)to_copy1.stringData,(StringData*)to_copy2.stringData);
+
+	to_copy2.Unlock();
+	to_copy1.Unlock();
+	Unlock();
 }
 
 SimpleString::SimpleString(StringData* sd)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	CopyStringData(sd);
+	Lock();
+
+	// Set data as usual
+	// stringData = sd;
+	// incr reference count
+	// sd->AddReference();
+
+	// Set data as usual
+	stringData = new OMISCID_TLM StringData(sd);
+
+	Unlock();
 }
 
 SimpleString::SimpleString(int i)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	Empty();
+	Lock();
+
+	stringData = (StringData*)NULL;
 	operator+=(i);
+
+	Unlock();
 }
 
 SimpleString::SimpleString(unsigned int ui)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	Empty();
+	Lock();
+
+	stringData = (StringData*)NULL;
 	operator+=(ui);
+
+	Unlock();
 }
 
 SimpleString::SimpleString(long int li)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	Empty();
+	Lock();
+
+	stringData = (StringData*)NULL;
 	operator+=(li);
+
+	Unlock();
 }
 
 SimpleString::SimpleString(float f)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	Empty();
+	Lock();
+
+	stringData = (StringData*)NULL;
 	operator+=(f);
+
+	Unlock();
 }
 
 SimpleString::SimpleString(double d)
+	: stringData((StringData*)NULL), Protect()
 {
-	stringData = NULL;
-	Empty();
+	Lock();
+
+	stringData = (StringData*)NULL;
 	operator+=(d);
+
+	Unlock();
 }
 
 SimpleString::~SimpleString()
 {
-	DestroyStringData();
+	// Lock will be done in Empty();
+	Empty();
 }
 
-void SimpleString::Empty()
-{
-	operator=((char*)NULL);
-}
-
+// WARNING DestroyStringData do not call protect
 void SimpleString::DestroyStringData()
 {
-	if ( stringData == NULL )
-	{
-		return;
-	}
-
-	if ( stringData->RemoveReference() <= 0 )
+	if ( stringData != (StringData*)NULL )
 	{
 		delete stringData;
+		stringData = (StringData*)NULL;
 	}
-
-	stringData = NULL;
 }
 
- /** \brief Set a StringData object. Do not incr the references
+ /** \brief Set a StringData object.
   *
   */
 void SimpleString::SetStringData(StringData* to_set)
@@ -517,101 +360,209 @@ void SimpleString::SetStringData(StringData* to_set)
 	if ( to_set == NULL )
 	{
 		// Set me as empty
-		*this = EmptyString();
+		*this = EmptyString;
 		return;
 	}
+
+	// Lock myself
+	Lock();
 
 	// First, destroy My data if any
 	DestroyStringData();
 
 	// and then just set the string data with incr reference count
 	stringData = to_set;
+
+	Unlock();
+}
+
+void SimpleString::Empty()
+{
+	Lock();
+
+	DestroyStringData();
+	stringData = new OMISCID_TLM StringData();
+
+	Unlock();
 }
 
 const SimpleString& SimpleString::operator= (const SimpleString& str)
 {
+	Lock();
+	str.Lock();
+
 	DestroyStringData();
-	CopyStringData( str.stringData );
+	// stringData = str.stringData;
+	// stringData->AddReference();
+	stringData = new OMISCID_TLM StringData(str.stringData);
+
+	str.Unlock();
+	Unlock();
+
 	return *this;
 }
 
 const SimpleString& SimpleString::operator= (const char* str)
 {
+	Lock();
+
 	DestroyStringData();
-	if(str == NULL)
-	{
-		CopyStringData( SimpleString::EmptyString().stringData );
-	}
-	else
-	{
-		stringData = new OMISCID_TLM StringData(str);
-	}
+	stringData = new OMISCID_TLM StringData(str);
+
+	Unlock();
+
 	return *this;
 }
 
 const SimpleString& SimpleString::operator= (int i)
 {
-	Empty();
-	return operator+=(i);
+	Lock();
+	
+	DestroyStringData();
+
+	TemporaryMemoryBuffer tmp(25);
+	snprintf((char*)tmp, 20, "%d", i);
+	stringData = new OMISCID_TLM StringData((char*)tmp);
+
+	Unlock();
+	return *this;
 }
 
 const SimpleString& SimpleString::operator= (unsigned int ui)
 {
-	Empty();
-	return operator+=(ui);
+	Lock();
+	
+	DestroyStringData();
+
+	TemporaryMemoryBuffer tmp(25);
+	snprintf((char*)tmp, 20, "%u", ui);
+
+	stringData = new OMISCID_TLM StringData((char*)tmp);
+
+	Unlock();
+
+	return *this;
 }
 
 const SimpleString& SimpleString::operator= (long int li)
 {
-	Empty();
-	return operator+=(li);
+	Lock();
+	
+	DestroyStringData();
+
+	TemporaryMemoryBuffer tmp(55);
+	snprintf((char*)tmp, 50, "%li", li);
+	stringData = new OMISCID_TLM StringData((char*)tmp);
+
+	Unlock();
+
+	return *this;
 }
 
 const SimpleString& SimpleString::operator= (float f)
 {
-	Empty();
-	return operator+=(f);
+	Lock();
+	
+	DestroyStringData();
+
+	TemporaryMemoryBuffer tmp(55);
+	snprintf((char*)tmp, 50, "%f", f);
+	stringData = new OMISCID_TLM StringData((char*)tmp);
+
+	Unlock();
+
+	return *this;
 }
 
 const SimpleString& SimpleString::operator= (double d)
 {
-	Empty();
-	return operator+=(d);
+	Lock();
+	
+	DestroyStringData();
+
+	TemporaryMemoryBuffer tmp(55);
+	// warning: ISO C++ does not support the '%lf' printf format
+	snprintf((char*)tmp, 50, "%f", d);
+	stringData = new OMISCID_TLM StringData((char*)tmp);
+
+	Unlock();
+
+	return *this;
 }
 
 void SimpleString::Append(const char* str)
 {
-	if(str != NULL)
+	if ( str != NULL )
 	{
-		StringData* tmp = new OMISCID_TLM StringData(GetStr(), str);
-		DestroyStringData();
-		stringData = tmp;
+		Lock();
+
+		StringData* tmp;
+		if ( stringData != (StringData*)NULL )
+		{
+			tmp = new OMISCID_TLM StringData(stringData, str);
+			DestroyStringData();
+			stringData = tmp;
+		}
+		else
+		{
+			stringData = new OMISCID_TLM StringData(str);
+		}
+
+		Unlock();
 	}
 }
 
 void SimpleString::Append(const SimpleString& str)
 {
-	Append(str.GetStr());
+	if ( str.stringData->length != 0 )
+	{
+		Lock();
+		str.Lock();
+
+		StringData* tmp = new OMISCID_TLM StringData(stringData, str.stringData);
+		DestroyStringData();
+		stringData = tmp;
+
+		str.Unlock();
+		Unlock();
+	}
 }
 
 char SimpleString::operator[](int i) const
 {
-	if ( i >= (int)stringData->GetLength() )
+	Lock();
+
+	char tmp;
+
+	if ( i < 0 || i >= (int)stringData->length )
 	{
+		Unlock();
 		throw  SimpleException("SimpleString::out of bound");
 	}
-	return *(stringData->GetDataPtr()+i);
+
+	tmp = *(stringData->data+i);
+
+	Unlock();
+
+	// retreive character at position
+	return tmp;
 }
 
 char& SimpleString::operator[](int i)
 {
-	if(stringData->GetNbReference() != 1)
+	Lock();
+
+	if ( i < 0 || i >= (int)stringData->length )
 	{
-		StringData* tmp = new OMISCID_TLM StringData(stringData->GetDataPtr());
-		DestroyStringData();
-		stringData = tmp;
+		Unlock();
+		throw  SimpleException("SimpleString::out of bound");
 	}
-	return *(stringData->GetDataPtr()+i);
+
+	char& tmp = *(stringData->data+i);
+
+	Unlock();
+
+	return tmp;
 }
 
 SimpleString& SimpleString::operator+= (const char* str)
@@ -679,19 +630,26 @@ SimpleString SimpleString::SubString(int begin, int end) const
 		}
 		else
 		{
-			return SimpleString::EmptyString();
+			return SimpleString::EmptyString;
 		}
 	}
 
 	if ( begin > lend )	// The Could not do the job, return an empty string
 	{
-		return SimpleString::EmptyString();
+		return SimpleString::EmptyString;
 	}
 
-	StringData* sd = new OMISCID_TLM StringData(GetStr(), begin, lend);
+	// Lock myself
+	Lock();
+
+	StringData * sd = new OMISCID_TLM StringData((StringData*)stringData, begin, lend);
+
+	// Unlock
+	Unlock();
+
 	if ( sd == NULL )
 	{
-		return EmptyString();
+		return EmptyString;
 	}
 	else
 	{
@@ -703,23 +661,23 @@ SimpleString SimpleString::SubString(int begin, int end) const
 
 const SimpleString Omiscid::operator+(const SimpleString& str1, const SimpleString& str2)
 {
-	if(str1.GetStr() == NULL) return SimpleString(str2);
-	if(str2.GetStr() == NULL) return SimpleString(str1);
-	return SimpleString(str1.GetStr(), str2.GetStr());
+	if ( str1.GetLength() == 0 ) return SimpleString(str2);
+	if ( str2.GetLength() == 0 ) return SimpleString(str1);
+	return SimpleString(str1, str2);
 }
 
 const SimpleString Omiscid::operator+(const char* str1, const SimpleString& str2)
 {
-	if(str1 == NULL) return SimpleString(str2);
-	if(str2.GetStr() == NULL) return SimpleString(str1);
-	return SimpleString(str1, str2.GetStr());
+	if ( str1 == NULL ) return SimpleString(str2);
+	if ( str2.GetLength() == 0 ) return SimpleString(str1);
+	return SimpleString( str1, str2 );
 }
 
 const SimpleString Omiscid::operator+(const SimpleString& str1, const char* str2)
 {
-	if(str1.GetStr() == NULL) return SimpleString(str2);
-	if(str2 == NULL) return SimpleString(str1);
-	return SimpleString(str1.GetStr(), str2);
+	if ( str1.GetLength() == 0 ) return SimpleString(str2);
+	if ( str2 == NULL ) return SimpleString(str1);
+	return SimpleString( str1, str2 );
 }
 
 int SimpleString::Find(const SimpleString SearchPattern, bool Backward /* = false */ ) const
@@ -728,18 +686,27 @@ int SimpleString::Find(const SimpleString SearchPattern, bool Backward /* = fals
 	char * Buffer;
 	int	CurrentLen;
 
-	if ( SearchPattern.GetLength() > GetLength() )
+	Lock();
+	SearchPattern.Lock();
+
+	if ( SearchPattern.stringData->length == 0 || SearchPattern.stringData->length > stringData->length )
 	{
+		SearchPattern.Unlock();
+		Unlock();
 		return -1;
 	}
 
 	// Get the current buffer
-	Buffer = (char*)GetStr();
+	Buffer = stringData->data;
 
 	if ( Backward == false )
 	{
 		// Forward search
-		TmpChar = strstr( Buffer, SearchPattern.GetStr() );
+		TmpChar = strstr( Buffer, SearchPattern.stringData->data );
+
+		SearchPattern.Unlock();
+		Unlock();
+
 		if ( TmpChar == NULL )
 		{
 			// Not Found
@@ -750,15 +717,17 @@ int SimpleString::Find(const SimpleString SearchPattern, bool Backward /* = fals
 	else
 	{
 		// backward search from the end of the current string minus the len of the search string
-		CurrentLen = GetLength() - SearchPattern.GetLength();
+		CurrentLen = stringData->length - SearchPattern.stringData->length;
 		for( ; ; )
 		{
 			TmpChar = (char*)memrchr( (void*)Buffer, (int)SearchPattern[0], (size_t)CurrentLen );
 			if ( TmpChar != NULL )
 			{
-				if ( strncmp( TmpChar, SearchPattern.GetStr(), SearchPattern.GetLength() ) == 0 )
+				if ( strncmp( TmpChar, SearchPattern.stringData->data, SearchPattern.stringData->length ) == 0 )
 				{
 					// ok, found
+					SearchPattern.Unlock();
+					Unlock();
 					return (int)(TmpChar-Buffer);
 				}
 
@@ -767,36 +736,43 @@ int SimpleString::Find(const SimpleString SearchPattern, bool Backward /* = fals
 			}
 			else
 			{
+				SearchPattern.Unlock();
+				Unlock();
 				return -1;
 			}
 		}
 	}
 }
 
-bool SimpleString::ReplaceFirst(const SimpleString SearchPattern, const SimpleString ReplacedPattern)
+bool SimpleString::InternalReplaceFirst(const SimpleString& SearchPattern, const SimpleString& ReplacedPattern)
 {
 	char * TmpChar;
 	char * Buffer;
 	SimpleString TmpString;
 
-	Buffer = (char*)GetStr();
+	if ( stringData->length == 0 )
+	{
+		// Nothing to find in an empty string
+		return false;
+	}
 
-	TmpChar = strstr( Buffer, SearchPattern.GetStr() );
+	Buffer = stringData->data;
+
+	TmpChar = strstr( Buffer, SearchPattern.stringData->data );
 	if ( TmpChar == NULL )
 	{
 		// Not Found
 		return false;
 	}
 
-
 	if ( TmpChar == Buffer )	// Search String is at the beginning of the string
 	{
-		TmpString = SubString( SearchPattern.GetLength(), GetLength() );
+		TmpString = SubString( SearchPattern.stringData->length, stringData->length );
 	}
 	else
 	{
 		// Build the string with the remplacement string
-		TmpString = SubString(0, (int)(TmpChar-Buffer)) + ReplacedPattern + SimpleString(TmpChar + SearchPattern.GetLength() );
+		TmpString = SubString(0, (int)(TmpChar-Buffer)) + ReplacedPattern + SimpleString(TmpChar + SearchPattern.stringData->length );
 	}
 
 	// Ok, now, I will contain the result
@@ -805,19 +781,63 @@ bool SimpleString::ReplaceFirst(const SimpleString SearchPattern, const SimpleSt
 	return true;
 }
 
-bool SimpleString::ReplaceAll(const SimpleString SearchPattern, const SimpleString ReplacedPattern)
+bool SimpleString::ReplaceFirst(const SimpleString& SearchPattern, const SimpleString& ReplacedPattern)
+{
+	Lock();
+	SearchPattern.Lock();
+	ReplacedPattern.Lock();
+
+	bool ret = InternalReplaceFirst( SearchPattern, ReplacedPattern );
+
+	ReplacedPattern.Unlock();
+	SearchPattern.Unlock();
+	Unlock();
+
+	return ret;
+}
+
+bool SimpleString::ReplaceAll(const SimpleString& SearchPattern, const SimpleString& ReplacedPattern)
 {
 	bool ret = false;
 
-	while( ReplaceFirst( SearchPattern, ReplacedPattern ) )
+	Lock();
+	SearchPattern.Lock();
+	ReplacedPattern.Lock();
+
+	while( InternalReplaceFirst( SearchPattern, ReplacedPattern ) )
 	{
 		ret = true;
 	}
 
-	return false;
+	ReplacedPattern.Unlock();
+	SearchPattern.Unlock();
+	Unlock();
+
+	return ret;
 }
 
-/* Test of 2 previous functions...
+#ifdef OMISCID_RUNING_TEST
+
+#include <System/ElapsedTime.h>
+#include <System/Event.h>
+
+int SimpleString::TestFunction()
+{
+	// Test of SimpleString...
+	int i;
+
+	// Test a growing SipleString
+	ElapsedTime TimeCounter;
+	SimpleString ToGrow;
+	for( i = 0; i < 1000; i++ )
+	{
+		ToGrow += "abc";
+	}
+
+	fprintf( stderr, "Temps : %d\n", TimeCounter.Get() );
+
+	return 1;
+
 	SimpleString Tutu;
 
 	Tutu = "\\032Yop";
@@ -849,9 +869,8 @@ bool SimpleString::ReplaceAll(const SimpleString SearchPattern, const SimpleStri
 	OmiscidTrace( "%s\n", Tutu.GetStr() );
 	Tutu.ReplaceAll( "\\032", "+++" );
 	OmiscidTrace( "%s\n", Tutu.GetStr() );
-
-	*/
-
+}
+#endif // OMISCID_RUNING_TEST
 
 using namespace std;
 
@@ -915,24 +934,23 @@ std::ostream& Omiscid::operator<<( std::ostream &os, const SimpleString &str )
 
 const char* SimpleString::GetStr() const
 {
-	return (const char*)stringData->GetDataPtr();
+	return (const char*)stringData->data;
 }
 
 unsigned int SimpleString::GetLength() const
 {
-	return stringData->GetLength();
+	return stringData->length;
 }
 
 bool SimpleString::IsEmpty() const
 {
-	return (stringData == NULL || stringData->GetLength() == 0 );
+	return (stringData == NULL || stringData->length == 0 );
 }
 
 bool SimpleString::operator==(const SimpleString& str) const
 {
 	return stringData->Equals(*(str.stringData));
 }
-
 
 bool SimpleString::operator==(const char* str) const
 {

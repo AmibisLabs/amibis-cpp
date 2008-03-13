@@ -53,7 +53,7 @@ public:
 
 private:
 	SimpleString SearchName;
-	int SearchNameLength;
+
 	char Regtype[RegtypeLength];
 	WaitForDnsSdServices * Parent;
 	bool DNSSDConnection;

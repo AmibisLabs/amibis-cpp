@@ -26,6 +26,9 @@ Service * Factory::Create( const SimpleString ServiceName, const SimpleString Cl
 		return NULL;
 	}
 
+	// Init ServiceControl layer if needed
+	OmiscidServiceControlLayerInit();
+
 	// construct the service
 	Service * NewOmiscidService = new OMISCID_TLM Service(ServiceName, ClassName);
 
@@ -41,6 +44,9 @@ Service * Factory::Create( const SimpleString ServiceName, const SimpleString Cl
 	 */
 Service * Factory::CreateFromXML( SimpleString XmlDesc )
 {
+	// Init ServiceControl layer if needed
+	OmiscidServiceControlLayerInit();
+
 	return NULL;
 }
 
@@ -53,6 +59,9 @@ Service * Factory::CreateFromXML( SimpleString XmlDesc )
 	 */
 ServiceRepository * Factory::CreateServiceRepository()
 {
+	// Init ServiceControl layer if needed
+	OmiscidServiceControlLayerInit();
+
 	// For the moment, nothing actually difficult
 	return new ServiceRepository();
 }

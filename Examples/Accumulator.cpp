@@ -91,7 +91,6 @@ void Accumulator::MessageReceived(Service& TheService, const SimpleString LocalC
 	// parse string to understand command
 	// Start lock myself using my mutex (needed if multiple clients)
 	SmartLocker SL_Locker(Locker);
-	SL_Locker.Lock();
 
 	// Get the pointer to the data
 	Command = Msg.GetBuffer();
@@ -174,21 +173,48 @@ void Accumulator::MessageReceived(Service& TheService, const SimpleString LocalC
 }
 
 
-#ifndef OMISCID_RUNING_TEST
+#ifdef OMISCID_RUNING_TEST
+
+#include "ClientAccumulator.h"
+
 /* @brief main program entry for the Accumulator. No need to give parameter */
-int main(int argc, char*argv[] )
+int Omiscid::DoAccumulatorTest( int argc, char*argv[] )
 {
-	// TrackMemoryLeaks TML;
+	// Create dynamically an accumulator sever
+	Accumulator * pAccuServer = new Accumulator;
 
-	// Create an Accumulator
-	Accumulator AccumulatorService;
+#ifdef DEBUG
+	if ( pAccuServer == (Accumulator *)NULL )
+	{
+		printf( "Test failed.\n" );
+		return -1;
+	}
+#endif
 
-	// Wait for the event. As no one will signal it, we will
-	// stay forever stuck here. 
-	Event ForEver;
-	ForEver.Wait();
+	// Create clients for accumulators
+	RunClientAccumulator * ClientsAccu = new RunClientAccumulator[2];
 
-	// exit
+#ifdef DEBUG
+	if ( ClientsAccu == (RunClientAccumulator *)NULL )
+	{
+		printf( "Test failed.\n" );
+		return -1;
+	}
+#endif
+
+	// Start them
+	ClientsAccu[0].Start();
+	ClientsAccu[1].Start();
+
+	// Sleep for 60 seconds, clients runs for 30 seconds
+	Sleep( 60*1000 );
+
+	// delete the Cliens
+	delete [] ClientsAccu;
+
+	// Delete the accu server
+	delete pAccuServer;
+
 	return 0;
 }
 #endif // OMISCID_RUNING_TEST

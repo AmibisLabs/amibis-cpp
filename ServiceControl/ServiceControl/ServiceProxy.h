@@ -174,7 +174,7 @@ private:
 	 * Gets the connection points of a remote connector
 	 * @param value the value (SimpleString format)
 	 */
-	bool GetConnectionInfos( const SimpleString Connector, ConnectionInfos& Connection );
+	bool GetConnectionInfos( const SimpleString ConnectorString, ConnectionInfos& Connection );
 
 	// Connection data
 	SimpleString HostName;

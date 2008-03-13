@@ -93,7 +93,7 @@ bool ServiceProperty::SetProperty( const SimpleString eName, const SimpleString 
 	// Set length to the Value of the name
 	Length = Name.GetLength() + 1;
 
-	if ( UpdateProperty( Value ) == false )
+	if ( UpdateProperty( eValue ) == false )
 	{
 		Empty();
 	}
@@ -110,7 +110,7 @@ bool ServiceProperty::UpdateProperty( const SimpleString eValue )
 
 	Value = eValue;
 
-	Length = Name.GetLength()+1+Value.GetLength() + 1;
+	Length = Name.GetLength() + 1 + Value.GetLength() + 1;
 
 	return true;
 }
@@ -124,7 +124,7 @@ const SimpleString ServiceProperty::operator= ( const SimpleString rvalue )
 const SimpleString ServiceProperty::GetValue()
 {
 	if ( Value.GetLength() == 0 )
-		return SimpleString::EmptyString();
+		return SimpleString::EmptyString;
 
 	return Value;
 }
@@ -132,7 +132,7 @@ const SimpleString ServiceProperty::GetValue()
 const SimpleString ServiceProperty::GetName()
 {
 	if ( Name.GetLength() == 0 )
-		return SimpleString::EmptyString();
+		return SimpleString::EmptyString;
 
 	return Name;
 }
@@ -328,7 +328,7 @@ ServiceProperty& ServiceProperties::operator[]( const SimpleString Name )
 		Properties = tmpProperties;
 	}
 
-	Properties[NbProperties].SetProperty( Name, SimpleString::EmptyString() );
+	Properties[NbProperties].SetProperty( Name, SimpleString::EmptyString );
 
 	NbProperties++;
 
@@ -459,6 +459,8 @@ const unsigned char * ServiceProperties::ExportTXTRecord() const
 		}
 	}
 
+	((char*)TXTRecord)[TXTRecordLength] = '\0';
+
 	return TXTRecord;
 }
 
@@ -500,7 +502,7 @@ bool ServiceProperties::ImportTXTRecord( int RecordLength, const unsigned char *
 			// Is it a simple flag ?
 			if ( value == NULL || valueLen == 0 )
 			{
-				(*this)[KeyName] = SimpleString::EmptyString();
+				(*this)[KeyName] = SimpleString::EmptyString;
 				continue;
 			}
 

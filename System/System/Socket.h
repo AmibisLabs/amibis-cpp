@@ -143,8 +143,6 @@ public:
   static struct hostent* gethostbyname( const SimpleString name ) { return GetHostByName(name); };
   static bool   FillAddrIn(struct sockaddr_in * pAdd, const SimpleString name, int port);
 
-  static void GetDnsNameSolvingOption();
-
   bool SetTcpNoDelay(bool Set = true);
 
   static int Errno();

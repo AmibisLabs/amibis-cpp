@@ -20,12 +20,20 @@ ClientConnection::~ClientConnection()
 	}
 }
 
+/*
 Connector::Connector(int a_pid)
 : TcpServer(), UdpExchange()
 {
 	SetServiceId(a_pid);
 
 	CallbackObject = NULL;
+}
+*/
+
+Connector::Connector()
+{
+	CallbackObject = NULL;
+	pid = 0;
 }
 
 Connector::~Connector()
@@ -44,7 +52,7 @@ void Connector::Create(int port_tcp, int port_udp)
 	// REVIEW add support of UDP Port
 	UdpExchange::Create(port_udp);
 
-	SimpleString tmps = MagicUdp();
+	SimpleString tmps = MagicUdp;
 	tmps +=	":";
 	tmps += UdpExchange::GetUdpPort();
 	TcpServer::SetSyncLinkData( tmps );
@@ -59,12 +67,11 @@ void Connector::SetName(const SimpleString NewName)
 	UdpExchange::SetName(NewName);
 
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
+
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		ListClients.GetCurrent()->tcpClient->SetName(NewName);
 	}
-	SL_ListClients.Unlock();
 }
 
 const SimpleString Connector::GetName()
@@ -88,7 +95,7 @@ void FUNCTION_CALL_TYPE Connector::ProcessLyncSyncMsg( MsgSocketCallBackData * M
 	{
 		// Ok, we've got the Linc Data
 		SimpleString tmpBuf((const char*)MsgData->Msg.GetBuffer());
-		SimpleString tmpUdp = MagicUdp();
+		SimpleString tmpUdp = MagicUdp;
 
 		SimpleString UDPPort = ValueFromKey( tmpBuf, tmpUdp );
 
@@ -136,7 +143,7 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 	{
 		UdpExchange::Create(0);
 
-		SimpleString tmps = MagicUdp();
+		SimpleString tmps = MagicUdp;
 		tmps +=	":";
 		tmps += UdpExchange::GetUdpPort();
 		TcpServer::SetSyncLinkData( tmps );
@@ -151,7 +158,6 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 
 	// add the client to my list of connected Socket
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	ListClients.Add(pConnection);
 	SL_ListClients.Unlock();
 
@@ -167,7 +173,6 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 
 	// Copy my callback objects to the new connection
 	SmartLocker SL_TcpServer_CallbackObjects(TcpServer::CallbackObjects);
-	SL_TcpServer_CallbackObjects.Lock();
 	for( TcpServer::CallbackObjects.First(); TcpServer::CallbackObjects.NotAtEnd(); TcpServer::CallbackObjects.Next() )
 	{
 		tcpclient->AddCallbackObject( TcpServer::CallbackObjects.GetCurrent() );
@@ -200,7 +205,6 @@ void Connector::SetServiceId(unsigned int pid)
 	UdpExchange::SetServiceId(pid);
 
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for( ListClients.First(); ListClients.NotAtEnd();  ListClients.Next())
 	{
 		if((ListClients.GetCurrent())->tcpClient->IsConnected())
@@ -213,7 +217,6 @@ void Connector::SetServiceId(unsigned int pid)
 			ListClients.RemoveCurrent();
 		}
 	}
-	SL_ListClients.Unlock();
 }
 
 void Connector::SendToAll(int len, const char* buf, bool fastsend)
@@ -232,9 +235,7 @@ void Connector::SendToAll(int len, const char* buf, bool fastsend)
 	else
 	{
 		SmartLocker SL_TcpServer_listConnections(TcpServer::listConnections);
-		SL_TcpServer_listConnections.Lock();
 		SmartLocker SL_UdpExchange_listUdpConnections(UdpExchange::listUdpConnections);
-		SL_UdpExchange_listUdpConnections.Lock();
 		try
 		{
 			for(TcpServer::listConnections.First();  TcpServer::listConnections.NotAtEnd();
@@ -271,7 +272,6 @@ void Connector::SendToAll(int len, const char* buf, bool fastsend)
 
 	// send to all server where it is connected
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		if((ListClients.GetCurrent())->tcpClient->IsConnected())
@@ -298,7 +298,6 @@ void Connector::SendToAll(int len, const char* buf, bool fastsend)
 			ListClients.RemoveCurrent();
 		}
 	}
-	SL_ListClients.Unlock();
 	// OmiscidTrace( "out SendToAll\n");
 }
 
@@ -314,7 +313,6 @@ int Connector::SendToPeer(int len, const char* buf, unsigned int pid, bool fasts
 
 	// Search between my client connections
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 
 	ClientConnection* cc = FindClientConnectionFromId(pid);
 	if ( cc )
@@ -334,7 +332,6 @@ int Connector::SendToPeer(int len, const char* buf, unsigned int pid, bool fasts
 		{
 			OmiscidTrace( "Error while sending to peer %8.8x : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
-		SL_ListClients.Unlock();
 		return ret;
 	}
 	SL_ListClients.Unlock();
@@ -370,7 +367,6 @@ bool Connector::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	UdpExchange::AddCallbackObject(CallbackObject);
 
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		if((ListClients.GetCurrent())->tcpClient->IsConnected())
@@ -383,7 +379,6 @@ bool Connector::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 			ListClients.RemoveCurrent();
 		}
 	}
-	SL_ListClients.Unlock();
 
 	return true;
 }
@@ -400,7 +395,6 @@ bool Connector::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	UdpExchange::RemoveCallbackObject(CallbackObject);
 
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		if( ListClients.GetCurrent()->tcpClient->IsConnected() == true )
@@ -413,7 +407,6 @@ bool Connector::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 			ListClients.RemoveCurrent();
 		}
 	}
-	SL_ListClients.Unlock();
 
 	return true;
 }
@@ -434,7 +427,6 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 
 	// Search in my Client connection
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for( ListClients.First(); (ClientCon == NULL) && ListClients.NotAtEnd(); ListClients.Next())
 	{
 		if((ListClients.GetCurrent())->GetPeerPid() == udp_connect.pid)
@@ -459,7 +451,6 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 			}
 		}
 
-		SL_ListClients.Unlock();
 		return ClientCon->udpConnection;
 	}
 
@@ -472,7 +463,6 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 
 	//std::cout << "recherche dans server connexion\n";
 	SmartLocker SL_TcpServer_listConnections(TcpServer::listConnections);
-	SL_TcpServer_listConnections.Lock();
 	try
 	{
 
@@ -534,7 +524,6 @@ UdpConnection* Connector::AcceptConnection(const UdpConnection& udp_connect, boo
 int Connector::GetNbConnection()
 {
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		if( ListClients.GetCurrent()->tcpClient->IsConnected() == false )
@@ -544,7 +533,7 @@ int Connector::GetNbConnection()
 		}
 	}
 	int nb = (int)(ListClients.GetNumberOfElements() + TcpServer::GetNbConnections());
-	SL_ListClients.Unlock();
+
 	return nb;
 }
 
@@ -553,7 +542,6 @@ int Connector::GetListPeerId(SimpleList<unsigned int>& listId)
 	int nb = TcpServer::GetListPeerId(listId);
 
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		if((ListClients.GetCurrent())->tcpClient->IsConnected())
@@ -567,7 +555,7 @@ int Connector::GetListPeerId(SimpleList<unsigned int>& listId)
 			ListClients.RemoveCurrent();
 		}
 	}
-	SL_ListClients.Unlock();
+
 	return nb;
 }
 
@@ -575,12 +563,10 @@ void Connector::SetMaxMessageSizeForTCP(int max)
 {
 	TcpServer::SetMaxMessageSizeForTCP(max);
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		(ListClients.GetCurrent())->tcpClient->SetMaxMessageSizeForTCP(max);
 	}
-	SL_ListClients.Unlock();
 }
 
 ComTools* Connector::Cast()
@@ -668,13 +654,11 @@ void Connector::Disconnect()
 
 	// disconnect my connections
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		delete ListClients.GetCurrent();
 		ListClients.RemoveCurrent();
 	}
-	SL_ListClients.Unlock();
 }
 
   /** @brief disconnect all connection to this Connector
@@ -690,7 +674,6 @@ bool Connector::DisconnectPeerId(unsigned int PeerId)
 
 	// remove locally the PeerId
 	SmartLocker SL_ListClients(ListClients);
-	SL_ListClients.Lock();
 	for(ListClients.First(); ListClients.NotAtEnd(); ListClients.Next())
 	{
 		if ( SearchId == (ListClients.GetCurrent()->tcpClient->GetPeerId() & ComTools::SERVICE_PEERID ) )
@@ -700,7 +683,6 @@ bool Connector::DisconnectPeerId(unsigned int PeerId)
 			ListClients.RemoveCurrent();
 		}
 	}
-	SL_ListClients.Unlock();
 
 	return ret;
 }

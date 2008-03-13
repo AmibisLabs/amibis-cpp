@@ -51,7 +51,7 @@ private:
 	 * @param ClassName The classe name of this service. Can be usefull in order
 	 * to search for services. By default, class is 'Service'.
 	 */
-	Service(const SimpleString ServiceName, const SimpleString ClassName = CommonServiceValues::GetDefaultServiceClassName() );
+	Service(const SimpleString ServiceName, const SimpleString ClassName = CommonServiceValues::DefaultServiceClassName );
 
 public:
 	/**

@@ -73,36 +73,15 @@ const SimpleString CommonServiceValues::GetOmiscidServiceDnsSdType()
 	return OmiscidServiceDnsSdType;
 }
 
-const SimpleString CommonServiceValues::GetDefaultServiceClassName()
-{
-	return SimpleString("Service");
-}
+const SimpleString CommonServiceValues::DefaultServiceClassName("Service");
 
 // Constant string values for service registration
-const SimpleString CommonServiceValues::GetNameForLockString()
-{
-	return SimpleString( "lock" );
-}
+const SimpleString CommonServiceValues::NameForLockString( "lock" );
+const SimpleString CommonServiceValues::NameForNameString( "name" );
+const SimpleString CommonServiceValues::NameForOwnerString( "owner" );
+const SimpleString CommonServiceValues::NameForClassString( "class" );
+const SimpleString CommonServiceValues::NameForPeerIdString( "peerId" );
 
-const SimpleString CommonServiceValues::GetNameForNameString()
-{
-	return SimpleString( "name" );
-}
-
-const SimpleString CommonServiceValues::GetNameForOwnerString()
-{
-	return SimpleString( "owner" );
-}
-
-const SimpleString CommonServiceValues::GetNameForClassString()
-{
-	return SimpleString( "class" );
-}
-
-const SimpleString CommonServiceValues::GetNameForPeerIdString()
-{
-	return SimpleString( "peerId" );
-}
 
 void CommonServiceValues::InitFromLayer()
 {

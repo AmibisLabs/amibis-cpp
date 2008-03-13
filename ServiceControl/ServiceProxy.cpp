@@ -332,7 +332,7 @@ SimpleString ServiceProxy::GetHostName()
 
 SimpleString ServiceProxy::GetName()
 {
-	return GetVariableValue( CommonServiceValues::GetNameForNameString() );
+	return GetVariableValue( CommonServiceValues::NameForNameString );
 }
 
 /**
@@ -343,7 +343,7 @@ unsigned int ServiceProxy::GetPeerId()
 {
 	try
 	{
-		SimpleString lPeerId = GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
+		SimpleString lPeerId = GetVariableValue( CommonServiceValues::NameForPeerIdString );
 
 		return ComTools::PeerIdFromString(lPeerId);
 	}
@@ -362,13 +362,13 @@ SimpleString ServiceProxy::GetPeerIdAsString()
 {
 	try
 	{
-		return GetVariableValue( CommonServiceValues::GetNameForPeerIdString() );
+		return GetVariableValue( CommonServiceValues::NameForPeerIdString );
 	}
 	catch( SimpleException& )
 	{
 	}
 
-	return SimpleString::EmptyString();
+	return SimpleString::EmptyString;
 }
 
 	/**
@@ -696,7 +696,7 @@ SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 		}
 	}
 
-	return SimpleString::EmptyString();
+	return SimpleString::EmptyString;
 }
 
 	/**

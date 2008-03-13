@@ -50,7 +50,7 @@ const ThreadMessage& ThreadMessage::operator=(const ThreadMessage& ToCopy)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 #ifdef DEBUG_THREAD
-Thread::Thread(const SimpleString Name /* = SimpleString::EmptyString() */)
+Thread::Thread(const SimpleString Name /* = SimpleString::EmptyString */)
 #else
 Thread::Thread()
 #endif
@@ -59,10 +59,11 @@ Thread::Thread()
 	ThreadName = Name;
 #endif
 
-
 #ifdef WIN32
 	ThreadID = 0;
 	ThreadHandle  = NULL;
+#else
+	m_thread = (pthread_t)0;
 #endif
 
 	ThreadIsRunning = false;
@@ -88,16 +89,22 @@ bool Thread::StartThread()
 	ThreadIsRunning = false;
 	StopWasAsked = false;
 
+#ifdef DEBUG_THREAD
+	OmiscidTrace( "StartThread : %s\n", ThreadName.GetStr() );
+#endif
+
 #ifdef WIN32
 	ThreadID = 0;
 	ThreadHandle = CreateThread( NULL, 0, CallRun, (void*)this, 0, &ThreadID );
 	return (ThreadHandle != NULL);
 #else
 	pthread_attr_t attr;
+
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	int rc = pthread_create(&m_thread, &attr, CallRun, this);
 	pthread_attr_destroy(&attr);
+
 	return (rc == 0);
 #endif
 }
@@ -108,6 +115,10 @@ bool Thread::StopThread(int wait_ms)
 
 	if (IsRunning())
 	{
+#ifdef DEBUG_THREAD
+		OmiscidTrace( "Ask %s to stop.\n", ThreadName.GetStr() );
+#endif
+
 		// Notify thread !
 		StopWasAsked = true;			// Notification for pseudo active waiting
 		StopWasAskedEvent.Signal();		// other notification
@@ -116,7 +127,11 @@ bool Thread::StopThread(int wait_ms)
 		if ( ThreadStopInTime == false )
 		{
 			// Timeout !!!
-			OmiscidError( "Thread::StopThread: Thread do not stop before timeout (%d).\n", wait_ms );
+#ifdef DEBUG_THREAD
+			OmiscidError( "Thread::StopThread: %s do not stop before timeout (%d).\n",  ThreadName.GetStr(), wait_ms );
+#else
+			OmiscidError( "Thread::StopThread: Thread do not stop before timeout (%d).\n",  wait_ms );
+#endif
 
 			// Destroy the thread...
 #ifdef WIN32
@@ -128,6 +143,10 @@ bool Thread::StopThread(int wait_ms)
 #endif
 		}
 	}
+
+#ifdef DEBUG_THREAD
+	OmiscidTrace( "Thread %s stopped.\n", ThreadName.GetStr() );
+#endif
 
 	return ThreadStopInTime;
 }
@@ -147,7 +166,10 @@ void* Thread::CallRun(void* ptr)
 	t->IsEnded.Reset();
 
 #ifdef DEBUG_THREAD
-	// OmiscidTrace( "%s\n", t->ThreadName.GetStr() );
+	t->ThreadName += "(";
+	t->ThreadName += t->GetThreadId();
+	t->ThreadName += ")";
+	OmiscidTrace( "%s started\n", t->ThreadName.GetStr() );
 #endif
 
 	// Do my job
@@ -204,12 +226,12 @@ void Thread::WaitForStop()
 /** @brief return an Id for the calling Thread
  *
  */
-unsigned long Thread::GetThreadId()
+unsigned int Thread::GetThreadId()
 {
 #ifdef WIN32
-	return (unsigned long)GetCurrentThreadId();
+	return (unsigned int)GetCurrentThreadId();
 #else
-	return (unsigned long)pthread_self();
+	return (unsigned int)pthread_self();
 #endif
 }
 
@@ -222,9 +244,8 @@ void Thread::SendMessage( int Code, void * Param1, void* Param2 /* = (void*)NULL
 	ThreadMessage MsgToSend( Code, Param1, Param2 );
 
 	SmartLocker SL_MsgQueue(MsgQueue);
-	SL_MsgQueue.Lock();
+
 	MsgQueue.AddTail(MsgToSend);
-	SL_MsgQueue.Unlock();
 }
 
 	/** @brief Send message to a Thread
@@ -234,9 +255,8 @@ void Thread::SendMessage( int Code, void * Param1, void* Param2 /* = (void*)NULL
 void Thread::SendMessage( const ThreadMessage& MsgToSend )
 {
 	SmartLocker SL_MsgQueue(MsgQueue);
-	SL_MsgQueue.Lock();
+
 	MsgQueue.AddTail(MsgToSend);
-	SL_MsgQueue.Unlock();
 }
 
 	/** @brief Retrieve message for a thread with timeout
@@ -247,7 +267,7 @@ bool Thread::WaitAndGetMessage( ThreadMessage& MsgToGet, unsigned int DelayMax /
 {
 	bool Done;
 
-	SmartLocker SL_MsgQueue(MsgQueue);
+	SmartLocker SL_MsgQueue(MsgQueue, false);
 
 	if ( DelayMax == 0 )
 	{
@@ -316,16 +336,14 @@ bool Thread::WaitAndGetMessage( ThreadMessage& MsgToGet, unsigned int DelayMax /
 bool Thread::GetMessage( ThreadMessage& MsgToSend )
 {
 	SmartLocker SL_MsgQueue(MsgQueue);
-	SL_MsgQueue.Lock();
+
 	if ( MsgQueue.GetNumberOfElements() == 0 )
 	{
 		// No message
-		SL_MsgQueue.Unlock();
 		return false;
 	}
 
 	// get first message
 	MsgToSend = MsgQueue.ExtractFirst();
-	SL_MsgQueue.Unlock();
 	return true;
 }

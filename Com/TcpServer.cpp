@@ -11,13 +11,15 @@ TcpServer::TcpServer()
 	BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
 }
 
-TcpServer::TcpServer(int port, int pid)
+/*
+TcpServer::TcpServer(int pid)
 : MsgSocket(Socket::TCP), TcpNoDelayMode(false)
 {
 	BufferForMultipleClients = new OMISCID_TLM char[TCP_BUFFER_SIZE];
 	SetServiceId(pid);
-	Create(port);
+	// Create(port);
 }
+*/
 
 TcpServer::~TcpServer()
 {
@@ -40,15 +42,12 @@ void TcpServer::Create(int port)
 void TcpServer::Disconnect()
 {
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		delete listConnections.GetCurrent();
 		listConnections.RemoveCurrent();
 	}
-
-	SL_listConnections.Unlock();
 }
 
 void TcpServer::Close()
@@ -61,7 +60,7 @@ int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 {
 	// OmiscidTrace( "TcpServer::SendToClient\n");
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
+
 	MsgSocket* ms = FindClientFromId(pid);
 	int nb_send = 0;
 	if ( ms != (MsgSocket*)NULL )
@@ -76,14 +75,13 @@ int TcpServer::SendToClient(int len, const char* buf, unsigned int pid)
 			OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
-	SL_listConnections.Unlock();
+
 	return nb_send;
 }
 
 int TcpServer::SendToClient(int* tab_len, const char** tab_buf, int nb_buf, unsigned int pid)
 {
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 
 	MsgSocket* ms = FindClientFromId(pid);
 	int nb_send = 0;
@@ -100,7 +98,7 @@ int TcpServer::SendToClient(int* tab_len, const char** tab_buf, int nb_buf, unsi
 			OmiscidTrace( "Error while sending to %8.8x peer : %s (%d)\n", pid, e.msg.GetStr(), e.err );
 		}
 	}
-	SL_listConnections.Unlock();
+
 	return nb_send;
 }
 
@@ -112,21 +110,17 @@ int TcpServer::SendToAllClients(int len, const char* buf)
 
 	// Check if we have someone to serve
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
+
 	if ( listConnections.GetNumberOfElements() == 0 )
 	{
-		SL_listConnections.Unlock();
 		return 0;
 	}
-	SL_listConnections.Unlock();
 
 	SmartLocker SL_ProtectedSend(ProtectedSend);
-	SL_ProtectedSend.Lock();
 
 	// If message is too big, we do not try to do optimisation
 	if ( len > maxBIPMessageSize )
 	{
-		SL_listConnections.Lock();
 		for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 		{
 			ms = listConnections.GetCurrent();
@@ -148,20 +142,16 @@ int TcpServer::SendToAllClients(int len, const char* buf)
 				delete ms;
 			}
 		}
-		SL_listConnections.Unlock();
 
-		SL_ProtectedSend.Unlock();
 		return nb_clients;
 	}
 
 	TotalLen = MsgSocket::PrepareBufferForBip( BufferForMultipleClients, buf, len );
 	if ( TotalLen == -1 )
 	{
-		SL_ProtectedSend.Unlock();
 		return -1;
 	}
 
-	SL_listConnections.Lock();
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -183,9 +173,6 @@ int TcpServer::SendToAllClients(int len, const char* buf)
 			delete ms;
 		}
 	}
-	SL_listConnections.Unlock();
-
-	SL_ProtectedSend.Unlock();
 
 	return nb_clients;
 }
@@ -199,13 +186,11 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 
 	// Check if we have someone to serve
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
+
 	if ( listConnections.GetNumberOfElements() == 0 )
 	{
-		SL_listConnections.Unlock();
 		return 0;
 	}
-	SL_listConnections.Unlock();
 
 	for( i = 0, TotalLen = 0; i < nb_buf; i++ )
 	{
@@ -215,7 +200,6 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 	// If message is too big, we do not try to do optimisation
 	if ( TotalLen > maxBIPMessageSize )
 	{
-		SL_listConnections.Lock();
 		for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 		{
 			ms = listConnections.GetCurrent();
@@ -237,22 +221,18 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 				delete ms;
 			}
 		}
-		SL_listConnections.Unlock();
 
 		return nb_clients;
 	}
 
 	SmartLocker SL_ProtectedSend(ProtectedSend);
-	SL_ProtectedSend.Lock();
 
 	TotalLen = MsgSocket::PrepareBufferForBipFromCuttedMsg( BufferForMultipleClients, tab_len, tab_buf, nb_buf);
 	if ( TotalLen == -1 )
 	{
-		SL_ProtectedSend.Unlock();
 		return -1;
 	}
 
-	SL_listConnections.Lock();
 	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -274,9 +254,6 @@ int TcpServer::SendToAllClients(int* tab_len, const char** tab_buf, int nb_buf)
 			delete ms;
 		}
 	}
-	SL_listConnections.Unlock();
-
-	SL_ProtectedSend.Unlock();
 
 	return nb_clients;
 }
@@ -287,7 +264,7 @@ int TcpServer::GetNbConnections()
 	MsgSocket * ms;
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
+
 	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next())
 	{
 		ms = listConnections.GetCurrent();
@@ -299,7 +276,7 @@ int TcpServer::GetNbConnections()
 	}
 
 	int nb = (int)listConnections.GetNumberOfElements();
-	SL_listConnections.Unlock();
+
 	return nb;
 }
 
@@ -310,12 +287,11 @@ bool TcpServer::AcceptConnection(MsgSocket* sock)
 	// OmiscidTrace( "TcpServer::AcceptConnection:: connection from (%s)\n", sock->GetSocket()->GetConnectedHost().GetStr());
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 
 	// Init the socket
 	// REVIEW: Inherit my SyndLink data
 	SmartLocker SL_mutex(mutex);
-	SL_mutex.Lock();
+
 	if ( SyncLinkData.GetLength() != 0 )
 	{
 		sock->SetSyncLinkData( SyncLinkData  );
@@ -329,7 +305,6 @@ bool TcpServer::AcceptConnection(MsgSocket* sock)
 
 	// Add all my listener to the new socket
 	SmartLocker SL_CallbackObjects(CallbackObjects);
-	SL_CallbackObjects.Lock();
 	for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 	{
 		// Add this listener
@@ -361,7 +336,6 @@ bool TcpServer::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 
 	MsgSocket* ms;
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -375,7 +349,6 @@ bool TcpServer::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 			delete ms;
 		}
 	}
-	SL_listConnections.Unlock();
 
 	return true;
 }
@@ -389,7 +362,6 @@ bool TcpServer::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 
 	MsgSocket* ms;
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -403,7 +375,6 @@ bool TcpServer::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 			delete ms;
 		}
 	}
-	SL_listConnections.Unlock();
 
 	return true;
 }
@@ -417,7 +388,6 @@ void TcpServer::RemoveAllCallbackObjects()
 
 	MsgSocket* ms;
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -431,7 +401,6 @@ void TcpServer::RemoveAllCallbackObjects()
 			delete ms;
 		}
 	}
-	SL_listConnections.Unlock();
 }
 
 int TcpServer::GetListPeerId(SimpleList<unsigned int>& list_peer)
@@ -440,7 +409,6 @@ int TcpServer::GetListPeerId(SimpleList<unsigned int>& list_peer)
 	int nb = 0;
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -455,7 +423,6 @@ int TcpServer::GetListPeerId(SimpleList<unsigned int>& list_peer)
 			nb++;
 		}
 	}
-	SL_listConnections.Unlock();
 	return nb;
 }
 
@@ -472,7 +439,6 @@ void TcpServer::SetServiceId(unsigned int pid)
 	MsgSocket::SetServiceId(pid);
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		if( listConnections.GetCurrent()->IsConnected() )
@@ -485,7 +451,6 @@ void TcpServer::SetServiceId(unsigned int pid)
 			listConnections.RemoveCurrent();
 		}
 	}
-	SL_listConnections.Unlock();
 }
 
 void TcpServer::SetMaxMessageSizeForTCP(int max)
@@ -493,7 +458,6 @@ void TcpServer::SetMaxMessageSizeForTCP(int max)
 	MsgSocket::SetMaxMessageSizeForTCP(max);
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for(listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		if(listConnections.GetCurrent()->IsConnected())
@@ -504,7 +468,6 @@ void TcpServer::SetMaxMessageSizeForTCP(int max)
 			listConnections.RemoveCurrent();
 		}
 	}
-	SL_listConnections.Unlock();
 }
 
 MsgSocket* TcpServer::FindClientFromId(unsigned int id)
@@ -512,7 +475,6 @@ MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 	MsgSocket * ms;
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -520,7 +482,6 @@ MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 		{
 			if( ms->IsConnected() )
 			{
-				SL_listConnections.Unlock();
 				return ms;
 			}
 			else
@@ -541,13 +502,11 @@ MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 		{
 			if ( ms->IsConnected() )
 			{
-				SL_listConnections.Unlock();
 				return ms;
 			}
 		}
 	}
 
-	SL_listConnections.Unlock();
 	return NULL;
 }
 
@@ -559,7 +518,6 @@ bool TcpServer::DisconnectPeerId(unsigned int PeerId)
 	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 	for( listConnections.First(); listConnections.NotAtEnd(); listConnections.Next() )
 	{
 		ms = listConnections.GetCurrent();
@@ -579,7 +537,6 @@ bool TcpServer::DisconnectPeerId(unsigned int PeerId)
 		}
 	}
 
-	SL_listConnections.Unlock();
 	return ret;
 }
 
@@ -591,7 +548,6 @@ bool TcpServer::SetTcpNoDelay(bool Set)
 		return true;
 
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
 
 	TcpNoDelayMode = Set;
 
@@ -599,8 +555,6 @@ bool TcpServer::SetTcpNoDelay(bool Set)
 	{
 		ReturnCode = ReturnCode & listConnections.GetCurrent()->SetTcpNoDelay(TcpNoDelayMode);
 	}
-
-	SL_listConnections.Unlock();
 
 	return ReturnCode;
 }
@@ -629,8 +583,8 @@ bool TcpServer::IsStillConnected(unsigned int peer_id)
 {
 	bool res = false;
 	SmartLocker SL_listConnections(listConnections);
-	SL_listConnections.Lock();
+
 	res = FindClientFromId(peer_id) != NULL;
-	SL_listConnections.Unlock();
+
 	return res;
 }

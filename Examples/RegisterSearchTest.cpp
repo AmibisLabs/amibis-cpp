@@ -89,6 +89,8 @@ int main(int argc, char*argv[] )
 		RegisterAndSearchUsage(argv[0]);
 	}
 
+	NumberOfServicesToRegister = 5;
+
 	// A simple list to store RegisterThread objects
 	SimpleList<RegisterThread*> ListOfRegisterThreads;
 
@@ -122,8 +124,9 @@ int main(int argc, char*argv[] )
 		// Create a new register service called
 		pRegThread = new OMISCID_TLM RegisterThread(i);
 		// if ok
-		if ( pRegThread )
+		if ( pRegThread != (RegisterThread*)NULL )
 		{
+			pRegThread->Start();
 			// add it to my list of threads
 			ListOfRegisterThreads.Add( pRegThread );
 		}

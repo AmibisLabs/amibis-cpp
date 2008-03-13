@@ -23,7 +23,6 @@ bool ServiceRepository::AddListener(ServiceRepositoryListener* Listener, Service
 	if ( Listener != (ServiceRepositoryListener*)NULL )
 	{
 		SmartLocker SL_RepoListeners(RepoListeners);
-		SL_RepoListeners.Lock();
 
 		// Add listener and start its browse
 		RepoListeners.AddTail(Listener);
@@ -58,7 +57,6 @@ bool ServiceRepository::RemoveListener(ServiceRepositoryListener* Listener, bool
 	}
 
 	SmartLocker SL_RepoListeners(RepoListeners);
-	SL_RepoListeners.Lock();
 
 	Found = false;
 	for( RepoListeners.First(); RepoListeners.NotAtEnd(); RepoListeners.Next() )
@@ -128,7 +126,6 @@ void ServiceRepository::Stop()
 
 	// Remove all entry from my list and remove them from the DnsSdProxy
 	SmartLocker SL_RepoListeners(RepoListeners);
-	SL_RepoListeners.Lock();
 
 	// While we have ServiceRepositoryListeners
 	while( RepoListeners.GetNumberOfElements() > 0 )
@@ -140,5 +137,4 @@ void ServiceRepository::Stop()
 		}
 	}
 
-	SL_RepoListeners.Unlock();
 }

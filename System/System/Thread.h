@@ -75,7 +75,7 @@ public:
 	SimpleString ThreadName;
 
 public:
-	Thread(const SimpleString Name = SimpleString::EmptyString() );
+	Thread(const SimpleString Name = SimpleString::EmptyString );
 
 #else
 
@@ -134,7 +134,7 @@ public:
 	/** @brief return an Id for the calling Thread
 	 *
 	 */
-	static unsigned long GetThreadId();
+	static unsigned int GetThreadId();
 
 protected:
 
@@ -185,14 +185,17 @@ private:
 	static unsigned long FUNCTION_CALL_TYPE CallRun(void* ptr);
 #else
 
-	pthread_t m_thread; /*!< the Posix thread*/
-
 	/** @brief static method executes in the Posix thread
 	 *
 	 * call the Run methods of a Thread object.
 	 * @param ptr pointer on a Thread object
 	 */
 	static void* CallRun(void* ptr);
+
+	unsigned int before;	/*!< to prevent memory correption by pthread_* functions */
+	pthread_t m_thread; /*!< the Posix thread*/
+	unsigned int after;		/*!< to prevent memory correption by pthread_* functions */
+
 #endif
 
 };

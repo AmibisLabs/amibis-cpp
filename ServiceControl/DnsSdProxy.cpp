@@ -15,6 +15,8 @@ using namespace Omiscid;
 DnsSdProxy::DnsSdServiceInstanceManager::DnsSdServiceInstanceManager( DnsSdService& ToCopy )
 	: DnsSdService(ToCopy)
 {
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
+
 	// When creating this service, it is here
 	IsPresent = true;
 }
@@ -47,63 +49,61 @@ bool DnsSdProxyClient::StopBrowse( bool NotifyAsIfServicesDisappear /* = false *
 
 DnsSdServicesList::DnsSdServicesList()
 {
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
-	DnsSdProxy::CurrentNumberOfServicesListCopies()++;
-	SL_Locker.Unlock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
+
+	DnsSdProxy::CurrentNumberOfServicesListCopies++;
 }
 
 DnsSdServicesList::~DnsSdServicesList()
 {
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
-	DnsSdProxy::CurrentNumberOfServicesListCopies()--;
-	SL_Locker.Unlock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
+
+	DnsSdProxy::CurrentNumberOfServicesListCopies--;
 }
 
 DnsSdProxy::DnsSdProxy()
 {
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
 
-	InstancesCount()++;
-	if ( InstancesCount() == 1 )
+	InstancesCount++;
+	if ( InstancesCount == 1 )
 	{
 		// First Instance
 		OmiscidTrace( "Launch DnsSdProxy instance.\n" );
 
 		// Reset Event (in case we were over 1 instance, under 1 and them over 1 again
-		Changes().Reset();
+		Changes.Reset();
 
-		ServiceBroswer() = new OMISCID_TLM BrowseForDNSSDService( CommonServiceValues::GetOmiscidServiceDnsSdType(), BrowseCollect, (void *)this, true);
-		if ( ServiceBroswer() == NULL )
+		ServiceBroswer = new OMISCID_TLM BrowseForDNSSDService( CommonServiceValues::GetOmiscidServiceDnsSdType(), BrowseCollect, (void *)this );
+		if ( ServiceBroswer == NULL )
 		{
 			OmiscidError( "Launch DnsSdProxy instance => failed\n" );
-			// Let InstancesCount() be 0, we will retry later
-			InstancesCount() = 0;
-			NeedToCleanupServicesList() = false;
+			// Let InstancesCount be 0, we will retry later
+			InstancesCount = 0;
+			NeedToCleanupServicesList = false;
 		}
+
+		// Start browsing
+		ServiceBroswer->Start();
 	}
-	SL_Locker.Unlock();
 }
 
 DnsSdProxy::~DnsSdProxy()
 {
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
 
-	if ( InstancesCount() == 1 )
+	if ( InstancesCount == 1 )
 	{
 		// I am the last Instance
-		InstancesCount() = 0;
+		InstancesCount = 0;
 		OmiscidTrace( "Last DnsSdProxy instance. Stop it.\n" );
 
 		DnsSdServiceInstanceManager * pSIM;
 
 		// Empty the list of current services
-		while( ServicesList().GetNumberOfElements() != 0 )
+		while( ServicesList.GetNumberOfElements() != 0 )
 		{
-			pSIM = ServicesList().ExtractFirst();
+			pSIM = ServicesList.ExtractFirst();
 			if ( pSIM != (DnsSdServiceInstanceManager *)NULL )
 			{
 				delete pSIM;
@@ -111,41 +111,91 @@ DnsSdProxy::~DnsSdProxy()
 		}
 
 		// Say that we do not need to do cleanup action
-		NeedToCleanupServicesList() = false;
+		NeedToCleanupServicesList = false;
 
-		if ( ServiceBroswer() )
+		if ( ServiceBroswer )
 		{
 			// Leave mutex to prevent deadlock
 			SL_Locker.Unlock();
-			delete ServiceBroswer();
+			delete ServiceBroswer;
 
 			// Reenter mutex
 			SL_Locker.Lock();
-			ServiceBroswer() = NULL;
+			ServiceBroswer = NULL;
 		}
 
 		// Send signals to wake up everybody waiting...
-		Changes().Signal();
+		Changes.Signal();
 	}
-	SL_Locker.Unlock();
+}
+
+// Init static data for the DnsSdProx class
+
+// To protect all my private stuff...
+ReentrantMutex DnsSdProxy::Locker;
+
+// A counter of instances
+unsigned int DnsSdProxy::InstancesCount = 0; // Start with 0 instances
+
+// Number of "copies" of the service in use
+unsigned int DnsSdProxy::CurrentNumberOfServicesListCopies = 0; // Start with 0 customers
+
+// A boolean saying that we need to remove services in the list
+bool DnsSdProxy::NeedToCleanupServicesList = false;	// At start we do not need to cleanup everything
+
+// A list to contain all the services
+SimpleList<DnsSdProxy::DnsSdServiceInstanceManager*> DnsSdProxy::ServicesList;
+
+// Event to say that I have new thing to
+Event DnsSdProxy::Changes;
+BrowseForDNSSDService * DnsSdProxy::ServiceBroswer = (BrowseForDNSSDService *)NULL;	// protected by a mutex
+
+// manage futur notification paradigm
+SimpleList<DnsSdProxyClient*> DnsSdProxy::ClientsList;
+
+// WARNING : we do not call the mutex lock !
+void DnsSdProxy::CleanupServicesList()
+{
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
+
+	DnsSdServiceInstanceManager * pServiceInfo;
+
+	// Shall we cleanup the List ?
+	if ( NeedToCleanupServicesList == true && CurrentNumberOfServicesListCopies == 0 )
+	{
+		// walk among the list to remove old entries
+		for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )
+		{
+			pServiceInfo = ServicesList.GetCurrent();
+			if ( pServiceInfo->IsPresent == false )
+			{
+				// ok remove it from the list
+				ServicesList.RemoveCurrent();
+
+				// destroy it
+				delete pServiceInfo;
+			}
+		}
+
+		// cleanup done
+		NeedToCleanupServicesList = false;
+	}
 }
 
 bool DnsSdProxy::IsEnabled()
 {
 	bool ret = false;
 
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
 
 	// Shall we cleanup the services list
 	CleanupServicesList();
 
 	// Is there some proxy running ?
-	if ( InstancesCount() > 0 )
+	if ( InstancesCount > 0 )
 	{
 		ret = true;
 	}
-	SL_Locker.Unlock();
 
 	return ret;
 }
@@ -154,14 +204,12 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, uns
 {
 	DnsSdServiceInstanceManager * pServiceInfo;
 
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock(); // To prevent destroy of myself...
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
 
 	// Look is we need to continue to work
-	if ( InstancesCount() == 0 )
+	if ( InstancesCount == 0 )
 	{
 		// quit
-		SL_Locker.Unlock();
 		return;
 	}
 
@@ -172,12 +220,11 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, uns
 
 		// Search if this service is already registered in case of multiple network interface
 		// services may appear several times
-		for( ServicesList().First(); ServicesList().NotAtEnd(); ServicesList().Next() )
+		for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )
 		{
-			if ( NewService.CompleteServiceName == ServicesList().GetCurrent()->CompleteServiceName )
+			if ( NewService.CompleteServiceName == ServicesList.GetCurrent()->CompleteServiceName )
 			{
 				// quit
-				SL_Locker.Unlock();
 				return;
 			}
 		}
@@ -186,16 +233,16 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, uns
 		pServiceInfo = new OMISCID_TLM DnsSdServiceInstanceManager( NewService );
 		if ( pServiceInfo != NULL )
 		{
-			ServicesList().AddTail( pServiceInfo );
+			ServicesList.AddTail( pServiceInfo );
 
 			// Call all DnsSdProxyClients
-			for( ClientsList().First(); ClientsList().NotAtEnd(); ClientsList().Next() )
+			for( ClientsList.First(); ClientsList.NotAtEnd(); ClientsList.Next() )
 			{
-				ClientsList().GetCurrent()->DnsSdProxyServiceBrowseReply( flags, *pServiceInfo );
+				ClientsList.GetCurrent()->DnsSdProxyServiceBrowseReply( flags, *pServiceInfo );
 			}
 
 			// Said to the waiters that a service appears
-			Changes().Signal();
+			Changes.Signal();
 		}
 
 		// Shall we cleanup the List ?
@@ -205,51 +252,47 @@ void FUNCTION_CALL_TYPE DnsSdProxy::BrowseCollect( DnsSdService& NewService, uns
 	{
 		// A new service desappears.
 		// Search it in the list
-		for( ServicesList().First(); ServicesList().NotAtEnd(); ServicesList().Next() )
+		for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )
 		{
 			// Copy each members of this list into the new list
-			if ( ServicesList().GetCurrent()->CompleteServiceName.EqualsCaseInsensitive( NewService.CompleteServiceName )  )
+			if ( ServicesList.GetCurrent()->CompleteServiceName.EqualsCaseInsensitive( NewService.CompleteServiceName )  )
 			{
 
 				// Call all DnsSdProxyClients
-				for( ClientsList().First(); ClientsList().NotAtEnd(); ClientsList().Next() )
+				for( ClientsList.First(); ClientsList.NotAtEnd(); ClientsList.Next() )
 				{
-					ClientsList().GetCurrent()->DnsSdProxyServiceBrowseReply( flags, *ServicesList().GetCurrent() );
+					ClientsList.GetCurrent()->DnsSdProxyServiceBrowseReply( flags, *ServicesList.GetCurrent() );
 				}
 
 				// Ok, we've got it, can we remove it ?
-				if ( CurrentNumberOfServicesListCopies() == 0 )
+				if ( CurrentNumberOfServicesListCopies == 0 )
 				{
-					pServiceInfo = ServicesList().GetCurrent();
-					ServicesList().RemoveCurrent();
+					pServiceInfo = ServicesList.GetCurrent();
+					ServicesList.RemoveCurrent();
 					delete pServiceInfo;
 				}
 				else
 				{
 					// Say that we will remove it in the future
-					ServicesList().GetCurrent()->IsPresent = false;
-					NeedToCleanupServicesList() = true;
+					ServicesList.GetCurrent()->IsPresent = false;
+					NeedToCleanupServicesList = true;
 				}
 
 				// Say something change
-				Changes().Signal();
+				Changes.Signal();
 				break;
 			}
 		}
 	}
-
-	SL_Locker.Unlock();
 }
 
 DnsSdServicesList * DnsSdProxy::GetCurrentServicesList()
 {
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
 
 	// Is there some proxy running ?
-	if ( InstancesCount() == 0 )
+	if ( InstancesCount == 0 )
 	{
-		SL_Locker.Unlock();
 		return NULL;
 	}
 
@@ -259,22 +302,19 @@ DnsSdServicesList * DnsSdProxy::GetCurrentServicesList()
 	DnsSdServicesList * pList = new OMISCID_TLM DnsSdServicesList;
 	if ( pList == NULL )
 	{
-		SL_Locker.Unlock();
 		return NULL;
 	}
 
-	for( ServicesList().First(); ServicesList().NotAtEnd(); ServicesList().Next() )
+	for( ServicesList.First(); ServicesList.NotAtEnd(); ServicesList.Next() )
 	{
 		// Copy each members of this list into the new list
-		DnsSdServiceInstanceManager * pServiceInfo = ServicesList().GetCurrent();
+		DnsSdServiceInstanceManager * pServiceInfo = ServicesList.GetCurrent();
 		// If the service is here, put it in the list
 		if ( pServiceInfo->IsPresent == true )
 		{
-			pList->AddTail( ServicesList().GetCurrent() );
+			pList->AddTail( ServicesList.GetCurrent() );
 		}
 	}
-
-	SL_Locker.Unlock();
 
 	return pList;
 }
@@ -286,17 +326,16 @@ bool DnsSdProxy::AddClient( DnsSdProxyClient * Client, bool NotifyOnlyNewEvent /
 		return false;
 	}
 
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
 
 	// Shall we cleanup the services list
 	CleanupServicesList();
 
 	// Add client
-	ClientsList().AddTail( Client );
+	ClientsList.AddTail( Client );
 
 	// Unlock to prevent too long locking
-	SL_Locker.Unlock();
+	// SL_Locker.Unlock();
 
 	// Send already arrived services to this client is requested
 	if ( NotifyOnlyNewEvent == false )
@@ -331,18 +370,17 @@ bool DnsSdProxy::RemoveClient( DnsSdProxyClient * Client, bool NotifyAsIfService
 		return false;
 	}
 
-	SmartLocker SL_Locker(DnsSdProxy::Locker());
-	SL_Locker.Lock();
+	SmartLocker SL_Locker(DnsSdProxy::Locker);
 
 	// Shall we cleanup the services list
 	CleanupServicesList();
 
-	for( ClientsList().First(); ClientsList().NotAtEnd(); ClientsList().Next() )
+	for( ClientsList.First(); ClientsList.NotAtEnd(); ClientsList.Next() )
 	{
-		if ( ClientsList().GetCurrent() == Client )
+		if ( ClientsList.GetCurrent() == Client )
 		{
 			// Remove client from the list
-			ClientsList().RemoveCurrent();
+			ClientsList.RemoveCurrent();
 
 			// Unlock mutex to prevent to loong locking
 			SL_Locker.Unlock();
@@ -373,7 +411,6 @@ bool DnsSdProxy::RemoveClient( DnsSdProxyClient * Client, bool NotifyAsIfService
 			return true;
 		}
 	}
-	SL_Locker.Unlock();
 
 	return false;
 }
@@ -385,5 +422,5 @@ bool DnsSdProxy::WaitForChanges(unsigned int TimeToWait)
 		return false;
 	}
 
-	return Changes().Wait( TimeToWait );
+	return Changes.Wait( TimeToWait );
 }

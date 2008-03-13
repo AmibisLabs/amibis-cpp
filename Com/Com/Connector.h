@@ -68,7 +68,7 @@ class Connector : public TcpServer, public UdpExchange
    * \brief Constructor.
    * \param a_pid [in] the service identifier
    */
-  Connector(int a_pid = 0);
+  Connector();
 
   /** \brief Destructor. */
   virtual ~Connector();

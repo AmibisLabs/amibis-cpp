@@ -48,8 +48,8 @@ public:
 	~OmiscidServiceControlLayerInitClass();
 };
 
-// External object
-extern OmiscidServiceControlLayerInitClass OmiscidServiceControlLayerInit;
+// External function
+extern void OmiscidServiceControlLayerInit();
 
 } // namespace Omiscid
 

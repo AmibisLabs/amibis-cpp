@@ -31,14 +31,13 @@ void UdpExchange::Create(int port)
 void UdpExchange::Disconnect()
 {
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
+
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd();
 		listUdpConnections.Next())
 	{
 		delete (listUdpConnections.GetCurrent());
 		listUdpConnections.RemoveCurrent();
 	}
-	SL_listUdpConnections.Unlock();
 }
 
 void UdpExchange::Close()
@@ -69,7 +68,6 @@ int UdpExchange::SendTo(int len, const char* buf, unsigned int pid)
 	int nb_send = 0;
 
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
 
 	UdpConnection* ptr = FindConnectionFromId(pid);
 	if(ptr)
@@ -84,14 +82,13 @@ int UdpExchange::SendTo(int len, const char* buf, unsigned int pid)
 		}
 	}
 
-	SL_listUdpConnections.Unlock();
 	return nb_send;
 }
 
 void UdpExchange::SendToAll(int len, const char* buf)
 {
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
+
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		try
@@ -103,15 +100,14 @@ void UdpExchange::SendToAll(int len, const char* buf)
 			OmiscidTrace( "Error while sending to all peers : %s (%d)\n", e.msg.GetStr(), e.err );
 		}
 	}
-	SL_listUdpConnections.Unlock();
 }
 
 int UdpExchange::GetNbConnections()
 {
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
+
 	int nb = listUdpConnections.GetNumberOfElements();
-	SL_listUdpConnections.Unlock();
+
 	return nb;
 }
 
@@ -120,7 +116,7 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
 	//std::cerr << "in UdpExchange::acceptConnection(UdpConnection*)\n";
 
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
+
 	UdpConnection* udp_found = NULL;
 	for ( listUdpConnections.First(); !udp_found && listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
@@ -139,7 +135,6 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
 	{
 		OmiscidTrace( "Connection UDP from refused (Unknown, not initialized with empty message)\n");
 	}
-	SL_listUdpConnections.Unlock();
 	return udp_found;
 }
 
@@ -148,13 +143,13 @@ int UdpExchange::GetListPeerId(SimpleList<unsigned int>& listId)
 	int nb =0;
 
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
+
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		listId.Add((listUdpConnections.GetCurrent())->pid);
 		nb++;
 	}
-	SL_listUdpConnections.Unlock();
+
 	return nb;
 }
 
@@ -163,12 +158,12 @@ UdpConnection* UdpExchange::FindConnectionFromId(unsigned int id)
 	unsigned int SearchId = id;
 
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
+
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		if( listUdpConnections.GetCurrent()->pid == SearchId )
 		{
-			SL_listUdpConnections.Unlock();
+
 			return listUdpConnections.GetCurrent();
 		}
 	}
@@ -185,7 +180,6 @@ UdpConnection* UdpExchange::FindConnectionFromId(unsigned int id)
 		}
 	}
 
-	SL_listUdpConnections.Unlock();
 	return NULL;
 }
 
@@ -198,7 +192,7 @@ bool UdpExchange::DisconnectPeerId(unsigned int PeerId)
 	unsigned int SearchId = PeerId & ComTools::SERVICE_PEERID;
 
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
+
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
 		if( SearchId == (listUdpConnections.GetCurrent()->pid & ComTools::SERVICE_PEERID))
@@ -209,14 +203,12 @@ bool UdpExchange::DisconnectPeerId(unsigned int PeerId)
 		}
 	}
 
-	SL_listUdpConnections.Unlock();
 	return ret;
 }
 
 bool UdpExchange::RemoveConnectionWithId(unsigned int pid)
 {
 	SmartLocker SL_listUdpConnections(listUdpConnections);
-	SL_listUdpConnections.Lock();
 
 	for(listUdpConnections.First(); listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
@@ -224,11 +216,9 @@ bool UdpExchange::RemoveConnectionWithId(unsigned int pid)
 		{
 			delete listUdpConnections.GetCurrent();
 			listUdpConnections.RemoveCurrent();
-			SL_listUdpConnections.Unlock();
 			return true;
 		}
 	}
-	SL_listUdpConnections.Unlock();
 	return false;
 }
 

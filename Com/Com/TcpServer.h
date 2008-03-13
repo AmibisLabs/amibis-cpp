@@ -38,14 +38,6 @@ class TcpServer : public MsgSocket, virtual public ComTools
    */
   TcpServer();
 
-  /** \brief Constructor
-   *
-   * Build a TCP socket
-   * ans then call Create with the parameter port.
-   * @see Create
-   */
-  TcpServer(int port, int pid = 0);
-
   /** \brief Destructor
    *
    * Call Disconnect and Close, and so

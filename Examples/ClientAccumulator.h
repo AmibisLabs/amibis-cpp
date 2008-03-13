@@ -23,12 +23,21 @@ namespace Omiscid {
 class RunClientAccumulator : public Thread
 {
 public:
-	RunClientAccumulator()
+	RunClientAccumulator() :
+#ifdef DEBUG_THREAD
+	Thread( "RunClientAccumulator" )
+#else
+	Thread()
+#endif
 	{
-		StartThread();
 	};
 
 	~RunClientAccumulator() {};
+
+	void Start()
+	{
+		StartThread();
+	}
 	
 	virtual void FUNCTION_CALL_TYPE Run()
 	{

@@ -69,7 +69,7 @@ public:
 	 *
 	 *	This constructor takes a name and optionaly a value for the new constructed property. See ServiceProperty#SetProperty.
 	*/
-	ServiceProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString() );
+	ServiceProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString );
 
 	virtual ~ServiceProperty();
 
@@ -94,7 +94,7 @@ public:
 	 *  \li \c if #Name equals "Property" and #Value is "", we will have an empty property : "Property=".
 	 *  \li \c if #Name equals "Property" and #Value is "something", we will have : "Property=something".
 	 */
-	virtual bool SetProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString() );	// Set a property with a name and optionaly a value
+	virtual bool SetProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString );	// Set a property with a name and optionaly a value
 
 	/*! \brief Change a value for a property that have already a name.
 	 *	\param[in] Value an mandatory const c-SimpleString containing the value of the property
@@ -128,10 +128,10 @@ class ServicePropertyNotify : public ServiceProperty
 
 public:
 	ServicePropertyNotify();
-	ServicePropertyNotify(const SimpleString Name, const SimpleString Value = SimpleString::EmptyString(), ServiceProperties * Parent = (ServiceProperties*)NULL );
+	ServicePropertyNotify(const SimpleString Name, const SimpleString Value = SimpleString::EmptyString, ServiceProperties * Parent = (ServiceProperties*)NULL );
 	virtual ~ServicePropertyNotify();
 
-	virtual bool SetProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString() );
+	virtual bool SetProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString );
 	virtual bool UpdateProperty( const SimpleString Value );
 	virtual const SimpleString operator= ( const SimpleString rvalue );
 	virtual const ServiceProperty& operator= ( const ServiceProperty& rvalue );

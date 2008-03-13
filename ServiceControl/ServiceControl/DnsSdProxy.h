@@ -79,93 +79,35 @@ private:
 	// Init static data for the DnsSdProx class
 
 	// To protect all my private stuff...
-	inline static ReentrantMutex& Locker()
-	{
-		static ReentrantMutex Internal_Locker;
-		return Internal_Locker;
-	}
+	static ReentrantMutex Locker;
 
 	// A counter of instances
-	inline static unsigned int& InstancesCount()
-	{
-		static unsigned int Internal_InstancesCount = 0; // Start with 0 instances
-		return Internal_InstancesCount;
-	}
+	static unsigned int InstancesCount;
 
 	// Number of "copies" of the service in use
-	inline static unsigned int& CurrentNumberOfServicesListCopies()
-	{
-		static unsigned int Internal_CurrentNumberOfServicesListCopies = 0; // Start with 0 customers
-		return Internal_CurrentNumberOfServicesListCopies;
-	}
+	static unsigned int CurrentNumberOfServicesListCopies;
 
 	// A boolean saying that we need to remove services in the list
-	inline static bool& NeedToCleanupServicesList()
-	{
-		static bool Internal_NeedToCleanupServicesList= false;	// At start we do not need to cleanup everything
-		return Internal_NeedToCleanupServicesList;
-	}
+	static bool NeedToCleanupServicesList;
 
 	// A list to contain all the services
-	inline static SimpleList<DnsSdServiceInstanceManager*>& ServicesList()
-	{
-		static SimpleList<DnsSdServiceInstanceManager*> Internal_ServicesList;
-		return Internal_ServicesList;
-	}
+	static SimpleList<DnsSdServiceInstanceManager*> ServicesList;
 
-	inline static Event& Changes()
-	{
-		static Event Internal_Changes;
-		return Internal_Changes;
-	}
+	static Event Changes;
 
-	inline static BrowseForDNSSDService *& ServiceBroswer()
-	{
-		static BrowseForDNSSDService * Internal_ServiceBroswer = NULL;	// protected by a mutex
-		return Internal_ServiceBroswer;
-	}
+	static BrowseForDNSSDService * ServiceBroswer;
 
 	// manage futur notification paradigm
-	inline static SimpleList<DnsSdProxyClient*>& ClientsList()
-	{
-		static SimpleList<DnsSdProxyClient*> Internal_ClientsList;
-		return Internal_ClientsList;
-	}
+	static SimpleList<DnsSdProxyClient*> ClientsList;
 
 	// An inline function to Cleanup the list
-	static inline void CleanupServicesList();
+	static void CleanupServicesList();
 
 	// Browsing of Services
 	static void FUNCTION_CALL_TYPE BrowseCollect( DnsSdService& NewService, unsigned int flags, void * UserData );
 };
 
-// inline functions
-// WARNING : we do not call the mutex lock !
-inline void DnsSdProxy::CleanupServicesList()
-{
-	DnsSdServiceInstanceManager * pServiceInfo;
 
-	// Shall we cleanup the List ?
-	if ( NeedToCleanupServicesList() == true && CurrentNumberOfServicesListCopies() == 0 )
-	{
-		// walk among the list to remove old entries
-		for( ServicesList().First(); ServicesList().NotAtEnd(); ServicesList().Next() )
-		{
-			pServiceInfo = ServicesList().GetCurrent();
-			if ( pServiceInfo->IsPresent == false )
-			{
-				// ok remove it from the list
-				ServicesList().RemoveCurrent();
-
-				// destroy it
-				delete pServiceInfo;
-			}
-		}
-
-		// cleanup done
-		NeedToCleanupServicesList() = false;
-	}
-}
 
 } // namespace Omiscid
 

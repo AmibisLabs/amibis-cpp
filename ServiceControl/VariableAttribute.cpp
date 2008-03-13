@@ -6,7 +6,25 @@
 
 using namespace Omiscid;
 
+  /**
+	 * SimpleString representation for 'variable' (used in XML description)
+	 */
+const SimpleString VariableAttribute::VariableStr("variable");
 
+   /**
+	 * SimpleString representation for 'constant' access (used in XML description)
+	 */
+const SimpleString VariableAttribute::AccessConstantStr("constant");
+
+	/**
+	 * SimpleString representation for 'read' access (used in XML description)
+	 */
+const SimpleString VariableAttribute::AccessReadStr("read");
+
+	/**
+	 * SimpleString representation for 'read-write' access (used in XML description)
+	 */
+const SimpleString VariableAttribute::AccessReadWriteStr("readWrite");
 
 VariableAttribute::VariableAttribute()
 {
@@ -23,9 +41,9 @@ VariableAttribute::VariableAttribute(const SimpleString a_name)
 
 const SimpleString& VariableAttribute::AccessToStr(VariableAccessType a)
 {
-	if(a == ConstantAccess) return AccessConstantStr();
-	if(a == ReadAccess) return AccessReadStr();
-	return AccessReadWriteStr();
+	if(a == ConstantAccess) return AccessConstantStr;
+	if(a == ReadAccess) return AccessReadStr;
+	return AccessReadWriteStr;
 }
 
 bool VariableAttribute::IsInitialised()
@@ -35,12 +53,12 @@ bool VariableAttribute::IsInitialised()
 
 void VariableAttribute::GenerateShortDescription(SimpleString& str)
 {
-	GenerateHeaderDescription(VariableStr(), GetName(), str);
+	GenerateHeaderDescription(VariableStr, GetName(), str);
 }
 
 void VariableAttribute::GenerateLongDescription(SimpleString& str)
 {
-	GenerateHeaderDescription(VariableStr(), GetName(), str, false);
+	GenerateHeaderDescription(VariableStr, GetName(), str, false);
 
 	str += "<value>";
 	PutAValueInCData(GetValue(), str);
@@ -61,7 +79,7 @@ void VariableAttribute::GenerateLongDescription(SimpleString& str)
 /*
 void VariableAttribute::GenerateValueMessage(SimpleString& str)
 {
-	GenerateHeaderDescription(VariableStr(), GetName(), str, false);
+	GenerateHeaderDescription(VariableStr, GetName(), str, false);
 
 	str += "<value>";
 	PutAValueInCData(GetValue(), str);
@@ -85,14 +103,12 @@ void VariableAttribute::SetValue(const SimpleString value_str)
 {
 	// ask to all listener if we can change the value
 	SmartLocker SL_Listeners(Listeners);
-	SL_Listeners.Lock();
+
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
 		VariableAttributeListener * pListener = Listeners.GetCurrent();
 		if ( pListener->IsValid( this, value_str ) == false )
 		{
-			// someone disagree
-			SL_Listeners.Unlock();
 			// OmiscidError( "VariableAttribute::SetValue: someone disagree on variable change\n");
 			return;
 		}
@@ -109,8 +125,6 @@ void VariableAttribute::SetValue(const SimpleString value_str)
 	{
 		Listeners.GetCurrent()->VariableChanged( this );
 	}
-
-	SL_Listeners.Unlock();
 }
 
 void VariableAttribute::SetValueFromControl(const SimpleString value_str)
@@ -123,13 +137,11 @@ void VariableAttribute::SetValueFromControl(const SimpleString value_str)
 
 	// Ok the value has change, send information back to people
 	SmartLocker SL_Listeners(Listeners);
-	SL_Listeners.Lock();
+
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
 		Listeners.GetCurrent()->VariableChanged( this );
 	}
-
-	SL_Listeners.Unlock();
 }
 
 void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
@@ -173,15 +185,15 @@ void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
 			else if ( cur_name == "access" )
 			{
 				SimpleString content = XMLMessage::ExtractTextContent(cur_node->children);
-				if( content == AccessReadStr() )
+				if( content == AccessReadStr )
 				{
 					SetAccessRead();
 				}
-				else if( content == AccessReadWriteStr() )
+				else if( content == AccessReadWriteStr )
 				{
 					SetAccessReadWrite();
 				}
-				else if( content == AccessConstantStr() )
+				else if( content == AccessConstantStr )
 				{
 					SetAccessConstant();
 				}
@@ -237,7 +249,7 @@ SimpleString& VariableAttribute::GetValue()
 		// throw  SimpleException( TmpString );
 
 		// return empty string for uninitialized values
-		return (SimpleString&)SimpleString::EmptyString();
+		return (SimpleString&)SimpleString::EmptyString;
 	}
 	return valueStr;
 }
@@ -282,21 +294,18 @@ bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
 	}
 
 	SmartLocker SL_Listeners(Listeners);
-	SL_Listeners.Lock();
+
 	// look if it is already there..
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
 		if ( Listeners.GetCurrent() == ListenerToAdd )
 		{
-			SL_Listeners.Unlock();
 			return false;
 		}
 	}
 
 	// add it
 	Listeners.Add( ListenerToAdd );
-
-	SL_Listeners.Unlock();
 
 	return true;
 }
@@ -315,9 +324,8 @@ bool VariableAttribute::RemoveListener( VariableAttributeListener *  ListenerToA
 
 	// Remove it if any
 	SmartLocker SL_Listeners(Listeners);
-	SL_Listeners.Lock();
+
 	ret = Listeners.Remove(ListenerToAdd);
-	SL_Listeners.Unlock();
 
 	return ret;
 }
@@ -327,9 +335,8 @@ unsigned int VariableAttribute::GetNumberOfListeners()
 	unsigned int ret;
 
 	SmartLocker SL_Listeners(Listeners);
-	SL_Listeners.Lock();
+
 	ret = Listeners.GetNumberOfElements();
-	SL_Listeners.Unlock();
 
 	return ret;
 }

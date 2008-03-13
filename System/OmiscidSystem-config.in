@@ -38,47 +38,37 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo "-I@includedir@ @OmiscidTraceFlags@"
-#	exit 0
+	echo -n " -I@includedir@ @OmiscidTraceFlags@ "
 	;;
     --cflags-only-I)
-	echo "-I@includedir@"
-#	exit 0
+	echo -n " -I@includedir@ "
 	;;
     --libs)
-	echo "-L@libdir@ -lOmiscidSystem"
-#	exit 0
+	echo -n " -L@libdir@ -lOmiscidSystem "
 	;;
     --libs-only-L)
-	echo "-L@libdir@"
-#	exit 0
+	echo -n " -L@libdir@ "
 	;;
     --libs-only-l)
-	echo "-lOmiscidSystem"
-#	exit 0
+	echo -n " -lOmiscidSystem "
 	;;
     --libdir)
-	echo "@libdir@"
-#	exit 0
+	echo -n " @libdir@ "
 	;;
     --includedir)
-	echo "@includedir@"
-#	exit 0
+	echo -n " @includedir@ "
 	;;
     --prefix)
-	echo "$prefix"
-#	exit 0
+	echo -n " $prefix "
 	;;
     --doc)
-	echo "@DOCDIR_SYSTEM@"
-#	exit 0
+	echo -n " @DOCDIR_SYSTEM@ "
 	;;
     --doc-tag)
-	echo "@DOCDIR_SYSTEM@/doc_system.tag=@DOCDIR_SYSTEM@"
-#	exit 0
+	echo -n " @DOCDIR_SYSTEM@/doc_system.tag=@DOCDIR_SYSTEM@ "
 	;;
     --all)
-	echo "-I@includedir@ -L@libdir@ -lOmiscidSystem @OmiscidTraceFlags@ @OmiscidCompilFlags@"
+	echo -n " -I@includedir@ -L@libdir@ -lOmiscidSystem @OmiscidTraceFlags@ @OmiscidCompilFlags@ "
 	;;
     *)
 	echo "Unknown mode \"$1\""

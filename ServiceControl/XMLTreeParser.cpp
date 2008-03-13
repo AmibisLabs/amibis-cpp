@@ -137,9 +137,11 @@ SimpleString XMLMessage::ExtractTextContent(xmlNodePtr node)
 
 ///////////////////////////////////////////////////////////////////
 
-XMLTreeParser::XMLTreeParser()
+XMLTreeParser::XMLTreeParser() :
 #ifdef DEBUG_THREAD
-	: Thread( false, "XMLTreeParser" )
+	Thread( "XMLTreeParser" )
+#else
+	Thread()
 #endif
 {
 }
@@ -179,17 +181,16 @@ void XMLTreeParser::Receive(MsgSocket& ConnectionPoint, MsgSocketCallBackData& c
 void XMLTreeParser::PushMessage(XMLMessage* msg)
 {
 	SmartLocker SL_listXMLMsg(listXMLMsg);
-	SL_listXMLMsg.Lock();
+
 	listXMLMsg.Add(msg);
 	event.Signal();
 	event.Reset();
-	SL_listXMLMsg.Unlock();
 }
 
 int XMLTreeParser::ProcessMessages()
 {
 	SmartLocker SL_listXMLMsg(listXMLMsg);
-	SL_listXMLMsg.Lock();
+
 	int nb = 0;
 	XMLMessage* msg = NULL;
 	while( listXMLMsg.IsNotEmpty() )
@@ -207,7 +208,7 @@ int XMLTreeParser::ProcessMessages()
 		// listXMLMsg.RemoveCurrent();
 		nb++;
 	}
-	SL_listXMLMsg.Unlock();
+
 	return nb;
 }
 
@@ -223,36 +224,33 @@ XMLMessage* XMLTreeParser::GetMessage()
 	XMLMessage* msg = NULL;
 
 	SmartLocker SL_listXMLMsg(listXMLMsg);
-	SL_listXMLMsg.Lock();
+
 	if ( listXMLMsg.GetNumberOfElements() )
 	{
 		listXMLMsg.First();
 		msg = listXMLMsg.GetCurrent();
 		listXMLMsg.RemoveCurrent();
 	}
-	SL_listXMLMsg.Unlock();
+
 	return msg;
 }
 
 void XMLTreeParser::ClearMessages()
 {
 	SmartLocker SL_listXMLMsg(listXMLMsg);
-	SL_listXMLMsg.Lock();
+
 	for ( listXMLMsg.First(); listXMLMsg.NotAtEnd(); listXMLMsg.Next() )
 	{
 		delete listXMLMsg.GetCurrent();
 		listXMLMsg.RemoveCurrent();
 	}
-	SL_listXMLMsg.Unlock();
 }
 
 unsigned int XMLTreeParser::GetNbMessages()
 {
 	SmartLocker SL_listXMLMsg(listXMLMsg);
-	SL_listXMLMsg.Lock();
-	int nb = listXMLMsg.GetNumberOfElements();
-	SL_listXMLMsg.Unlock();
-	return nb;
+
+	return listXMLMsg.GetNumberOfElements();
 }
 
 bool XMLTreeParser::WaitForMessage(unsigned long timer)

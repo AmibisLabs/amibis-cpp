@@ -14,22 +14,11 @@
 using namespace Omiscid;
 
 // Initialise All stuff needed by the ServiceControl Layer
-namespace Omiscid {
-
 
 // Objects to prevent multiple access
-inline static Mutex& OmiscidServiceControlLayerInitMutex()
-{
-	static Mutex Internal_OmiscidServiceControlLayerInitMutex;
-	return Internal_OmiscidServiceControlLayerInitMutex;
-}
+static Mutex OmiscidServiceControlLayerInitMutex;
 
-inline static unsigned int& OmiscidServiceControlLayerInitInstanceCount()
-{
-	static unsigned int Internal_OmiscidServiceControlLayerInitInstanceCount = 0;
-	return Internal_OmiscidServiceControlLayerInitInstanceCount;
-}
-
+static unsigned int OmiscidServiceControlLayerInitInstanceCount = 0;
 
 // Function to do mandatory init/reset operations
 
@@ -66,17 +55,14 @@ static void DnsSdProxyLaunch(bool Init)
 	}
 }
 
-// Object used to initialise
-OmiscidServiceControlLayerInitClass OmiscidServiceControlLayerInit;
-
-
 OmiscidServiceControlLayerInitClass::OmiscidServiceControlLayerInitClass()
+	: OmiscidComLayerInitClass()
 {
 	// Enter locker
-	OmiscidServiceControlLayerInitMutex().Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidServiceControlLayerInitMutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
-	OmiscidServiceControlLayerInitInstanceCount()++;
-	if ( OmiscidServiceControlLayerInitInstanceCount() == 1 )
+	OmiscidServiceControlLayerInitInstanceCount++;
+	if ( OmiscidServiceControlLayerInitInstanceCount == 1 )
 	{
 		// First instance, do init for Layer System
 
@@ -95,16 +81,16 @@ OmiscidServiceControlLayerInitClass::OmiscidServiceControlLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidServiceControlLayerInitMutex().Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidServiceControlLayerInitMutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 }
 
 OmiscidServiceControlLayerInitClass::~OmiscidServiceControlLayerInitClass()
 {
 	// Enter locker
-	OmiscidServiceControlLayerInitMutex().Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidServiceControlLayerInitMutex.Lock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
 
-	OmiscidServiceControlLayerInitInstanceCount()--;
-	if ( OmiscidServiceControlLayerInitInstanceCount() == 0 )
+	OmiscidServiceControlLayerInitInstanceCount--;
+	if ( OmiscidServiceControlLayerInitInstanceCount == 0 )
 	{
 		// Last instance, do reset for Layer System
 
@@ -119,7 +105,17 @@ OmiscidServiceControlLayerInitClass::~OmiscidServiceControlLayerInitClass()
 	}
 
 	// Leave locker
-	OmiscidServiceControlLayerInitMutex().Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+	OmiscidServiceControlLayerInitMutex.Unlock();	// Add SL_ as comment in order to prevent false alarm in code checker on locks
+}
+
+namespace Omiscid {
+
+// function used to initialised this layer
+void OmiscidServiceControlLayerInit()
+{
+	// Just create a static insatnce of initialisation object
+	static OmiscidServiceControlLayerInitClass OmiscidServiceControlLayerInitObject;
 }
 
 } // namespace Omiscid
+

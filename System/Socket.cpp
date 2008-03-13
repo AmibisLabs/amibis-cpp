@@ -73,8 +73,7 @@ Socket::Socket(SocketKind type)
 
 Socket::~Socket()
 {
-	if(descriptor != SOCKET_ERROR) Close();
-
+	Close();
 }
 
 int Socket::Errno()
@@ -214,7 +213,7 @@ const SimpleString Socket::GetConnectedHost()
 
 	if ( descriptor < 0 || socketType != TCP ) // All kind of errors
 	{
-		return SimpleString::EmptyString();
+		return SimpleString::EmptyString;
 	}
 
 	if ( ConnectedHost.GetLength() == 0 )
@@ -222,7 +221,7 @@ const SimpleString Socket::GetConnectedHost()
 		// Try to get the peername
 		if ( getpeername( descriptor, (sockaddr*)&addr, &namelen ) == SOCKET_ERROR )
 		{
-			return SimpleString::EmptyString();
+			return SimpleString::EmptyString;
 		}
 
 		// Ok, let's get the name of the connected host
@@ -230,7 +229,7 @@ const SimpleString Socket::GetConnectedHost()
 		he = gethostbyaddr((char *) &addr.sin_addr, 4, AF_INET);
 		if ( he == NULL )
 		{
-			return SimpleString::EmptyString();
+			return SimpleString::EmptyString;
 		}
 
 		ConnectedHost = he->h_name;
@@ -306,6 +305,10 @@ void Socket::Connect(const SimpleString addr, int port)
 
 void Socket::Close()
 {
+	if ( descriptor == SOCKET_ERROR )
+	{
+		return;
+	}
 #ifdef WIN32
 	::shutdown(descriptor, SD_BOTH);
 	closesocket(descriptor);
@@ -410,7 +413,6 @@ int Socket::SendTo(int len, const char* buf, struct sockaddr_in* adest)
 	return res;
 }
 
-
 bool Socket::Select()
 {
 	// Done, change it to non full blocking mode....
@@ -468,12 +470,6 @@ SimpleString Socket::GetHostName()
 		throw SocketException("GetHostName", Errno());
 	}
 	return SimpleString( HostName );
-}
-
-void Socket::GetDnsNameSolvingOption()
-{
-	// Keep for backward compatibility
-
 }
 
 const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Modified )

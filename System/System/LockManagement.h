@@ -54,9 +54,16 @@ class SmartLocker
 public:
 	/** @brief Constructor
 	 * @param LockableObjectToManage a reference to the object to managed
+	 * @param LockAtInit do we lock this LockAtInit
 	 *
 	 */
-	SmartLocker( LockableObject& LockableObjectToManage );
+	SmartLocker( LockableObject& LockableObjectToManage, bool LockAtInit = true );
+
+	/** @brief Constructor
+	 * @param LockableObjectToManage a reference to the object to managed
+	 *
+	 */
+	SmartLocker( const LockableObject& LockableObjectToManage, bool LockAtInit = true  );
 
 	/** @brief Constructor
 	 *

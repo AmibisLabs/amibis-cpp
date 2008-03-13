@@ -31,7 +31,7 @@ void ServiceFromXML::InitServiceFromXml(xmlNodePtr root_node)
 	  if (cur_node->type == XML_ELEMENT_NODE)
 	{
 	  SimpleString cur_name = (const char*)cur_node->name;
-	  if( cur_name == VariableAttribute::VariableStr() )
+	  if( cur_name == VariableAttribute::VariableStr )
 		{
 		  ProcessVariableAttribute(cur_node);
 		}

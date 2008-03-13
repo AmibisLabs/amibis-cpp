@@ -61,16 +61,17 @@ public:
 	inline bool LeaveMutex() { return Unlock(); };
 
 private:
+
+#ifdef DEBUG
+	unsigned int OwnerId;
+#endif
+
 #ifdef WIN32
 	HANDLE mutex;
-	#ifdef DEBUG
-		DWORD OwnerId;
-	#endif
 #else
-	pthread_mutex_t mutex; /*!< Posix Mutex*/
-	#ifdef DEBUG
-		unsigned long OwnerId;
-	#endif
+	unsigned int before;	/*!< to prevent memory correption by pthread_* functions */
+	pthread_mutex_t mutex; /*!< Posix Mutex */
+	unsigned int after;		/*!< to prevent memory correption by pthread_* functions */
 #endif /* WIN32 */
 };
 

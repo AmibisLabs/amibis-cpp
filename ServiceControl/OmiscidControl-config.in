@@ -38,48 +38,37 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo "`@bindir@/OmiscidCom-config --cflags` `xml2-config --cflags` @zeroconfflag@"
-#	exit 0
+	echo -n " `@bindir@/OmiscidCom-config --cflags` `xml2-config --cflags` @zeroconfflag@ "
 	;;
     --cflags-only-I)
-	echo "`@bindir@/OmiscidCom-config --cflags-only-I`"
-#	exit 0
+	echo -n " `@bindir@/OmiscidCom-config --cflags-only-I` "
 	;;
     --libs)
-	echo "-L@libdir@ -lOmiscidControl `xml2-config --libs` @zeroconflib@"
-#	exit 0
+	echo -n " `@bindir@/OmiscidCom-config --libs` -L@libdir@ -lOmiscidControl `xml2-config --libs` @zeroconflib@ "
 	;;
     --libs-only-L)
-	echo "-L@libdir@"
-#	exit 0
+	echo -n " `@bindir@/OmiscidCom-config --libs-only-L` -L@libdir@ "
 	;;
     --libs-only-l)
-	echo "-lOmiscidControl"
-#	exit 0
+	echo -n " `@bindir@/OmiscidCom-config --libs-only-l` -lOmiscidControl "
 	;;
     --libdir)
-	echo "@libdir@"
-#	exit 0
+	echo -n " @libdir@ "
 	;;
     --includedir)
-	echo "@includedir@"
-#	exit 0
+	echo -n " @includedir@ "
 	;;
     --prefix)
-	echo "$prefix"
-#	exit 0
+	echo -n " $prefix "
 	;;
     --doc)
-	echo "@DOCDIR_CONTROL@"
-#	exit 0
+	echo -n " @DOCDIR_CONTROL@ "
 	;;
     --doc-tag)
-	echo "@DOCDIR_CONTROL@/doc_control.tag=@DOCDIR_CONTROL@"
-#	exit 0
+	echo -n " @DOCDIR_CONTROL@/doc_control.tag=@DOCDIR_CONTROL@ "
 	;;
     --all)
-	echo "`@bindir@/OmiscidCom-config --libs-only-L --cflags-only-I` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ -lOmiscidControl `xml2-config --libs` @OmiscidTraceFlags@"
-#	exit 0
+	echo -n " `@bindir@/OmiscidCom-config --libs --cflags-only-I` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ -lOmiscidControl `xml2-config --libs` @OmiscidTraceFlags@ "
 	;;	    
     *)
 	echo "Unknown mode \"$1\""

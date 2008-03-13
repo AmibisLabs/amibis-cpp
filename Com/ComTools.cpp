@@ -18,6 +18,11 @@ ComTools::~ComTools()
 {
 }
 
+  /** @brief Gestion of Magic paquet
+   *
+   */
+const SimpleString ComTools::MagicUdp("udp-port");
+
 unsigned int ComTools::GeneratePeerId()
 {
 	unsigned int res;
@@ -54,8 +59,6 @@ SimpleString ComTools::PeerIdAsString(unsigned int PeerId)
 	return SimpleString(tmp);
 }
 
-// const SimpleString ComTools::MagicUdp("udp-port");
-
 SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString key)
 {
    unsigned int klen = key.GetLength();	// key length
@@ -88,7 +91,7 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
 
 	 if (len == 0)
 	 {
-		 return SimpleString::EmptyString();
+		 return SimpleString::EmptyString;
 	 }
 
 	 switch (array[idx])
@@ -128,7 +131,7 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
 
 	 if (len == 0)
 	 {
-		 return SimpleString::EmptyString();
+		 return SimpleString::EmptyString;
 	 }
 
 	 switch (array[idx])

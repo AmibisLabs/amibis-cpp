@@ -45,6 +45,11 @@ private:
 
 };
 
+#ifdef OMISCID_RUNING_TEST
+// Call test in a separate function
+extern int DoAccumulatorTest(int argc, char*argv[] );
+#endif // OMISCID_RUNING_TEST
+
 } // namespace Omiscid
 
 #endif // __ACCUMULATOR_H__

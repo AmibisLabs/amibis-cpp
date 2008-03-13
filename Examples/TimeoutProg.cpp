@@ -1,33 +1,22 @@
 
 // Standard includes
-#include <System/Thread.h>
+#include "TimeoutProg.h"
 
-namespace Omiscid {
-
-class TimeoutProg : public Thread
-{
-public:
-	TimeoutProg(int TimeInMs);
-	~TimeoutProg();
-
-	void FUNCTION_CALL_TYPE Run();
-
-private:
-	int TimeToTimeOutInMs;
-};
-
-TimeoutProg::TimeoutProg(int TimeInMs)
+TimeoutProg::TimeoutProg(int TimeInMs) :
+#ifdef DEBUG_THREAD
+	Thread( "TimeoutProg" )
+#else
+	Thread()
+#endif
 {
 	if ( TimeInMs <= 0 )
 	{
-		TimeToTimeOutInMs = 2*60*1000;	// 1 minutes
+		TimeToTimeOutInMs = 2*60*1000;	// 2 minutes
 	}
 	else
 	{
 		TimeToTimeOutInMs = TimeInMs;
 	}
-
-	StartThread();
 }
 
 TimeoutProg::~TimeoutProg()
@@ -37,22 +26,18 @@ TimeoutProg::~TimeoutProg()
 
 void FUNCTION_CALL_TYPE TimeoutProg::Run()
 {
-	int TimeAlreadyWaited = 0;
+	ElapsedTime TimeAlreadyWaited;
 
-	while( StopPending() == false && TimeAlreadyWaited < TimeToTimeOutInMs )
+	while( StopPending() == false && TimeAlreadyWaited.Get() < TimeToTimeOutInMs )
 	{
-		Sleep( 10 );
-		TimeAlreadyWaited += 10;
+		Sleep( 100 );
 	}
 
 	if ( StopPending() == false )
 	{
-		fprintf( stderr, "Timout !!!\n" );
+		fprintf( stderr, "Timout !!! (%.2f)\n", ((float)TimeAlreadyWaited.Get())/1000.0f );
 		exit(-1);
 	}
 }
-
-// 2 minutes to run
-static TimeoutProg TimeoutExecutionOfThisProgram(2*60*1000);
 
 } // namespace Omiscid

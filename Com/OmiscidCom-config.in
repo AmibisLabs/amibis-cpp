@@ -38,47 +38,37 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo "`@bindir@/OmiscidSystem-config --cflags`"
-#	exit 0
+	echo -n " `@bindir@/OmiscidSystem-config --cflags` "
 	;;
     --cflags-only-I)
-	echo "`@bindir@/OmiscidSystem-config --cflags-only-I`"
-#	exit 0
+	echo -n " `@bindir@/OmiscidSystem-config --cflags-only-I` "
 	;;
     --libs)
-	echo "-L@libdir@ -lOmiscidCom"
-#	exit 0
+	echo -n " `@bindir@/OmiscidSystem-config --libs` -L@libdir@ -lOmiscidCom "
 	;;
     --libs-only-L)
-	echo "-L@libdir@"
-#	exit 0
+	echo -n " `@bindir@/OmiscidSystem-config --libs-only-L` -L@libdir@ "
 	;;
     --libs-only-l)
-	echo "-lOmiscidCom"
-#	exit 0
+	echo -n " `@bindir@/OmiscidSystem-config --libs-only-l` -lOmiscidCom "
 	;;
     --libdir)
-	echo "@libdir@"
-#	exit 0
+	echo -n " @libdir@ "
 	;;
     --includedir)
-	echo "@includedir@"
-#	exit 0
+	echo -n " @includedir@ "
 	;;
     --prefix)
-	echo "$prefix"
-#	exit 0
+	echo -n " $prefix "
 	;;
     --doc)
-	echo "@DOCDIR_COM@"
-#	exit 0
+	echo -n " @DOCDIR_COM@ "
 	;;
     --doc-tag)
-	echo "@DOCDIR_COM@/doc_com.tag=@DOCDIR_COM@"
-#	exit 0
+	echo -n " @DOCDIR_COM@/doc_com.tag=@DOCDIR_COM@ "
 	;;
     --all)
-	echo "`@bindir@/OmiscidSystem-config --libs-only-L --cflags-only-I` -L@libdir@ -lOmiscidCom @OmiscidTraceFlags@"
+	echo " `@bindir@/OmiscidSystem-config --libs --cflags-only-I` -L@libdir@ -lOmiscidCom @OmiscidTraceFlags@ "
 	;;
 
 	   

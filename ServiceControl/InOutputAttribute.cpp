@@ -175,7 +175,7 @@ const SimpleString& InOutputAttribute::KindToStr() const
 			return unknown_str;
 	}
 
-	return SimpleString::EmptyString();
+	return SimpleString::EmptyString;
 }
 
 void InOutputAttribute::ExtractDataFromXml(xmlNodePtr node)

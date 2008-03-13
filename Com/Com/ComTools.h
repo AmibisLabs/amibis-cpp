@@ -82,12 +82,7 @@ class ComTools
   /** @brief Gestion of Magic paquet
    *
    */
-  
-	inline static const SimpleString& MagicUdp()
-	{
-			static const SimpleString Internal_MagicUdp;
-			return Internal_MagicUdp;
-	}
+  static const SimpleString MagicUdp;
 
   static SimpleString ValueFromKey(const SimpleString array, const SimpleString key);
 };
