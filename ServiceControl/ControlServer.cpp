@@ -871,7 +871,9 @@ void ControlServer::NotifyValueChanged(VariableAttribute* var)
 	if(vl && vl->HasListener())
 	{
 		SimpleString str("<variable name=\"");
-		str = str + var->GetName()+"\"><value>"+ var->GetValue()+"</value></variable>";
+		str = str + var->GetName()+"\"><value>";
+		VariableAttribute::PutAValueInCData(var->GetValue(), str);
+		str += "</value></variable>";
 		str = "<controlEvent>" + str + "</controlEvent>";
 
 #ifdef DEBUG
