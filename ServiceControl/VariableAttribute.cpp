@@ -101,6 +101,14 @@ void VariableAttribute::Display()
 
 void VariableAttribute::SetValue(const SimpleString value_str)
 {
+	if ( valueStr == value_str )
+	{
+		// This appends when we remotely ask for a change
+		// we were already notified that the value was changed
+		// nothing to do, neither validate change nor change value
+		return;
+	}
+
 	// ask to all listener if we can change the value
 	SmartLocker SL_Listeners(Listeners);
 
@@ -129,6 +137,15 @@ void VariableAttribute::SetValue(const SimpleString value_str)
 
 void VariableAttribute::SetValueFromControl(const SimpleString value_str)
 {
+	if ( valueStr == value_str )
+	{
+		// This appends when we ask for a change without validation
+		// and e ask for several time to change to the same value
+		// we were already notified that the value was changed
+		// nothing to do, neither validate change nor change value
+		return;
+	}
+
 	// Ok, change my value
 	valueStr = value_str;
 

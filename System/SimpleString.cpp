@@ -36,15 +36,29 @@ SimpleString::StringData::StringData(const StringData* base)
 SimpleString::StringData::StringData(const StringData* base, int begin, int end)
 {
 	int tmplen = end-begin;
-	if ( base == (const StringData*)NULL || tmplen <= 0 || (tmplen+begin) > (int)base->length  )
+	if ( base == (const StringData*)NULL || tmplen < 0 || (tmplen+begin) > (int)base->length  )
 	{
+#ifdef DEBUG
+		TemporaryMemoryBuffer TmpS(1024);
+		sprintf( (char*)TmpS, "Bad parameter for SimpleString::StringData::StringData (%s)\nbase=%p\nbase->length=%d\nbegin=%d\nend=%d\ntmplen=%d\n", base->data, (void*)base, (int)base->length, begin, end, tmplen );
+		throw SimpleException( (char*)TmpS );
+#else
 		throw SimpleException( "Bad parameter for SimpleString::StringData::StringData" );
+#endif // DEBUG
 	}
 
-	length = end-begin;
-	data = new OMISCID_TLM char[length + 1];
-	memcpy(data, base->data+begin, length);
-	*(data+length) = '\0';
+	if ( tmplen == 0 )
+	{
+		data = GetEmptyBuffer();
+		length = 0;
+	}
+	else
+	{
+		length = end-begin;
+		data = new OMISCID_TLM char[length + 1];
+		memcpy(data, base->data+begin, length);
+		*(data+length) = '\0';
+	}
 }
 
 SimpleString::StringData::StringData(const char* str1, const char* str2)
@@ -338,8 +352,10 @@ SimpleString::SimpleString(double d)
 
 SimpleString::~SimpleString()
 {
-	// Lock will be done in Empty();
-	Empty();
+	// Lock is not done in DestroyStringData
+	Lock();
+	DestroyStringData();
+	Unlock();
 }
 
 // WARNING DestroyStringData do not call protect
@@ -634,7 +650,7 @@ SimpleString SimpleString::SubString(int begin, int end) const
 		}
 	}
 
-	if ( begin > lend )	// The Could not do the job, return an empty string
+	if ( begin >= lend )	// The Could not do the job, or job is empty return an empty string
 	{
 		return SimpleString::EmptyString;
 	}
@@ -816,61 +832,7 @@ bool SimpleString::ReplaceAll(const SimpleString& SearchPattern, const SimpleStr
 	return ret;
 }
 
-#ifdef OMISCID_RUNING_TEST
 
-#include <System/ElapsedTime.h>
-#include <System/Event.h>
-
-int SimpleString::TestFunction()
-{
-	// Test of SimpleString...
-	int i;
-
-	// Test a growing SipleString
-	ElapsedTime TimeCounter;
-	SimpleString ToGrow;
-	for( i = 0; i < 1000; i++ )
-	{
-		ToGrow += "abc";
-	}
-
-	fprintf( stderr, "Temps : %d\n", TimeCounter.Get() );
-
-	return 1;
-
-	SimpleString Tutu;
-
-	Tutu = "\\032Yop";
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-	Tutu.ReplaceFirst( "\\032", " " );
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-
-	Tutu = "Yop\\032";
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-	Tutu.ReplaceFirst( "\\032", " " );
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-
-	Tutu = "Yop\\032blib";
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-	Tutu.ReplaceFirst( "\\032", " " );
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-
-	Tutu = "Yop\\0 liajezijclz jl ijzzlij blib";
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-	Tutu.ReplaceFirst( "\\032", " " );
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-
-	Tutu = "Yop\\032liajezijclz jl ijzzlij blib";
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-	Tutu.ReplaceAll( "\\032", " " );
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-
-	Tutu = "Yop\\032liajezijclz jl\\032 ijzzlij blib";
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-	Tutu.ReplaceAll( "\\032", "+++" );
-	OmiscidTrace( "%s\n", Tutu.GetStr() );
-}
-#endif // OMISCID_RUNING_TEST
 
 using namespace std;
 
@@ -1016,6 +978,57 @@ bool SimpleString::Latin1ToUTF8( const char *Src, char * Latin1ToUTF8Buffer, int
 
 	return true;
 }
+
+#ifdef OMISCID_RUNING_TEST
+
+#include <System/ElapsedTime.h>
+#include <System/Event.h>
+#include <System/Socket.h>
+
+int SimpleString::TestFunction()
+{
+	// Test of SimpleString...
+
+	SimpleString Test("metis.local.");
+
+	bool Modif = false;
+	Test = Socket::RemoveLocalDomain( Test, Modif );
+
+	SimpleString Tutu;
+
+	Tutu = "\\032Yop";
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032";
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032blib";
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\0 liajezijclz jl ijzzlij blib";
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceFirst( "\\032", " " );
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032liajezijclz jl ijzzlij blib";
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceAll( "\\032", " " );
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+
+	Tutu = "Yop\\032liajezijclz jl\\032 ijzzlij blib";
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+	Tutu.ReplaceAll( "\\032", "+++" );
+	OmiscidTrace( "%s\n", Tutu.GetStr() );
+
+	return 0;
+}
+#endif // OMISCID_RUNING_TEST
 
 #ifdef WIN32
 	#undef snprintf

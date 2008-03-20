@@ -20,16 +20,6 @@ ClientConnection::~ClientConnection()
 	}
 }
 
-/*
-Connector::Connector(int a_pid)
-: TcpServer(), UdpExchange()
-{
-	SetServiceId(a_pid);
-
-	CallbackObject = NULL;
-}
-*/
-
 Connector::Connector()
 {
 	CallbackObject = NULL;
@@ -129,10 +119,12 @@ unsigned int Connector::ConnectTo(const SimpleString addr, int port_tcp) // , in
 {
 	TcpClient* tcpclient = new OMISCID_TLM TcpClient();
 
-	if ( tcpclient == NULL )
+#ifdef DEBUG
+	if ( tcpclient == (TcpClient*)NULL )
 	{
 		return 0;
 	}
+#endif
 
 	tcpclient->SetServiceId(GetServiceId());
 	tcpclient->SetName(TcpServer::GetName());

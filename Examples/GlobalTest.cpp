@@ -17,6 +17,7 @@
 #include "Accumulator.h"
 #include "ClientAccumulator.h"
 #include "BrowsingTest.h"
+#include "SendHugeData.h"
 
 using namespace Omiscid;
 
@@ -84,6 +85,21 @@ int main(int argc, char* argv[])
 	{
 		printf( "Test failed.\n" );
 		return -1; 
+	}
+
+	/***********************************************************
+		Looping and validating huge buffers test
+	***********************************************************/
+
+	// Call DoRegisterSearchTest, first set paramater Array
+	LocalArgv[0] = "DoSendHugeDataTest";
+	LocalArgv[1] = NULL;
+
+	ReturnCode = DoSendHugeDataTest( 1, LocalArgv );
+	if ( ReturnCode != 0 )
+	{
+		printf( "Test failed.\n" );
+		return -1;
 	}
 
 	printf( "Test ok.\n" );

@@ -64,7 +64,7 @@ sub WakeOnLan()
 	
 	$MacAddress =~ s/://g;
 	`./wol $MacAddress`;
-	$NbTry = 10;
+	$NbTry = 5;
 	while( $NbTry > 0 )
 	{
 		$res = `ssh $TestComputer "echo 'ssh is now ok.'"`;
@@ -341,21 +341,19 @@ if ( $DoTest == 1 )
 	$Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
 	$Computers{'metis'}  = '000d936fc38c';
 	$Options{'metis'}   = '("")';
-	$Computers{'junon'}  = '0013202e4fea';
-	$Options{'junon'}   = '("zeroconf=mdns")';
 	$Computers{'desdemona'}  = '000bcd624fa9';
-	$Options{'desdemona'}   = '("zeroconf=mdns")';
-	# $Options{'desdemona'}   = '("")';
+	# $Options{'desdemona'}   = '("zeroconf=mdns")';
+	$Options{'desdemona'}   = '("")';
 	$Computers{'protee'}  = '000d561ff276';
 	# $Options{'protee'}   = '("zeroconf=mdns ChMemMode=1")';
-	$Options{'protee'}   = '("zeroconf=mdns debugthread=1)';
+	$Options{'protee'}   = '("zeroconf=avahi")';
 	# $SupportedDebugMode{'protee'} = 'insure';
 	$Computers{'puck'}  = '0019b94b4902';
 	$Options{'puck'}   = '("")';
-
 	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';
+	$TestsList{'SendHugeData.cpp'} = 'SendHugeData';
 	
 	$InstallOmiscidFolder = '/tmp/OmiscidInstall';
 	# $InstallOmiscidFolder = '/usr/local/';
@@ -376,7 +374,7 @@ if ( $DoTest == 1 )
 		if ( &WakeOnLan($TestComputer) == 0 )
 		{
 			$Tested = 0;
-			&AddLog( "ERR: Could not connect to $TestComputer" );
+			&AddLog( "WRN: Could not connect to $TestComputer" );
 			next;
 		}
 		
@@ -536,14 +534,14 @@ if ( $DoTest == 1 )
 						{
 							$TestSuite .= "TFA: Could not compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'\n";
 							&AddLog( "TFA: Could not compile $TestsList{$test} and run it successfully ($NbTestsOk/$NbTestsTried)\n     files used '$test'" );
-							# if ( $Option =~ /avahi/ )
-							# {
-							# 	&AddLog( "WRN: Could not run test ('debug=$DebugFlag trace=$TraceFlag $Option') on $TestComputer" );
-							# }
-							# else
-							# {
+							if ( $Option =~ /avahi/ )
+							{
+							 	&AddLog( "WRN: Could not run test ('debug=$DebugFlag trace=$TraceFlag $Option') on $TestComputer" );
+							}
+							else
+							{
 								&AddLog( "ERR: Could not run test ('debug=$DebugFlag trace=$TraceFlag $Option') on $TestComputer" );
-							# }
+							}
 							&AddLog( "CMT: $LastTry" );
 							next;
 						}
@@ -571,6 +569,8 @@ if ( &LogOk() == 0 )
 	print STDERR "\n\n\t=> Problem when testing $VersionFile.\n";
 	exit();
 }
+
+&AddLog( "TOK: All tests passed." );
 
 `rm ../$VersionFile`;
 

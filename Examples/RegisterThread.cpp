@@ -24,7 +24,7 @@ RegisterThread::RegisterThread(unsigned int MyNumber) :
 /* @brief destructor (all destructor must be virtual !) */
 RegisterThread::~RegisterThread()
 {
-	// nothing to do, the thread destructor will call StopThread
+	// nothing else to do, the thread destructor will call StopThread
 }
 
 /* @brief The Run procedure of the thread, so what he must do */
@@ -63,4 +63,5 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 
 	// Delete the constructed service and die (i.e existing the Run() function).
 	delete pServ;
+	NbRegistered--;
 }

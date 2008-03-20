@@ -250,7 +250,7 @@ inline void OmiscidTrace(const char * format, ... )
 #ifdef DEBUG
 	#define DevOmiscidTrace OmiscidError
 #else
-	#define DevOmiscidTrace (void)0
+	inline void DevOmiscidTrace( const char * format, ... ) {}
 #endif
 
 // Define an OmiscidMessage depend on DEBUG flag but always doing a trace

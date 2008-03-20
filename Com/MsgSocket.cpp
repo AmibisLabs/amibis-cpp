@@ -649,6 +649,8 @@ void MsgSocket::Receive()
 			}
 			occupiedSize += nb_read;
 
+			// DevOmiscidTrace( "occupiedSize %d\n", occupiedSize );
+
 			// For printing stuff...
 			buffer[occupiedSize] = '\0';
 
@@ -936,7 +938,6 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 
 			// Send header
 			HeaderSend = socket->Send(TotalLen, (char*)SendBuffer);
-
 			if ( HeaderSend != TotalLen )
 			{
 				return -1;
@@ -944,13 +945,13 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 
 			// Let's send data...
 			TotalLen = socket->Send( Sendlen, (char*)(buf) );
-			if ( TotalLen == SOCKET_ERROR )
+			if ( TotalLen != Sendlen )
 			{
 				return -1;
 			}
 
 			TailerSend = socket->Send( tag_end_size, tag_end );
-			if ( TailerSend == SOCKET_ERROR )
+			if ( TailerSend != tag_end_size )
 			{
 				return -1;
 			}
@@ -1502,9 +1503,13 @@ bool MsgSocket::WaitSyncLinkMsg(unsigned int TimeToWait/* = 250 */)
 	ElapsedTime CountWaitedTime;
 	while( connected == true )
 	{
-		if ( ReceivedSyncLinkMsg() || CountWaitedTime.Get() >= TimeToWait )
+		if ( ReceivedSyncLinkMsg() )
 		{
 			return true;
+		}
+		if ( CountWaitedTime.Get() >= TimeToWait )
+		{
+			return false;
 		}
 		Thread::Sleep(10);
 	}

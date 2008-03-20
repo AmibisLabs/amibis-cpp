@@ -278,7 +278,7 @@ void Socket::Connect(const SimpleString addr, int port)
 		struct sockaddr_in the_addr;
 		FillAddrIn(&the_addr, addr, port);
 
-		if(connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == SOCKET_ERROR)
+		if( connect(descriptor, (struct sockaddr*)&the_addr, sizeof(struct sockaddr)) == SOCKET_ERROR )
 		{
 #ifdef DEBUG
 			SimpleString Mesg;
@@ -380,6 +380,8 @@ int Socket::Send(int len, const char* buf)
 				}
 				TotalLen += res;
 			}
+
+			return TotalLen;
 		}
 		else
 		{
@@ -477,6 +479,8 @@ const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Mod
 	int Pos;
 	SimpleString TmpS(Name);
 
+	DevOmiscidTrace("RemoveLocalDomain : %s", TmpS.GetStr() );
+
 	// Say that we do not modify it
 	Modified = false;
 
@@ -486,7 +490,9 @@ const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Mod
 	{
 		// Ok we found "xxx.local."
 		Modified = true;
-		return TmpS.SubString( 0, Pos );
+		TmpS = TmpS.SubString( 0, Pos );
+		DevOmiscidTrace( " => %s\n", TmpS.GetStr() );
+		return TmpS;
 	}
 
 	// seek .local.
@@ -495,9 +501,12 @@ const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Mod
 	{
 		// Ok we found "xxx.local"
 		Modified = true;
-		return TmpS.SubString( 0, Pos );
+		TmpS = TmpS.SubString( 0, Pos );
+		DevOmiscidTrace( " => %s\n", TmpS.GetStr() );
+		return TmpS;
 	}
 
+	DevOmiscidTrace( " => %s\n", TmpS.GetStr() );
 	return TmpS;
 }
 
@@ -507,6 +516,8 @@ const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, boo
 
 	// Say that we do not modify it
 	Modified = false;
+
+	DevOmiscidTrace("RemoveDnsSdDaemonNumber : %s", Name.GetStr() );
 
 	bool PreviousSequenceOfNumber = false;	// give information about the fact we have numbers before
 	int SizeOfNum = 0;						// number of characters in the sequence '-\d+'
@@ -519,7 +530,9 @@ const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, boo
 			{
 				// Ok, we've got '-\d+', do the modification
 				Modified = true;
-				return Name.SubString(0,PosDeb) + Name.SubString(PosDeb+1+SizeOfNum,Name.GetLength() );
+				SimpleString TmpS = Name.SubString(0,PosDeb) + Name.SubString(PosDeb+1+SizeOfNum,Name.GetLength() );
+				DevOmiscidTrace("=> %s\n", TmpS.GetStr() );
+				return TmpS;
 			}
 			// ok, the next previous is '-', so not a number
 			PreviousSequenceOfNumber = false;
@@ -537,6 +550,7 @@ const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, boo
 		SizeOfNum = 0;
 	}
 
+	DevOmiscidTrace("=> %s\n", Name.GetStr() );
 	return Name;
 }
 
@@ -566,6 +580,7 @@ hostent* Socket::GetHostByName( const SimpleString name )
 		{
 			SimpleString Mesg = "GetHostByName : ";
 			Mesg += name;
+			Mesg += " not found";
 			throw SocketException(Mesg, Errno());
 		}
 		return he;
