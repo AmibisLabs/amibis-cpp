@@ -30,10 +30,6 @@ int main(int argc, char* argv[])
 	// Return code from pseudo main function call
 	int ReturnCode;
 
-#ifdef DEBUG
-	// MsgSocket::Debug = MsgSocket::DBG_ALL;
-#endif
-
 	/***********************************************************
 		Unitary SimpleString Test
 	***********************************************************/

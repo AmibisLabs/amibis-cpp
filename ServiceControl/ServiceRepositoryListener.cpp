@@ -16,11 +16,12 @@ ServiceRepositoryListener::~ServiceRepositoryListener()
 	// Strop browsing
 	StopBrowse();
 
+	// We do not delete anymore ServiceFilter
 	// Delete filter if any !
-	if ( FilterForMonitoring != (ServiceFilter *)NULL )
-	{
-		delete FilterForMonitoring;
-	}
+	// if ( FilterForMonitoring != (ServiceFilter *)NULL )
+	// {
+	//	delete FilterForMonitoring;
+	// }
 
 	// Remove id (unsigned intergers)
 	MonitoredServicesForRemovals.Empty();
@@ -32,7 +33,7 @@ bool ServiceRepositoryListener::SetFilter( ServiceFilter * Filter )
 	{
 		return false;
 	}
-	FilterForMonitoring = Filter->Duplicate();
+	FilterForMonitoring = Filter;
 	return true;
 }
 

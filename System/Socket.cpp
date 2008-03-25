@@ -479,8 +479,6 @@ const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Mod
 	int Pos;
 	SimpleString TmpS(Name);
 
-	DevOmiscidTrace("RemoveLocalDomain : %s", TmpS.GetStr() );
-
 	// Say that we do not modify it
 	Modified = false;
 
@@ -490,9 +488,7 @@ const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Mod
 	{
 		// Ok we found "xxx.local."
 		Modified = true;
-		TmpS = TmpS.SubString( 0, Pos );
-		DevOmiscidTrace( " => %s\n", TmpS.GetStr() );
-		return TmpS;
+		return TmpS.SubString( 0, Pos );
 	}
 
 	// seek .local.
@@ -501,12 +497,9 @@ const SimpleString Socket::RemoveLocalDomain( const SimpleString Name, bool& Mod
 	{
 		// Ok we found "xxx.local"
 		Modified = true;
-		TmpS = TmpS.SubString( 0, Pos );
-		DevOmiscidTrace( " => %s\n", TmpS.GetStr() );
-		return TmpS;
+		return TmpS.SubString( 0, Pos );
 	}
 
-	DevOmiscidTrace( " => %s\n", TmpS.GetStr() );
 	return TmpS;
 }
 
@@ -516,8 +509,6 @@ const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, boo
 
 	// Say that we do not modify it
 	Modified = false;
-
-	DevOmiscidTrace("RemoveDnsSdDaemonNumber : %s", Name.GetStr() );
 
 	bool PreviousSequenceOfNumber = false;	// give information about the fact we have numbers before
 	int SizeOfNum = 0;						// number of characters in the sequence '-\d+'
@@ -530,9 +521,7 @@ const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, boo
 			{
 				// Ok, we've got '-\d+', do the modification
 				Modified = true;
-				SimpleString TmpS = Name.SubString(0,PosDeb) + Name.SubString(PosDeb+1+SizeOfNum,Name.GetLength() );
-				DevOmiscidTrace("=> %s\n", TmpS.GetStr() );
-				return TmpS;
+				return Name.SubString(0,PosDeb) + Name.SubString(PosDeb+1+SizeOfNum,Name.GetLength() );
 			}
 			// ok, the next previous is '-', so not a number
 			PreviousSequenceOfNumber = false;
@@ -550,7 +539,6 @@ const SimpleString Socket::RemoveDnsSdDaemonNumber( const SimpleString Name, boo
 		SizeOfNum = 0;
 	}
 
-	DevOmiscidTrace("=> %s\n", Name.GetStr() );
 	return Name;
 }
 

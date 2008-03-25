@@ -450,6 +450,11 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 		// Remove an instance
 		AvahiRegisteringCounter--;
 
+		if ( AvahiPollWithThread != (AvahiThreadedPoll *)NULL )
+		{
+			avahi_threaded_poll_lock(AvahiPollWithThread);
+		}
+
 		// Free non static Avahi stuff in inverse order of allocation
 		if ( AvahiTxtRecord != (AvahiStringList *)NULL )
 		{
@@ -474,7 +479,6 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			if ( AvahiPollWithThread != (AvahiThreadedPoll *)NULL )
 			{
 				// Stop the threaded poll
-				avahi_threaded_poll_lock(AvahiPollWithThread);
 				avahi_threaded_poll_stop(AvahiPollWithThread);
 				avahi_threaded_poll_unlock(AvahiPollWithThread);
 			}
@@ -498,6 +502,11 @@ void RegisterService::InitZeroconfSubsystem( bool FromConstructor )
 			AvahiPollWithThread = (AvahiThreadedPoll *)NULL;
 
 			OmiscidTrace( "Free avahi done.\n" );
+		}
+
+		if ( AvahiPollWithThread != (AvahiThreadedPoll *)NULL )
+		{
+			avahi_threaded_poll_unlock(AvahiPollWithThread);
 		}
 	}
 

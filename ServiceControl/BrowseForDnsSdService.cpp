@@ -44,12 +44,17 @@ void BrowseForDNSSDService::InitZeroconfSubsystem( bool FromConstructor )
 			avahi_client_free(AvahiConnection);
 		}
 
+		/* WE DO NOT unitialized nothing because it always crash
+		   will see with avahi dev members to check what happens
+		   As we have only one instance of this in UserFriendlyMode
+		   it is not a real problem
+
 		// Not done to prevent Avahi crash (better but still crash some times)
-		// if ( AvahiPoll != (AvahiSimplePoll *)NULL )
-		// {
-		//		avahi_simple_poll_quit( AvahiPoll );
-		//		avahi_simple_poll_free( AvahiPoll );
-		//}
+		if ( AvahiPoll != (AvahiSimplePoll *)NULL )
+		{
+				avahi_simple_poll_quit( AvahiPoll );
+				avahi_simple_poll_free( AvahiPoll );
+		} */
 	}
 
 	AvahiPoll = (AvahiSimplePoll *)NULL;
@@ -91,7 +96,7 @@ BrowseForDNSSDService::BrowseForDNSSDService(const SimpleString eRegtype, Browse
 
 BrowseForDNSSDService::~BrowseForDNSSDService()
 {
-	StopThread();
+	StopThread(0);
 
 	// Free DNS-SD stuff
 	InitZeroconfSubsystem( false );

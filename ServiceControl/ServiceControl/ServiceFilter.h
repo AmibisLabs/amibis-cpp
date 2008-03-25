@@ -24,14 +24,15 @@ namespace Omiscid {
 class ServiceFilter
 {
 protected:
-	ServiceFilter() {};
+	ServiceFilter();
 
 public:
 	virtual ~ServiceFilter();
 
-public:
 	virtual bool IsAGoodService(ServiceProxy& SP) = 0;
 	virtual ServiceFilter * Duplicate() = 0;
+
+	virtual void Empty();
 };
 
 /**

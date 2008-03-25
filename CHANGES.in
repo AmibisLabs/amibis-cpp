@@ -21,9 +21,16 @@ In this files, you will find changes between OMiSCID versions.
 	- remove last StartThread() in constructors. As Run() is virtual and
 	  virtual table is not safe *before* the end of constructor, one
 	  *MUST NOT* call StartThread() in Thread or subclass constructor
-	  as we do now. Refactor Examples to be compliant with this rules.
+	  as we do now. Refactor Examples to be compliant with this rule.
 	- remove validation/noitification when changing variable value for
 	  the same value. Now we only notify real change of value.
+	- to allow integration in interpreted language (like python but
+	  not only) we do not try enymore to cope with memory management
+	  of ServiceFilter instances. We do not call anymore Duplicate
+	  inside OMiSCID even if we think this method must be implemented
+	  so it stay abstact. Now to release ServiceFilter, you must
+	  call Empty(). Destroy the object will not delete included filters :
+	  one may want to reuse its filters for anoither research.
 	[API]
 	- Add ability to connect to undiscovered services connectors
 	  (using hostname and port) in order to facilitate communications

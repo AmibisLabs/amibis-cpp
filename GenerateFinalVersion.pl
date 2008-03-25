@@ -337,19 +337,19 @@ $TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
 
 if ( $DoTest == 1 )
 {
-	$Computers{'astree'} = '000e0c5e4586';
-	$Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
-	$Computers{'metis'}  = '000d936fc38c';
-	$Options{'metis'}   = '("")';
-	$Computers{'desdemona'}  = '000bcd624fa9';
+	# $Computers{'astree'} = '000e0c5e4586';
+	# $Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
+	# $Computers{'metis'}  = '000d936fc38c';
+	# $Options{'metis'}   = '("")';
+	# $Computers{'desdemona'}  = '000bcd624fa9';
 	# $Options{'desdemona'}   = '("zeroconf=mdns")';
-	$Options{'desdemona'}   = '("")';
+	# $Options{'desdemona'}   = '("")';
 	$Computers{'protee'}  = '000d561ff276';
 	# $Options{'protee'}   = '("zeroconf=mdns ChMemMode=1")';
 	$Options{'protee'}   = '("zeroconf=avahi")';
 	# $SupportedDebugMode{'protee'} = 'insure';
-	$Computers{'puck'}  = '0019b94b4902';
-	$Options{'puck'}   = '("")';
+	# $Computers{'puck'}  = '0019b94b4902';
+	# $Options{'puck'}   = '("")';
 	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';

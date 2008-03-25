@@ -10,7 +10,15 @@ using namespace Omiscid;
 
 namespace Omiscid {
 
+ServiceFilter::ServiceFilter()
+{
+}
+
 ServiceFilter::~ServiceFilter()
+{
+}
+
+void ServiceFilter::Empty()
 {
 }
 
@@ -27,7 +35,7 @@ public:
 	virtual bool IsAGoodService(ServiceProxy& SP);
 	virtual ServiceFilter * Duplicate();
 
-	void Empty();
+	virtual void Empty();
 
 private:
 	CascadeServiceFiltersType Type;

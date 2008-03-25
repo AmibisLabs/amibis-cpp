@@ -438,7 +438,7 @@ public:
 	 * Finds a service on the network. The research is based on a ServiceFilter
 	 * @param Filter A filter in order to check if a service is valid for us. This Filter will be destroy
 	 * during the function call. You <B>can</B> not provide adresses of stack objects, this method
-	 * will first call ServiceFilter#Duplicate ont the Filter.
+	 * do *no longer* call ServiceFilter#Duplicate ont the Filter.
 	 * @param WaitTime Wait for WaitTime ms to find the service. If WaitTime == 0, wait until a valid service is here
 	 * @return a ServiceProxy if we can find a suitable one in the assigned time, NULL otherwise.
 	 * @see ServiceFilter
