@@ -181,8 +181,14 @@ int main(int argc, char*argv[] )
 	TimeCounter.Reset();
 
 	// Search for a service, wait at max 5 s (5000 ms) to get an answer. We provide
-	// A filter (automatically create by NameIs and automatically destroyed by FindService
-	ServiceProxy * OneService = Searcher->FindService(NameIs("RegisterThread"), 5000);
+	// Create filter (automatically create by NameIs and automatically destroyed by FindService
+	ServiceFilter * MySearch = NameIs("RegisterThread");
+
+	ServiceProxy * OneService = Searcher->FindService(MySearch, 5000);
+
+	// Free the ServiceFilter. As it is a simple one, call to Empty is not mandatory
+	MySearch->Empty();
+	delete MySearch;
 
 	if ( OneService != NULL )
 	{
@@ -258,7 +264,13 @@ int main(int argc, char*argv[] )
 	TimeCounter.Reset();
 	// Search for services, wait forever (no second parameter given) to get an answer
 	// Get in return a ServiceProxy List
-	OneService = Searcher->FindService( Not(MultipleServices->GetCurrent()) );
+	MySearch = Not(MultipleServices->GetCurrent());
+
+	OneService = Searcher->FindService( MySearch );
+
+	// Free the ServiceFilter. As it is a simple one, call to Empty is not mandatory
+	MySearch->Empty();
+	delete MySearch;
 
 	// MultipleServices != NULL can not be null as we do not got out of FindServices without
 	// an answer

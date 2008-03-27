@@ -184,7 +184,8 @@ CascadeServiceFilters::CascadeServiceFilters(CascadeServiceFiltersType CreationT
 
 CascadeServiceFilters::~CascadeServiceFilters()
 {
-	Empty();
+	// We do not call automatically Empty now
+	// Empty();
 }
 
 void CascadeServiceFilters::Empty()

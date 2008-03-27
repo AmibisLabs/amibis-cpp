@@ -63,8 +63,15 @@ SendHugeData::~SendHugeData()
 	/* @brief Do mutual connections */
 bool SendHugeData::SearchAndConnectToAnotherOne()
 {
+	// Store pointer to the filter object
+	ServiceFilter * MySearch = And(NameIs("SendHugeData"),Not(PeerIdIs(MyAssociatedService->GetPeerId())));
+
 	// Search for a SendHugeData service that is not me
-	ServiceProxy * TheOtherSendHugeData = MyAssociatedService->FindService( And(NameIs("SendHugeData"),Not(PeerIdIs(MyAssociatedService->GetPeerId()))) );
+	ServiceProxy * TheOtherSendHugeData = MyAssociatedService->FindService( MySearch );
+
+	// Free the ServiceFilter. As it is a simple one, call to Empty is not mandatory
+	MySearch->Empty();
+	delete MySearch;
 
 	if ( TheOtherSendHugeData == (ServiceProxy *)NULL )
 	{

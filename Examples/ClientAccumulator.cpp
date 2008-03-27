@@ -96,9 +96,15 @@ int main( int argc, char*argv[] )
 		// Search for services, wait 5 s (5000 ms) to get an answer
 		// Get in return a ServiceProxy*. This service is nammed Accumalator, gets a variable
 		// Accu and an InOutput connector "Commands"
-		OneAccumulator = pAccuClient->FindService( And(NameIs("Accumulator"),HasVariable("Accu"), HasConnector("Commands",AnInOutput) ), 5000 );
+		ServiceFilter * MySearch = And(NameIs("Accumulator"),HasVariable("Accu"), HasConnector("Commands",AnInOutput) );
 
-		if ( OneAccumulator == NULL )
+		OneAccumulator = pAccuClient->FindService( MySearch, 5000 );
+
+		// empty and them delete Search filter
+		MySearch->Empty();
+		delete MySearch;
+
+		if ( OneAccumulator == (ServiceProxy*)NULL )
 		{
 			fprintf( stderr, "Search for an Accumulator service failed. Try again...\n" );
 			continue;
@@ -107,7 +113,7 @@ int main( int argc, char*argv[] )
 		break;
 	}
 
-	if ( OneAccumulator == NULL )
+	if ( OneAccumulator == (ServiceProxy*)NULL )
 	{
 		fprintf( stderr, "Could not find an Accumulator service. quit !\n" );
 

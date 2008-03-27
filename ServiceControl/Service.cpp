@@ -781,9 +781,6 @@ ServiceProxy * Service::FindService(ServiceFilter * Filter, unsigned int WaitTim
 	// we will do it at the right time
 	delete WFOS;
 
-	// Delete the filter
-	delete Filter;
-
 	// If not found, return NULL
 	return MyData.Proxy;
 }

@@ -103,8 +103,8 @@ peer_pid(0),
 receivedSyncLinkMsg(false),
 sendSyncLinkMsg(false)
 {
-	buffer = new OMISCID_TLM unsigned char[bufferSize];
-	SendBuffer = new OMISCID_TLM unsigned char[TCP_BUFFER_SIZE];
+	buffer = new OMISCID_TLM unsigned char[bufferSize+1];			// +1 for '\0'
+	SendBuffer = new OMISCID_TLM unsigned char[TCP_BUFFER_SIZE];	// +1 for '\0'
 
 	start_tag = new OMISCID_TLM char[tag_size+1];
 	SetMaxMessageSizeForTCP(TCP_BUFFER_SIZE-1);
@@ -365,12 +365,12 @@ void MsgSocket::InitForTcpClient(const SimpleString addr, int port)
 {
 	socket->Connect(addr, port);
 	bufferSize = TCP_BUFFER_SIZE;
-	buffer = new OMISCID_TLM unsigned char[bufferSize];
+	buffer = new OMISCID_TLM unsigned char[bufferSize+1];	// + 1 for ending '\0'
 	if ( buffer == NULL )
 	{
 		throw MsgSocketException( "Not enougth memory" );
 	}
-	SendBuffer = new OMISCID_TLM unsigned char[TCP_BUFFER_SIZE];
+	SendBuffer = new OMISCID_TLM unsigned char[TCP_BUFFER_SIZE+1];	// + 1 for ending '\0'
 	if ( SendBuffer == NULL )
 	{
 		throw MsgSocketException( "Not enougth memory" );
@@ -404,8 +404,8 @@ void MsgSocket::InitForUdpExchange(int port)
 {
 	socket->Bind(SimpleString::EmptyString, port);
 	bufferSize = TCP_BUFFER_SIZE;
-	buffer = new OMISCID_TLM unsigned char[bufferSize];
-	buffer_udp_send = new OMISCID_TLM char[UDP_MAX_MSG_SIZE];
+	buffer = new OMISCID_TLM unsigned char[bufferSize+1];		// +1 for '\0'
+	buffer_udp_send = new OMISCID_TLM char[UDP_MAX_MSG_SIZE+1];	// +1 for '\0'
 	kind = UDP_EXCHANGE_KIND;
 	connected = true;
 	occupiedSize = 0;
@@ -757,8 +757,8 @@ void MsgSocket::Receive()
 						{
 							OmiscidTrace( "buffer too small : new buffer allocation\n");
 							//allocation new buffer
-							bufferSize = (total+1023)&~1023; // bufferSize = total arrondi au kilo d'octet superieur
-							unsigned char* tmp_buffer = new OMISCID_TLM unsigned char[bufferSize];
+							bufferSize = (total+1023)&~1023; // bufferSize = rouded to the KB over
+							unsigned char* tmp_buffer = new OMISCID_TLM unsigned char[bufferSize+1];
 							if(tmp_buffer)
 							{
 								memcpy(tmp_buffer, buffer+offset, size*sizeof(unsigned char));
@@ -1186,7 +1186,6 @@ int MsgSocket::	SendPreparedBuffer(int len, char* l_buffer)
 	}
 }
 
-
 int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 {
 	//   OmiscidTrace( "in MsgSocket::SendTo\n");
@@ -1199,7 +1198,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 	SmartLocker SL_protectSend(protectSend);
 	if ( buffer_udp_send == NULL )
 	{
-		buffer_udp_send = new OMISCID_TLM char[2048];
+		buffer_udp_send = new OMISCID_TLM char[UDP_MAX_MSG_SIZE+1];	// +1 for '\0'
 		if ( buffer_udp_send == NULL )
 		{
 			return 0;
@@ -1222,7 +1221,6 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 		//	  socket->SendTo(strlen(start_tag), start_tag, destptr);
 		//	  socket->SendTo(len, buf, destptr);
 		//	  socket->SendTo(tag_end_size, tag_end, destptr);
-
 	}
 	catch(SocketException& e)
 	{

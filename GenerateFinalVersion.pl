@@ -304,52 +304,60 @@ $TestSuite .= "##################\n";
 $TestSuite .= "CMT: Compilation environment\n";
 $TestSuite .= "C++: Microsoft Visual Studio 2005\n";
 $TestSuite .= "     Version 8.0.50727.867  (vsvista.050727-8600)\n";
+$TestSuite .= "     Microsoft .NET Framework\n";
+$TestSuite .= "     Version 2.0.50727 SP1\n";
 $TestSuite .= "     Édition installée : Professional\n";
-$TestSuite .= "     Microsoft Visual Studio 2005 Professional - Français Service Pack 1 (KB926607)\n";   
-$TestSuite .= "     Update pour Microsoft Visual Studio 2005 Professional - Français (KB932233)\n";  
+$TestSuite .= "     Microsoft Visual C# 2005   77915-009-0000007-41342\n";
+$TestSuite .= "     Microsoft Visual C++ 2005   77915-009-0000007-41342\n";
+$TestSuite .= "     Microsoft Visual J# 2005   77915-009-0000007-41342\n";
+$TestSuite .= "     Microsoft Web Application Projects 2005   77915-009-0000007-41342\n";
+$TestSuite .= "     Version 8.0.50727.867\n";
+$TestSuite .= "     Crystal Reports    AAC6G-G0CSA4K-U7000P7\n";
+$TestSuite .= "     Microsoft Visual Studio 2005 Professional - Français Service Pack 1 (KB926607)\n";
+$TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB937061)\n";
+$TestSuite .= "     Update pour Microsoft Visual Studio 2005 Professional - Français (KB932233)\n";
+$TestSuite .= "     Insure++ Version 7.1.2 (build 2007-09-10)\n";
 $TestSuite .= "XML: libxml2 version 2.6.23 with iconv 1.9.1\n";
-$TestSuite .= "CMT: Test Omiscid with 'debug=0 trace=0' flags.\n";
-$TestSuite .= "IOK: Compile and install Omiscid.\n";
-$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
-$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
-$TestSuite .= "CMT: Test Omiscid with 'debug=0 trace=1' flags.\n";
-$TestSuite .= "IOK: Compile and install Omiscid.\n";
-$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
-$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
-$TestSuite .= "CMT: Test Omiscid with 'debug=1 trace=0' flags.\n";
-$TestSuite .= "IOK: Compile and install Omiscid.\n";
-$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
-$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
-$TestSuite .= "CMT: Test Omiscid with 'debug=1 trace=1' flags.\n";
-$TestSuite .= "IOK: Compile and install Omiscid.\n";
-$TestSuite .= "TOK: Compile RegisterTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'RegisterSearchTest.cpp RegisterThread.cpp'\n";
-$TestSuite .= "TOK: Compile BrowsingTest and run it successfully (1)\n";
-$TestSuite .= "     files used 'BrowsingTest.cpp RegisterThread.cpp'\n";
 
-
+# Construct the actual tests done
+foreach $DebugFlag ( ('1', '0') )
+{
+	if ( $DebugFlag eq '1' )
+	{
+		$DebugTag = '1 chmem=1 ';
+	}
+	else
+	{
+		$DebugTag = '0';
+	}
+	
+	foreach $TraceFlag ( ('1', '0') )
+	{
+		$TestSuite .= "CMT: Test Omiscid with 'debug=$DebugTag trace=$TraceFlag' flags.\n";
+		$TestSuite .= "IOK: Compile Omiscid.\n";
+		$TestSuite .= "TOK: Compile GlobalTest and run it successfully (1)\n";
+		$TestSuite .= "     files used 'GlobalTest.cpp Accumulator.cpp BrowsingTest.cpp ClientAccumulator.cpp RegisterSearchTest.cpp RegisterThread.cpp SendHugeData.cpp'\n";
+	}
+}
 
 if ( $DoTest == 1 )
 {
-	# $Computers{'astree'} = '000e0c5e4586';
-	# $Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
-	# $Computers{'metis'}  = '000d936fc38c';
-	# $Options{'metis'}   = '("")';
-	# $Computers{'desdemona'}  = '000bcd624fa9';
+	$Computers{'astree'} = '000e0c5e4586';
+	$Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
+	$Computers{'prometheus'} = '0013202e4fae';
+	$Options{'prometheus'}   = '("")'; # debugthread=1")';
+	$Computers{'metis'}  = '000d936fc38c';
+	$Options{'metis'}   = '("")';
+	$Computers{'desdemona'}  = '000bcd624fa9';
 	# $Options{'desdemona'}   = '("zeroconf=mdns")';
-	# $Options{'desdemona'}   = '("")';
+	$Options{'desdemona'}   = '("")';
 	$Computers{'protee'}  = '000d561ff276';
+	$Options{'protee'}   = '("zeroconf=avahi ChMemMode=1", "")';
 	# $Options{'protee'}   = '("zeroconf=mdns ChMemMode=1")';
-	$Options{'protee'}   = '("zeroconf=avahi")';
+	# $Options{'protee'}   = '("zeroconf=mdns chmem=1")';
 	# $SupportedDebugMode{'protee'} = 'insure';
-	# $Computers{'puck'}  = '0019b94b4902';
-	# $Options{'puck'}   = '("")';
+	$Computers{'puck'}  = '0019b94b4902';
+	$Options{'puck'}   = '("")';
 	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';
@@ -433,7 +441,7 @@ if ( $DoTest == 1 )
 				$CompilerOptions .= ' -DDEBUG_THREAD ';
 			}
 			
-			if ( $Options{$TestComputer} =~ /ChMemMode\=(1|yes|true)/ )
+			if ( $Options{$TestComputer} =~ /chmem\=(1|yes|true)/ )
 			{
 				$CompilerOptions .= ' -DTRACKING_MEMORY_LEAKS ';
 			}		
