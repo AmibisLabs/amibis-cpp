@@ -10,3 +10,9 @@ Architecture: any
 Depends: ${shlibs:Depends}, libxml2-dev, libavahi-client-dev
 Description: Object Oriented Opensource Middleware for Service Communication Inspection and Discovery.
  O3MiSCID stands for Object Oriented Opensource Middleware for Service Communication Inspection and Discovery.
+
+Package: omiscid-dev
+Architecture: any
+Depends: omiscid
+Description: Omiscid Headers and Dev files
+ <insert>

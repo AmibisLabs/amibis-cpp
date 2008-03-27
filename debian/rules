@@ -14,6 +14,8 @@
 # from having to guess our platform (since we know it already)
 DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+export DH_COMPAT=4
+
 
 configure:
 
@@ -26,31 +28,34 @@ build: build-stamp
 build-stamp:  config.status
 
 clean:
-	scons -c
+	dh_testdir
+	dh_clean
 	rm -rf debian/tmp
-	rm  -f debian/files
+	scons -c
 
 install: build
+	dh_clean -a
+	dh_installdirs -a
 # Build architecture-independent files here.
 
 binary-indep: build install
 # We have nothing to do by default.
 
 binary-arch: build install
-	rm -rf debian/tmp
-	install -d debian/tmp debian/tmp/DEBIAN
-	install -d debian/tmp/usr/bin
-	install -d debian/tmp/usr/lib
-
 	dh_testdir
 	dh_testroot
-	scons zeroconf=avahi prefix=debian/tmp/usr install
-	debian/replace.sh
-	dh_fixperms
-	dh_shlibdeps
-	dh_gencontrol
-	dh_md5sums
-	dh_builddeb
+	scons zeroconf=avahi prefix=$(CURDIR)/debian/tmp/usr install
+	#$(CURDIR)/debian/replace.sh 
+	sed  -i 's/\/[A-Za-z0-9 | \/ | . | -]*debian\/tmp//g' $(CURDIR)/debian/tmp/usr/bin/OmiscidControl-config
+	sed  -i 's/\/[A-Za-z0-9 | \/ | . | -]*debian\/tmp//g' $(CURDIR)/debian/tmp/usr/bin/OmiscidCom-config
+	sed  -i 's/\/[A-Za-z0-9 | \/ | . | -]*debian\/tmp//g' $(CURDIR)/debian/tmp/usr/bin/OmiscidSystem-config
+	dh_install --sourcedir=debian/tmp
+	dh_fixperms -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
 
 
 
