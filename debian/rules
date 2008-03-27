@@ -28,7 +28,7 @@ build-stamp:  config.status
 clean:
 	scons -c
 	rm -rf debian/tmp
-	rm  debian/files
+	rm  -f debian/files
 
 install: build
 # Build architecture-independent files here.
