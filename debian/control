@@ -13,6 +13,6 @@ Description: Object Oriented Opensource Middleware for Service Communication Ins
 
 Package: omiscid-dev
 Architecture: any
-Depends: omiscid, libxml2-dev, libavahi-client-dev
+Depends: omiscid(= 1.4), libxml2-dev, libavahi-client-dev
 Description: Omiscid Headers and Dev files
  <insert>
