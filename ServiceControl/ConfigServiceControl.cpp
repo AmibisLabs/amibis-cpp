@@ -64,10 +64,30 @@ OmiscidServiceControlLayerInitClass::OmiscidServiceControlLayerInitClass()
 	OmiscidServiceControlLayerInitInstanceCount++;
 	if ( OmiscidServiceControlLayerInitInstanceCount == 1 )
 	{
-		// First instance, do init for Layer System
+		// First instance, do init for this System
 
 		// now init this layer
 		OmiscidTrace( "Init ServiceControl layer\n" );
+
+		// Added for compatibility reasons
+		char * Option = getenv( "OMISCID_DNSSD_FACTORY" );
+		if ( Option != NULL )
+		{
+			// Warn user about this env variable : we do not use it at run time in C++
+			OmiscidError( "OMISCID_DNSSD_FACTORY is not use by non Java version of OMiSCID. You must choose how to access DNSSD at compile time.\n" );
+		}
+
+		// Added for compatibility reasons
+		Option = getenv( "OMISCID_DNSSD_FACTORY_VERBOSE_MODE" );
+		if ( Option != NULL )
+		{
+			// Warn user about how we access to DNSSD
+#ifdef OMISCID_USE_AVAHI
+			OmiscidError( "OMiSCID is currently compiled to use Avahi as DNSSD stack.\n" );
+#else
+			OmiscidError( "OMiSCID is currently compiled to use mdns (from Apple) as DNSSD stack.\n" );
+#endif
+		}
 
 		// Init XmlParser
 		InitXmlParser();

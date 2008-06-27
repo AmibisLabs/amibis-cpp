@@ -417,46 +417,49 @@ int Socket::SendTo(int len, const char* buf, struct sockaddr_in* adest)
 
 bool Socket::Select()
 {
-	while(true)
+	// Done, change it to non full blocking mode....
+	fd_set socketfds;
+
+	timeval timeout;
+
+	FD_ZERO(&socketfds);
+	FD_SET(descriptor, &socketfds);
+
+	// First check for event (like disconnection...)
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 10;	// 10 micro seconds
+
+	// Ask if some event are waiting on this socket
+	if ( select((int)descriptor+1, NULL, NULL, &socketfds, &timeout) > 0 )
 	{
-		// Done, change it to non full blocking mode....
-		fd_set socketfds;
-
-		timeval timeout;
-
-		FD_ZERO(&socketfds);
-		FD_SET(descriptor, &socketfds);
-
-		// First check for event (like disconnection...)
-		timeout.tv_sec = 0;
-		timeout.tv_usec = 10;	// 10 micro seconds
-
-		// Ask if some event are waiting on this socket
-		if ( select((int)descriptor+1, NULL, NULL, &socketfds, &timeout) > 0 )
-		{
-			// Ok, something happens
-			int err = Errno();
-			if (err != EINTR)
-				throw SocketException("select", err);
-			continue;
-		}
-
-		timeout.tv_sec = 0;
-		timeout.tv_usec = 100000;	// 100 ms
-
-		FD_ZERO(&socketfds);
-		FD_SET(descriptor, &socketfds);
-
-		if( select((int)descriptor+1, &socketfds, NULL, NULL, &timeout) == SOCKET_ERROR )
-		{
-			// A problem occurs
-			int err = Errno();
-			if (Errno() != EINTR)
-				throw SocketException("select", err);
-			continue;
-		}
-		return FD_ISSET(descriptor, &socketfds);
+		// Ok, something happens
+		throw SocketException("select", Errno());
 	}
+
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 100000;	// 100 ms
+
+	FD_ZERO(&socketfds);
+	FD_SET(descriptor, &socketfds);
+
+	if( select((int)descriptor+1, &socketfds, NULL, NULL, &timeout) == SOCKET_ERROR )
+	{
+		// A problem occurs
+#ifdef WIN32
+		throw SocketException("select",  Errno());
+#else
+		int err = Errno();
+		if ( err != EINTR )
+		{
+			// This error is sent when there is a pending signal (not necessary
+			// related to this socket) in order to get out of low level system
+			// and let the appropriate process of the signal, so it is not an
+			// error
+			throw SocketException("select", err);
+		}
+#endif
+	}
+	return FD_ISSET(descriptor, &socketfds);
 }
 
 unsigned short Socket::GetPortNb()

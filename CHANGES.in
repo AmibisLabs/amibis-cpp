@@ -4,6 +4,9 @@
 
 In this files, you will find changes between OMiSCID versions.
 
+	[Bug corrections]
+	- correct signal handling in Socket::select on linux.
+
 %Version%	%Date%
 	[Global modifications]
 	- change remote access rigth to the "Lock" variable in order to be compliant

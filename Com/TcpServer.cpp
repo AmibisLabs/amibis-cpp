@@ -286,6 +286,7 @@ bool TcpServer::AcceptConnection(MsgSocket* sock)
 
 	// OmiscidTrace( "TcpServer::AcceptConnection:: connection from (%s)\n", sock->GetSocket()->GetConnectedHost().GetStr());
 
+	SmartLocker SL_protectSend( protectSend );	// Prevent send before synchronisation
 	SmartLocker SL_listConnections(listConnections);
 
 	// Init the socket
