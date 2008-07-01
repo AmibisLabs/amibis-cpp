@@ -26,7 +26,7 @@ class CascadeServiceFilters : public ServiceFilter,	 public SimpleList<ServiceFi
 {
 public:
 
-	typedef enum CascadeServiceFiltersType { IsAND, IsOR };
+	enum CascadeServiceFiltersType { IsAND, IsOR };
 
 	CascadeServiceFilters(CascadeServiceFiltersType CreationType = IsAND);
 	virtual ~CascadeServiceFilters();

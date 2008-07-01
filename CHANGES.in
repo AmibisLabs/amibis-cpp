@@ -4,72 +4,80 @@
 
 In this files, you will find changes between OMiSCID versions.
 
-	[Bug corrections]
-	- correct signal handling in Socket::select on linux.
-
 %Version%	%Date%
 	[Global modifications]
-	- change remote access rigth to the "Lock" variable in order to be compliant
-	  with the Java version.
-	- add defines in the Examples in order to compile them
-	  in only one main test (toi check code with insure and get back
-	  code coverage value).
-	- for the same reason, change Accumulator example source code and
-	  add some new files in Examples.
-	- uninitialized SimpleStrings are now considered as empty by default.
-	- in System Layer, Config.h and .cpp become ConfigSystem.h and .cpp.
-	  Identically for the Com and ServiceControlLayer
-	- SimpleString is totally rebuilt to be more secure. With less
-	  Mutex acces, it runs also faster.
-	- remove last StartThread() in constructors. As Run() is virtual and
-	  virtual table is not safe *before* the end of constructor, one
-	  *MUST NOT* call StartThread() in Thread or subclass constructor
-	  as we do now. Refactor Examples to be compliant with this rule.
-	- remove validation/noitification when changing variable value for
-	  the same value. Now we only notify real change of value.
-	- to allow integration in interpreted language (like python but
-	  not only) we do not try enymore to cope with memory management
-	  of ServiceFilter instances. We do not call anymore Duplicate
-	  inside OMiSCID even if we think this method must be implemented
-	  so it stay abstact. Now to release ServiceFilter, you must
-	  call Empty(). Destroy the object will not delete included filters :
-	  one may want to reuse its filters for anoither research.
-	[API]
-	- Add ability to connect to undiscovered services connectors
-	  (using hostname and port) in order to facilitate communications
-	  on non local area network.
-	- Add a port number parameter to AddConnector function in order
-	  to decide on which port we want to run it. Usefull to work
-	  with previous adding. This parameter is not mandatory.
-	- Add filtering facilities when registering listener
-	  to a ServiceRepository. It inproves service event
-	  notification by filtering.
-	- Add access to Variable Type and description, to Connector
-	  description in ServiceProxy
-	- Add the ability to skip validation phase when changing a variable
-	  value localy.
-	- You can now get the number of connected clients to one connector
-	  using Service::GetConnectorClientCount
-	- Remove autostart from BrowseForDNSSDService constructor (virtual
-	  members problems).
-	[Known features]
-	- pthread_* functions seems to be incorrect (or pthread.h is now incorrect)
-	  and thus, pthread_create for exemple overite extra memory (2 weeks of debugging
-	  thinking it is our fault). Under non Windows plateforms, add before and
-	  after data for pthread_* functions, one unsigned int to prevent memory
-	  corruption. Everything works fine now.
+	- add support for some environment variable to be compliant with the
+	java version : OMISCID_DNSSD_FACTORY (message indicating that this
+	choice is supported only at compile time for the C++ version) and
+	OMISCID_DNSSD_FACTORY_VERBOSE_MODE (print if Bonjour or Avahi is used).
+	- remove all "typedef enum" to be gcc 4.3 compliant.
 	[Bug corrections]
-	- Correct memory leak when trying to add a connector after starting
-	  the service.
-	- Correct connection failure (due to bad implementation of MsgSocket::WaitSyncLinkMsg)
-	- correct lost (some times) of the first sent paquet over TCP.
-	- correct static object paradigm to prevent bad initialization.
-	  Now, the subsystem is not longer started before main. It is started
-	  at first factory call.
-	- correct linking problems on Linux/MacOS
-	- correct memory leaks
-	- some other minor bug corrections
-	
+	- prevent sending data before the first full exchange was completed.
+	- correct signal handling in Socket::select on linux.
+
+1.4.0	2008-3-27
+    [Global modifications]
+    - change remote access rigth to the "Lock" variable in order to be compliant
+      with the Java version.
+    - add defines in the Examples in order to compile them
+      in only one main test (toi check code with insure and get back
+      code coverage value).
+    - for the same reason, change Accumulator example source code and
+      add some new files in Examples.
+    - uninitialized SimpleStrings are now considered as empty by default.
+    - in System Layer, Config.h and .cpp become ConfigSystem.h and .cpp.
+      Identically for the Com and ServiceControlLayer
+    - SimpleString is totally rebuilt to be more secure. With less
+      Mutex acces, it runs also faster.
+    - remove last StartThread() in constructors. As Run() is virtual and
+      virtual table is not safe *before* the end of constructor, one
+      *MUST NOT* call StartThread() in Thread or subclass constructor
+      as we do now. Refactor Examples to be compliant with this rule.
+    - remove validation/noitification when changing variable value for
+      the same value. Now we only notify real change of value.
+    - to allow integration in interpreted language (like python but
+      not only) we do not try enymore to cope with memory management
+      of ServiceFilter instances. We do not call anymore Duplicate
+      inside OMiSCID even if we think this method must be implemented
+      so it stay abstact. Now to release ServiceFilter, you must
+      call Empty(). Destroy the object will not delete included filters :
+      one may want to reuse its filters for anoither research.
+    [API]
+    - Add ability to connect to undiscovered services connectors
+      (using hostname and port) in order to facilitate communications
+      on non local area network.
+    - Add a port number parameter to AddConnector function in order
+      to decide on which port we want to run it. Usefull to work
+      with previous adding. This parameter is not mandatory.
+    - Add filtering facilities when registering listener
+      to a ServiceRepository. It inproves service event
+      notification by filtering.
+    - Add access to Variable Type and description, to Connector
+      description in ServiceProxy
+    - Add the ability to skip validation phase when changing a variable
+      value localy.
+    - You can now get the number of connected clients to one connector
+      using Service::GetConnectorClientCount
+    - Remove autostart from BrowseForDNSSDService constructor (virtual
+      members problems).
+    [Known features]
+    - pthread_* functions seems to be incorrect (or pthread.h is now incorrect)
+      and thus, pthread_create for exemple overite extra memory (2 weeks of debugging
+      thinking it is our fault). Under non Windows plateforms, add before and
+      after data for pthread_* functions, one unsigned int to prevent memory
+      corruption. Everything works fine now.
+    [Bug corrections]
+    - Correct memory leak when trying to add a connector after starting
+      the service.
+    - Correct connection failure (due to bad implementation of MsgSocket::WaitSyncLinkMsg)
+    - correct lost (some times) of the first sent paquet over TCP.
+    - correct static object paradigm to prevent bad initialization.
+      Now, the subsystem is not longer started before main. It is started
+      at first factory call.
+    - correct linking problems on Linux/MacOS
+    - correct memory leaks
+    - some other minor bug corrections
+
 1.3.0	2007-8-31
     [Global modifications]
     - you can now have any number for you DnsSD daemon. So, you can

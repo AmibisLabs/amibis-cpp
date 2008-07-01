@@ -32,8 +32,8 @@ namespace Omiscid {
 
 #endif
 
-typedef enum ControlServerStatus { STATUS_INIT = 1, STATUS_RUNNING = 2 };
-typedef enum VariableAccessType { ReadAccess = 0, ConstantAccess = 1, ReadWriteAccess = 2 };
+enum ControlServerStatus { STATUS_INIT = 1, STATUS_RUNNING = 2 };
+enum VariableAccessType { ReadAccess = 0, ConstantAccess = 1, ReadWriteAccess = 2 };
 
 // Define Initialisation Object for Com Layer
 // can be instanciated several time without any problem

@@ -494,7 +494,7 @@ struct SimpleMemoryElement * MemoryList::ExtractFirst()
 void AddMemoryBlock(size_t asize,void** addr);
 void RemoveMemoryBlock(void* addr);
 
-typedef enum TrackMemoryValues
+enum TrackMemoryValues
 {
 	TemporaryBufferSize = 4*1024-1	// 4 Kb - 1 byte
 };

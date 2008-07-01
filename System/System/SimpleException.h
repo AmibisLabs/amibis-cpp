@@ -32,7 +32,7 @@ namespace Omiscid {
 class SimpleException
 {
 public:
-	typedef enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
+	enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
 
   /** \brief Constructor
    *

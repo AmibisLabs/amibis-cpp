@@ -17,7 +17,7 @@
 
 namespace Omiscid {
 
-typedef enum ConnectorKind { UnkownConnectorKind = 0, AnInput = 1, AnOutput = 2, AnInOutput = 3 };
+enum ConnectorKind { UnkownConnectorKind = 0, AnInput = 1, AnOutput = 2, AnInOutput = 3 };
 
 // Definition of a connection point. Will be extended for Shared memory
 class ConnectionInfos
@@ -36,7 +36,7 @@ public:
 	ConnectorKind Type;
 };
 
-typedef enum MessageOrigine { UnknownOrigine, FromUDP, FromTCP, FromSharedMemory };
+enum MessageOrigine { UnknownOrigine, FromUDP, FromTCP, FromSharedMemory };
 
 // Define Initialisation Object for Com Layer
 // can be instanciated several time without any problem
