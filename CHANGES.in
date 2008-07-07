@@ -12,8 +12,10 @@ In this files, you will find changes between OMiSCID versions.
 	OMISCID_DNSSD_FACTORY_VERBOSE_MODE (print if Bonjour or Avahi is used).
 	- remove all "typedef enum" to be gcc 4.3 compliant.
 	[Bug corrections]
-	- prevent sending data before the first full exchange was completed.
-	- correct signal handling in Socket::select on linux.
+	- prevent sending data before the init config exchange was completed
+	between connectors.
+	- correct signal handling in Socket::select on linux (prevent signal
+	problems using ::select function).
 
 1.4.0	2008-3-27
     [Global modifications]
