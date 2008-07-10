@@ -1,0 +1,20 @@
+Source: $OMISCID_PACKAGENAME
+Section: main
+Priority: extra
+Maintainer: OMiSCID Team <omiscid@inrialpes.fr>
+Build-Depends: debhelper (>= 5), autotools-dev, libxml2-dev, scons$OMISCID_DEPENDANCY
+Standards-Version: 3.7.2
+
+Package: $OMISCID_PACKAGENAME
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: OMiSCID libraries (using $OMISCID_ZEROCONF).
+ O3MiSCID stands for Object Oriented Opensource Middleware for Service Communication Inspection and Discovery.
+ This package contains binary files for use with $OMISCID_ZEROCONF_INFO.
+
+Package: $OMISCID_PACKAGENAME-dev
+Architecture: any
+Depends: $OMISCID_PACKAGENAME(>= $OMISCID_MAJORVERSION), libxml2-dev$OMISCID_DEPENDANCY
+Description: OMiSCID Headers and Dev files (using $OMISCID_ZEROCONF)
+ O3MiSCID stands for Object Oriented Opensource Middleware for Service Communication Inspection and Discovery.
+ This package contains sources files for use with $OMISCID_ZEROCONF_INFO.

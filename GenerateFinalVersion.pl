@@ -345,7 +345,7 @@ if ( $DoTest == 1 )
 	$Computers{'astree'} = '000e0c5e4586';
 	$Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
 	$Computers{'prometheus'} = '0013202e4fae';
-	$Options{'prometheus'}   = '("")'; # debugthread=1")';
+	$Options{'prometheus'}   = '("zeroconf=avahi")'; # debugthread=1")';
 	$Computers{'metis'}  = '000d936fc38c';
 	$Options{'metis'}   = '("")';
 	$Computers{'desdemona'}  = '000bcd624fa9';
@@ -663,8 +663,22 @@ foreach $file ( keys %FilesToAdd )
 }
 
 # print $command;
-
 chdir('..');
 system( $command );
+
+if ( -e './Temp' )
+{
+	mkdir './Temp', 0755;
+}
+
+`cp $VersionFile ./Temp`;
+chdir('./Temp');
+`rm -rf ./OMiSCID`;
+`unzip $VersionFile`;
+$VersionFile =~ s/\.zip/\.tgz/;
+`rm -rf ../$VersionFile`;
+`tar cvfz ../$VersionFile OMiSCID`;
+
+chdir('..');
 chdir($WorkingRep);
 print STDERR "=> done.\n";
