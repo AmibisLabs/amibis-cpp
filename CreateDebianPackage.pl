@@ -6,28 +6,19 @@ $ZeroconfInfo{'mdns'} = "mDNSresponder (Bonjour from Apple,\n see http://develop
 $ZeroconfDepends{'mdns'} = '';
 
 
+$OMISCID_PACKAGENAME = 'omiscid';
+
 if ( !defined $ARGV[0] )
-{
-	die "Missing package name parameter\n";
-}
-
-$OMISCID_PACKAGENAME = $ARGV[0];
-if ( $OMISCID_PACKAGENAME =~ /[A-Z]/ )
-{
-	die "Could not use uppercase character in package name\n";
-}
-
-if ( !defined $ARGV[1] )
 {
 	die "Missing zeroconf parameter\n";
 }
 
-if ( !defined $ZeroconfInfo{$ARGV[1]} )
+if ( !defined $ZeroconfInfo{$ARGV[0]} )
 {
 	die "Bad zeroconf parameter. Must be mdns or avahi.\n";
 }
 
-$OMISCID_ZEROCONF = $ARGV[1];
+$OMISCID_ZEROCONF = $ARGV[0];
 $OMISCID_ZEROCONF_INFO = $ZeroconfInfo{$OMISCID_ZEROCONF};
 $OMISCID_DEPENDANCY = $ZeroconfDepends{$OMISCID_ZEROCONF};
 
@@ -42,8 +33,8 @@ while( $line = <$fd> )
 {
 	if ( $line =~ /^(\d+\.\d+)\.(\d+)\s+/ )
 	{
-		$OMISCID_PACKAGEVERSION = "$1-$2";
-		$OMISCID_MAJORVERSION = $1;
+		$OMISCID_PACKAGEVERSION = "$1.$2";
+		$OMISCID_MAJORVERSION = "$1.$2";
 		$VersionCourante = "$1.$2";
 		last;
 	}
@@ -161,5 +152,29 @@ print STDERR "Unzip current OMiSCID version to Temp\n";
 print STDERR "Move debian folder in OMiSCID\n";
 `mv debian OMiSCID/`;
 
+$PackageFolder = $OMISCID_PACKAGENAME . '-' . $OMISCID_MAJORVERSION;
+
+print STDERR "Remove oberon:tmp/$PackageFolder if any\n";
+`ssh oberon "rm -rf tmp/$PackageFolder"`;
+
+print STDERR "Copy Temp/OMiSCID to oberon:tmp/$PackageFolder\n";
+`scp -r  OMiSCID oberon:tmp/$PackageFolder`;
+
+print STDERR "Change permission in tmp/$PackageFolder\n";
+`ssh oberon "cd tmp; chmod -R 755 $PackageFolder; chmod 777 $PackageFolder/debian/rules"`;
+
+print STDERR "Create tmp/$PackageFolder.orig\n";
+`ssh oberon "cd tmp; rm -rf $PackageFolder.orig; cp -r $PackageFolder $PackageFolder.orig"`;
+
+if ( $OMISCID_ZEROCONF eq 'mdns' )
+{
+	system( "ssh carme \"cd tmp/$PackageFolder; debuild -us -uc\"" );
+}
+else
+{
+	system( "ssh carme \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
+}
+
 print STDERR "Remove OMiSCID folder in Temp\n";
 # `rm -rf OMiSCID`;
+

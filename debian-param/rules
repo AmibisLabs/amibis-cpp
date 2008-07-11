@@ -30,6 +30,7 @@ clean:
 	dh_clean
 	rm -rf debian/tmp
 	scons -c
+	rm -rf .scon* *.pyc
 
 install: build
 	dh_clean -a

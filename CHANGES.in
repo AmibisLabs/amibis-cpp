@@ -16,6 +16,8 @@ In this files, you will find changes between OMiSCID versions.
 	between connectors.
 	- correct signal handling in Socket::select on linux (prevent signal
 	problems using ::select function).
+	[Scons changes]
+	- change from env.Copy() (deprecated) to env.Clone() in SConstruct.
 	[Version number]
 	- change package middle number to be compliant with the java version.
 

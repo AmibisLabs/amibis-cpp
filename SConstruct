@@ -18,7 +18,7 @@ libToInstall = []
 
 # common environment settings
 env.AppendUnique(CXXFLAGS = ['-g','-Werror','-Wall','-pedantic','-std=c++98'])
-env_system = env.Copy()
+env_system = env.Clone()
 env_system.Append(CPPPATH='System')
 target_system = env_system.SharedLibrary(
     target='OmiscidSystem',
@@ -26,7 +26,7 @@ target_system = env_system.SharedLibrary(
 )
 libToInstall += target_system
 
-env_com = env.Copy()
+env_com = env.Clone()
 env_com.Append(CPPPATH=['System', 'Com'])
 env_com.Prepend(LIBPATH=['.'])
 env_com.Append(LIBS = ['OmiscidSystem'])
@@ -37,7 +37,7 @@ target_com = env_com.SharedLibrary(
 
 libToInstall += target_com
 
-env_control = env.Copy()
+env_control = env.Clone()
 env_control.Append(CPPPATH=['System', 'Com', 'ServiceControl'])
 env_control.Prepend(LIBPATH=['.'])
 env_control.Append(LIBS = ['OmiscidCom', 'OmiscidSystem'])
@@ -62,4 +62,3 @@ binToInstall += OmiscidDotInFileTarget(env, 'ServiceControl/OmiscidControl-confi
 
 OmiscidInstallTarget(env,binToInstall,libToInstall,hToInstall=hToInstall)
 
- 
