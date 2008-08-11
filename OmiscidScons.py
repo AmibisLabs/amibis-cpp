@@ -27,6 +27,7 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
 	global OSis
 	global DoDebugThread
 	global ChMemMode
+	global DebugMode
 	
 	if 'xml2' in options:
 		env.ParseConfig('xml2-config --cflags')
@@ -176,6 +177,7 @@ def OmiscidMapping():
 	global DoValgrind
 	global OSis
 	global ChMemMode
+	global DebugMode
 	
 	ReplaceList = {}
 	
@@ -210,6 +212,9 @@ def OmiscidMapping():
 		ReplaceList['@OmiscidCompilFlags@'] = ' -DTRACKING_MEMORY_LEAKS '
 	else :
 		ReplaceList['@OmiscidCompilFlags@'] = ' '
+		
+	if DebugMode == True :
+		ReplaceList['@OmiscidCompilFlags@'] += ' -DDEBUG '
 	
 	return ReplaceList
 
