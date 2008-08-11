@@ -38,7 +38,7 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo -n " -I@includedir@ @OmiscidTraceFlags@ "
+	echo -n " -I@includedir@ @OmiscidTraceFlags@ @OmiscidCompilFlags@"
 	;;
     --cflags-only-I)
 	echo -n " -I@includedir@ "

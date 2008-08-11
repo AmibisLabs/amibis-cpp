@@ -68,7 +68,7 @@ case "$1" in
 	echo -n " @DOCDIR_COM@/doc_com.tag=@DOCDIR_COM@ "
 	;;
     --all)
-	echo " `@bindir@/OmiscidSystem-config --libs --cflags-only-I` -L@libdir@ -lOmiscidCom @OmiscidTraceFlags@ "
+	echo " `@bindir@/OmiscidSystem-config --libs --cflags-only-I` -L@libdir@ -lOmiscidCom @OmiscidTraceFlags@ @OmiscidCompilFlags@ "
 	;;
 
 	   
