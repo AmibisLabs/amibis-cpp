@@ -43,7 +43,7 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir
 	dh_testroot
-	scons zeroconf=$OMISCID_ZEROCONF prefix=$(CURDIR)/debian/tmp/usr install
+	scons zeroconf=$OMISCID_ZEROCONF prefix=$(CURDIR)/debian/tmp/usr $OMISCID_DEBUG install
 	sed  -i 's/\/[A-Za-z0-9 | \/ | . | -]*debian\/tmp//g' $(CURDIR)/debian/tmp/usr/bin/OmiscidControl-config
 	sed  -i 's/\/[A-Za-z0-9 | \/ | . | -]*debian\/tmp//g' $(CURDIR)/debian/tmp/usr/bin/OmiscidCom-config
 	sed  -i 's/\/[A-Za-z0-9 | \/ | . | -]*debian\/tmp//g' $(CURDIR)/debian/tmp/usr/bin/OmiscidSystem-config

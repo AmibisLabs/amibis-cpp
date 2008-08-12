@@ -10,6 +10,8 @@ In this files, you will find changes between OMiSCID versions.
 	java version : OMISCID_DNSSD_FACTORY (message indicating that this
 	choice is supported only at compile time for the C++ version) and
 	OMISCID_DNSSD_FACTORY_VERBOSE_MODE (print if Bonjour or Avahi is used).
+	- in order to be coherent, now when compiling with omiscid, your
+	project will be in debug (-DDEBUG) mode also under Linux/MacOS.
 	- remove all "typedef enum" to be gcc 4.3 compliant.
 	[Bug corrections]
 	- prevent sending data before the init config exchange was completed

@@ -7,22 +7,35 @@ $ZeroconfDepends{'mdns'} = '';
 
 
 $OMISCID_PACKAGENAME = 'omiscid';
+$OMISCID_DEBUG = '';
 
 if ( !defined $ARGV[0] )
 {
 	die "Missing zeroconf parameter\n";
 }
 
-if ( !defined $ZeroconfInfo{$ARGV[0]} )
+$OMISCID_ZEROCONF = $ARGV[0];
+
+if ( !defined $ZeroconfInfo{$OMISCID_ZEROCONF} )
 {
 	die "Bad zeroconf parameter. Must be mdns or avahi.\n";
 }
 
-$OMISCID_ZEROCONF = $ARGV[0];
+$PackageSuffix = '';
+if ( defined $ARGV[1] )
+{
+	if ( $ARGV[1] ne '-deb' )
+	{
+		die "Bad '$ARGV[1]' parameter. Must be '-deb'.\n";
+	}
+	$PackageSuffix = '-deb';
+	$OMISCID_DEBUG = 'debug=1';
+}
+
 $OMISCID_ZEROCONF_INFO = $ZeroconfInfo{$OMISCID_ZEROCONF};
 $OMISCID_DEPENDANCY = $ZeroconfDepends{$OMISCID_ZEROCONF};
 
-$OMISCID_PACKAGENAME .= '-using-' . $OMISCID_ZEROCONF;
+$OMISCID_PACKAGENAME .= '-using-' . $OMISCID_ZEROCONF . $PackageSuffix;
 
 # search for changelog
 $CurrentVersion = '';
@@ -124,6 +137,7 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 		$line =~ s/\$OMISCID_MAJORVERSION/$OMISCID_MAJORVERSION/g;
 		$line =~ s/\$OMISCID_CHANGELOG/$OMISCID_CHANGELOG/g;
 		$line =~ s/\$OMISCID_PACKAGEDATE/$OMISCID_PACKAGEDATE/g;
+		$line =~ s/\$OMISCID_DEBUG/$OMISCID_DEBUG/g;
 		$content .= $line;
 	}
 	
