@@ -18,7 +18,7 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 configure:
 
 config.status: configure
-	scons zeroconf=$OMISCID_ZEROCONF
+	scons zeroconf=$OMISCID_ZEROCONF $OMISCID_DEBUG
 
 
 build: build-stamp
@@ -29,7 +29,7 @@ clean:
 	dh_testdir
 	dh_clean
 	rm -rf debian/tmp
-	scons -c
+	scons zeroconf=$OMISCID_ZEROCONF $OMISCID_DEBUG -c
 	rm -rf .scon* *.pyc
 
 install: build

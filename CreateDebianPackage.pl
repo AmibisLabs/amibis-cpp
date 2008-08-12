@@ -40,7 +40,7 @@ $OMISCID_PACKAGENAME .= '-using-' . $OMISCID_ZEROCONF . $PackageSuffix;
 # search for changelog
 $CurrentVersion = '';
 
-open( $fd, '<CHANGES' );
+open( $fd, '<CHANGES' ) or die "unable to open 'CHANGES' file\n";
 # seek first line with a sequence number
 while( $line = <$fd> )
 {

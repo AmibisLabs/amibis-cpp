@@ -126,62 +126,69 @@ $IncrVersionType = 0;	# last
 $DoTest = 1;
 $DoDoc = 1;
 $StopAfterZip = 0;
+$DoPackage = 1;
 
 $PosArgv = 0;
 while( defined $ARGV[$PosArgv] )
 {
-	if ( $ARGV[$PosArgv] =~ /^-middle/i )
+	if ( $ARGV[$PosArgv] =~ /^-middle$/i )
 	{
 		$IncrVersionType = 1; # middle number
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] =~ /^-major/i )
+	if ( $ARGV[$PosArgv] =~ /^-major$/i )
 	{
 		$IncrVersionType = 2; # major number
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] =~ /^-minor/i )
+	if ( $ARGV[$PosArgv] =~ /^-minor$/i )
 	{
 		$IncrVersionType = 0; # minor number
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] =~ /^-last/i )
+	if ( $ARGV[$PosArgv] =~ /^-last$/i )
 	{
 		$IncrVersionType = -1; # regenerate the same version
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] =~ /^-notest/i )
+	if ( $ARGV[$PosArgv] =~ /^-notest$/i )
 	{
 		$DoTest = 0; # major number
 		print "do not test\n";
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] =~ /^-stopafterzip/i )
+	if ( $ARGV[$PosArgv] =~ /^-stopafterzip$/i )
 	{
 		$StopAfterZip = 1; # major number
 		print "just generate zip\n";
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] =~ /^-nodoc/i )
+	if ( $ARGV[$PosArgv] =~ /^-nodoc$/i )
 	{
 		$DoDoc = 0; # major number
 		print "do not generate documentation\n";
 		$PosArgv++;
 		next;
 	}
-	if ( $ARGV[$PosArgv] =~ /^-emptylog/i )
+	if ( $ARGV[$PosArgv] =~ /^-emptylog$/i )
 	{
 		&EmptyLog();
 		print "log is empty\n";
 		$PosArgv++;
 		next;
-	}	
+	}
+	if ( $ARGV[$PosArgv] =~ /^-nopackage$/i )
+	{
+		$DoPackage = 0;
+		$PosArgv++;
+		next;
+	}
 	die "Wrong parameter\n";
 }
 
@@ -681,4 +688,14 @@ $VersionFile =~ s/\.zip/\.tgz/;
 
 chdir('..');
 chdir($WorkingRep);
+
+
+# Generate package
+if ( $DoPackage == 1 )
+{
+	`perl CreateDebianPackage.pl mdns`;
+	`perl CreateDebianPackage.pl mdns -deb`;
+	`perl CreateDebianPackage.pl avahi`;
+	`perl CreateDebianPackage.pl avahi -deb`;}
+
 print STDERR "=> done.\n";
