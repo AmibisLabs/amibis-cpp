@@ -183,12 +183,23 @@ print STDERR "Create tmp/$PackageFolder.orig\n";
 if ( $OMISCID_ZEROCONF eq 'mdns' )
 {
 	system( "ssh carme \"cd tmp/$PackageFolder; debuild -us -uc\"" );
+	chdir('..');
+	print "scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .\n";
+	`scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
 }
 else
 {
 	system( "ssh carme \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
+	chdir('..');
+	print "scp carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .\n";
+	`scp carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
 }
 
 print STDERR "Remove OMiSCID folder in Temp\n";
+
+
+
+
+
 # `rm -rf OMiSCID`;
 

@@ -696,6 +696,7 @@ if ( $DoPackage == 1 )
 	`perl CreateDebianPackage.pl mdns`;
 	`perl CreateDebianPackage.pl mdns -deb`;
 	`perl CreateDebianPackage.pl avahi`;
-	`perl CreateDebianPackage.pl avahi -deb`;}
+	`perl CreateDebianPackage.pl avahi -deb`;
+}
 
 print STDERR "=> done.\n";
