@@ -7,28 +7,47 @@ $ZeroconfDepends{'mdns'} = '';
 
 $OMISCID_PACKAGENAME = 'omiscid';
 $OMISCID_DEBUG = '';
-
-if ( !defined $ARGV[0] )
-{
-	die "Missing zeroconf parameter\n";
-}
-
-$OMISCID_ZEROCONF = $ARGV[0];
-
-if ( !defined $ZeroconfInfo{$OMISCID_ZEROCONF} )
-{
-	die "Bad zeroconf parameter. Must be mdns or avahi.\n";
-}
-
+$OMISCID_ZEROCONF = '';
 $PackageSuffix = '';
-if ( defined $ARGV[1] )
+
+$CurrentArg = 0;
+while( defined $ARGV[$CurrentArg] )
 {
-	if ( $ARGV[1] ne '-deb' )
+	if ( $ARGV[$CurrentArg] =~ /^zeroconf\=(.+)$/ )
 	{
-		die "Bad '$ARGV[1]' parameter. Must be '-deb'.\n";
+		if ( $OMISCID_ZEROCONF ne '' )
+		{
+			die "Multiple definition of zeroconf argument\n";
+		}
+		$OMISCID_ZEROCONF = $1;
+		if ( !defined $ZeroconfInfo{$OMISCID_ZEROCONF} )
+		{
+			die "Bad zeroconf parameter. Must be mdns or avahi.\n";
+		}
+		$CurrentArg++;
+		next;
 	}
-	$PackageSuffix = '-deb';
-	$OMISCID_DEBUG = 'debug=1';
+	if ( $ARGV[$CurrentArg] =~ /^replaces=(.+)$/ )
+	{
+		$OMISCID_REPLACES = $1;
+		$CurrentArg++;
+		next;
+	}
+	if ( $ARGV[$CurrentArg] eq '-debug' )
+	{
+		$PackageSuffix = '-debug';
+		$OMISCID_DEBUG = 'debug=1';
+		$CurrentArg++;
+		next;
+	}
+	die "Unknown parameter '$ARGV[$CurrentArg]'\n";
+}
+
+$ErrorInArg = 0;
+if ( $OMISCID_ZEROCONF eq '' )
+{
+	print STDERR "Missing zeroconf argument\n";
+	$ErrorInArg = 1;
 }
 
 $OMISCID_ZEROCONF_INFO = $ZeroconfInfo{$OMISCID_ZEROCONF};
@@ -207,6 +226,8 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 		$line =~ s/\$OMISCID_LICENCE/$OMISCID_LICENCE/g;
 		$line =~ s/\$OMISCID_AUTHORS/$OMISCID_AUTHORS/g;
 		$line =~ s/\$OMISCID_COPYRIGHT/$OMISCID_COPYRIGHT/g;
+		$line =~ s/\$OMISCID_REPLACES/$OMISCID_REPLACES/g;
+		
 		$content .= $line;
 	}
 	
@@ -215,8 +236,6 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 	# 	die "Missing variable for :\n$content\n";
 	# }
 	close( $fd );
-	
-
 	
 	open( $fd, ">debian/$ShortFile" );
 	print $fd $content;

@@ -705,10 +705,7 @@ chdir($WorkingRep);
 # Generate package
 if ( $DoPackage == 1 )
 {
-	`perl CreateDebianPackage.pl mdns`;
-	`perl CreateDebianPackage.pl mdns -deb`;
-	`perl CreateDebianPackage.pl avahi`;
-	`perl CreateDebianPackage.pl avahi -deb`;
+	`perl MakeAllPackages.pl`;
 }
 
 print STDERR "=> done.\n";

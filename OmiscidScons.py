@@ -9,6 +9,7 @@ from SCons.Util import WhereIs
 
 Chmod = SCons.Action.ActionFactory(os.chmod, lambda dest, mode: 'Chmod: "%s" with 0%o' % (dest, mode)) 
 
+
 def OmiscidMessage(str):
 	print '--==-- '+str
 
@@ -219,6 +220,51 @@ def OmiscidMapping():
 	return ReplaceList
 
 
+############################################
+### Command to generate the install libs ###
+############################################
+def OmiscidCreateLibLinks(CurrentLib):
+	global prefix_lib
+	
+	# remember where I am and change CWD
+	WhereAmI = os.getcwd()
+	os.chdir( prefix_lib )
+	
+        lib = CurrentLib.name
+        
+        partoflib = re.split('^(lib[^\.]+)\.(\d+)\.(\d+)\.(\d+)', lib )
+	
+	# libName.so.version
+	dst = partoflib[1] + '.so'
+	print 'link ' + dst + ' to ' + lib
+	if os.path.exists(dst):
+		os.remove(dst)
+	os.symlink( lib, dst )
+	
+	dst = partoflib[1] + '.so.' + partoflib[2]
+	print 'link ' + dst + ' to ' + lib
+	if os.path.exists(dst):
+		os.remove(dst)
+	os.symlink( lib, dst )
+
+	dst = partoflib[1] + '.so.' + partoflib[2] + '.' + partoflib[3]
+	print 'link ' + dst + ' to ' + lib
+	if os.path.exists(dst):
+		os.remove(dst)
+	os.symlink( lib, dst )
+
+	dst = partoflib[1] + '.so.' + partoflib[2] + '.' + partoflib[3] + '.' + partoflib[4]
+	print 'link ' + dst + ' to ' + lib
+	if os.path.exists(dst):
+		os.remove(dst)
+	os.symlink( lib, dst )
+
+	Chmod( prefix_lib, 0755 )
+	os.chdir( WhereAmI )
+	
+CreateLibLinks = SCons.Action.ActionFactory(OmiscidCreateLibLinks, lambda libToInstall: 'OmiscidCreateLibLinks' ) 	
+	
+
 ##############################################
 ### Command to generate the install target ###
 ##############################################
@@ -236,8 +282,9 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
 			prefix_h = os.path.join(ARGUMENTS.get("prefix"), "include", "Omiscid")
 			lTarget = env.Install(prefix_bin, binToInstall)
 			env.AddPostAction( lTarget, Chmod( prefix_bin, 0755 ) )
-			lTarget = env.Install(prefix_lib, libToInstall)
-			env.AddPostAction( lTarget, Chmod( prefix_lib, 0755 ) )
+			for i in libToInstall:
+				lTarget = env.Install(prefix_lib, i)
+				env.AddPostAction( lTarget, CreateLibLinks(i) )
 			hTargetToInstall = []
 			for i in hToInstall:
 				if type(i) in (str, unicode):
