@@ -4,7 +4,7 @@
 
 In this files, you will find changes between OMiSCID versions.
 
-%Version%	%Date%
+%OMISCID_VERSION%	%OMISCID_DAY%
 	[Global modifications]
 	- add support for some environment variable to be compliant with the
 	java version : OMISCID_DNSSD_FACTORY (message indicating that this

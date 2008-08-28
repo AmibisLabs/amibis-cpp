@@ -1,0 +1,21 @@
+This package was debianized by Dominique Vaufreydaz <omiscid@inrialpes.fr> on
+$OMISCID_PACKAGEDATE.
+
+It was downloaded from: http://omiscid.gforge.inria.fr/
+
+Upstream Author(s):
+
+$OMISCID_AUTHORS
+Copyright:
+
+    $OMISCID_COPYRIGHT
+
+Licence :
+
+$OMISCID_LICENCE
+
+The Debian packaging is (C) $OMISCID_COPYRIGHT <omiscid@inrialpes.fr>
+and is licensed under MIT like licence, see `LICENCE'.
+
+# Please also look if there are files or directories which have a
+# different copyright/license attached and list them here.

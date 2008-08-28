@@ -80,7 +80,6 @@ sub WakeOnLan()
 	return 0;
 }
 
-
 $NameOfLogFile = 'Problems.txt';
 
 sub EmptyLog()
@@ -256,8 +255,50 @@ if ( -e "../$VersionFile" )
 	unlink "../$VersionFile";
 }
 
-# generate temporary CHANGES from CHANGES.in
-`cp CHANGES.in CHANGES`;
+# generate date
+my ($sec,$min,$hour,$mday,$mon,$year, $wday,$yday,$isdst) = localtime time;
+$year += 1900;
+$mon += 1;
+my $fdchanges;
+my $ligne;
+my $contenu;
+my $FileIn, $FileWithoutIn;
+
+while( $FileIn = <*.in> )
+{
+	$FileIn =~ /^(.+)\.in$/;
+	$FileWithoutIn = $1;
+	
+	$contenu = '';
+	
+	# print STDERR "1\n";
+	
+	open( $fd, "<$FileIn" ) or die "Could not open '$FileIn'\n";
+	while( $ligne = <$fd> )
+	{
+		$ligne =~ s/[\s\r\n]+$//;
+		$ligne =~ s/%OMISCID_VERSION%/$Version/g;
+		$ligne =~ s/%OMISCID_DAY%/$year-$mon-$mday/g;
+		$ligne =~ s/%OMISCID_YEAR%/$year/g;
+		$ligne =~ s/%OMISCID_SONAME_SUFFIX%/$majorn\.$middlen/g;
+		$contenu .= $ligne . '_#_#_#_#_';
+	}
+	close( $fd );
+	
+	# print STDERR "2\n";
+	
+	$contenu =~ s/(_#_#_#_#_)+/_#_#_#_#_/g;
+	$contenu =~ s/_#_#_#_#_/\n/g;
+	
+	# print STDERR "3\n";
+
+	open( $fd, ">$FileWithoutIn" ) or die "Could not write to '$FileWithoutIn'\n";
+	print $fd $contenu;
+	print $fd "\n";
+	close( $fd );
+}
+
+`perl RecursiveDos2Unix.pl .`;
 
 # generate testing archive
 &RecurseWork::RecurseWork("System/");
@@ -598,32 +639,6 @@ open( $fdtests, '>TESTS' );
 print $fdtests $TestSuite;
 close( $fdtests);
 
-# generate date
-my ($sec,$min,$hour,$mday,$mon,$year, $wday,$yday,$isdst) = localtime time;
-$year += 1900;
-$mon += 1;
-my $fdchanges;
-my $ligne;
-my $contenu = '';
-	
-open( $fd, '<CHANGES.in' ) or die "Could not open 'CHANGES.in'\n";
-while( $ligne = <$fd> )
-{
-	$ligne =~ s/[\r\n\s]+$//g;
-	$ligne =~ s/%Version%/$Version/g;
-	$ligne =~ s/%Date%/$year-$mon-$mday/g;
-	$contenu .= $ligne . '_#_#_#_#_';
-}
-close( $fd );
-	
-$contenu =~ s/(_#_#_#_#_)+$//;
-$contenu =~ s/(_#_#_#_#_)/\n/g;
-	
-open( $fd, '>CHANGES' ) or die "Could not write to 'CHANGES'\n";
-print $fd $contenu;
-print $fd "\n";
-close( $fd );
-
 # reset file list
 undef(%FilesToAdd);
 
@@ -638,8 +653,6 @@ if ( $DoDoc == 1 )
 	print "Generate Doc\n";
 	`doxygen`;
 }
-
-`perl RecursiveDos2Unix.pl .`;
 
 # generate testing archive
 &RecurseWork::RecurseWork("System/");
@@ -688,7 +701,6 @@ $VersionFile =~ s/\.zip/\.tgz/;
 
 chdir('..');
 chdir($WorkingRep);
-
 
 # Generate package
 if ( $DoPackage == 1 )

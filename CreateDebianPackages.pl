@@ -5,7 +5,6 @@ $ZeroconfDepends{'avahi'} = ', libavahi-client-dev';
 $ZeroconfInfo{'mdns'} = "mDNSresponder (Bonjour from Apple,\n see http://developer.apple.com/networking/bonjour/download/)";
 $ZeroconfDepends{'mdns'} = '';
 
-
 $OMISCID_PACKAGENAME = 'omiscid';
 $OMISCID_DEBUG = '';
 
@@ -35,7 +34,7 @@ if ( defined $ARGV[1] )
 $OMISCID_ZEROCONF_INFO = $ZeroconfInfo{$OMISCID_ZEROCONF};
 $OMISCID_DEPENDANCY = $ZeroconfDepends{$OMISCID_ZEROCONF};
 
-$OMISCID_PACKAGENAME .= '-using-' . $OMISCID_ZEROCONF . $PackageSuffix;
+$OMISCID_PACKAGENAME .= '-' . $OMISCID_ZEROCONF . $PackageSuffix;
 
 # search for changelog
 $CurrentVersion = '';
@@ -48,6 +47,7 @@ while( $line = <$fd> )
 	{
 		$OMISCID_PACKAGEVERSION = "$1.$2";
 		$OMISCID_MAJORVERSION = "$1.$2";
+		$OMISCID_SHORTVERSION = $1;
 		$VersionCourante = "$1.$2";
 		last;
 	}
@@ -110,6 +110,64 @@ else
 	mkdir 'debian', 0755;
 }
 
+# parse license file to collect Authors and license
+$OMISCID_COPYRIGHT = '';
+$OMISCID_AUTHORS = '';
+$OMISCID_LICENSE = '';
+open( $fd, '<../OMiSCID/LICENCE' ) or die "Unable to open 'LICENCE' file\n";
+$OMISCID_COPYRIGHT = <$fd>;
+$OMISCID_COPYRIGHT =~ s/[\s\r\n\.]+$//;
+$OMISCID_COPYRIGHT =~ s/^Copyright\s+\(c\)\s+//;
+
+while( $line = <$fd> )
+{
+	if ( $line =~ /^O3MiSCID \(aka OMiSCID\) Software written by\s([^\r\n]+)/ ) #
+	{
+		$TmpAuthors = $1;
+		$TmpAuthors =~ s/^\s+//;
+		$TmpAuthors =~ s/[\s\.]+$//;
+		$TmpAuthors =~ s/\s+/ /;
+		$TmpAuthors =~ s/((\s+)?,|\s+and)(\s+)/ <omiscid\@inrialpes.fr>\r\n    /g;
+		$TmpAuthors = '    ' . $TmpAuthors . " <omiscid\@inrialpes.fr>\r\n";
+		$OMISCID_AUTHORS = $TmpAuthors;
+		while( $line = <$fd> )
+		{
+			if ( $line =~ /^Previous contributors :/ )
+			{
+				# we have all the authors
+				last;
+			}
+			$TmpAuthors = $line;
+			$TmpAuthors =~ s/^\s+//;
+			$TmpAuthors =~ s/[\s\r\n\.]+$//;
+			$TmpAuthors =~ s/\s+/ /;
+			$TmpAuthors =~ s/((\s+)?,|\s+and)(\s+)/ <omiscid\@inrialpes.fr>\r\n    /g;
+			$TmpAuthors = '    ' . $TmpAuthors . " <omiscid\@inrialpes.fr>\r\n";
+			$OMISCID_AUTHORS .= $TmpAuthors;
+		}
+		last;
+	}
+}
+# skip blank lines
+while( $line = <$fd> )
+{
+	next if ( $line =~ /^[\s+\r\n]$/ );
+	
+	# if not blank, add it to the LICENSE
+	$OMISCID_LICENCE = "    " . $line;
+	last;
+}
+# read until end of LICENCE file
+while( $line = <$fd> )
+{
+	$OMISCID_LICENCE .= "    " . $line;
+}
+close( $fd );
+
+$OMISCID_LICENCE =~ s/[\r\n]+/\r\n/gm;
+
+# die "Authors : $OMISCID_AUTHORS\nLICENCE :\n$OMISCID_LICENCE\n";
+
 foreach $File ( <$WorkingRep/debian-param/*> )
 {
 	print STDERR "Process $File\n";
@@ -118,10 +176,17 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 	$File =~ /\/([^\/]+)$/;
 	$ShortFile = $1;
 	
-	if ( $ShortFile =~ /^omiscid(.*).install$/ )
+	if ( $ShortFile =~ /^omiscid-dev.install$/ )
 	{
-		# die "mv $File debian/$OMISCID_PACKAGENAME$1.install\n";
-		`mv $File 'debian/$OMISCID_PACKAGENAME$1.install'`;
+		# die "cp $File 'debian/omiscid-dev.install'\n";
+		`cp $File 'debian/omiscid-dev.install'`;
+		next;
+	}
+	
+	if ( $ShortFile =~ /^omiscid.install$/ )
+	{
+		`cp $File 'debian/$OMISCID_PACKAGENAME.install'`;
+		# die "cp $File 'debian/$OMISCID_PACKAGENAME.install'\n";
 		next;
 	}
 	
@@ -135,9 +200,13 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 		$line =~ s/\$OMISCID_DEPENDANCY/$OMISCID_DEPENDANCY/g;
 		$line =~ s/\$OMISCID_PACKAGEVERSION/$OMISCID_PACKAGEVERSION/g;
 		$line =~ s/\$OMISCID_MAJORVERSION/$OMISCID_MAJORVERSION/g;
+		$line =~ s/\$OMISCID_SHORTVERSION/$OMISCID_SHORTVERSION/g;
 		$line =~ s/\$OMISCID_CHANGELOG/$OMISCID_CHANGELOG/g;
 		$line =~ s/\$OMISCID_PACKAGEDATE/$OMISCID_PACKAGEDATE/g;
 		$line =~ s/\$OMISCID_DEBUG/$OMISCID_DEBUG/g;
+		$line =~ s/\$OMISCID_LICENCE/$OMISCID_LICENCE/g;
+		$line =~ s/\$OMISCID_AUTHORS/$OMISCID_AUTHORS/g;
+		$line =~ s/\$OMISCID_COPYRIGHT/$OMISCID_COPYRIGHT/g;
 		$content .= $line;
 	}
 	
@@ -185,21 +254,19 @@ if ( $OMISCID_ZEROCONF eq 'mdns' )
 	system( "ssh carme \"cd tmp/$PackageFolder; debuild -us -uc\"" );
 	chdir('..');
 	print "scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .\n";
-	`scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
+	`scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb oberon:tmp/omiscid-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
 }
 else
 {
 	system( "ssh carme \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
 	chdir('..');
 	print "scp carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .\n";
-	`scp carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
+	`scp carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb carme:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
 }
 
+print STDERR "Remove OMiSCID folder in tmp on oberon\n";
+# `ssh oberon "rm -rf tmp/omiscid*"`;
+
 print STDERR "Remove OMiSCID folder in Temp\n";
-
-
-
-
-
 # `rm -rf OMiSCID`;
 

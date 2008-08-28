@@ -24,6 +24,7 @@ target_system = env_system.SharedLibrary(
     target='OmiscidSystem',
     source=SystemSources
 )
+env_system.AddPostAction
 libToInstall += target_system
 
 env_com = env.Clone()
