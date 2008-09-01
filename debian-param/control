@@ -17,7 +17,7 @@ Description: OMiSCID libraries (using $OMISCID_ZEROCONF).
 
 Package: omiscid-dev
 Architecture: any
-Depends: omiscid-mdns(>= $OMISCID_SHORTVERSION) | omiscid-mdns-deb(>= $OMISCID_SHORTVERSION) | omiscid-avahi(>= $OMISCID_SHORTVERSION) | omiscid-avahi-deb(>= $OMISCID_SHORTVERSION), libxml2-dev
+Depends: omiscid-mdns(< $OMISCID_NEXTVERSION) | omiscid-mdns-debug(< $OMISCID_NEXTVERSION) | omiscid-avahi(< $OMISCID_NEXTVERSION) | omiscid-avahi-debug(< $OMISCID_NEXTVERSION), libxml2-dev
 Description: OMiSCID Headers and Dev files
  O3MiSCID stands for Object Oriented Opensource Middleware for Service
  Communication Inspection and Discovery. This package contains sources and

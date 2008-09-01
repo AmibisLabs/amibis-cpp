@@ -396,9 +396,9 @@ if ( $DoTest == 1 )
 	$Options{'prometheus'}   = '("zeroconf=avahi")'; # debugthread=1")';
 	$Computers{'metis'}  = '000d936fc38c';
 	$Options{'metis'}   = '("")';
-	$Computers{'desdemona'}  = '000bcd624fa9';
-	# $Options{'desdemona'}   = '("zeroconf=mdns")';
-	$Options{'desdemona'}   = '("")';
+	$Computers{'carme'}  = '000f1f74c296';
+	# $Options{'carme'}   = '("zeroconf=mdns")';
+	$Options{'carme'}   = '("")';
 	$Computers{'protee'}  = '000d561ff276';
 	$Options{'protee'}   = '("zeroconf=avahi ChMemMode=1", "")';
 	# $Options{'protee'}   = '("zeroconf=mdns ChMemMode=1")';

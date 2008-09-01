@@ -25,7 +25,6 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
 	global WhichZeroConfLibrary
 	global TraceMode
 	global DoValgrind
-	global OSis
 	global DoDebugThread
 	global ChMemMode
 	global DebugMode
@@ -48,15 +47,15 @@ def OmiscidLinuxMacOSInit(env,commandLineTargets,arguments,options=[]):
 	if os.name == 'posix' :
 		if string.find(sys.platform, 'darwin') != -1:
 			# Mac OS
-			OSis = 'MacOS'
+			env.Replace(OSis = 'MacOS')
 			WhichZeroConfLibrary = 'OMISCID_USE_MDNS' 
 		else :
 			# default for other posix plateform
 			# Was WhichZeroConfLibrary = 'OMISCID_USE_AVAHI' before Avahi crash problems
-			OSis = 'Linux'
+			env.Replace(OSis = 'Linux')
 			WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
 	else :
-		OSis = 'Win32'
+		env.Replace(OSis = 'Win32')
 		WhichZeroConfLibrary = 'OMISCID_USE_MDNS'
 		
 	if 'zeroconf' in arguments :
@@ -172,11 +171,10 @@ def OmiscidDotInFileTarget(env, target, mapping):
 ##############################################
 ### Command to map file ###
 ##############################################
-def OmiscidMapping():
+def OmiscidMapping(env):
 	global WhichZeroConfLibrary
 	global TraceMode
 	global DoValgrind
-	global OSis
 	global ChMemMode
 	global DebugMode
 	
@@ -198,7 +196,7 @@ def OmiscidMapping():
 	else :
 		if WhichZeroConfLibrary == 'OMISCID_USE_MDNS' :
 			ReplaceList['@zeroconfflag@'] = ' -D' + WhichZeroConfLibrary + ' '
-			if OSis != 'MacOS' :
+			if env['OSis'] != 'MacOS' :
 				ReplaceList['@zeroconflib@'] = ' -ldns_sd '
 		else :
 			OmiscidMessage("Bad value for zeroconf flags (internal).")
@@ -223,46 +221,56 @@ def OmiscidMapping():
 ############################################
 ### Command to generate the install libs ###
 ############################################
-def OmiscidCreateLibLinks(CurrentLib):
+def OmiscidCreateLibLinks(CurrentLib,OSis):
 	global prefix_lib
 	
-	# remember where I am and change CWD
-	WhereAmI = os.getcwd()
-	os.chdir( prefix_lib )
+	if OSis == 'MacOS' :
+		extension = '.dylib'
+	elif OSis == 'Linux' :
+		extension = '.so'
+		
+	if OSis == 'Linux' or  OSis == 'MacOS' :
+		# remember where I am and change CWD
+		WhereAmI = os.getcwd()
+		os.chdir( prefix_lib )
+			
+	        lib = CurrentLib.name
+	        
+	        partoflib = re.split('^(lib[^\.]+)\.(\d+)\.(\d+)\.(\d+)', lib )
+		
+		# libName.so
+		dst = partoflib[1] + extension
+		print 'link ' + dst + ' to ' + lib
+		if os.path.exists(dst):
+			os.remove(dst)
+		os.symlink( lib, dst )
+		
+		if OSis == 'Linux' :
+			extension = extension + '.'
+		
+			dst = partoflib[1] + extension + partoflib[2]
+			print 'link ' + dst + ' to ' + lib
+			if os.path.exists(dst):
+				os.remove(dst)
+			os.symlink( lib, dst )
+			
+			dst = partoflib[1] + extension + partoflib[2] + '.' + partoflib[3]
+			print 'link ' + dst + ' to ' + lib
+			if os.path.exists(dst):
+				os.remove(dst)
+			os.symlink( lib, dst )
+		
+			dst = partoflib[1] + extension + partoflib[2] + '.' + partoflib[3] + '.' + partoflib[4]
+			print 'link ' + dst + ' to ' + lib
+			if os.path.exists(dst):
+				os.remove(dst)
+			os.symlink( lib, dst )
 	
-        lib = CurrentLib.name
-        
-        partoflib = re.split('^(lib[^\.]+)\.(\d+)\.(\d+)\.(\d+)', lib )
-	
-	# libName.so.version
-	dst = partoflib[1] + '.so'
-	print 'link ' + dst + ' to ' + lib
-	if os.path.exists(dst):
-		os.remove(dst)
-	os.symlink( lib, dst )
-	
-	dst = partoflib[1] + '.so.' + partoflib[2]
-	print 'link ' + dst + ' to ' + lib
-	if os.path.exists(dst):
-		os.remove(dst)
-	os.symlink( lib, dst )
-
-	dst = partoflib[1] + '.so.' + partoflib[2] + '.' + partoflib[3]
-	print 'link ' + dst + ' to ' + lib
-	if os.path.exists(dst):
-		os.remove(dst)
-	os.symlink( lib, dst )
-
-	dst = partoflib[1] + '.so.' + partoflib[2] + '.' + partoflib[3] + '.' + partoflib[4]
-	print 'link ' + dst + ' to ' + lib
-	if os.path.exists(dst):
-		os.remove(dst)
-	os.symlink( lib, dst )
+		os.chdir( WhereAmI )
 
 	Chmod( prefix_lib, 0755 )
-	os.chdir( WhereAmI )
 	
-CreateLibLinks = SCons.Action.ActionFactory(OmiscidCreateLibLinks, lambda libToInstall: 'OmiscidCreateLibLinks' ) 	
+CreateLibLinks = SCons.Action.ActionFactory(OmiscidCreateLibLinks, lambda CurrentLib, OSis: 'OmiscidCreateLibLinks' ) 	
 	
 
 ##############################################
@@ -284,7 +292,7 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
 			env.AddPostAction( lTarget, Chmod( prefix_bin, 0755 ) )
 			for i in libToInstall:
 				lTarget = env.Install(prefix_lib, i)
-				env.AddPostAction( lTarget, CreateLibLinks(i) )
+				env.AddPostAction( lTarget, CreateLibLinks(i,env['OSis']) )
 			hTargetToInstall = []
 			for i in hToInstall:
 				if type(i) in (str, unicode):

@@ -50,6 +50,11 @@ if ( $OMISCID_ZEROCONF eq '' )
 	$ErrorInArg = 1;
 }
 
+if ( $ErrorInArg == 1 )
+{
+	exit(-1);
+}
+
 $OMISCID_ZEROCONF_INFO = $ZeroconfInfo{$OMISCID_ZEROCONF};
 $OMISCID_DEPENDANCY = $ZeroconfDepends{$OMISCID_ZEROCONF};
 
@@ -62,12 +67,17 @@ open( $fd, '<CHANGES' ) or die "unable to open 'CHANGES' file\n";
 # seek first line with a sequence number
 while( $line = <$fd> )
 {
-	if ( $line =~ /^(\d+\.\d+)\.(\d+)\s+/ )
+	if ( $line =~ /^(\d+)\.(\d+)\.(\d+)\s+/ )
 	{
-		$OMISCID_PACKAGEVERSION = "$1.$2";
-		$OMISCID_MAJORVERSION = "$1.$2";
-		$OMISCID_SHORTVERSION = $1;
-		$VersionCourante = "$1.$2";
+		$Major = $1;
+		$Middle = $2;
+		$Minor = $3;
+		$OMISCID_PACKAGEVERSION = "$Major.$Middle.$Minor";
+		$OMISCID_MAJORVERSION = "$Major.$Middle.$Minor";
+		$OMISCID_SHORTVERSION = $Major.$Middle;
+		$VersionCourante = "$Major.$Middle.$Minor";
+		$Middle++;
+		$OMISCID_NEXTVERSION = "$Major.$Middle";
 		last;
 	}
 }
@@ -142,7 +152,7 @@ while( $line = <$fd> )
 {
 	if ( $line =~ /^O3MiSCID \(aka OMiSCID\) Software written by\s([^\r\n]+)/ ) #
 	{
-		$TmpAuthors = $1;
+		$TmpAuthors = $Major.$Middle;
 		$TmpAuthors =~ s/^\s+//;
 		$TmpAuthors =~ s/[\s\.]+$//;
 		$TmpAuthors =~ s/\s+/ /;
@@ -193,7 +203,7 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 	
 	# Get only file name
 	$File =~ /\/([^\/]+)$/;
-	$ShortFile = $1;
+	$ShortFile = $Major.$Middle;
 	
 	if ( $ShortFile =~ /^omiscid-dev.install$/ )
 	{
@@ -227,6 +237,7 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 		$line =~ s/\$OMISCID_AUTHORS/$OMISCID_AUTHORS/g;
 		$line =~ s/\$OMISCID_COPYRIGHT/$OMISCID_COPYRIGHT/g;
 		$line =~ s/\$OMISCID_REPLACES/$OMISCID_REPLACES/g;
+		$line =~ s/\$OMISCID_NEXTVERSION/$OMISCID_NEXTVERSION/g;
 		
 		$content .= $line;
 	}
