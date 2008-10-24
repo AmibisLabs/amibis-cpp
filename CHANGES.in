@@ -28,6 +28,7 @@ In this files, you will find changes between OMiSCID versions.
     - change from env.Copy() (deprecated) to env.Clone() in SConstruct.
     [Version number]
     - change package middle number to be compliant with the java version.
+    
 1.4.0	2008-3-27
     [Global modifications]
     - change remote access rigth to the "Lock" variable in order to be compliant
@@ -90,6 +91,7 @@ In this files, you will find changes between OMiSCID versions.
     - correct linking problems on Linux/MacOS
     - correct memory leaks
     - some other minor bug corrections
+    
 1.3.0	2007-8-31
     [Global modifications]
     - you can now have any number for you DnsSD daemon. So, you can
@@ -104,6 +106,7 @@ In this files, you will find changes between OMiSCID versions.
     [Known features]
     - look at previous version, features using avahi seems to
       be solved by version 0.6.61 of avahi (Test ok).
+      
 1.2.0    2007-6-12
     [Global modifications]
     - change stuff in order to be actually able to install several
@@ -133,11 +136,13 @@ In this files, you will find changes between OMiSCID versions.
       some time the DnsSd daemon can generate at each wake up a false
       new instance and a new daemon number. If this number goes
       over 9, you may encounter problems.
+      
 1.1.1	2007-04-28
     [Global modifications]
     - add some specific changes for gcc problematic version under
       gentoo (it do not see that a variable will be initialised
       in all path of the function, so add initialisation).
+      
 1.1.0	2007-04-27
     [Global modifications]
     - change this file grouping changes by section.
@@ -183,15 +188,18 @@ In this files, you will find changes between OMiSCID versions.
       local DNS-SD daemons, try to avoid this feature mixing both on
       the same computer. Running Avahi and mDNS on separate computer
       seems to word fine.
+      
 1.0.5	2007-02-01
     - correct some portability problem with Mac OSX
     - change tabs into 4 spaces
     - minor corrections
+    
 1.0.4	2007-01-09
     - correct some dead lock problems
     - correct send huge TCP messages under linux (worked fine
       under windows).
     - correct some bugs
+    
 1.0.3	2006-10-26
     - Add a global include file for the User Friendly Interface
       and change examples to use this include. The new include
@@ -201,11 +209,14 @@ In this files, you will find changes between OMiSCID versions.
       either in file, function or class names
     - correct a little memory leak problem (problem in reference
       count) when using SubString.
+      
 1.0.2   2006-10-02
     - Change to be compliant with Bonjour version 107.6 (changes
       made by Apple in API, 2006-09-18) and at the same time with
       previous versions.
+      
 1.0.1
     - Add missing folder ServiceControl
+    
 1.0.0
     - Initial version
