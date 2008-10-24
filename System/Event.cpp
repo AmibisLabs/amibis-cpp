@@ -5,6 +5,7 @@
 
 using namespace Omiscid;
 
+/** @brief Constructor */
 Event::Event()
 {
 #ifndef WIN32
@@ -18,6 +19,7 @@ Event::Event()
 #endif /* WIN32 */
 }
 
+/** @brief Virtual destructor */
 Event::~Event()
 {
 #ifndef WIN32
@@ -28,13 +30,7 @@ Event::~Event()
 #endif /* WIN32 */
 }
 
-void Event::Reset()
-{
-#ifdef WIN32
-	ResetEvent(handle);
-#endif
-}
-
+/** @brief Signal all the threads waiting on this event*/
 void Event::Signal()
 {
 #ifndef WIN32
@@ -46,6 +42,24 @@ void Event::Signal()
 #endif /* WIN32 */
 }
 
+/** @brief Reset the event
+ *
+ * Under Windows : stop the effect of the method 'Signal'.
+ */
+void Event::Reset()
+{
+#ifdef WIN32
+	ResetEvent(handle);
+#endif
+}
+
+/** @brief Block the thread
+ *
+ * Block the thread on this event until another thread signal the event,
+ * during a maximum of 'timer' milliseconds (if 'timer' is not null)
+ * It should have been const but the pthread API make problems...
+ * @param [in] timer timeout in milliseconds. 0 to wait an infinite time.
+ */
 bool Event::Wait(unsigned long timer)
 {
 #ifndef WIN32

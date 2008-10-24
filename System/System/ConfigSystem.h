@@ -7,6 +7,8 @@
  * @file System/Config.h
  * @ingroup System
  * @brief this file is the first file included in the System layer. it defines all mandatory includes.
+ * Inludes any header file from the System layer will first include this file. Most thinks about DEBUG
+ * and specific definitions for different operating systems.
  */
 
 #ifndef __CONFIG_SYSTEM_H__
@@ -36,7 +38,7 @@
 	#pragma warning(disable : 4512) // Could not generate automatically operator= for a class
 	// #pragma warning(disable : 4127)	// to remove carning about constant expression when compiling...
 
-	// If U are using MFC and co...
+	// If *you* are using MFC and co...
 	#ifdef USE_AFX
 		#define  WINVER 0x0501
 		#include "StdAfx.h"
@@ -79,7 +81,6 @@
 	 *
 	 *	For multiplateform source code.
 	 */
-
 
 	/*! @def strncasecmp
 	 *	@ingroup System
@@ -151,7 +152,7 @@
 	 *	In order to have portable DEBUG support, we need to define a common
 	 *	debug symbol. We choose to use the debug symbol used by gcc : DEBUG.
 	 */
-	#if defined DEBUG
+	#if defined DEBUG	// This section is made only to appear in the Doxygen documentation
 		#undef DEBUG
 		#define DEBUG
 	#endif

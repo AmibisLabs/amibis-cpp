@@ -19,7 +19,7 @@ ElapsedTime::~ElapsedTime()
 {
 }
 
-/** @brief reset Start time */
+/** @brief reset start time */
 void ElapsedTime::Reset()
 {
 	struct timeval CurrentTimeOfDay;
@@ -31,7 +31,10 @@ void ElapsedTime::Reset()
 	StartTime = CurrentTimeOfDay.tv_sec * 1000 + CurrentTimeOfDay.tv_usec/1000;
 }
 
-/** @brief Get the elapsed time in ms */
+/** @brief Get the elapsed time in ms since construction or last reset.
+ * @param DoReset says if we need to reset the object with a new start time
+ * @return the Elapsed Time in ms since the
+ */
 unsigned int ElapsedTime::Get(bool DoReset /* = false */)
 {
 	struct timeval CurrentTimeOfDay;

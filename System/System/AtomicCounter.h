@@ -39,8 +39,10 @@ public:
 	 *
 	 * Increment the integer value and next return the new value like
 	 * in this C code :
-	 * integer i = 0, j;
+	 * @code AtomicCounter i(0);
+	 * integer j;
 	 * j = ++i; // j == 1
+	 * @endcode
 	 */
 	int operator++();
 
@@ -48,8 +50,10 @@ public:
 	 *
 	 * Increment the value of the AtomicCounter and then return the previous
 	 * value like in this C code :
-	 * integer i = 0, j;
+	 * @code AtomicCounter i(0);
+	 * integer j;
 	 * j = i++; // j == 0
+	 * @endcode
 	 */
 	int operator++(int);
 
@@ -57,8 +61,10 @@ public:
 	 *
 	 * Decrement the value of the AtomicCounter and then return the new
 	 * value like in this C code :
-	 * integer i = 0, j;
+	 * @code AtomicCounter i(0);
+	 * integer j;
 	 * j = --i; // j == -1
+	 * @endcode
 	 */
 	int operator--();
 
@@ -66,8 +72,10 @@ public:
 	 *
 	 * Decrement the value of the AtomicCounter and then return the previous
 	 * value like in this C code :
-	 * integer i = 0, j;
+	 * @code AtomicCounter i(0);
+	 * integer j;
 	 * j = i--; // j == 0
+	 * @endcode
 	 */
 	int operator--(int);
 

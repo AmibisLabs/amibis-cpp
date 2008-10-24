@@ -1212,7 +1212,7 @@ int MsgSocket::SendTo(int len, const char* buf, UdpConnection* dest)
 
 		sprintf(buffer_udp_send, tag_str, service_id, message_id, len);
 		++message_id;
-		sprintf((buffer_udp_send+total-tag_end_size), tag_end);
+		sprintf((buffer_udp_send+total-tag_end_size), "%s", tag_end);
 		memcpy(buffer_udp_send+tag_size, buf, len);
 
 		int TotalLen = socket->SendTo(total, buffer_udp_send, destptr);

@@ -16,6 +16,15 @@
 namespace Omiscid {
 
 
+/**
+ * @class DateAndTime DateAndTime.cpp System/DateAndTime.h
+ * @brief A class dedicated to retrieve date information.
+ *
+ * One can access Milliseconds, Seconds, Minutes,
+ * Hours, Day, Month and Year
+ * @author Dominique Vaufreydaz
+ * @author Sebastien Pesnel
+ */
 class DateAndTime
 {
 public:
@@ -25,7 +34,7 @@ public:
 	DateAndTime(struct timeval& TimeToSet);
 	DateAndTime(struct timeval* TimeToSet);
 
-	/** @brief Destructor */
+	/** @brief Virtual destructor */
 	virtual ~DateAndTime();
 
 	/** @brief set the current time */
@@ -37,13 +46,13 @@ public:
 	void Set(struct timeval* TimeToSet);
 
 public:
-	int Milliseconds;	/* milliseconds */
-	int Seconds;		/* seconds */
-	int Minutes;		/* minutes */
-	int Hours;			/* hours */
-	int Day;			/* day of the month */
-	int Month;			/* month */
-	int Year;			/* year */
+	int Milliseconds;	/*!< Milliseconds part (0 to 999) */
+	int Seconds;		/*!< Seconds part (0 to 59) */
+	int Minutes;		/*!< Minutes part (0 to 59) */
+	int Hours;			/*!< Hours part (0 to 23) */
+	int Day;			/*!< Day of the month part (1 to 31) */
+	int Month;			/*!< Month part (1 to 12) */
+	int Year;			/*!< Year part */
 };
 
 } // namespace Omiscid

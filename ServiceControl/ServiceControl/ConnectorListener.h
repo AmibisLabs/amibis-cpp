@@ -30,7 +30,7 @@ class ConnectorListener : public MsgSocketCallbackObject
 	friend class Service;
 
 public:
-	// Virtual destructor always
+	/** @brief Virtual destructor always */
 	virtual ~ConnectorListener();
 
 	/**
@@ -69,7 +69,6 @@ private:
 	void Connected(MsgSocket& ConnectionPoint, unsigned int PeerId);
 	void Disconnected(MsgSocket& ConnectionPoint, unsigned int PeerId);
 
-private:
 	/**
 	 * @class ExtendedMessageForService ServiceControl/ConnectorListener.h
 	 * @ingroup UserFriendly

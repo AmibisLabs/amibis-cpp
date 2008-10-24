@@ -13,88 +13,94 @@
 namespace Omiscid {
 
 /**
- * @class Event System/AutoDelete.h
- * @brief Event or condition implementation.
+ * @class AutoDelete System/AutoDelete.h
+ * @brief AutoDelete object in order to free pointers.
  *
- * Enable a thread to wait on a condition, until be awoken by another thread.
+ * Enable to manage automatically destruction of pointers when leaving scope.
  * @author Dominique Vaufreydaz
  */
 template <typename TYPE>
 class AutoDelete
 {
 public:
-	/** @brief Constructor */
+	/** @brief Constructor. */
 	AutoDelete();
 
-	/** @brief Copy constructor */
+	/** @brief Constructor with initialisation (TYPE pointer). */
 	AutoDelete(TYPE * ToCopy);
 
-	/** @brief Copy constructor not allowed */
+	/** @brief Copy constructor. Call this constructor will raise a SimpleException. */
 	AutoDelete(const AutoDelete<TYPE>& ToCopy);
 
-	/** @brief Destructor */
+	/** @brief Virtual destructor. */
 	virtual ~AutoDelete();
 
-	/** @brief Explicitally destroy the pointed object */
+	/** @brief Explicitally destroy the pointed object. */
 	void Delete();
 
-	/** @brief Access function true '*' operator */
+	/** @brief Access function true '*' operator. */
 	TYPE& operator*();
 
-	/** @brief Access function true '->' operator */
+	/** @brief Access function true '->' operator. */
 	TYPE* operator->();
 
-	/** @brief affectation operator/copy */
+	/** @brief Get internal pointer */
+	TYPE* Get()
+	{
+		return pObject;
+	}
+
+	/** @brief affectation operator/copy : not allowed. Call this method will raise a SimpleException. */
 	const AutoDelete<TYPE>& operator=(const AutoDelete<TYPE>& ToCopy);
 
-	/** @brief affectation operator/copy with content type */
+	/** @brief Affectation operator with a TYPE pointer. If there is already a pointer kept by this AutoDelete, a Simple Exception will raise. */
 	const AutoDelete<TYPE>& operator=(TYPE * ToCopy);
 
-	/** @brief comparaison operator */
+	/** @brief Comparaison operator. Return true if the kept pointer is equal to ToCompare. */
 	bool operator==(const TYPE * ToCompare);
 
-	/** @brief comparaison operator */
+	/** @brief Comparaison operator. Return true if the both kept pointers are the same (must never appear if you do not want to have multiple destructor calls !). */
 	bool operator==(const AutoDelete<TYPE>& ToCompare);
 
-	/** @brief comparaison operator */
+	/** @brief Comparaison operator. Return true if the kept pointer is *not* equal to ToCompare. */
 	bool operator!=(const TYPE * ToCompare);
 
-	/** @brief comparaison operator */
+	/** @brief Comparaison operator. Return true if the both kept pointers are not the same (must always be the case !). */
 	bool operator!=(const AutoDelete<TYPE>& ToCompare);
 
 private:
-	TYPE * pObject;
+	TYPE * pObject;	/*!< The TYPE pointer to keep */
 };
 
-/** @brief Constructor */
+/** @brief Constructor. */
 template <typename TYPE>
 AutoDelete<TYPE>::AutoDelete()
 {
 	pObject = (TYPE*)NULL;
 }
 
-/** @brief Copy constructor */
+/** @brief Constructor with initialisation (TYPE pointer). */
 template <typename TYPE>
 AutoDelete<TYPE>::AutoDelete(TYPE * ToCopy)
 {
 	pObject = ToCopy;
 }
 
-/** @brief Copy constructor not allowed */
+/** @brief Copy constructor. Call this constructor will raise a SimpleException. */
 template <typename TYPE>
 AutoDelete<TYPE>::AutoDelete(const AutoDelete<TYPE>& ToCopy)
 {
 	throw SimpleException( "Copying AutoDelete object will result in multiple delete calls on the same pointer", 0 );
 }
 
-/** @brief Destructor */
+/** @brief Destructor. */
 template <typename TYPE>
 AutoDelete<TYPE>::~AutoDelete()
 {
 	Delete();
 }
 
-/** @brief Explicitally destroy the pointed object */
+/** @brief Explicitally destroy the pointed object. */
 template <typename TYPE>
 void AutoDelete<TYPE>::Delete()
 {
@@ -105,20 +111,21 @@ void AutoDelete<TYPE>::Delete()
 	}
 }
 
-/** @brief Access function true '*' operator */
+/** @brief Access function true '*' operator. */
 template <typename TYPE>
 TYPE& AutoDelete<TYPE>::operator*()
 {
 	return *pObject;
 }
 
-/** @brief Access function true '->' operator */
+/** @brief Access function true '->' operator. */
 template <typename TYPE>
 TYPE* AutoDelete<TYPE>::operator->()
 {
 	return pObject;
 }
 
+/** @brief Affectation operator/copy : not allowed. Call this method will raise a SimpleException. */
 template <typename TYPE>
 const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(const AutoDelete<TYPE>& ToCopy)
 {
@@ -126,6 +133,7 @@ const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(const AutoDelete<TYPE>& ToCo
 	return *this;
 }
 
+/** @brief Affectation operator with a TYPE pointer. If there is already a pointer kept by this AutoDelete, a Simple Exception will raise. */
 template <typename TYPE>
 const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(TYPE * ToCopy)
 {
@@ -140,7 +148,7 @@ const AutoDelete<TYPE>& AutoDelete<TYPE>::operator=(TYPE * ToCopy)
 	return *this;
 }
 
-/** @brief comparaison operator */
+/** @brief Comparaison operator. Return true if the kept pointer is equal to ToCompare. */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator==(const TYPE * ToCompare)
 {
@@ -152,7 +160,7 @@ bool AutoDelete<TYPE>::operator==(const TYPE * ToCompare)
 	return false;
 }
 
-/** @brief comparaison operator */
+/** @brief Comparaison operator. Return true if the both kept pointers are the same (must never appear if you do not want to have multiple destructor calls !). */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator==(const AutoDelete<TYPE>& ToCompare)
 {
@@ -164,7 +172,7 @@ bool AutoDelete<TYPE>::operator==(const AutoDelete<TYPE>& ToCompare)
 	return false;
 }
 
-/** @brief comparaison operator */
+/** @brief Comparaison operator. Return true if the kept pointer is *not* equal to ToCompare. */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator!=(const TYPE * ToCompare)
 {
@@ -176,7 +184,7 @@ bool AutoDelete<TYPE>::operator!=(const TYPE * ToCompare)
 	return false;
 }
 
-/** @brief comparaison operator */
+/** @brief Comparaison operator. Return true if the both kept pointers are not the same (must always be the case !). */
 template <typename TYPE>
 bool AutoDelete<TYPE>::operator!=(const AutoDelete<TYPE>& ToCompare)
 {

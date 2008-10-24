@@ -46,12 +46,12 @@ Socket::DynamicNameSolvingType Socket::GetDynamicNameSolving()
 		if ( Option == NULL )
 		{
 			DynamicNameSolving = OMISCIDNS_USE_DNS_ONLY;
-			OmiscidTrace( "OMISCIDNS_USE_DNS_ONLY found. Use standard DNS for name solving.\n" );
+			OmiscidTrace( "Use standard DNS for name solving (faster on non ad-hoc networks - default).\n" );
 		}
 		else
 		{
 			DynamicNameSolving = OMISCIDNS_USE_MDNS_NAME_SOLVING;
-			OmiscidTrace( "OMISCIDNS_USE_MDNS_NAME_SOLVING found. Use mDNS for name solving." );
+			OmiscidTrace( "OMISCIDNS_USE_MDNS_NAME_SOLVING found. Use mDNS for name solving (useful on ad-hoc networks).\n" );
 		}
 	}
 

@@ -24,6 +24,7 @@
 
 #else
 #ifdef OMISCID_USE_AVAHI
+
 	#include <avahi-client/client.h>
 	#include <avahi-client/publish.h>
 
@@ -38,7 +39,6 @@
 
 #endif
 #endif
-
 
 #include <System/SimpleException.h>
 

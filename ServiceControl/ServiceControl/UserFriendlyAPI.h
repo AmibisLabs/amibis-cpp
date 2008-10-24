@@ -14,6 +14,8 @@
 // In this contexte, let's say that everything is used...
 #include <System/AtomicCounter.h>
 #include <System/AtomicReentrantCounter.h>
+#include <System/AutoDelete.h>
+#include <System/DateAndTime.h>
 #include <System/ElapsedTime.h>
 #include <System/Event.h>
 #include <System/MultipleReferencedData.h>

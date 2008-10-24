@@ -14,7 +14,7 @@ namespace Omiscid {
 
 /**
  * @class AtomicReentrantCounter AtomicReentrantCounter.cpp System/AtomicReentrantCounter.h
- * @brief Counter with access protected by mutex.
+ * @brief Counter with access protected by a reentrant mutex.
  *
  * Can be incremented, decremented and, of course, accessed.
  * It can be manipulated by multiple threads.
@@ -29,27 +29,65 @@ public:
 	 */
 	AtomicReentrantCounter(int init_value = 0);
 
-	// Virtual destructor always
+	/** @brief Virtual destructor always
+	 */
 	virtual ~AtomicReentrantCounter();
 
 	/** @name Operators */
 	//@{
-	/** @brief prefix increment operator*/
+	/** @brief Prefix increment operator
+	 *
+	 * Increment the integer value and next return the new value like
+	 * in this C code :
+	 * @code AtomicReentrantCounter i(0);
+	 * integer j;
+	 * j = ++i; // j == 1
+	 * @endcode
+	 */
 	int operator++();
 
-	/** @brief postfix increment operator */
+	/** @brief Postfix increment operator
+	 *
+	 * Increment the value of the AtomicCounter and then return the previous
+	 * value like in this C code :
+	 * @code AtomicReentrantCounter i(0);
+	 * integer j;
+	 * j = i++; // j == 0
+	 * @endcode
+	 */
 	int operator++(int);
 
-	/** @brief prefix decrement operator */
+	/** @brief Prefix decrement operator
+	 *
+	 * Decrement the value of the AtomicCounter and then return the new
+	 * value like in this C code :
+	 * @code AtomicReentrantCounter i(0);
+	 * integer j;
+	 * j = --i; // j == -1
+	 * @endcode
+	 */
 	int operator--();
 
-	 /** @brief postfix decrement operator */
+	/** @brief Postfix decrement operator
+	 *
+	 * Decrement the value of the AtomicCounter and then return the previous
+	 * value like in this C code :
+	 * @code AtomicReentrantCounter i(0);
+	 * integer j;
+	 * j = i--; // j == 0
+	 * @endcode
+	 */
 	int operator--(int);
 
-	/** @brief cast operator : return the counter value*/
+	/** @brief cast operator : return the counter value as const
+	 *
+	 */
 	operator int() const;
 
-	/** @brief Set the counter value to 'value' */
+	/** @brief equal operator to set the counter value to 'value'
+	 *
+	 * @param value [in] The new value to set for this AtomicCounter
+	 */
 	int operator=(int value);
 	//@}
 
