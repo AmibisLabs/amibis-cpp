@@ -6,9 +6,17 @@ In this files, you will find changes between OMiSCID versions.
 
 %OMISCID_VERSION%	%OMISCID_DAY%
 	[Bug corrections]
-	- correct bug in udp message construction.
+	- correct name of GetServiceAccessType (was GetServiceAccessTypeType
+	in Service and ServiceProxy classes).
+	- add body to ServiceProxy::GetServiceAccessType.
 	[Documentation]
-	- start of documentation effort.
+	- still documentation effort.
+
+1.5.1	2008-10-24
+    [Bug corrections]
+    - correct bug in udp message construction.
+    [Documentation]
+    - start of documentation effort.
 
 1.5.0	2008-9-1
     [Global modifications]

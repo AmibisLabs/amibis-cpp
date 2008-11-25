@@ -736,6 +736,22 @@ bool ServiceProxy::GetConnectionInfos( const SimpleString Connector, ConnectionI
 	return true;
 }
 
+/**
+ * Gets the value of a remote variable
+ * @param VarName the name of the remote variable
+ * @param value the value (SimpleString format)
+ */
+VariableAccessType ServiceProxy::GetVariableAccessType(const SimpleString VarName)
+{
+	VariableAttribute * pVar = FindVariable( VarName );
+	if ( pVar == (VariableAttribute *)NULL )
+	{
+		throw SimpleException( "Unable to retrive variable" );
+	}
+
+	return pVar->GetAccess();
+}
+
 // Utility functions
 VariableAttribute * ServiceProxy::FindVariable( SimpleString VarName )
 {

@@ -393,7 +393,7 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	 * @return the access type (SimpleString version)
 	 * @see Service#addVariable
 	 */
-SimpleString Service::GetVariableAccessTypeType(SimpleString VarName)
+SimpleString Service::GetVariableAccessType(SimpleString VarName)
 {
 	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )

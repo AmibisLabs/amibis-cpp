@@ -301,9 +301,9 @@ public:
 	 * Returns the variable access type
 	 * @param VarName the variable name
 	 * @return the access type (SimpleString version)
-	 * @see Service#addVariable
+	 * @see Service#AddVariable
 	 */
-	SimpleString GetVariableAccessTypeType(SimpleString VarName);
+	SimpleString GetVariableAccessType(SimpleString VarName);
 
 	/**
 	 * Returns the string version of the variable type

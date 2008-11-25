@@ -78,6 +78,7 @@ while( $line = <$fd> )
 		$VersionCourante = "$Major.$Middle.$Minor";
 		$Middle++;
 		$OMISCID_NEXTVERSION = "$Major.$Middle";
+		$Middle--;
 		last;
 	}
 }
@@ -199,11 +200,11 @@ $OMISCID_LICENCE =~ s/[\r\n]+/\r\n/gm;
 
 foreach $File ( <$WorkingRep/debian-param/*> )
 {
-	print STDERR "Process $File\n";
+	print STDERR "Process $File to ";
 	
 	# Get only file name
 	$File =~ /\/([^\/]+)$/;
-	$ShortFile = $Major.$Middle;
+	$ShortFile = $1;
 	
 	if ( $ShortFile =~ /^omiscid-dev.install$/ )
 	{
@@ -248,6 +249,7 @@ foreach $File ( <$WorkingRep/debian-param/*> )
 	# }
 	close( $fd );
 	
+	print STDERR "debian/$ShortFile\n";
 	open( $fd, ">debian/$ShortFile" );
 	print $fd $content;
 	close( $fd );

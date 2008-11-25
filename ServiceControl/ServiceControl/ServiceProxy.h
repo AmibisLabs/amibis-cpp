@@ -135,7 +135,7 @@ public:
 	 * @param VarName the name of the remote variable
 	 * @param value the value (SimpleString format)
 	 */
-	VariableAccessType GetVariableAccessTypeType(const SimpleString VarName);
+	VariableAccessType GetVariableAccessType(const SimpleString VarName);
 
 	/**
 	 * Add a listener to monitor variable changes

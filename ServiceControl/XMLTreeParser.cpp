@@ -61,10 +61,10 @@ void XMLMessage::Display(FILE* fout)
 
 xmlAttrPtr XMLMessage::FindAttribute(const SimpleString name, xmlNodePtr node)
 {
-	if(node)
+	if ( node )
 	{
 		xmlAttrPtr current = node->properties;
-		while(current)
+		while( current )
 		{
 			if( name == (const char*)current->name )
 			{
