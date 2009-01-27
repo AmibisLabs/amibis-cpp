@@ -9,6 +9,7 @@
 
 #include <ServiceControl/ConfigServiceControl.h>
 #include <System/SimpleString.h>
+#include <System/ReentrantMutex.h>
 
 #include <libxml/xmlschemas.h>
 
@@ -32,6 +33,8 @@ private:
 	xmlSchemaPtr Schema;
 	xmlSchemaParserCtxtPtr ParserCtxt;
 	xmlSchemaValidCtxtPtr ValidCtxt;
+
+	ReentrantMutex OneValidationAtATime;
 };
 
 } // namespace Omiscid

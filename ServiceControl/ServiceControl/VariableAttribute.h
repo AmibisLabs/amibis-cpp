@@ -172,10 +172,10 @@ public:
 	static const SimpleString VariableStr;	// = "variable"
 
 protected:
-  SimpleString type; /*!< type of the variable */
-  SimpleString defaultValue; /*!< default value*/
-  VariableAccessType access; /*!< kind of access.*/
-  SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
+	SimpleString type; /*!< type of the variable */
+	SimpleString defaultValue; /*!< default value*/
+	VariableAccessType access; /*!< kind of access.*/
+	SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
 
     /**
 	 * SimpleString representation for 'constant' access (used in XML description)
@@ -193,7 +193,8 @@ protected:
 	static const SimpleString AccessReadWriteStr;	// "readWrite"
 
 private:
-  MutexedSimpleList<VariableAttributeListener*> Listeners;
+  SimpleList<VariableAttributeListener*> Listeners;
+  Mutex LockVariable;
   bool Initialised;
 };
 

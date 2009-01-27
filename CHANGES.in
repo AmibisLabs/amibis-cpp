@@ -18,6 +18,9 @@ In this files, you will find changes between OMiSCID versions.
 	in Service and ServiceProxy classes).
 	- add body to ServiceProxy::GetServiceAccessType.
 	- correct memory leak problem when nobody is tacking memory leak (sic).
+	- change VariableAttribute working paradigme. Do not use anymore
+	MutexedSimpleList as list and as mutex. Now, use a normal
+	SimpleList and a Mutex.
 	[API]
 	- MultipleReferencedData now works subclassing ReentrantMutex and
 	not with an simple AtomicCounter anymore. We also add Internal

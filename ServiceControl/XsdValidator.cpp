@@ -10,6 +10,8 @@ using namespace Omiscid;
 
 XsdValidator::XsdValidator()
 {
+	SmartLocker SL_OneValidationAtATime(OneValidationAtATime);
+
 	ParserCtxt = NULL;
 	Schema = NULL;
 	ValidCtxt = NULL;
@@ -17,11 +19,15 @@ XsdValidator::XsdValidator()
 
 XsdValidator::~XsdValidator()
 {
+	SmartLocker SL_OneValidationAtATime(OneValidationAtATime);
+
 	DestroySchema();
 }
 
 void XsdValidator::DestroySchema()
 {
+	SmartLocker SL_OneValidationAtATime(OneValidationAtATime);
+
 	// Cleaning xsd validation tools
 	if ( ValidCtxt )
 	{
@@ -42,6 +48,8 @@ void XsdValidator::DestroySchema()
 
 bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidate /* = SimpleString::EmptyString */ )
 {
+	SmartLocker SL_OneValidationAtATime(OneValidationAtATime);
+
 	if ( ValidCtxt != NULL )
 	{
 		// Already create
@@ -88,6 +96,8 @@ bool XsdValidator::CreateSchemaFromString( const SimpleString XsdSchemaToValidat
 
 bool XsdValidator::CreateSchemaFromFile( const SimpleString XsdSchemaFile )
 {
+	SmartLocker SL_OneValidationAtATime(OneValidationAtATime);
+
 	if ( ValidCtxt != NULL )
 	{
 		// Already create
@@ -134,6 +144,8 @@ bool XsdValidator::CreateSchemaFromFile( const SimpleString XsdSchemaFile )
 
 bool XsdValidator::ValidateDoc( const SimpleString Doc )
 {
+	SmartLocker SL_OneValidationAtATime(OneValidationAtATime);
+
 	xmlDocPtr pDoc;
 	bool ret;
 
@@ -156,6 +168,8 @@ bool XsdValidator::ValidateDoc( const SimpleString Doc )
 
 bool XsdValidator::ValidateDoc( xmlDocPtr Doc )
 {
+	SmartLocker SL_OneValidationAtATime(OneValidationAtATime);
+
 	if ( ValidCtxt == NULL || Doc == NULL || xmlSchemaValidateDoc( ValidCtxt, Doc ) != 0 )
 	{
 		OmiscidError( "ValidateDoc: unable to validate xml stream.\n" );

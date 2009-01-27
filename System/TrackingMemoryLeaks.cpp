@@ -58,7 +58,9 @@ private:
 #endif
 
 #ifdef WIN32
+	HANDLE DUMMY_1;
 	HANDLE mutex;
+	HANDLE DUMMY_2;
 #else
 	unsigned int before;	/*!< to prevent memory correption by pthread_* functions */
 	pthread_mutex_t mutex; /*!< Posix Mutex*/

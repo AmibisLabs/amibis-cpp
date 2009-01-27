@@ -892,6 +892,7 @@ void ControlClient::ProcessAMessage(XMLMessage* msg)
 	{
 		// bad message...
 		OmiscidError( "ControlClient::ProcessAMessage: bad controlAnswer/controlEvent.\n" );
+		msg->Display(stderr);
 		return;
 	}
 

@@ -519,6 +519,7 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 	else
 	{
 		OmiscidError( "waited : controlQuery, received='%s'\n", node->name);
+		msg->Display(stderr);
 	}
 }
 
