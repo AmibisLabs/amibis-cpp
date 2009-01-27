@@ -106,7 +106,7 @@ private:
 		 */
 		inline char * GetEmptyBuffer()
 		{
-			char * tmpc = new char[1];
+			char * tmpc = new OMISCID_TLM char[1];
 			if ( tmpc == (char*)NULL )
 			{
 				return (char*)NULL;

@@ -8,9 +8,6 @@
  * @author Dominique Vaufreydaz
  */
 
-// Standard includes
-#include <ServiceControl/UserFriendlyAPI.h>
-
 // Add local class RegisterThread
 #include "BrowsingTest.h"
 #include "RegisterThread.h"

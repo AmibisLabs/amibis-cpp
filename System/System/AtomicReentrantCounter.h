@@ -29,6 +29,11 @@ public:
 	 */
 	AtomicReentrantCounter(int init_value = 0);
 
+	/** @brief Copy constructor
+	 *  @param ToCopy [in] The AtomicReentrantCounter to copy 
+	 */
+	AtomicReentrantCounter(const AtomicReentrantCounter& ToCopy);
+
 	/** @brief Virtual destructor always
 	 */
 	virtual ~AtomicReentrantCounter();
@@ -89,6 +94,11 @@ public:
 	 * @param value [in] The new value to set for this AtomicCounter
 	 */
 	int operator=(int value);
+
+	/** @brief Equal operator
+	 *  @param ToCopy [in] The AtomicCounter to copy 
+	 */
+	const AtomicReentrantCounter& operator=(const AtomicReentrantCounter& ToCopy);
 	//@}
 
 private:

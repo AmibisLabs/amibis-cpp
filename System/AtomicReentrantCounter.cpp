@@ -20,6 +20,17 @@ AtomicReentrantCounter::AtomicReentrantCounter(int init_value /* = 0 */)
 	counter = init_value;
 }
 
+/** @brief Copy constructor
+ *  @param ToCopy [in] The AtomicCounter to copy 
+ */
+AtomicReentrantCounter::AtomicReentrantCounter(const AtomicReentrantCounter& ToCopy)
+{
+	SmartLocker SL_mutex(mutex);
+
+	// set the counter to the value of the other counter
+	counter = ToCopy;
+}
+
 /** @brief Virtual destructor always
  */
 AtomicReentrantCounter::~AtomicReentrantCounter()
@@ -44,6 +55,19 @@ int AtomicReentrantCounter::operator++()
 	++counter;
 
 	return counter;
+}
+
+/** @brief Equal operator
+ *  @param ToCopy [in] The AtomicCounter to copy 
+ */
+const AtomicReentrantCounter& AtomicReentrantCounter::operator=(const AtomicReentrantCounter& ToCopy)
+{
+	SmartLocker SL_mutex(mutex);
+
+	// set the counter to the value of the other counter
+	counter = ToCopy;
+
+	return *this;
 }
 
 /** @brief Postfix increment operator

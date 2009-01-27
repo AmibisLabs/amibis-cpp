@@ -1,6 +1,8 @@
-// Thread.cpp: implementation of the CThread class.
-//
-//////////////////////////////////////////////////////////////////////
+/**
+* @file System/Thread.cpp
+* @ingroup System
+* @brief Implementation of ThreadMessage and Thread classes
+*/
 
 
 #include <System/Thread.h>

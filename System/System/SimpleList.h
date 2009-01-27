@@ -83,6 +83,12 @@ public:
 	*/
 	SimpleList();
 
+	/** @brief Copy constructor
+	*
+	* Build a copy of the list.
+	*/
+	SimpleList(SimpleList<TYPE>& ToCopy);
+
 	/** @brief Destructor */
 	virtual ~SimpleList();
 
@@ -229,6 +235,21 @@ SimpleList<TYPE>::SimpleList()
 	PreviousElement = NULL;
 	CurrentElement = NULL;
 	RemoveCurrentHasOccured = false;
+}
+
+/** @brief Copy constructor
+*
+* Build a copy of the list.
+*/
+template <typename TYPE>
+SimpleList<TYPE>::SimpleList(SimpleList<TYPE>& ToCopy)
+{
+	// From the first to the last
+	for( ToCopy.First(); ToCopy.NotAtEnd(); ToCopy.Next() )
+	{
+		// Add tail in order to preserve the order of the list ToCopy
+		AddTail(ToCopy.GetCurrent());
+	}
 }
 
 template <typename TYPE>

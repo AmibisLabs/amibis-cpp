@@ -20,10 +20,34 @@ AtomicCounter::AtomicCounter(int init_value)
 	counter = init_value;
 }
 
+/** @brief Copy constructor
+ *  @param ToCopy [in] The AtomicCounter to copy 
+ */
+AtomicCounter::AtomicCounter(const AtomicCounter& ToCopy)
+{
+	SmartLocker SL_mutex(mutex);
+
+	// set the counter to the value of the other counter
+	counter = ToCopy;
+}
+
 /** @brief Virtual destructor always
  */
 AtomicCounter::~AtomicCounter()
 {
+}
+
+/** @brief Equal operator
+ *  @param ToCopy [in] The AtomicCounter to copy 
+ */
+const AtomicCounter& AtomicCounter::operator=(const AtomicCounter& ToCopy)
+{
+	SmartLocker SL_mutex(mutex);
+
+	// set the counter to the value of the other counter
+	counter = ToCopy;
+
+	return *this;
 }
 
 /** @brief Prefix increment operator

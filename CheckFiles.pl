@@ -12,6 +12,101 @@ sub EnterDirectory()
  	# print "$DirName ok\n";
  	return 1;
 }
+sub RemoveConstantStringFromFile()
+{
+	my $FileIn = shift @_;
+	my $CurrentLine;
+ 	my $FileContent = '';
+	
+	foreach $CurrentLine ( split(/\r\n/, $FileIn) )
+	{
+		while ( $CurrentLine =~ s/^([^\"]*\")([^\"]*)\"(.+[\r\n]*)$/$1$3/ ) {}
+	
+		$FileContent .= $CurrentLine;
+	}
+	
+	return $FileContent;
+}
+
+sub RemoveCommentsFromFile()
+{
+	my $FileIn = shift @_;
+	my $CurrentLine;
+ 	my $Mode = 0;  # 0 means normal mode, 1 means multine
+ 	my $StartOfLine;
+ 	my $EndOfLine;
+ 	my $LineProcessed;
+ 	my $FileContent = '';
+	
+	foreach $CurrentLine ( split(/\r\n/, $FileIn) )
+	{
+		$CurrentLineNumber++;
+		$CurrentLine =~ s/[\r\n]+$//;
+		
+		$LineProcessed = 0;
+		while( $LineProcessed == 0 )
+		{
+			if ( $Mode == 0 )
+			{
+				# "/*" ?
+				if ( $CurrentLine =~ /^(.*)\/\*(.*)$/ )
+				{
+					$StartOfLine = $1;
+					$EndOfLine = $2;
+					
+					if ( $StartOfLine =~ /^(.*)\/\// )
+					{
+						$FileContent .= $1;
+						$LineProcessed = 1;
+						next;
+					}
+					
+					# die "'$StartOfLine' '$EndOfLine'";
+					
+					# ok, we have /*, remove it and go on
+					$Mode = 1;
+					$FileContent .= $StartOfLine;
+					$CurrentLine = $EndOfLine;
+					next;
+				}
+				if ( $CurrentLine =~ /^(.*)\/\// )
+				{
+					$FileContent .= $1;
+					$LineProcessed = 1;
+					
+					# die "'$FileContent'";
+					next;
+				}
+				
+				# nothing special on this line
+				$FileContent .= $CurrentLine;
+				$LineProcessed = 1;
+				next;
+			}
+			else
+			{
+				# die "$CurrentLine";
+				# we are looking for "*/"
+				if ( $CurrentLine =~ /^(.*)\*\/(.*)$/ )
+				{
+					$CurrentLine = $2;
+					$Mode = 0;
+					next; # go on on this line
+				}
+				else
+				{
+					# no "*/", skip this line
+					$LineProcessed = 1;
+					next;
+				}
+			}
+		}
+		
+		$FileContent .= "\r\n";
+	}
+	
+	return $FileContent;
+}
 
 sub CheckEmptyLineAtEnd()
 {
@@ -274,6 +369,7 @@ sub FilesShouldContainOnlyOneClassDeclaration()
 {
  	my $FileName = shift @_;
 	my $ClassCount = 0;
+ 	my $fd;
  	
  	if ( $FileName =~ /System\/Config.h$/ )
  	{
@@ -307,6 +403,7 @@ sub GenerateIncludeGraph()
  	my $FileName = shift @_;
   	my $ShortFileName = shift @_;
   	my $CurrentLine;
+ 	my $fd;
 	
  	if ( $FileName =~ /System\/Config.h$/ )
  	{
@@ -354,7 +451,8 @@ sub CheckExceptionConsistancy()
  	my $FileName = shift @_;
    	my $CurrentLine;
   	my $CurrentLineNumber = 0;
-  	
+  	my $fd;
+ 	
    	my @ExcludedFiles = ( 'System/TrackingMemoryLeaks.h', 'System/TrackingMemoryLeaks.cpp' );
  	my $CurrentFile;
  	
@@ -409,7 +507,8 @@ sub LockAndUnlockAreProtectedUsingSmartLocker()
  	my $FileName = shift @_;
  	my $CurrentLine;
   	my $CurrentLineNumber = 0;
-  	
+ 	my $fd;
+ 	  	
   	my @ExcludedFiles = ( 'System/LockManagement.cpp', 'System/LockManagement.h', 'System/TrackingMemoryLeaks.cpp' );
  	my $CurrentFile;
  	
@@ -444,6 +543,43 @@ sub LockAndUnlockAreProtectedUsingSmartLocker()
 		}
 	}
 	close( $fd );
+}
+
+sub CheckThatAll_new_CallsAreInstrumented()
+{
+ 	my $FileName = shift @_;
+ 	my $FileContent;
+ 	my $CurrentLine;
+  	my $CurrentLineNumber = 0;
+  	my $fd;
+  	
+  	# load file
+  	open( $fd, "<$FileName" ) or return;
+  	
+  	$FileContent = '';
+  	while( $CurrentLine = <$fd> )
+  	{
+  		$FileContent .= $CurrentLine;
+  	}
+  	
+  	# Remove comments and Constant Strings
+  	$FileContent = &RemoveConstantStringFromFile(&RemoveCommentsFromFile($FileContent));
+  	  	
+	foreach $CurrentLine ( split(/\r\n/, $FileContent) )
+	{
+		$CurrentLineNumber++;
+		
+		if ( $CurrentLine =~ /new\s+/ )
+		{
+			if ( $CurrentLine =~ /new\s+OMISCID_TLM/ )
+			{
+			}
+			else
+			{
+				print "$FileName ($CurrentLineNumber): bad new Patern ?\n";
+			}
+		}
+	}
 }
 
 # 
@@ -492,6 +628,10 @@ sub WorkOnFile()
 			&FirstIncludeofSourceFileisItsHeader($CompleteFileName);
 		}
 		
+		# Chack that all new are instrumented
+		# print "$CompleteFileName (CheckThatAll_new_CallsAreInstrumented)\n";
+		&CheckThatAll_new_CallsAreInstrumented($CompleteFileName);
+		
 		# Check if we have an empty line at end for gcc
 		# print "$CompleteFileName (CheckEmptyLineAtEnd)\n";
 		&CheckEmptyLineAtEnd($CompleteFileName);
@@ -516,7 +656,6 @@ sub WorkOnFile()
 		# print "Do not process $CompleteFileName\n";
 	}
 }
-
 
 &RecurseWork::RecurseWork( 'System', 0 );
 &RecurseWork::RecurseWork( 'Com', 0 );

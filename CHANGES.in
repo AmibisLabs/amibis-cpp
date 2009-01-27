@@ -5,10 +5,25 @@
 In this files, you will find changes between OMiSCID versions.
 
 %OMISCID_VERSION%	%OMISCID_DAY%
+	[Global modifications]
+	- add support for 64 bits packages
+	- put TemporaryMemoryBuffer into separate files (TemporaryMemoryBuffer.h
+	and .cpp). You can always include Portage.h to include them.
+	- add ability for TemporaryMemoryBuffer to grow and to be empty.
+	- add memory integrity checker facilities when tracking memory
+	leaks (when CHECK_MEMORY_BOUNDARIES is also defined) to check
+	if someone *wrote* out of its memory.
 	[Bug corrections]
 	- correct name of GetServiceAccessType (was GetServiceAccessTypeType
 	in Service and ServiceProxy classes).
 	- add body to ServiceProxy::GetServiceAccessType.
+	- correct memory leak problem when nobody is tacking memory leak (sic).
+	[API]
+	- MultipleReferencedData now works subclassing ReentrantMutex and
+	not with an simple AtomicCounter anymore. We also add Internal
+	(inline) protected method to manipulate data without locking in
+	order to prevent multiple call to expensive system locks.
+	- start to add CopyConstructor for every class.
 	[Documentation]
 	- still documentation effort.
 

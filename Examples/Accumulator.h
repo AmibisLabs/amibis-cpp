@@ -30,6 +30,7 @@ class Accumulator : public ConnectorListener
 public:
 	/* @brief constructor */
 	Accumulator();
+
 	/* @brief destructor */
 	virtual ~Accumulator();
 

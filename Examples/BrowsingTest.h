@@ -8,6 +8,9 @@
 #ifndef __BROWSING_TEST_H__
 #define __BROWSING_TEST_H__
 
+// Standard includes
+#include <ServiceControl/UserFriendlyAPI.h>
+
 namespace Omiscid {
 
 #ifdef OMISCID_RUNING_TEST

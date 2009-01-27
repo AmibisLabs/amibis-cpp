@@ -10,6 +10,15 @@ $OMISCID_DEBUG = '';
 $OMISCID_ZEROCONF = '';
 $PackageSuffix = '';
 
+$Archi{32}{'computer'} = 'desdemona';
+$Archi{32}{'suffix'} = '_i386';
+$Archi{64}{'computer'} = 'carme';
+$Archi{64}{'suffix'} = '_amd64';
+
+
+$PackageArch = 32;		# default 32 bits
+
+
 $CurrentArg = 0;
 while( defined $ARGV[$CurrentArg] )
 {
@@ -40,7 +49,22 @@ while( defined $ARGV[$CurrentArg] )
 		$CurrentArg++;
 		next;
 	}
-	die "Unknown parameter '$ARGV[$CurrentArg]'\n";
+	if ( $ARGV[$CurrentArg] =~ /^-arch=(.+)$/ )
+	{
+		$TmpParam = $1;
+		
+		if ( $TmpParam =~ /^\d+bits/ )
+		{
+			$PackageArch = $1;
+			if ( $PackageArch == 32 || $PackageArch == 64 )
+			{
+				next;
+			}
+		}
+		die "Unknown package arch for '$TmpParam' for option -arch\n";
+		next;
+	}
+	die "Unknown or bad parameter '$ARGV[$CurrentArg]'\n";
 }
 
 $ErrorInArg = 0;
@@ -281,19 +305,21 @@ print STDERR "Change permission in tmp/$PackageFolder\n";
 print STDERR "Create tmp/$PackageFolder.orig\n";
 `ssh oberon "cd tmp; rm -rf $PackageFolder.orig; cp -r $PackageFolder $PackageFolder.orig"`;
 
+$computer = $Archi{$PackageArch}{'computer'};
+
 if ( $OMISCID_ZEROCONF eq 'mdns' )
 {
-	system( "ssh carme \"cd tmp/$PackageFolder; debuild -us -uc\"" );
+	system( "ssh $computer \"cd tmp/$PackageFolder; debuild -us -uc\"" );
 	chdir('..');
-	print "scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .\n";
-	`scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb oberon:tmp/omiscid-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
+	print "scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
+	`scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb oberon:tmp/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
 }
 else
 {
-	system( "ssh carme \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
+	system( "ssh $computer \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
 	chdir('..');
-	print "scp carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_i386.deb .\n";
-	`scp carme:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_i386.deb carme:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}_i386.deb .`;
+	print "scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
+	`scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
 }
 
 print STDERR "Remove OMiSCID folder in tmp on oberon\n";

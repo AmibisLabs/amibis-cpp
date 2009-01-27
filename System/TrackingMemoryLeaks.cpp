@@ -1,8 +1,6 @@
 
 #include <System/TrackingMemoryLeaks.h>
 
-#include <System/Mutex.h>
-
 #ifdef TRACKING_MEMORY_LEAKS
 
 #if defined WIN32 || defined _WIN32
@@ -27,9 +25,137 @@ namespace Omiscid {
 
 using namespace Omiscid;
 
+
+// Internal Mutex
+class InternalMutex
+{
+public:
+	/** @brief Constructor */
+	InternalMutex();
+
+	/** @brief Destructor */
+	virtual ~InternalMutex();
+
+	/**
+	 * @brief Lock the mutex.
+	 *
+	 * Wait if the mutex is already locked, until it is unlocked, and then locks the mutex
+	 * @return false if an error occured
+	 */
+	bool EnterMutex();
+
+	/**
+	 * @brief Unlock the mutex
+	 *
+	 * Enables other clients to use the critical section protected by this mutex.
+	 */
+	bool LeaveMutex();
+
+private:
+
+#ifdef DEBUG
+	unsigned int OwnerId;
+#endif
+
+#ifdef WIN32
+	HANDLE mutex;
+#else
+	unsigned int before;	/*!< to prevent memory correption by pthread_* functions */
+	pthread_mutex_t mutex; /*!< Posix Mutex*/
+	unsigned int after;		/*!< to prevent memory correption by pthread_* functions */
+#endif /* WIN32 */
+
+};
+
+InternalMutex::InternalMutex()
+{
+#ifdef WIN32
+	// mutex = CreateMutex( NULL, false, NULL );
+	mutex = CreateSemaphore(NULL, 1, (LONG)0xffff, NULL );
+	#ifdef DEBUG
+		if ( mutex == NULL )
+		{
+			int err = GetLastError();
+			OmiscidError( "Could not create mutex : %d\n", err );
+		}
+	#endif
+#else
+	if ( pthread_mutex_init(&mutex, NULL) != 0 )
+	{
+		throw  SimpleException("Error Mutex Init");
+	}
+#endif
+#ifdef DEBUG
+	OwnerId = 0;
+#endif
+}
+
+InternalMutex::~InternalMutex()
+{
+#ifdef WIN32
+	if ( mutex )
+	{
+		CloseHandle( mutex );
+	}
+#else
+	pthread_mutex_destroy(&mutex);
+#endif
+}
+
+bool InternalMutex::EnterMutex()
+{
+#ifdef WIN32
+	unsigned int Result = WaitForSingleObject( mutex, INFINITE );
+	if ( Result == WAIT_OBJECT_0 )
+	{
+#ifdef DEBUG
+		// In debug mode, set the owner id
+		OwnerId = Thread::GetThreadId();
+#endif
+		// Here we go, we've got the mutex
+		return true;
+	}
+#else
+	if( pthread_mutex_lock(&mutex) == 0 )
+	{
+#ifdef DEBUG
+		// In debug mode, set the owner id
+		OwnerId = Thread::GetThreadId();
+#endif
+		return true;
+	}
+#endif
+
+	return false;
+}
+
+bool InternalMutex::LeaveMutex()
+{
+#ifdef WIN32
+	// if ( !ReleaseMutex(mutex) )
+	if ( !ReleaseSemaphore(mutex,1,NULL) )
+	{
+		return false;
+	}
+#else
+	if( pthread_mutex_unlock(&mutex) != 0 )
+	{
+		return false;
+	}
+#endif
+
+#ifdef DEBUG
+	OwnerId = 0;
+#endif
+
+	return true;
+}
+
 namespace Omiscid {
-	Mutex TrackingMemoryLocker;
-	unsigned int NumberOfTrackingMemoryClient = 0;
+
+InternalMutex TrackingMemoryLocker;
+unsigned int NumberOfTrackingMemoryClient = 0;
+
 }	// namespace Omiscid
 
 TrackMemoryLeaks::TrackMemoryLeaks()
@@ -53,6 +179,7 @@ namespace Omiscid {
 
 	void AddMemoryBlock(size_t asize, void** addr);
 	void RemoveMemoryBlock(void* addr);
+
 } // namespace Omiscid
 
 #include <stdio.h>
@@ -191,6 +318,12 @@ public:
 	 * @param elt the element to release
 	 */
 	void ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const;
+
+#ifdef CHECK_MEMORY_BOUNDARIES
+	/** \brief Check
+	*/
+	void CheckMemoryBoundaries(struct SimpleMemoryElement* elt) const;
+#endif
 
  public:
 	struct SimpleMemoryElement * Head, * Tail; /*!< pointers on head and tail of the list */
@@ -366,7 +499,7 @@ struct SimpleMemoryElement * MemoryList::GetCurrent() const
 // Remove the current element
 bool MemoryList::RemoveCurrent()
 {
-	if(RemoveCurrentHasOccured)
+	if ( RemoveCurrentHasOccured )
 		throw  "RemoveCurrentHasOccured";
 
 	RemoveCurrentHasOccured = true;
@@ -432,16 +565,40 @@ bool MemoryList::Remove(void * LegalPointer)
 	return false;
 }
 
+#ifdef CHECK_MEMORY_BOUNDARIES
+#define BOUNDARY_CHECK_STRING "OMISCID"
+#endif
+
 struct SimpleMemoryElement* MemoryList::GetNewSimpleListElement(size_t SizeOfBlock) const
 {
-	// Allocate the asked size + the size of our structure
-	struct SimpleMemoryElement * tmp = (struct SimpleMemoryElement*)malloc(SizeOfBlock+sizeof(struct SimpleMemoryElement));
+	size_t RealSizeToAlloc;
 
-	if ( tmp != NULL )
+	// Allocate the asked size + the size of our structure
+#ifdef CHECK_MEMORY_BOUNDARIES
+	// Allocate with place for 2 BOUNDARY_CHECK_STRING
+	RealSizeToAlloc = SizeOfBlock+sizeof(struct SimpleMemoryElement)+2*strlen(BOUNDARY_CHECK_STRING);
+#else
+	RealSizeToAlloc = SizeOfBlock+sizeof(struct SimpleMemoryElement);
+#endif
+
+	struct SimpleMemoryElement * tmp = (struct SimpleMemoryElement*)malloc(RealSizeToAlloc);
+
+	if ( tmp != (SimpleMemoryElement*)NULL )
 	{
-		tmp->Where = (((char*)tmp)+sizeof(struct SimpleMemoryElement));
 		tmp->Size = SizeOfBlock;
 		tmp->NextElement = NULL;
+
+#ifdef CHECK_MEMORY_BOUNDARIES
+		tmp->Where = (((char*)tmp)+sizeof(struct SimpleMemoryElement));
+		// Copy 1st string
+		memcpy( tmp->Where, BOUNDARY_CHECK_STRING, strlen(BOUNDARY_CHECK_STRING) );
+		// say start of buffer is after the first string
+		tmp->Where = ((char*)tmp->Where) + strlen(BOUNDARY_CHECK_STRING);
+		// copy 2nd string at end of buffer
+		memcpy( ((char*)tmp)+RealSizeToAlloc-strlen(BOUNDARY_CHECK_STRING), BOUNDARY_CHECK_STRING, strlen(BOUNDARY_CHECK_STRING) );
+#else
+		tmp->Where = (((char*)tmp)+sizeof(struct SimpleMemoryElement));
+#endif
 	}
 
 	return tmp;
@@ -451,9 +608,53 @@ void MemoryList::ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const
 {
 	if ( elt )
 	{
+#ifdef CHECK_MEMORY_BOUNDARIES
+		CheckMemoryBoundaries( elt );
+#endif
 		free(elt);
 	}
 }
+
+#ifdef CHECK_MEMORY_BOUNDARIES
+/** \brief Check
+*/
+void MemoryList::CheckMemoryBoundaries(struct SimpleMemoryElement* elt) const
+{
+	bool DataBeforeBlockAreSane = true;
+	bool DataAfterBlockAreSane = true;
+	char * DataBeforeBlock;
+	char * DataAfterBlock;
+
+	// Chack data before 
+	DataBeforeBlock = ((char*)elt->Where) - strlen(BOUNDARY_CHECK_STRING);
+	if ( memcmp(DataBeforeBlock, BOUNDARY_CHECK_STRING, strlen(BOUNDARY_CHECK_STRING)) != 0 )
+	{
+		DataBeforeBlockAreSane = false; 
+	}
+
+	// Check string after
+	DataAfterBlock = ((char*)elt->Where) + elt->Size - strlen(BOUNDARY_CHECK_STRING);
+	if ( memcmp(DataBeforeBlock, BOUNDARY_CHECK_STRING, strlen(BOUNDARY_CHECK_STRING)) != 0 )
+	{
+		DataAfterBlockAreSane = false; 
+	}
+
+	if ( DataBeforeBlockAreSane == false || DataAfterBlockAreSane == false )
+	{
+		fprintf( stderr, "-+-+-+-+-+-+-+-+\n" );
+		fprintf( stderr, "Data around block at adresse %p were corrupted\n", elt->Where );
+		if ( DataBeforeBlockAreSane == false )
+		{
+			fprintf( stderr, "Magic string before data is '%s' and should be '%s'\n", DataBeforeBlock, BOUNDARY_CHECK_STRING );
+		}
+		if ( DataBeforeBlockAreSane == false )
+		{
+			fprintf( stderr, "Magic string after data is '%s' and should be '%s'\n", DataAfterBlock, BOUNDARY_CHECK_STRING );
+		}
+		fprintf( stderr, "-+-+-+-+-+-+-+-+\n" );
+	}
+}
+#endif
 
 void MemoryList::Empty()
 {
@@ -582,6 +783,7 @@ void Omiscid::RemoveMemoryBlock(void* addr)
 	TrackingMemoryLocker.EnterMutex();
 	if ( NumberOfTrackingMemoryClient == 0 )
 	{
+		free(addr);
 		TrackingMemoryLocker.LeaveMutex();
 		return;
 	}

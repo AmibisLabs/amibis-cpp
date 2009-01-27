@@ -10,68 +10,6 @@
 
 using namespace Omiscid;
 
-MemoryBufferException::MemoryBufferException( SimpleString Msg, int i )
-	: SimpleException( Msg, i )
-{
-}
-
-MemoryBufferException::~MemoryBufferException()
-{
-}
-
-MemoryBufferException::MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy )
-	: SimpleException( MemoryBufferExceptionToCopy )
-{
-}
-
-SimpleString MemoryBufferException::GetExceptionType() const
-{
-	return SimpleString("MemoryBufferException");
-}
-
-
-
-
-// class for Allocate/Unallocation memory buffer
-TemporaryMemoryBuffer::TemporaryMemoryBuffer( size_t SizeOfBuffer )
-{
-	Buffer = new OMISCID_TLM char[SizeOfBuffer];
-	if ( Buffer == NULL )
-	{
-		BufferSize = 0;
-		throw MemoryBufferException( "No more memory to allocate buffer" );
-	}
-	BufferSize = SizeOfBuffer;
-}
-
-TemporaryMemoryBuffer::~TemporaryMemoryBuffer()
-{
-	if ( Buffer != NULL )
-	{
-		delete [] Buffer;
-	}
-}
-
-TemporaryMemoryBuffer::operator char*() const
-{
-	return (char*)Buffer;
-}
-
-TemporaryMemoryBuffer::operator unsigned char*() const
-{
-	return (unsigned char*)Buffer;
-}
-
-TemporaryMemoryBuffer::operator void*() const
-{
-	return (void*)Buffer;
-}
-
-size_t TemporaryMemoryBuffer::GetLength() const
-{
-	return BufferSize;
-}
-
 #ifdef WIN32
 
 int Omiscid::random()

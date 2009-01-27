@@ -10,6 +10,7 @@
 #include <System/ConfigSystem.h>
 #include <System/SimpleString.h>
 #include <System/SimpleException.h>
+#include <System/TemporaryMemoryBuffer.h>
 
 namespace Omiscid {
 
@@ -40,36 +41,6 @@ void RandomInit();
 
 // Retrieve the logged username
 SimpleString GetLoggedUser();
-
-// classes for Allocate/Unallocation memory buffer
-class MemoryBufferException : public SimpleException
-{
-public:
-	// Virtual destructor always
-	virtual ~MemoryBufferException();
-
-	MemoryBufferException( SimpleString Msg, int i = UnkownSimpleExceptionCode );
-	MemoryBufferException( const MemoryBufferException& MemoryBufferExceptionToCopy );
-
-	SimpleString GetExceptionType() const;
-};
-
-class TemporaryMemoryBuffer
-{
-public:
-	TemporaryMemoryBuffer( size_t SizeOfBuffer );
-	virtual ~TemporaryMemoryBuffer();
-
-	operator char*() const;
-	operator void*() const;
-	operator unsigned char*() const;
-
-	size_t GetLength() const;
-
-private:
-	char * Buffer;
-	size_t BufferSize;
-};
 
 
 } // namespace Omiscid

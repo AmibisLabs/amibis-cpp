@@ -35,18 +35,21 @@
 
 namespace Omiscid {
 
-	class TrackMemoryLeaks
-	{
-	public:
-		TrackMemoryLeaks();
-		virtual ~TrackMemoryLeaks();
+class TrackMemoryLeaks
+{
+public:
+	TrackMemoryLeaks();
+	virtual ~TrackMemoryLeaks();
 
-		static void DumpUnfreed();
+	static void DumpUnfreed();
 
-	private:
-		static void StartTrackingMemory();
-		static void StopTrackingMemory();
-	};
+private:
+	static void StartTrackingMemory();
+	static void StopTrackingMemory();
+};
+
+/** @brief Initialise Tacking system */
+// void TrackMemoryLeaksInit();
 
 } // namespace Omiscid
 

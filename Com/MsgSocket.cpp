@@ -897,7 +897,7 @@ void MsgSocket::AcceptConnection()
 	Socket* sock = socket->Accept();
 	if(sock)
 	{
-		AcceptConnection(new MsgSocket(sock));
+		AcceptConnection(new OMISCID_TLM MsgSocket(sock));
 	}
 }
 

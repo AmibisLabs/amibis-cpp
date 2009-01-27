@@ -181,7 +181,7 @@ void Accumulator::MessageReceived(Service& TheService, const SimpleString LocalC
 int Omiscid::DoAccumulatorTest( int argc, char*argv[] )
 {
 	// Create dynamically an accumulator sever
-	Accumulator * pAccuServer = new Accumulator;
+	Accumulator * pAccuServer = new OMISCID_TLM Accumulator;
 
 #ifdef DEBUG
 	if ( pAccuServer == (Accumulator *)NULL )
@@ -192,7 +192,7 @@ int Omiscid::DoAccumulatorTest( int argc, char*argv[] )
 #endif
 
 	// Create clients for accumulators
-	RunClientAccumulator * ClientsAccu = new RunClientAccumulator[2];
+	RunClientAccumulator * ClientsAccu = new OMISCID_TLM RunClientAccumulator[2];
 
 #ifdef DEBUG
 	if ( ClientsAccu == (RunClientAccumulator *)NULL )

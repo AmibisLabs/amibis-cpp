@@ -289,59 +289,6 @@ int main(int argc, char* argv[])
 
 	pServ->Start();
 
-#if 0
-
-	// Now we'd like to connect to ask connection point...
-	if ( ConnectionString >= 2 )
-	{
-		char ** Table = new char *[ConnectionObjects];
-		if ( Table == NULL )
-		{
-			exit(1);
-		}
-		ParseConnectionString( argv[ConnectionString], true, Table );
-
-		WaitForOmiscidServices WFS;
-
-		for( Argument = 0; Argument < ConnectionObjects; Argument+=2 )
-		{
-			WFS.NeedService( Table[Argument] );
-		}
-
-		printf( "Wait for %d services...\n", ConnectionObjects/2 );
-		WFS.WaitAll();
-
-		for( Argument = 0; Argument < ConnectionObjects; Argument+=2 )
-		{
-			ControlClient * CtrCli = new ControlClient(CtrSrv.GetServiceId());
-			fprintf( stderr, "%s\n", WFS[Argument/2].Name );
-			if ( CtrCli->ConnectToCtrlServer( WFS[Argument/2].HostName, WFS[Argument/2].Port ) )
-			{
-				InOutputAttribut * ConnectPointAtt;
-				TcpUdpClientServer * TcpCli;
-				CtrCli->QueryGlobalDescription();
-
-				if ( (ConnectPointAtt = CtrCli->QueryInputDescription( Table[Argument+1] ))  ||
-					 (ConnectPointAtt = CtrCli->QueryOutputDescription( Table[Argument+1] )) ||
-					 (ConnectPointAtt = CtrCli->QueryInOutputDescription( Table[Argument+1] )) )
-				{
-					TcpCli = new TcpUdpClientServer();
-					TcpCli->SetServiceId( CtrSrv.GetServiceId() );
-					TcpCli->SetCallBackOnRecv( DropMessage, (void*)TcpCli, NULL );
-					TcpCli->ConnectTo( WFS[Argument/2].HostName, ConnectPointAtt->GetTcpPort(), ConnectPointAtt->GetUdpPort() );
-
-					continue;
-				}
-			}
-			else
-			{
-				int zz = 0;
-			}
-		}
-
-	}
-#endif
-
 	printf( "Waiting...\n" );
 	// Lock Mylself
 	Event ForEver;

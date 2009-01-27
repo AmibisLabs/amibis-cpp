@@ -44,6 +44,9 @@ OmiscidSystemLayerInitClass::OmiscidSystemLayerInitClass()
 
 		// Init Socket
 		OmiscidSocketInit();
+
+		// Init Memory Tacking subsystem
+		// TrackMemoryLeaksInit();
 	}
 
 	// Leave locker
