@@ -545,6 +545,7 @@ bool MsgSocket::SendSyncLinkMsg()
 	catch(SocketException& e)
 	{
 		SL_protectSend.Unlock();
+
 		OmiscidTrace( "SocketException: %s %d\n", e.msg.GetStr(), e.err);
 		if ( connected )
 		{
@@ -604,6 +605,7 @@ void MsgSocket::Stop()
 	{
 		// Send disconnected message
 		SmartLocker SL_CallbackObjects(CallbackObjects);
+
 		// Send info to all listener
 		for( CallbackObjects.First(); CallbackObjects.NotAtEnd(); CallbackObjects.Next() )
 		{
@@ -912,9 +914,10 @@ int MsgSocket::Send(int Sendlen, const char* buf)
 {
 	int TotalLen = 0;
 
-	SmartLocker SL_protectSend(protectSend);
 	try
 	{
+		SmartLocker SL_protectSend(protectSend);
+
 		if ( Sendlen > maxBIPMessageSize )
 		{
 			int HeaderSend	= 0;

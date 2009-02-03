@@ -235,7 +235,7 @@ ServiceProxy::~ServiceProxy()
 	 * Returns the list of variables
 	 * @return the list of variables
 	 */
-SimpleList<SimpleString>& ServiceProxy::GetVariables()
+MutexedSimpleList<SimpleString>& ServiceProxy::GetVariables()
 {
 	return GetVariableNameList();
 }
@@ -244,7 +244,7 @@ SimpleList<SimpleString>& ServiceProxy::GetVariables()
 	* Returns the list of connectors (input type)
 	* @return the list of connectors
 	*/
-SimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
+MutexedSimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
 {
 	// We got everything
 	if ( FullDescription == true )
@@ -262,7 +262,7 @@ SimpleList<SimpleString>& ServiceProxy::GetInputConnectors()
 	* Returns the list of connectors (output type)
 	* @return the list of connectors
 	*/
-SimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
+MutexedSimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
 {
 	// We got everything
 	if ( FullDescription == true )
@@ -280,7 +280,7 @@ SimpleList<SimpleString>& ServiceProxy::GetOutputConnectors()
 	 * Returns the list of connectors (input-output type)
 	 * @return the list of connectors
 	 */
-SimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
+MutexedSimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
 {
 	// We got everything
 	if ( FullDescription == true )

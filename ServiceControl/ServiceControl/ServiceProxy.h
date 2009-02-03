@@ -43,25 +43,25 @@ public:
 	 * Returns the list of variables
 	 * @return the list of variables
 	 */
-	SimpleList<SimpleString>& GetVariables();
+	MutexedSimpleList<SimpleString>& GetVariables();
 
 	/**
 	 * Returns the list of connectors (input type)
 	 * @return the list of connectors
 	 */
-	SimpleList<SimpleString>& GetInputConnectors();
+	MutexedSimpleList<SimpleString>& GetInputConnectors();
 
 	/**
 	 * Returns the list of connectors (output type)
 	 * @return the list of connectors
 	 */
-	SimpleList<SimpleString>& GetOutputConnectors();
+	MutexedSimpleList<SimpleString>& GetOutputConnectors();
 
 	/**
 	 * Returns the list of connectors (input-output type)
 	 * @return the list of connectors
 	 */
-	SimpleList<SimpleString>& GetInputOutputConnectors();
+	MutexedSimpleList<SimpleString>& GetInputOutputConnectors();
 
 	/**
 	 * Updates the local view of a remote Omiscid service :

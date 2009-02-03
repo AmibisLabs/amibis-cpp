@@ -168,6 +168,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    * @param var_name [in] the variable name
    */
   void Subscribe(const SimpleString var_name);
+
   /** @brief Ask for receive variable modification no longer
    * @param var_name [in] the variable name
    */
@@ -201,6 +202,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   InOutputAttribute* FindInOutput(const SimpleString name);
   //@}
 
+#ifndef DEBUG
   /** @name Display Name of known attributes */
   //@{
   /*! Display the variable names on the standard output */
@@ -212,30 +214,42 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   /*! Display the inoutput names on the standard output */
   void DisplayInOutputName();
   //@}
+#else
+  /** @name Display Name of known attributes */
+  //@{
+  /*! Display the variable names on the standard output */
+  void DisplayVariableName() {};
+  /*! Display the output names on the standard output */
+  void DisplayOutputName() {};
+  /*! Display the input names on the standard output */
+  void DisplayInputName() {};
+  /*! Display the inoutput names on the standard output */
+  void DisplayInOutputName() {};
+  //@}
+#endif	// ndef DEBUG
 
   /** \name Accss to list of attribute by kind */
   //@{
   /** \brief Access to the list of variable name */
-  SimpleList<SimpleString>& GetVariableNameList();
+  MutexedSimpleList<SimpleString>& GetVariableNameList();
   /** \brief Access to the list of variable object */
-  SimpleList<VariableAttribute*>& GetVariableList();
+  MutexedSimpleList<VariableAttribute*>& GetVariableList();
 
   /** \brief Access to the list of input name */
-  SimpleList<SimpleString>& GetInputNameList();
+  MutexedSimpleList<SimpleString>& GetInputNameList();
   /** \brief Access to the list of input object */
-  SimpleList<InOutputAttribute*>& GetInputList();
+  MutexedSimpleList<InOutputAttribute*>& GetInputList();
 
   /** \brief Access to the list of output name */
-  SimpleList<SimpleString>& GetOutputNameList();
+  MutexedSimpleList<SimpleString>& GetOutputNameList();
   /** \brief Access to the list of output object */
-  SimpleList<InOutputAttribute*>& GetOutputList();
+  MutexedSimpleList<InOutputAttribute*>& GetOutputList();
 
   /** \brief Access to the list of inoutput name */
-  SimpleList<SimpleString>& GetInOutputNameList();
+  MutexedSimpleList<SimpleString>& GetInOutputNameList();
   /** \brief Access to the list of inoutput object */
-  SimpleList<InOutputAttribute*>& GetInOutputList();
+  MutexedSimpleList<InOutputAttribute*>& GetInOutputList();
   //@}
-
 
   /** \brief Process Control Event
    *
@@ -347,18 +361,18 @@ private:
 protected:
   /** \name List of name */
   //@{
-  SimpleList<SimpleString> listVariableName; /*!< list of variable name */
-  SimpleList<SimpleString> listInputName; /*!< list of input name */
-  SimpleList<SimpleString> listOutputName; /*!< list of output name */
-  SimpleList<SimpleString> listInOutputName; /*!< list of inoutput name */
+  MutexedSimpleList<SimpleString> listVariableName; /*!< list of variable name */
+  MutexedSimpleList<SimpleString> listInputName; /*!< list of input name */
+  MutexedSimpleList<SimpleString> listOutputName; /*!< list of output name */
+  MutexedSimpleList<SimpleString> listInOutputName; /*!< list of inoutput name */
   //@}
 
   /** \name List of attributes*/
   //@{
-  SimpleList<VariableAttribute*> listVariableAttr; /*!< list of variable attribute*/
-  SimpleList<InOutputAttribute*> listInputAttr; /*!< list of input attribute*/
-  SimpleList<InOutputAttribute*> listOutputAttr; /*!< list of output attribute*/
-  SimpleList<InOutputAttribute*> listInOutputAttr; /*!< list of inoutput attribute*/
+  MutexedSimpleList<VariableAttribute*> listVariableAttr; /*!< list of variable attribute*/
+  MutexedSimpleList<InOutputAttribute*> listInputAttr; /*!< list of input attribute*/
+  MutexedSimpleList<InOutputAttribute*> listOutputAttr; /*!< list of output attribute*/
+  MutexedSimpleList<InOutputAttribute*> listInOutputAttr; /*!< list of inoutput attribute*/
   //@}
 
  /** @brief Init this object
@@ -372,6 +386,7 @@ protected:
 private:
   CtrlEventListener callback; /*!< callback for event processing */
   void* userDataPtr; /*!< pointer on data for the callback */
+  ReentrantMutex AutoProtect; /*!< a mutex to protect myself */
 
 protected:
   // standard Omiscid Xsd Schemas validators

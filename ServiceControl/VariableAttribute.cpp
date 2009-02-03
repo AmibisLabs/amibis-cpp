@@ -48,16 +48,23 @@ const SimpleString& VariableAttribute::AccessToStr(VariableAccessType a)
 
 bool VariableAttribute::IsInitialised()
 {
+	// Not really needed
+	// SmartLocker SL_LockThis(*this);
+
 	return Initialised;
 }
 
 void VariableAttribute::GenerateShortDescription(SimpleString& str)
 {
+	SmartLocker SL_LockThis(*this);
+
 	GenerateHeaderDescription(VariableStr, GetName(), str);
 }
 
 void VariableAttribute::GenerateLongDescription(SimpleString& str)
 {
+	SmartLocker SL_LockThis(*this);
+
 	GenerateHeaderDescription(VariableStr, GetName(), str, false);
 
 	str += "<value>";
@@ -91,6 +98,8 @@ void VariableAttribute::GenerateValueMessage(SimpleString& str)
 
 void VariableAttribute::Display()
 {
+	SmartLocker SL_LockThis(*this);
+
 	printf("Name : %s\n", GetName().GetStr() );
 	printf("Type : %s\n", type.GetStr());
 	printf("Default Value : %s\n", defaultValue.GetStr());
@@ -101,6 +110,8 @@ void VariableAttribute::Display()
 
 void VariableAttribute::SetValue(const SimpleString value_str)
 {
+	SmartLocker SL_LockThis(*this);
+
 	if ( valueStr == value_str )
 	{
 		// This appends when we remotely ask for a change
@@ -110,7 +121,6 @@ void VariableAttribute::SetValue(const SimpleString value_str)
 	}
 
 	// ask to all listener if we can change the value
-	SmartLocker SL_Listeners(Listeners);
 
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
@@ -137,6 +147,8 @@ void VariableAttribute::SetValue(const SimpleString value_str)
 
 void VariableAttribute::SetValueFromControl(const SimpleString value_str)
 {
+	SmartLocker SL_LockThis(*this);
+
 	if ( valueStr == value_str )
 	{
 		// This appends when we ask for a change without validation
@@ -153,8 +165,6 @@ void VariableAttribute::SetValueFromControl(const SimpleString value_str)
 	Initialised = true;
 
 	// Ok the value has change, send information back to people
-	SmartLocker SL_Listeners(Listeners);
-
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
 	{
 		Listeners.GetCurrent()->VariableChanged( this );
@@ -163,6 +173,7 @@ void VariableAttribute::SetValueFromControl(const SimpleString value_str)
 
 void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
 {
+	SmartLocker SL_LockThis(*this);
 
 	xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", node);
 	if(attr_name)
@@ -228,36 +239,50 @@ void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
 
 void VariableAttribute::SetType(const SimpleString t)
 {
+	SmartLocker SL_LockThis(*this);
+
 	type = t;
 }
 
 void VariableAttribute::SetAccess(VariableAccessType a)
 {
+	SmartLocker SL_LockThis(*this);
+
 	access = a;
 }
 
 void VariableAttribute::SetAccessRead()
 {
+	SmartLocker SL_LockThis(*this);
+
 	access = ReadAccess;
 }
 
 void VariableAttribute::SetAccessConstant()
 {
+	SmartLocker SL_LockThis(*this);
+
 	access = ConstantAccess;
 }
 
 void VariableAttribute::SetAccessReadWrite()
 {
+	SmartLocker SL_LockThis(*this);
+
 	access = ReadWriteAccess;
 }
 
 void VariableAttribute::SetDefaultValue(const SimpleString str)
 {
+	SmartLocker SL_LockThis(*this);
+
 	defaultValue = str;
 }
 
 SimpleString& VariableAttribute::GetValue()
 {
+	SmartLocker SL_LockThis(*this);
+
 	if ( Initialised == false )
 	{
 		// SimpleString TmpString;
@@ -273,21 +298,29 @@ SimpleString& VariableAttribute::GetValue()
 
 SimpleString& VariableAttribute::GetType()
 {
+	SmartLocker SL_LockThis(*this);
+
 	return type;
 }
 
 VariableAccessType VariableAttribute::GetAccess()
 {
+	SmartLocker SL_LockThis(*this);
+
 	return access;
 }
 
 SimpleString& VariableAttribute::GetDefaultValue()
 {
+	SmartLocker SL_LockThis(*this);
+
 	return defaultValue;
 }
 
 bool VariableAttribute::CanBeModifiedFromInside(ControlServerStatus status) const
 {
+	SmartLocker SL_LockThis(*this);
+
 	if ( access == ConstantAccess && status == STATUS_RUNNING )
 	{
 		return false;
@@ -295,8 +328,10 @@ bool VariableAttribute::CanBeModifiedFromInside(ControlServerStatus status) cons
 	return true;
 }
 
- bool VariableAttribute::CanBeModifiedFromOutside(ControlServerStatus status) const
+bool VariableAttribute::CanBeModifiedFromOutside(ControlServerStatus status) const
 {
+	SmartLocker SL_LockThis(*this);
+
 	return (access == ReadWriteAccess || (access == ConstantAccess && status != STATUS_RUNNING));
 }
 
@@ -310,7 +345,7 @@ bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
 		return false;
 	}
 
-	SmartLocker SL_Listeners(Listeners);
+	SmartLocker SL_LockThis(*this);
 
 	// look if it is already there..
 	for( Listeners.First(); Listeners.NotAtEnd(); Listeners.Next() )
@@ -330,28 +365,23 @@ bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
    /** \brief remove a listener to this variable.
    *
    */
-bool VariableAttribute::RemoveListener( VariableAttributeListener *  ListenerToAdd )
+bool VariableAttribute::RemoveListener( VariableAttributeListener *  ListenerToRemove )
 {
-	bool ret;
-
-	if ( ListenerToAdd == NULL )
+	if ( ListenerToRemove == NULL )
 	{
 		return false;
 	}
 
-	// Remove it if any
-	SmartLocker SL_Listeners(Listeners);
+	SmartLocker SL_LockThis(*this);
 
-	ret = Listeners.Remove(ListenerToAdd);
-
-	return ret;
+	return Listeners.Remove(ListenerToRemove);
 }
 
 unsigned int VariableAttribute::GetNumberOfListeners()
 {
-	unsigned int ret;
+	SmartLocker SL_LockThis(*this);
 
-	SmartLocker SL_Listeners(Listeners);
+	unsigned int ret;
 
 	ret = Listeners.GetNumberOfElements();
 

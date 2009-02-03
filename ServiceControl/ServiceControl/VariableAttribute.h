@@ -10,6 +10,7 @@
 #include <ServiceControl/ConfigServiceControl.h>
 
 #include <System/SimpleList.h>
+#include <System/ReentrantMutex.h>
 #include <ServiceControl/Attribute.h>
 #include <ServiceControl/VariableAttributeListener.h>
 
@@ -31,7 +32,7 @@ class VariableAttributeListener;
  * When the value change, a callback can be called :
  * used by ControlServer to enable users to subscribe to variable modification.
  */
-class VariableAttribute : public Attribute
+class VariableAttribute : public Attribute, protected ReentrantMutex
 {
 	friend class ControlServer;
 	friend class ControlClient;
@@ -194,7 +195,6 @@ protected:
 
 private:
   SimpleList<VariableAttributeListener*> Listeners;
-  Mutex LockVariable;
   bool Initialised;
 };
 

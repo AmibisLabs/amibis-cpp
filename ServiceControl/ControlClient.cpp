@@ -345,7 +345,7 @@ bool ControlClient::QueryGlobalDescription()
 {
 	SimpleString request("");
 	XMLMessage* msg = QueryToServer(request);
-	if(msg)
+	if ( msg != (XMLMessage*) )
 	{
 		ProcessGlobalDescription(msg);
 		delete msg;
@@ -360,9 +360,9 @@ VariableAttribute* ControlClient::QueryVariableDescription(const SimpleString va
 
 	bool name_in_list = true;
 
-	if(!var_attr)
+	if ( !var_attr )
 	{
-		if(!NameInList(var_name, listVariableName))
+		if ( NameInList(var_name, listVariableName) == false )
 		{
 			OmiscidTrace( "Unknown variable '%s', ask to the service.\n", var_name.GetStr());
 			name_in_list = false;
@@ -371,7 +371,7 @@ VariableAttribute* ControlClient::QueryVariableDescription(const SimpleString va
 
 	SimpleString request = "<variable name=\"" + var_name + "\"/>";
 	XMLMessage* msg = QueryToServer(request);
-	if(msg)
+	if ( msg != (XMLMessage*)NULL )
 	{
 		VariableAttribute* attr = NULL;
 		if(msg->GetRootNode()->children != NULL)
@@ -408,7 +408,6 @@ VariableAttribute* ControlClient::QueryVariableModif(const SimpleString var_name
 	}
 
 	SimpleString request = "<variable name=\"" + SimpleString(var_name) + "\">";
-
 
 	request +=  "<value>";
 	VariableAttribute::PutAValueInCData(value_str, request);
@@ -669,7 +668,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 	{
 		SimpleString name = (const char*)(cur_node->name);
 		// std::cerr << "tag name="<<(*it)->name <<"\n";
-		if( name == InOutputAttribute::input_str.GetStr() )	// an Inpout
+		if( name == InOutputAttribute::input_str )	// an Inpout
 		{
 			pAtt = ProcessInputDescription( cur_node, NULL );
 			if ( pAtt != NULL )
@@ -678,7 +677,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 				listInputAttr.Add( pAtt );
 			}
 		}
-		else if ( name == InOutputAttribute::output_str.GetStr() ) // an Output
+		else if ( name == InOutputAttribute::output_str ) // an Output
 		{
 			pAtt = ProcessOutputDescription( cur_node, NULL );
 			if ( pAtt != NULL )
@@ -687,7 +686,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 				listOutputAttr.Add( pAtt );
 			}
 		}
-		else if ( name == InOutputAttribute::inoutput_str.GetStr() ) // an InOutput
+		else if ( name == InOutputAttribute::inoutput_str ) // an InOutput
 		{
 			pAtt = ProcessInOutputDescription( cur_node, NULL );
 			if ( pAtt != NULL )
@@ -696,7 +695,7 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 				listInOutputAttr.Add( pAtt );
 			}
 		}
-		else if( name == VariableAttribute::VariableStr.GetStr() )
+		else if( name == VariableAttribute::VariableStr )
 		{
 			pVar = ProcessVariableDescription( cur_node, NULL );
 			if ( pVar != NULL )
@@ -718,7 +717,9 @@ VariableAttribute* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 															VariableAttribute* var_attr)
 {
 	if( !node || VariableAttribute::VariableStr != (const char*)node->name )
+	{
 		return NULL;
+	}
 
 #if defined DEBUG
 	// XMLMessage::DisplayNode(node, stderr);
@@ -742,8 +743,11 @@ VariableAttribute* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 InOutputAttribute* ControlClient::ProcessInputDescription(xmlNodePtr node, InOutputAttribute* input_attr)
 {
 	//std::cerr << "ControlClient::ProcessInputDescription : Not Yet Implemented\n";
-	if( !node || InOutputAttribute::input_str != (const char*)node->name )
+	if( node == (xmlNodePtr)NULL || InOutputAttribute::input_str != (const char*)node->name )
+	{
 		return NULL;
+	}
+
 	InOutputAttribute* inattr = NULL;
 	if(input_attr) inattr = input_attr;
 	else inattr = new OMISCID_TLM InOutputAttribute("", AnInput);
@@ -752,11 +756,15 @@ InOutputAttribute* ControlClient::ProcessInputDescription(xmlNodePtr node, InOut
 
 	return inattr;
 }
+
 InOutputAttribute* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOutputAttribute* output_attr)
 {
 	//std::cerr << "ControlClient::ProcessOutputDescription : Not Yet Implemented\n";
-	if(!node || InOutputAttribute::output_str != (const char*)node->name )
+	if( node == (xmlNodePtr)NULL || InOutputAttribute::output_str != (const char*)node->name )
+	{
 		return NULL;
+	}
+
 	InOutputAttribute* outattr = NULL;
 	if(output_attr)
 	{
@@ -773,11 +781,18 @@ InOutputAttribute* ControlClient::ProcessOutputDescription(xmlNodePtr node, InOu
 InOutputAttribute* ControlClient::ProcessInOutputDescription(xmlNodePtr node, InOutputAttribute* in_output_attr)
 {
 	//std::cerr << "ControlClient::ProcessInOutputDescription : Not Yet Implemented\n";
-	if(!node || InOutputAttribute::inoutput_str != (const char*)node->name)
+	if ( node == (xmlNodePtr)NULL || InOutputAttribute::inoutput_str != (const char*)node->name )
 		return NULL;
+
 	InOutputAttribute* in_outattr = NULL;
-	if(in_output_attr) in_outattr = in_output_attr;
-	else in_outattr = new OMISCID_TLM InOutputAttribute("", AnInOutput);
+	if ( in_output_attr )
+	{
+		in_outattr = in_output_attr;
+	}
+	else
+	{
+		in_outattr = new OMISCID_TLM InOutputAttribute("", AnInOutput);
+	}
 
 	in_outattr->ExtractDataFromXml(node);
 
@@ -803,7 +818,6 @@ bool ControlClient::NameInList(const SimpleString name, SimpleList<SimpleString>
 	return false;
 }
 
-
 VariableAttribute* ControlClient::FindVariable(const SimpleString name)
 {
 	for(listVariableAttr.First(); listVariableAttr.NotAtEnd();
@@ -814,6 +828,7 @@ VariableAttribute* ControlClient::FindVariable(const SimpleString name)
 	}
 	return NULL;
 }
+
 InOutputAttribute* ControlClient::FindInput(const SimpleString name)
 {
 	for(listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next())
@@ -823,6 +838,7 @@ InOutputAttribute* ControlClient::FindInput(const SimpleString name)
 	}
 	return NULL;
 }
+
 InOutputAttribute* ControlClient::FindOutput(const SimpleString name)
 {
 	for(listOutputAttr.First(); listOutputAttr.NotAtEnd(); listOutputAttr.Next())
@@ -832,6 +848,7 @@ InOutputAttribute* ControlClient::FindOutput(const SimpleString name)
 	}
 	return NULL;
 }
+
 InOutputAttribute* ControlClient::FindInOutput(const SimpleString name)
 {
 	for(listInOutputAttr.First(); listInOutputAttr.NotAtEnd();
@@ -864,6 +881,7 @@ void ControlClient::Subscribe(const SimpleString var_name)
 		OmiscidTrace( "variable unknown by client\n");
 	}
 }
+
 void ControlClient::Unsubscribe(const SimpleString var_name)
 {
 	VariableAttribute* va = FindVariable(var_name);
@@ -924,10 +942,10 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 		{
 			xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", current);
 			VariableAttribute* va = FindVariable((const char*)attr_name->children->content);
-			if(va)
+			if ( va != (VariableAttribute*)NULL )
 			{
 				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", current);
-				if (val_node)
+				if ( val_node != (xmlNodePtr)NULL )
 				{
 					va->SetValue((const char*)val_node->children->content);
 				}
@@ -944,6 +962,7 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 	}
 }
 
+#ifndef DEBUG
 void ControlClient::DisplayVariableName()
 {
 	DisplayListName(listVariableName, "Variable Name :");
@@ -963,43 +982,44 @@ void ControlClient::DisplayInOutputName()
 {
 	DisplayListName(listInOutputName, "InOutput Name :");
 }
+#endif
 
-SimpleList<SimpleString>& ControlClient::GetVariableNameList()
+MutexedSimpleList<SimpleString>& ControlClient::GetVariableNameList()
 {
 	return listVariableName;
 }
 
-SimpleList<VariableAttribute*>& ControlClient::GetVariableList()
+MutexedSimpleList<VariableAttribute*>& ControlClient::GetVariableList()
 {
 	return listVariableAttr;
 }
 
-SimpleList<SimpleString>& ControlClient::GetInputNameList()
+MutexedSimpleList<SimpleString>& ControlClient::GetInputNameList()
 {
 	return listInputName;
 }
 
-SimpleList<InOutputAttribute*>& ControlClient::GetInputList()
+MutexedSimpleList<InOutputAttribute*>& ControlClient::GetInputList()
 {
 	return listInputAttr;
 }
 
-SimpleList<SimpleString>& ControlClient::GetOutputNameList()
+MutexedSimpleList<SimpleString>& ControlClient::GetOutputNameList()
 {
 	return listOutputName;
 }
 
-SimpleList<InOutputAttribute*>& ControlClient::GetOutputList()
+MutexedSimpleList<InOutputAttribute*>& ControlClient::GetOutputList()
 {
 	return listOutputAttr;
 }
 
-SimpleList<SimpleString>& ControlClient::GetInOutputNameList()
+MutexedSimpleList<SimpleString>& ControlClient::GetInOutputNameList()
 {
 	return listInOutputName;
 }
 
-SimpleList<InOutputAttribute*>& ControlClient::GetInOutputList()
+MutexedSimpleList<InOutputAttribute*>& ControlClient::GetInOutputList()
 {
 	return listInOutputAttr;
 }

@@ -185,7 +185,7 @@ bool ControlServer::StartServer()
 		port = GetSocket()->GetPortNb();
 		// GetSocket()->GetHostName((char*)hostname, HOST_NAME_MAX_SIZE);
 
-		for(unsigned int NbMaxRegisterTries = 10; NbMaxRegisterTries > 0; NbMaxRegisterTries--)
+		for( unsigned int NbMaxRegisterTries = 10; NbMaxRegisterTries > 0; NbMaxRegisterTries-- )
 		{
 			// Add peerID value
 			TemporaryMemoryBuffer tmp_peerid(30);	// To prevent buffer overflow
@@ -350,12 +350,13 @@ bool ControlServer::StartServer()
 		// Something was wrong...
 		OmiscidError( "Registration of '%s' failed\n", serviceName.GetStr() );
 	}
-	catch(SocketException e)
+	catch(SocketException&) // e)
 	{
-		e.Display();
+		// e.Display();
 	}
 
-	if ( registerDnsSd )
+	// Way out if errors
+	if ( registerDnsSd != (RegisterOmiscidService*)NULL )
 	{
 		// Delete DNS-SD object
 		delete registerDnsSd;
@@ -674,9 +675,9 @@ void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, boo
 	{
 		SimpleString name((const char*)attr->children->content);
 		VariableAttribute* va = FindVariable(name);
-		if( va )
+		if ( va != (VariableAttribute*)NULL )
 		{
-			if (subscribe)
+			if ( subscribe == true )
 			{
 				AddListener(va, peer_id);
 				va->GenerateLongDescription( str_answer );

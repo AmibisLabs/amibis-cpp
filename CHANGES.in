@@ -13,20 +13,35 @@ In this files, you will find changes between OMiSCID versions.
 	- add memory integrity checker facilities when tracking memory
 	leaks (when CHECK_MEMORY_BOUNDARIES is also defined) to check
 	if someone *wrote* out of its memory.
+	- change VariableAttribute working paradigme. Do not use anymore
+	MutexedSimpleList as list and as mutex. Now, use a normal
+	SimpleList and a Mutex.
+	- Add an empty line between sections in this CHANGE file.
+	
 	[Bug corrections]
 	- correct name of GetServiceAccessType (was GetServiceAccessTypeType
 	in Service and ServiceProxy classes).
 	- add body to ServiceProxy::GetServiceAccessType.
-	- correct memory leak problem when nobody is tacking memory leak (sic).
-	- change VariableAttribute working paradigme. Do not use anymore
-	MutexedSimpleList as list and as mutex. Now, use a normal
-	SimpleList and a Mutex.
+	- correct memory leak problem when memory leak tracker is on and
+	nobody is tacking memory leak (sic).
+	- correct core dump problem when modifying localy and remotely
+	the same variable
+	- correct deadlock problem when (massively) multithreading
+	access to ControlSever/ControlClient
+	
 	[API]
 	- MultipleReferencedData now works subclassing ReentrantMutex and
 	not with an simple AtomicCounter anymore. We also add Internal
 	(inline) protected method to manipulate data without locking in
-	order to prevent multiple call to expensive system locks.
+	order to prevent multiple call to expensive system calls.
+	- Use MutexedSimpleList as return values for several functions
+	in ControlClient and ServiceProxy. User must used lock facilities
+	on these returned objects when using it from several threads at the
+	same time.
 	- start to add CopyConstructor for every class.
+	- Remove body of Display* functions in non debug mode for class
+	ControlClient (they are inline empty functions in non debug mode).
+	
 	[Documentation]
 	- still documentation effort.
 

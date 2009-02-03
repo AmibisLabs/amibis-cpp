@@ -11,14 +11,15 @@ StringVariableAttribute::~StringVariableAttribute()
 
 StringVariableAttribute::StringVariableAttribute(VariableAttribute* va, SimpleString value)
 {
-  VariableAtt = va;
-  SetValue(value);
+	VariableAtt = va;
+	SetValue( value );
 }
 
 void StringVariableAttribute::SetValue( SimpleString value )
 {
+	// First set value to the reference VariableAttribute
+	VariableAtt->SetValueFromControl( value );
 	StringValue = value;
-	VariableAtt->SetValueFromControl( StringValue );
 }
 
 SimpleString StringVariableAttribute::GetValue() const

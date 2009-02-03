@@ -196,8 +196,10 @@ int XMLTreeParser::ProcessMessages()
 	while( listXMLMsg.IsNotEmpty() )
 	{
 		msg = listXMLMsg.ExtractFirst();
+		SL_listXMLMsg.Unlock();	// permit to other threads to work usging xml messages queue
 		try
 		{
+			// Process current message
 			ProcessAMessage(msg);
 		}
 		catch( SimpleException &e )
@@ -207,6 +209,9 @@ int XMLTreeParser::ProcessMessages()
 		delete msg;
 		// listXMLMsg.RemoveCurrent();
 		nb++;
+
+		// lock xml messages queue for next iteration
+		SL_listXMLMsg.Lock();
 	}
 
 	return nb;
