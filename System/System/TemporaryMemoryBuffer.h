@@ -42,6 +42,11 @@ public:
 
 	size_t GetLength() const;
 
+	char * GetBuffer()
+	{
+		return Buffer;
+	}
+
 private:
 	char * Buffer;
 	size_t LogicalBufferSize;

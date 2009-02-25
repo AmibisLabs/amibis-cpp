@@ -149,12 +149,16 @@ void SendHugeData::MessageReceived(Service& TheService, const SimpleString Local
 }
 
 #ifdef OMISCID_RUNING_TEST
+#include "TimeoutProg.h"
+
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int Omiscid::DoSendHugeDataTest( int argc, char*argv[] )
+{
+	TimeoutProg ExitIn2Minutes;
 #else
 int main( int argc, char*argv[] )
-#endif
 {
+#endif
 	// Create Service
 	SendHugeData TwoSendHugeData[2];
 

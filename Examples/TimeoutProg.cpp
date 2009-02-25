@@ -17,6 +17,8 @@ TimeoutProg::TimeoutProg(int TimeInMs) :
 	{
 		TimeToTimeOutInMs = TimeInMs;
 	}
+
+	StartThread();
 }
 
 TimeoutProg::~TimeoutProg()
@@ -28,6 +30,7 @@ void FUNCTION_CALL_TYPE TimeoutProg::Run()
 {
 	ElapsedTime TimeAlreadyWaited;
 
+	OmiscidError( "Start to wait for %.2f s before killing myself.\n", ((float)TimeToTimeOutInMs)/1000.0f );
 	while( StopPending() == false && TimeAlreadyWaited.Get() < TimeToTimeOutInMs )
 	{
 		Sleep( 100 );
@@ -35,7 +38,7 @@ void FUNCTION_CALL_TYPE TimeoutProg::Run()
 
 	if ( StopPending() == false )
 	{
-		fprintf( stderr, "Timout !!! (%.2f)\n", ((float)TimeAlreadyWaited.Get())/1000.0f );
+		OmiscidError( "Timout !!! (%.2f)\n", ((float)TimeAlreadyWaited.Get())/1000.0f );
 		exit(-1);
 	}
 }

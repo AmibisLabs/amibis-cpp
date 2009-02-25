@@ -547,9 +547,10 @@ TYPE SimpleList<TYPE>::ExtractFirst()
 	}
 
 	SimpleListElement<TYPE>* elt = Head;
-	if(Head == Tail)
+	if ( Head == Tail )
 	{
-		Head = NULL; Tail = NULL;
+		Head = NULL;
+		Tail = NULL;
 	}
 	else
 	{

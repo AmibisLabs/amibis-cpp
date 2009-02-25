@@ -473,7 +473,7 @@ SimpleString ServiceProxy::GetVariableType(const SimpleString VarName)
 
 	if ( IsConnected() == false )
 	{
-		// Update description if needed
+		// Connect if needed
 		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
 		{
 			throw SimpleException("Can not connect to the Service.");
@@ -787,6 +787,7 @@ VariableAttribute * ServiceProxy::FindVariable( SimpleString VarName )
 		// Try to get the variable if we do not get the full description
 		pVar = QueryVariableDescription(VarName);
 	}
+
 	return pVar;
 }
 

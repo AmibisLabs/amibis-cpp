@@ -110,14 +110,17 @@ ControlServer::~ControlServer()
 	TcpServer::Close();
 	XMLTreeParser::StopThread(0);
 
+	SmartLocker SL_AutoProtect(AutoProtect);
 	SmartLocker SL_listValueListener(listValueListener);
+	SmartLocker SL_listVariable(listVariable);
+	SmartLocker SL_listInOutput(listInOutput);
+
 	for(listValueListener.First(); listValueListener.NotAtEnd();
 		listValueListener.Next())
 	{
 		delete listValueListener.GetCurrent();
 		listValueListener.RemoveCurrent();
 	}
-	SL_listValueListener.Unlock();
 
 	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
 	{
@@ -178,6 +181,8 @@ bool ControlServer::StartServer()
 		return false;
 	}
 
+	SmartLocker SL_AutoProtect(AutoProtect);
+
 	try
 	{
 		Create(0);
@@ -209,6 +214,8 @@ bool ControlServer::StartServer()
 			SetStatus(STATUS_RUNNING);
 
 			SimpleString tmp;
+
+			SmartLocker SL_listVariable(listVariable);
 
 			// Add Constant variable
 			for( listVariable.First(); TxtRecordIsFull != true && listVariable.NotAtEnd(); listVariable.Next() )
@@ -247,6 +254,8 @@ bool ControlServer::StartServer()
 			// Add inputs/outputs/inoutputs
 			if ( TxtRecordIsFull != true )
 			{
+				SmartLocker SL_listInOutput(listInOutput);
+
 				// Add Constant variable
 				for( listInOutput.First(); TxtRecordIsFull != true && listInOutput.NotAtEnd(); listInOutput.Next() )
 				{
@@ -375,6 +384,9 @@ void ControlServer::StartThreadProcessMsg()
 
 void ControlServer::GenerateGlobalShortDescription(SimpleString& str)
 {
+	SmartLocker SL_listVariable(listVariable);
+	SmartLocker SL_listInOutput(listInOutput);
+
 	for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
 	{
 		(listInOutput.GetCurrent())->GenerateShortDescription(str);
@@ -388,6 +400,8 @@ void ControlServer::GenerateGlobalShortDescription(SimpleString& str)
 
 InOutputAttribute* ControlServer::FindInOutput(const SimpleString InOutputName)
 {
+	SmartLocker SL_listInOutput(listInOutput);
+
 	for(listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next())
 	{
 		if ( strcasecmp(InOutputName.GetStr(), listInOutput.GetCurrent()->GetName().GetStr() ) == 0 )
@@ -396,12 +410,23 @@ InOutputAttribute* ControlServer::FindInOutput(const SimpleString InOutputName)
 	return NULL;
 }
 
-VariableAttribute* ControlServer::FindVariable(const SimpleString VarName)
+VariableAttribute* ControlServer::FindVariable(const SimpleString VarName, bool LockIt /* = false */ )
 {
+	SmartLocker SL_listVariable(listVariable);
+
+	VariableAttribute* pVar;
+
 	for(listVariable.First(); listVariable.NotAtEnd(); listVariable.Next())
 	{
 		if( strcasecmp( VarName.GetStr(), listVariable.GetCurrent()->GetName().GetStr() ) == 0 )
-			return listVariable.GetCurrent();
+		{
+			pVar = listVariable.GetCurrent();
+			if ( LockIt == true )
+			{
+				pVar->Lock(); // Add SL_ as comment in order to prevent false alarm in code checker on locks
+			}
+			return pVar;
+		}
 	}
 	return NULL;
 }
@@ -419,18 +444,24 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 
 	xmlNodePtr node = msg->GetRootNode();
 
+	SmartLocker SL_AutoProtect(AutoProtect);
+
 	// if( strcmp((const char*)node->name, "controlQuery") == 0 )
 	if ( ControlQueryValidator.ValidateDoc(msg->doc) )
 	{
+		SL_AutoProtect.Unlock();
+
 		SimpleString id;
 		xmlAttrPtr attr = XMLMessage::FindAttribute("id", node);
-		if(attr)
-		{ id = SimpleString((const char*)attr->children->content);}
+		if ( attr != (xmlAttrPtr)NULL )
+		{
+			id = SimpleString((const char*)attr->children->content);
+		}
 
 		bool ReplyAnAnswer = true;	// default
 		SimpleString str;
 
-		if(node->children == NULL)
+		if ( node->children == NULL )
 		{
 			//global description
 			GenerateGlobalShortDescription(str);
@@ -494,12 +525,14 @@ void ControlServer::ProcessAMessage(XMLMessage* msg)
 				+ str
 				+ "</controlAnswer>";
 
-	#ifdef DEBUG
+#ifdef DEBUG
+			SL_AutoProtect.Lock();
 			if ( ControlAnswerValidator.ValidateDoc( str ) == false )
 			{
 				OmiscidError( "ControlServer::ProcessAMessage: bad ControlAnswer sent.\n" );
 			}
-	#endif
+			SL_AutoProtect.Unlock();
+#endif
 
 			SmartLocker SL_TcpServer_listConnections(TcpServer::listConnections);
 
@@ -534,11 +567,11 @@ void ControlServer::ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answ
 	{
 		xmlAttrPtr attr = XMLMessage::FindAttribute("name", node);
 		bool found = (attr != NULL);
-		if(found)
+		if ( found )
 		{
 			SimpleString name((const char*)attr->children->content);
 			InOutputAttribute* ioa = FindInOutput(name);
-			if(ioa)
+			if (ioa)
 			{
 				ioa->GenerateLongDescription(str_answer);
 			}
@@ -559,13 +592,13 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 	if ( found )
 	{
 		SimpleString name((const char*)attr->children->content);
-		VariableAttribute* va = FindVariable(name);
+		VariableAttribute* va = FindVariable( name, true);
 
 		// OmiscidTrace( "Query on name '%s' in %8.8x\n", name.GetStr(), GetServiceId() );
 
-		if(va)
+		if ( va != (VariableAttribute*)NULL )
 		{
-			if(node->children == NULL)
+			if ( node->children == NULL)
 			{
 				// OmiscidTrace( "GenerateLongDescription\n" );
 				va->GenerateLongDescription(str_answer);
@@ -574,9 +607,9 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 			{
 				// OmiscidTrace( "VariableChange\n" );
 				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", node);
-				if(val_node)
+				if ( val_node )
 				{
-					if(LockOk(pid) && va->CanBeModifiedFromOutside(GetStatus()))
+					if( LockOk(pid) && va->CanBeModifiedFromOutside(GetStatus()) )
 					{
 						//if(va->GetType() == "xml")
 						//{
@@ -602,6 +635,8 @@ void ControlServer::ProcessVariableQuery(xmlNodePtr node, unsigned int pid, Simp
 					va->GenerateLongDescription(str_answer);
 				}
 			}
+
+			va->Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on locks
 		}
 	}
 	else
@@ -645,12 +680,12 @@ void ControlServer::ProcessConnectQuery(xmlNodePtr node, SimpleString& str_answe
 				else
 				{
 					OmiscidError( "in connect query : unused tag :\n");
-#if defined DEBUG
+#ifdef DEBUG
 					XMLMessage::DisplayNode(cur_node, stderr);
 #endif
 				}
 			}
-			if(found_port && found_host)
+			if ( found_port && found_host )
 			{
 				Connect(host, port, tcp, ioa);
 				ioa->GenerateConnectAnswer(str_answer);
@@ -674,7 +709,7 @@ void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, boo
 	else
 	{
 		SimpleString name((const char*)attr->children->content);
-		VariableAttribute* va = FindVariable(name);
+		VariableAttribute* va = FindVariable(name, true);
 		if ( va != (VariableAttribute*)NULL )
 		{
 			if ( subscribe == true )
@@ -686,6 +721,8 @@ void ControlServer::ProcessSubscribeQuery(xmlNodePtr node, unsigned peer_id, boo
 			{
 				RemoveListener(va, peer_id);
 			}
+
+			va->Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on locks
 		}
 	}
 }
@@ -725,6 +762,9 @@ void ControlServer::ProcessLockQuery(xmlNodePtr node, unsigned int pid, bool loc
 
 void ControlServer::ProcessFullDescriptionQuery(xmlNodePtr node, SimpleString& str_answer)
 {
+	SmartLocker SL_listInOutput(listInOutput);
+	SmartLocker SL_listVariable(listVariable);
+
 	// Add InOutput description
 	for( listInOutput.First(); listInOutput.NotAtEnd(); listInOutput.Next() )
 	{
@@ -738,12 +778,14 @@ void ControlServer::ProcessFullDescriptionQuery(xmlNodePtr node, SimpleString& s
 	}
 }
 
-bool ControlServer::LockOk(unsigned int peer){
+bool ControlServer::LockOk(unsigned int peer)
+{
 	RefreshLock();
 	return (lockIntVariable->GetValue() == 0) || (((unsigned int)lockIntVariable->GetValue()) == peer);
 }
 
-void ControlServer::RefreshLock(){
+void ControlServer::RefreshLock()
+{
 	unsigned int peer = (unsigned int)lockIntVariable->GetValue();
 	if(peer != 0){
 		if(!IsStillConnected(peer)){
@@ -756,7 +798,7 @@ void ControlServer::Connect(const SimpleString host, int port, bool tcp, InOutpu
 {
 #ifdef DEBUG
 	fprintf(stderr, "in ControlServer::Connect (%s:%d", host.GetStr(), port);
-	if(tcp) fprintf(stderr, " [TCP] "); else fprintf(stderr, " [UDP] ");
+	if (tcp) fprintf(stderr, " [TCP] "); else fprintf(stderr, " [UDP] ");
 	fprintf(stderr, "%s\n", ioa->GetName().GetStr());
 #endif
 }
@@ -809,10 +851,14 @@ VariableAttribute* ControlServer::AddVariable(const SimpleString VarName)
 	}
 
 	VariableAttribute* va = new OMISCID_TLM VariableAttribute(VarName);
-	listVariable.Add(va);
+
+	SmartLocker SL_listVariable(listVariable);
 
 	// I am the first listener
 	va->AddListener( this );
+
+	// Put it in the list
+	listVariable.Add(va);
 
 	return va;
 }
@@ -858,6 +904,7 @@ InOutputAttribute* ControlServer::AddInOutput(const SimpleString InOutputName, C
 		com_tool->SetServiceId( GetServiceId() | ConnectorId );
 	}
 
+	SmartLocker SL_listInOutput(listInOutput);
 	listInOutput.Add(ioa);
 
 	return ioa;
@@ -995,16 +1042,20 @@ bool ValueListener::HasListener() const
 
 unsigned int ControlServer::GetServiceId() const
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
 	return serviceId;
 }
 
 void ControlServer::DisplayServiceId() const
 {
+	// SmartLocker SL_AutoProtect(AutoProtect); not really needed
 	printf("%u\n", serviceId);
 }
 
 bool ControlServer::SetServiceName(const SimpleString service_name)
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
+
 	if ( registerDnsSd && registerDnsSd->IsRegistered() )
 	{
 		return false;
@@ -1033,21 +1084,25 @@ void ControlServer::DisplayServiceGlobalShortDescription()
 
 ControlServerStatus ControlServer::GetStatus() const
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
 	return (ControlServerStatus)Status;
 }
 
 void ControlServer::SetStatus(ControlServerStatus s)
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
 	Status = s;
 }
 
 const SimpleString& ControlServer::GetServiceName()
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
 	return serviceName;
 }
 
 const SimpleString& ControlServer::GetRegisteredServiceName()
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
 	if ( registerDnsSd )
 	{
 		return registerDnsSd->RegisteredName;
@@ -1064,6 +1119,7 @@ const SimpleString& ControlServer::GetRegisteredServiceName()
    */
 void ControlServer::SetClass( const SimpleString Class )
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
 	ClassVariable->SetValue( Class );
 }
 
@@ -1073,5 +1129,6 @@ void ControlServer::SetClass( const SimpleString Class )
    */
 const SimpleString ControlServer::GetClass()
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
 	return ClassVariable->GetValue();
 }

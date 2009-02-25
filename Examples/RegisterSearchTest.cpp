@@ -28,13 +28,18 @@ void RegisterAndSearchUsage(char * ProgramName)
 }
 
 #ifdef OMISCID_RUNING_TEST
+
+#include "TimeoutProg.h"
+
 // Call test in a separate function
 int DoRegisterSearchTest(int argc, char*argv[] )
+{
+	TimeoutProg ExitIn2Minutes;
 #else
 /* @brief main program entry. No need to give parameter */
 int main(int argc, char*argv[] )
-#endif // OMISCID_RUNING_TEST
 {
+#endif // OMISCID_RUNING_TEST
 	unsigned int i;
 	int j;
 

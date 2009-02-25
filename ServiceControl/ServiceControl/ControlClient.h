@@ -184,7 +184,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    * @param name [in] the variable name
    * @return NULL if the variable is not found, else a pointer on a structure with the data about the variable
    */
-  VariableAttribute* FindVariable(const SimpleString name);
+  VariableAttribute* FindVariable(const SimpleString name, bool LockIt = false );
   /** @brief Access to data about an input
    * @param name [in] the input name
    * @return NULL if the input is not found, else a pointer on a structure with the data about the input
@@ -202,7 +202,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   InOutputAttribute* FindInOutput(const SimpleString name);
   //@}
 
-#ifndef DEBUG
+#ifdef DEBUG
   /** @name Display Name of known attributes */
   //@{
   /*! Display the variable names on the standard output */
@@ -226,7 +226,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   /*! Display the inoutput names on the standard output */
   void DisplayInOutputName() {};
   //@}
-#endif	// ndef DEBUG
+#endif	// ifdef DEBUG
 
   /** \name Accss to list of attribute by kind */
   //@{
@@ -347,14 +347,14 @@ private:
    * \param list_of_name [in] list with the name to display
    * \param entete [in] give the kind of name displayed
    */
-  void DisplayListName(SimpleList<SimpleString>& list_of_name, const SimpleString& entete);
+  void DisplayListName(MutexedSimpleList<SimpleString>& list_of_name, const SimpleString& entete);
 
   /** \brief Test if a name is existing in a list
    * \param name [in] the researched name
    * \param list_name [in] the list of name
    * \return true if the name is in the list of name
    */
-  bool NameInList(const SimpleString name, SimpleList<SimpleString>& list_name);
+  bool NameInList(const SimpleString name, MutexedSimpleList<SimpleString>& list_name);
 
    unsigned int id; /*!< query id */
 

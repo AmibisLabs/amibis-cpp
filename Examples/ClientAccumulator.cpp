@@ -53,13 +53,19 @@ public:
 } // namespace Omiscid
 
 #ifdef OMISCID_RUNING_TEST
+
+#include "TimeoutProg.h"
+
 // Call test in a separate function
 int DoClientAccumulator( int argc, char*argv[] )
+{
+	TimeoutProg ExitIn2Minutes;
 #else
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int main( int argc, char*argv[] )
-#endif // OMISCID_RUNING_TEST
 {
+#endif // OMISCID_RUNING_TEST
+
 	// Instanciate a Connector and a Variable listener (must *not* be destroyed before it has
 	// been removed for the connector or until the service is destroyed).
 	ClientConnectorAndVariableListener MyListener;

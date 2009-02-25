@@ -105,6 +105,7 @@ sub LogOk()
 {
 	my $fdpb;
 	my $line;
+	my $IsOk = 1;
 	
 	# Empty problem file.
 	open( $fdpb, "<$NameOfLogFile" );
@@ -112,12 +113,18 @@ sub LogOk()
 	{
 		if ( $line =~ /^ERR:/ )
 		{
-			close( $fdpb );	
-			return 0;
+			$IsOk = 0;
+			next;
+		}
+		if ( $line =~ /^  Start test phase on/ )
+		{
+			# New start, remove previous error (previous try)
+			$IsOk = 1;
+			next;
 		}
 	}
 	close( $fdpb );	
-	return 1;
+	return $IsOk;
 }
 
 # default values for parameters
@@ -390,22 +397,23 @@ foreach $DebugFlag ( ('1', '0') )
 
 if ( $DoTest == 1 )
 {
-	$Computers{'astree'} = '000e0c5e4586';
-	$Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
-	$Computers{'prometheus'} = '0013202e4fae';
-	$Options{'prometheus'}   = '("zeroconf=avahi")'; # debugthread=1")';
-	$Computers{'metis'}  = '000d936fc38c';
-	$Options{'metis'}   = '("")';
+# 	$Computers{'astree'} = '000e0c5e4586';
+# 	$Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
+ 	$Computers{'prometheus'} = '0013202e4fae';
+ 	$Options{'prometheus'}   = '("zeroconf=avahi")'; # debugthread=1")';
+# 	$Computers{'metis'}  = '000d936fc38c';
+# 	$Options{'metis'}   = '("")';
+ 	$Computers{'protee'}  = '000d561ff276';
+ 	$Options{'protee'}   = '("zeroconf=avahi ChMemMode=1")';
+# 	# $Options{'protee'}   = '("zeroconf=mdns ChMemMode=1")';
+# 	# $Options{'protee'}   = '("zeroconf=mdns chmem=1")';
+# 	# $SupportedDebugMode{'protee'} = 'insure';
+ 	$Computers{'puck'}  = '0019b94b4902';
+ 	$Options{'puck'}   = '("")';
+	
 	$Computers{'carme'}  = '000f1f74c296';
 	# $Options{'carme'}   = '("zeroconf=mdns")';
 	$Options{'carme'}   = '("")';
-	$Computers{'protee'}  = '000d561ff276';
-	$Options{'protee'}   = '("zeroconf=avahi ChMemMode=1", "")';
-	# $Options{'protee'}   = '("zeroconf=mdns ChMemMode=1")';
-	# $Options{'protee'}   = '("zeroconf=mdns chmem=1")';
-	# $SupportedDebugMode{'protee'} = 'insure';
-	$Computers{'puck'}  = '0019b94b4902';
-	$Options{'puck'}   = '("")';
 	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';

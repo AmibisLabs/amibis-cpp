@@ -2,7 +2,7 @@
 
 using namespace Omiscid;
 
-MultipleReferencedData::MultipleReferencedData(MethodForRelease method_for_release)
+MultipleReferencedData::MultipleReferencedData(MethodForRelease method_for_release /* = NULL */ )
 {
 	methodForRelease = method_for_release;
 	Init();
@@ -29,10 +29,12 @@ void MultipleReferencedData::ReleaseData(MultipleReferencedData* multiple_refere
 		MethodForRelease method_for_release = multiple_referenced_data->methodForRelease;
 		if ( method_for_release == (MethodForRelease)NULL )
 		{
+			SL_Myself.Unlock();
 			delete multiple_referenced_data;
 		}
 		else
 		{
+			SL_Myself.Unlock();
 			method_for_release( multiple_referenced_data );
 		}
 	}
@@ -42,12 +44,14 @@ void MultipleReferencedData::AddRef()
 {
 	SmartLocker SL_Myself(*this);
 	InternalAddRef();
+	// fprintf( stderr, "AddRef %p : %u\n", this, this->NbCurrentRef );
 }
 
 void MultipleReferencedData::RemoveRef()
 {
 	SmartLocker SL_Myself(*this);
 	InternalRemoveRef();
+	// fprintf( stderr, "RemoveRef %p : %u\n", this, this->NbCurrentRef );
 }
 
 bool MultipleReferencedData::IsStillUseful() const

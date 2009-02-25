@@ -299,29 +299,30 @@ void ControlClient::Init()
 
 ControlClient::~ControlClient()
 {
+	// Lock all myself
+	SmartLocker SL_AutoProtect(AutoProtect);
+	SmartLocker SL_listVariableAttr(listVariableAttr);
+	SmartLocker SL_listInputAttr(listInputAttr);
+	SmartLocker SL_listOutputAttr(listOutputAttr);
+	
 	TcpClient::RemoveAllCallbackObjects();
 	TcpClient::Stop();
 
 	XMLTreeParser::StopThread(0);
 
-	for(listVariableAttr.First(); listVariableAttr.NotAtEnd();
-		listVariableAttr.Next())
+	while( listVariableAttr.GetNumberOfElements() > 0 )
 	{
-		delete listVariableAttr.GetCurrent();
-		listVariableAttr.RemoveCurrent();
+		delete listVariableAttr.ExtractFirst();
 	}
 
-	for(listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next())
+	while( listInputAttr.GetNumberOfElements() > 0 )
 	{
-		delete listInputAttr.GetCurrent();
-		listInputAttr.RemoveCurrent();
+		delete listInputAttr.ExtractFirst();
 	}
 
-	for(listOutputAttr.First(); listOutputAttr.NotAtEnd();
-		listOutputAttr.Next())
+	while( listOutputAttr.GetNumberOfElements() > 0 )
 	{
-		delete listOutputAttr.GetCurrent();
-		listOutputAttr.RemoveCurrent();
+		delete listOutputAttr.ExtractFirst();
 	}
 }
 
@@ -345,7 +346,7 @@ bool ControlClient::QueryGlobalDescription()
 {
 	SimpleString request("");
 	XMLMessage* msg = QueryToServer(request);
-	if ( msg != (XMLMessage*) )
+	if ( msg != (XMLMessage*)NULL )
 	{
 		ProcessGlobalDescription(msg);
 		delete msg;
@@ -358,14 +359,13 @@ VariableAttribute* ControlClient::QueryVariableDescription(const SimpleString va
 {
 	VariableAttribute* var_attr = FindVariable(var_name);
 
-	bool name_in_list = true;
-
 	if ( !var_attr )
 	{
 		if ( NameInList(var_name, listVariableName) == false )
 		{
-			OmiscidTrace( "Unknown variable '%s', ask to the service.\n", var_name.GetStr());
-			name_in_list = false;
+			// Wa can not anymore add varibale when running
+			OmiscidTrace( "Unknown variable '%s'.\n", var_name.GetStr());
+			return NULL;
 		}
 	}
 
@@ -374,22 +374,13 @@ VariableAttribute* ControlClient::QueryVariableDescription(const SimpleString va
 	if ( msg != (XMLMessage*)NULL )
 	{
 		VariableAttribute* attr = NULL;
-		if(msg->GetRootNode()->children != NULL)
+		if ( msg->GetRootNode()->children != NULL )
 		{
-			attr = ProcessVariableDescription(msg->GetRootNode()->children, var_attr);
+			attr = ProcessVariableDescription(msg->GetRootNode()->children, var_attr );
 		}
-		if(!var_attr && attr) listVariableAttr.Add(attr);
-		else if(var_attr && !attr)
-		{
-			listVariableAttr.Remove(var_attr);
-			delete var_attr;
-		}
-
-		if(name_in_list && !attr) listVariableName.Remove(var_name);
-		else if(!name_in_list && attr)  listVariableName.Add(var_name);
-
 
 		delete msg;
+
 		//std::cerr << "Retour de Process\n";
 		return attr;
 	}
@@ -401,7 +392,7 @@ VariableAttribute* ControlClient::QueryVariableDescription(const SimpleString va
 VariableAttribute* ControlClient::QueryVariableModif(const SimpleString var_name, const SimpleString value_str)
 {
 	VariableAttribute* var_attr = FindVariable(var_name);
-	if(!var_attr)
+	if( !var_attr )
 	{
 		OmiscidTrace( "Unknown Variable '%s' : Not Available Description.\n", var_name.GetStr());
 		return NULL;
@@ -414,7 +405,7 @@ VariableAttribute* ControlClient::QueryVariableModif(const SimpleString var_name
 	request += "</value>";
 	request += "</variable>";
 	XMLMessage* msg = QueryToServer(request);
-	if(msg)
+	if( msg != (XMLMessage*)NULL )
 	{
 		VariableAttribute* attr = NULL;
 		if(msg->GetRootNode()->children != NULL)
@@ -430,34 +421,25 @@ VariableAttribute* ControlClient::QueryVariableModif(const SimpleString var_name
 InOutputAttribute* ControlClient::QueryInputDescription(const SimpleString input_name)
 {
 	InOutputAttribute* input_attr = FindInput(input_name);
-	bool name_in_list = true;
-	if(!input_attr)
+
+	if( input_attr == (InOutputAttribute*)NULL )
 	{
-		if(!NameInList(input_name, listInputName))
+		if( NameInList(input_name, listInputName) == false )
 		{
-			OmiscidTrace( "Unknown Input '%s', ask to the service.\n",input_name.GetStr());
-			name_in_list = false;
+			OmiscidTrace( "Unknown Input '%s'.\n",input_name.GetStr());
+			return (InOutputAttribute*)NULL;
 		}
 	}
 
 	SimpleString request = "<"+InOutputAttribute::input_str+" name=\"" + SimpleString(input_name) + "\"/>";
 	XMLMessage* msg = QueryToServer(request);
-	if(msg)
+	if ( msg != (XMLMessage*)NULL )
 	{
 		InOutputAttribute* attr = NULL;
 		if(msg->GetRootNode()->children != NULL)
 		{
 			attr = ProcessInputDescription(msg->GetRootNode()->children, input_attr);
 		}
-		if(!input_attr && attr) listInputAttr.Add(attr);
-		else if(input_attr && !attr)
-		{
-			listInputAttr.Remove(input_attr);
-			delete input_attr;
-		}
-
-		if(name_in_list && !attr) listInputName.Remove(input_name);
-		else if(!name_in_list && attr) listInputName.Add(input_name);
 
 		delete msg;
 		//std::cerr << "Retour de Process\n";
@@ -470,34 +452,26 @@ InOutputAttribute* ControlClient::QueryInputDescription(const SimpleString input
 InOutputAttribute* ControlClient::QueryOutputDescription(const SimpleString output_name)
 {
 	InOutputAttribute* output_attr = FindOutput(output_name);
-	bool name_in_list = true;
-	if(!output_attr)
+
+	if( output_attr == (InOutputAttribute*)NULL )
 	{
-		if(!NameInList(output_name, listOutputName))
+		if( NameInList(output_name, listOutputName) == false )
 		{
-			OmiscidTrace( "Unknown Output '%s', ask to the service.\n", output_name.GetStr());
-			name_in_list = false;
+			OmiscidTrace( "Unknown Output '%s'.\n", output_name.GetStr());
+			return (InOutputAttribute*)NULL;
 		}
 	}
 
 	SimpleString request = "<"+InOutputAttribute::output_str+" name=\"" + SimpleString(output_name) + "\"/>";
 	XMLMessage* msg = QueryToServer(request);
-	if(msg)
+	if ( msg != (XMLMessage*)NULL )
 	{
-		InOutputAttribute* attr = NULL;
-		if(msg->GetRootNode()->children != NULL)
+		InOutputAttribute* attr = (InOutputAttribute*)NULL;
+
+		if( msg->GetRootNode()->children != NULL )
 		{
 			attr = ProcessOutputDescription(msg->GetRootNode()->children, output_attr);
 		}
-		if(!output_attr && attr) listOutputAttr.Add(attr);
-		else if(output_attr && !attr)
-		{
-			listOutputAttr.Remove(output_attr);
-			delete output_attr;
-		}
-
-		if(name_in_list && !attr) listOutputName.Remove(output_name);
-		else if(!name_in_list && attr) listOutputName.Add(output_name);
 
 		delete msg;
 		//std::cerr << "Retour de Process\n";
@@ -510,34 +484,25 @@ InOutputAttribute* ControlClient::QueryOutputDescription(const SimpleString outp
 InOutputAttribute* ControlClient::QueryInOutputDescription(const SimpleString in_output_name)
 {
 	InOutputAttribute* in_output_attr = FindInOutput(in_output_name);
-	bool name_in_list = true;
-	if(!in_output_attr)
+
+	if( in_output_attr == (InOutputAttribute*)NULL )
 	{
-		if(!NameInList(in_output_name, listInOutputName))
+		if( NameInList(in_output_name, listInOutputName) == false )
 		{
-			OmiscidTrace( "Unknown InOutput '%s', ask to the service.\n", in_output_name.GetStr());
-			name_in_list = false;
+			OmiscidTrace( "Unknown InOutput '%s'.\n", in_output_name.GetStr());
+			return (InOutputAttribute*)NULL;
 		}
 	}
 
 	SimpleString request = "<"+InOutputAttribute::inoutput_str+" name=\"" + SimpleString(in_output_name) + "\"/>";
 	XMLMessage* msg = QueryToServer(request);
-	if(msg)
+	if ( msg != (XMLMessage*)NULL )
 	{
 		InOutputAttribute* attr = NULL;
 		if(msg->GetRootNode()->children != NULL)
 		{
 			attr = ProcessInOutputDescription(msg->GetRootNode()->children, in_output_attr);
 		}
-		if(!in_output_attr && attr) listInOutputAttr.Add(attr);
-		else if(in_output_attr && !attr)
-		{
-			listInOutputAttr.Remove(in_output_attr);
-			delete in_output_attr;
-		}
-
-		if(name_in_list && !attr) listInOutputName.Remove(in_output_name);
-		else if(!name_in_list && attr) listInOutputName.Add(in_output_name);
 
 		delete msg;
 		//std::cerr << "Retour de Process\n";
@@ -584,7 +549,7 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& request, bool wait_answer
 		pWaiter = CreateAnswerWaiter( msg_id );
 		if ( pWaiter == NULL )
 		{
-			return NULL;
+			return (XMLMessage*)NULL;
 		}
 	}
 
@@ -607,6 +572,7 @@ XMLMessage* ControlClient::QueryToServer(SimpleString& request, bool wait_answer
 unsigned int ControlClient::BeginEndTag(SimpleString& str)
 {
 	TemporaryMemoryBuffer tmp(10);
+
 	snprintf((char*)tmp, 10, "%8.8x", id);
 	id++;
 	SimpleString tmp_str(tmp);
@@ -627,24 +593,32 @@ void ControlClient::ProcessGlobalDescription(XMLMessage* xml_msg)
 		const char* node_name = (const char*)cur_node->name;
 
 		xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", cur_node);
-		if(attr_name)
+		if ( attr_name != (xmlAttrPtr)NULL )
 		{
 			SimpleString name((const char*)attr_name->children->content);
 
 			if( VariableAttribute::VariableStr == node_name )
 			{
+				SmartLocker SL_listVariableName(listVariableName);
+
 				listVariableName.Add(name);
 			}
 			else if( InOutputAttribute::input_str == node_name )
 			{
+				SmartLocker SL_listInputName(listInputName);
+
 				listInputName.Add(name);
 			}
 			else if( InOutputAttribute::output_str == node_name )
 			{
+				SmartLocker SL_listOutputName(listOutputName);
+
 				listOutputName.Add(name);
 			}
 			else if( InOutputAttribute::inoutput_str == node_name )
 			{
+				SmartLocker SL_listInOutputName(listInOutputName);
+
 				listInOutputName.Add(name);
 			}
 			else
@@ -673,6 +647,9 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 			pAtt = ProcessInputDescription( cur_node, NULL );
 			if ( pAtt != NULL )
 			{
+				SmartLocker SL_listInputName(listInputName);
+				SmartLocker SL_listInputAttr(listInputAttr);
+
 				listInputName.Add( pAtt->GetName() );
 				listInputAttr.Add( pAtt );
 			}
@@ -682,6 +659,9 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 			pAtt = ProcessOutputDescription( cur_node, NULL );
 			if ( pAtt != NULL )
 			{
+				SmartLocker SL_listOutputName(listOutputName);
+				SmartLocker SL_listOutputAttr(listOutputAttr);
+
 				listOutputName.Add( pAtt->GetName() );
 				listOutputAttr.Add( pAtt );
 			}
@@ -691,6 +671,9 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 			pAtt = ProcessInOutputDescription( cur_node, NULL );
 			if ( pAtt != NULL )
 			{
+				SmartLocker SL_listInOutputName(listInOutputName);
+				SmartLocker SL_listInOutputAttr(listInOutputAttr);
+
 				listInOutputName.Add( pAtt->GetName() );
 				listInOutputAttr.Add( pAtt );
 			}
@@ -700,6 +683,9 @@ void ControlClient::ProcessDetailedDescription(XMLMessage* xml_msg)
 			pVar = ProcessVariableDescription( cur_node, NULL );
 			if ( pVar != NULL )
 			{
+				SmartLocker SL_listVariableName(listVariableName);
+				SmartLocker SL_listVariableAttr(listVariableAttr);
+
 				listVariableName.Add( pVar->GetName() );
 				listVariableAttr.Add( pVar );
 			}
@@ -726,7 +712,7 @@ VariableAttribute* ControlClient::ProcessVariableDescription(xmlNodePtr node,
 #endif
 
 	VariableAttribute* vattr = NULL;
-	if(var_attr)
+	if ( var_attr != (VariableAttribute*)NULL )
 	{
 		vattr = var_attr;
 	}
@@ -749,8 +735,14 @@ InOutputAttribute* ControlClient::ProcessInputDescription(xmlNodePtr node, InOut
 	}
 
 	InOutputAttribute* inattr = NULL;
-	if(input_attr) inattr = input_attr;
-	else inattr = new OMISCID_TLM InOutputAttribute("", AnInput);
+	if ( input_attr != (InOutputAttribute*)NULL )
+	{
+		inattr = input_attr;
+	}
+	else
+	{
+		inattr = new OMISCID_TLM InOutputAttribute("", AnInput);
+	}
 
 	inattr->ExtractDataFromXml(node);
 
@@ -799,7 +791,7 @@ InOutputAttribute* ControlClient::ProcessInOutputDescription(xmlNodePtr node, In
 	return in_outattr;
 }
 
-void ControlClient::DisplayListName(SimpleList<SimpleString>& list_name,
+void ControlClient::DisplayListName(MutexedSimpleList<SimpleString>& list_name,
 									const SimpleString& entete)
 {
 	printf("%s\n", entete.GetStr());
@@ -809,7 +801,7 @@ void ControlClient::DisplayListName(SimpleList<SimpleString>& list_name,
 	}
 }
 
-bool ControlClient::NameInList(const SimpleString name, SimpleList<SimpleString>& list_name)
+bool ControlClient::NameInList(const SimpleString name, MutexedSimpleList<SimpleString>& list_name)
 {
 	for(list_name.First(); list_name.NotAtEnd(); list_name.Next())
 	{
@@ -818,63 +810,85 @@ bool ControlClient::NameInList(const SimpleString name, SimpleList<SimpleString>
 	return false;
 }
 
-VariableAttribute* ControlClient::FindVariable(const SimpleString name)
+VariableAttribute* ControlClient::FindVariable(const SimpleString name, bool LockIt /* false */ )
 {
-	for(listVariableAttr.First(); listVariableAttr.NotAtEnd();
-		listVariableAttr.Next())
+	SmartLocker SL_listVariableAttr(listVariableAttr);
+
+	VariableAttribute * pVar;
+
+	for( listVariableAttr.First(); listVariableAttr.NotAtEnd(); listVariableAttr.Next() )
 	{
-		if(( listVariableAttr.GetCurrent())->GetName() == name)
-			return  listVariableAttr.GetCurrent();
+		if ( (listVariableAttr.GetCurrent())->GetName() == name )
+		{
+			pVar = listVariableAttr.GetCurrent();
+			if ( LockIt == true )
+			{
+				pVar->Lock(); // Add SL_ as comment in order to prevent false alarm in code checker on locks
+			}
+			return pVar;
+		}
 	}
 	return NULL;
 }
 
 InOutputAttribute* ControlClient::FindInput(const SimpleString name)
 {
-	for(listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next())
+	SmartLocker SL_listInputAttr(listInputAttr);
+
+	for( listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next() )
 	{
 		if((listInputAttr.GetCurrent())->GetName() == name)
+		{
 			return listInputAttr.GetCurrent();
+		}
 	}
 	return NULL;
 }
 
 InOutputAttribute* ControlClient::FindOutput(const SimpleString name)
 {
-	for(listOutputAttr.First(); listOutputAttr.NotAtEnd(); listOutputAttr.Next())
+	SmartLocker SL_listOutputAttr(listOutputAttr);
+
+	for( listOutputAttr.First(); listOutputAttr.NotAtEnd(); listOutputAttr.Next() )
 	{
 		if((listOutputAttr.GetCurrent())->GetName() == name)
+		{
 			return listOutputAttr.GetCurrent();
+		}
 	}
 	return NULL;
 }
 
 InOutputAttribute* ControlClient::FindInOutput(const SimpleString name)
 {
-	for(listInOutputAttr.First(); listInOutputAttr.NotAtEnd();
-		listInOutputAttr.Next())
+	SmartLocker SL_listInOutputAttr(listInOutputAttr);
+
+	for( listInOutputAttr.First(); listInOutputAttr.NotAtEnd(); listInOutputAttr.Next() )
 	{
 		if((listInOutputAttr.GetCurrent())->GetName() == name)
+		{
 			return listInOutputAttr.GetCurrent();
+		}
 	}
 	return NULL;
 }
 
 void ControlClient::Subscribe(const SimpleString var_name)
 {
-	VariableAttribute* va = FindVariable(var_name);
-	if ( va )
+	VariableAttribute* va = FindVariable( var_name, true );
+	if ( va != (VariableAttribute*)NULL )
 	{
 		SimpleString request("<subscribe name=\"");
 		request = request + va->GetName()  +"\"/>";
 		XMLMessage* msg = QueryToServer(request, true);
-		if ( msg )
+		if ( msg != (XMLMessage*)NULL )
 		{
-			if(msg->GetRootNode()->children != NULL)
+			if( msg->GetRootNode()->children != NULL )
 			{
-				ProcessVariableDescription(msg->GetRootNode()->children, va);
+				ProcessVariableDescription( msg->GetRootNode()->children, va );
 			}
 		}
+		va->Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on locks
 	}
 	else
 	{
@@ -884,12 +898,14 @@ void ControlClient::Subscribe(const SimpleString var_name)
 
 void ControlClient::Unsubscribe(const SimpleString var_name)
 {
-	VariableAttribute* va = FindVariable(var_name);
-	if(va)
+	VariableAttribute* va = FindVariable( var_name, true );
+	if ( va != (VariableAttribute*)NULL )
 	{
 		SimpleString request("<unsubscribe name=\"");
 		request = request + va->GetName()  +"\"/>";
 		QueryToServer(request, false);
+
+		va->Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on locks
 	}
 	else
 	{
@@ -905,6 +921,9 @@ void ControlClient::ProcessAMessage(XMLMessage* msg)
 		return;
 	}
 
+	// Lock myself
+	SmartLocker SL_AutoProtect(AutoProtect);
+
 	// Validate against XSD schema
 	if ( ControlAnswerValidator.ValidateDoc( msg->doc ) == false )
 	{
@@ -914,13 +933,15 @@ void ControlClient::ProcessAMessage(XMLMessage* msg)
 		return;
 	}
 
-	if( strcmp((const char*)msg->GetRootNode()->name, "controlAnswer") ==0 )
+	if( strcmp((const char*)msg->GetRootNode()->name, "controlAnswer") == 0 )
 	{
 		// Set the message and way to the rigth Waiter that is ok
 		PushAnswer(msg);
 	}
 	else if( strcmp((const char*)msg->GetRootNode()->name, "controlEvent") == 0 )
 	{
+		SmartLocker SL_AutoProtect(AutoProtect);
+
 		CtrlEventProcess( msg );
 		if ( callback != NULL )
 		{
@@ -941,7 +962,7 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 		if( VariableAttribute::VariableStr == cur_name )
 		{
 			xmlAttrPtr attr_name = XMLMessage::FindAttribute("name", current);
-			VariableAttribute* va = FindVariable((const char*)attr_name->children->content);
+			VariableAttribute* va = FindVariable( (const char*)attr_name->children->content, true );
 			if ( va != (VariableAttribute*)NULL )
 			{
 				xmlNodePtr val_node = XMLMessage::FindFirstChild("value", current);
@@ -962,7 +983,7 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 	}
 }
 
-#ifndef DEBUG
+#ifdef DEBUG
 void ControlClient::DisplayVariableName()
 {
 	DisplayListName(listVariableName, "Variable Name :");
@@ -1026,6 +1047,8 @@ MutexedSimpleList<InOutputAttribute*>& ControlClient::GetInOutputList()
 
 void ControlClient::SetCtrlEventListener(CtrlEventListener fct, void* user_ptr)
 {
+	SmartLocker SL_AutoProtect(AutoProtect);
+
 	callback = fct;
 	userDataPtr = user_ptr;
 }

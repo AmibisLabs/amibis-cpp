@@ -196,7 +196,7 @@ class ControlServer : public TcpServer, public XMLTreeParser, public VariableAtt
    * @param name [in] name of the variable
    * @return the VariableAttribute object or NULL if not found
    */
-  VariableAttribute* FindVariable(const SimpleString name);
+  VariableAttribute* FindVariable(const SimpleString name, bool LockIt = false);
 
   /**
    * @brief Access to the service status
@@ -349,13 +349,15 @@ protected:
   StringVariableAttribute* ClassVariable; /*!< variable structure for exporting the name of this service */
   StringVariableAttribute* PeerIdVariable; /*!< variable structure for integer to export the peerid */
 
-  SimpleList<InOutputAttribute*> listInOutput; /*!< list of inputs and outputs */
+  MutexedSimpleList<InOutputAttribute*> listInOutput; /*!< list of inputs and outputs */
 
-  SimpleList<VariableAttribute*> listVariable; /*!<  list of variables */
+  MutexedSimpleList<VariableAttribute*> listVariable; /*!<  list of variables */
 
   RegisterOmiscidService* registerDnsSd; /*!< Object for registering the service to DNS-SD */
 
   MutexedSimpleList<ValueListener*> listValueListener; /*!< list of group variable - peer id intereted in variable modification */
+
+  ReentrantMutex AutoProtect; /*!< auto protection against multiple threading */
 
 protected:
   // standard Omiscid Xsd Schemas validators

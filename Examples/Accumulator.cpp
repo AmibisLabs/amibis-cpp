@@ -176,10 +176,13 @@ void Accumulator::MessageReceived(Service& TheService, const SimpleString LocalC
 #ifdef OMISCID_RUNING_TEST
 
 #include "ClientAccumulator.h"
+#include "TimeoutProg.h"
 
 /* @brief main program entry for the Accumulator. No need to give parameter */
 int Omiscid::DoAccumulatorTest( int argc, char*argv[] )
 {
+	TimeoutProg ExitIn2Minutes;
+
 	// Create dynamically an accumulator sever
 	Accumulator * pAccuServer = new OMISCID_TLM Accumulator;
 

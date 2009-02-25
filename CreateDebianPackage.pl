@@ -53,11 +53,13 @@ while( defined $ARGV[$CurrentArg] )
 	{
 		$TmpParam = $1;
 		
-		if ( $TmpParam =~ /^\d+bits/ )
+		if ( $TmpParam =~ /^(\d+)bits/ )
 		{
 			$PackageArch = $1;
 			if ( $PackageArch == 32 || $PackageArch == 64 )
 			{
+				print STDERR "Creating package for $PackageArch architecture.\n";
+				$CurrentArg++;
 				next;
 			}
 		}
@@ -155,12 +157,12 @@ if ( !-e '../Temp' )
 chdir('../Temp');
 if ( -e debian )
 {
-	print STDER "Empty Temp/debian folder\n";
+	print STDERR "Empty Temp/debian folder\n";
 	`rm -rf debian/*`;
 }
 else
 {
-	print STDER "Create Temp/debian folder\n";
+	print STDERR "Create Temp/debian folder\n";
 	mkdir 'debian', 0755;
 }
 
@@ -307,20 +309,20 @@ print STDERR "Create tmp/$PackageFolder.orig\n";
 
 $computer = $Archi{$PackageArch}{'computer'};
 
-if ( $OMISCID_ZEROCONF eq 'mdns' )
+# if ( $OMISCID_ZEROCONF eq 'mdns' )
 {
 	system( "ssh $computer \"cd tmp/$PackageFolder; debuild -us -uc\"" );
 	chdir('..');
 	print "scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
 	`scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb oberon:tmp/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
 }
-else
-{
-	system( "ssh $computer \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
-	chdir('..');
-	print "scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
-	`scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
-}
+# else
+# {
+# 	system( "ssh $computer \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
+# 	chdir('..');
+# 	print "scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
+# 	`scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
+# }
 
 print STDERR "Remove OMiSCID folder in tmp on oberon\n";
 # `ssh oberon "rm -rf tmp/omiscid*"`;

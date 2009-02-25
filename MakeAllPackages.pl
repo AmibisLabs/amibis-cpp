@@ -20,7 +20,7 @@ close( $fd );
 
 @DaemonNames = ( 'avahi', 'mdns' );
 @DebugModes = ( '', '-debug' );
-@Archies = ( '-arch=32bits', '-arch=64bits' );
+@Archies = ( '-arch=64bits', '-arch=32bits' );
 
 $OriginalReplacesString = '';
 for $DaemonName ( @DaemonNames )
@@ -38,11 +38,11 @@ for $DaemonName ( @DaemonNames )
 	}
 }
 
-foreach $DaemonName ( @DaemonNames )
-{
-	foreach $DebugMode ( @DebugModes )
+for $ArchName ( @Archies )
+{	
+	foreach $DaemonName ( @DaemonNames )
 	{
-		foreach $ArchName ( @Archies )
+		foreach $DebugMode ( @DebugModes )
 		{
 			$ReplaceString = $OriginalReplacesString;
 			$ReplaceString =~ s/(, )?omiscid-$DaemonName$DebugMode\(= $CurrentVersion\)//;

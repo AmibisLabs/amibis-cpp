@@ -57,7 +57,7 @@ TemporaryMemoryBuffer::~TemporaryMemoryBuffer()
 
 void TemporaryMemoryBuffer::SetNewBufferSize( size_t NewSizeOfBuffer, bool KeepData /* = false */ )
 {
-	if ( NewSizeOfBuffer < LogicalBufferSize && KeepData == true )
+	if ( NewSizeOfBuffer > LogicalBufferSize && KeepData == true )
 	{
 		throw MemoryBufferException( "Could not not keep data in a smaller buffer" );
 	}
