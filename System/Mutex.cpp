@@ -33,6 +33,7 @@ Mutex::Mutex()
 #endif
 #ifdef DEBUG
 	OwnerId = 0;
+	PreviousOwnerId = 0;
 #endif
 }
 
@@ -91,6 +92,7 @@ bool Mutex::Unlock()
 #endif
 
 #ifdef DEBUG
+	PreviousOwnerId = OwnerId;
 	OwnerId = 0;
 #endif
 

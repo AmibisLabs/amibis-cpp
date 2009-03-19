@@ -306,6 +306,7 @@ def OmiscidInstallTarget(env,binToInstall=[],libToInstall=[],modToInstall=[],hTo
 			#env.Install(prefix_h, hTargetToInstall)
 			toInstall = [prefix_bin,prefix_lib,hTargetToInstall]
 			env.Alias("install", toInstall)
+			env.Execute( "ldconfig" )
 		else :
 			OmiscidMessage('prefix must be given for installation')
 			OmiscidMessage('you can use "scons prefix=Prefix/Where/To/Install install" to specify the prefix')

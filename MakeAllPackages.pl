@@ -18,7 +18,7 @@ close( $fd );
 
 # Generate all packages name
 
-@DaemonNames = ( 'avahi', 'mdns' );
+@DaemonNames = ( 'mdns', 'avahi' );
 @DebugModes = ( '', '-debug' );
 @Archies = ( '-arch=64bits', '-arch=32bits' );
 

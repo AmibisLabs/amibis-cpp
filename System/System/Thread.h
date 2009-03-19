@@ -10,7 +10,7 @@
 #include <System/ConfigSystem.h>
 #include <System/Event.h>
 #include <System/Mutex.h>
-#include <System/SimpleList.h>
+#include <System/MutexedSimpleList.h>
 
 #ifdef DEBUG
 #include <System/SimpleString.h>

@@ -833,7 +833,7 @@ VariableAttribute* ControlClient::FindVariable(const SimpleString name, bool Loc
 
 InOutputAttribute* ControlClient::FindInput(const SimpleString name)
 {
-	SmartLocker SL_listInputAttr(listInputAttr);
+	SmartLocker SL_listInputAttr( listInputAttr );
 
 	for( listInputAttr.First(); listInputAttr.NotAtEnd(); listInputAttr.Next() )
 	{
@@ -970,6 +970,7 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 				{
 					va->SetValue((const char*)val_node->children->content);
 				}
+				va->Unlock();
 			}
 			else
 			{

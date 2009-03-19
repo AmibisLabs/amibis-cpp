@@ -281,8 +281,14 @@ while( $FileIn = <*.in> )
 	# print STDERR "1\n";
 	
 	open( $fd, "<$FileIn" ) or die "Could not open '$FileIn'\n";
+	
 	while( $ligne = <$fd> )
 	{
+		if ( $ligne =~ /^\d+\.\d+\.\d+/ )
+		{
+			$ligne = '_#_#_O_#_#_' . $ligne;
+		}
+		$ligne =~ s/^(\s+)\[/_#_#_O_#_#_$1\[/;
 		$ligne =~ s/[\s\r\n]+$//;
 		$ligne =~ s/%OMISCID_VERSION%/$Version/g;
 		$ligne =~ s/%OMISCID_DAY%/$year-$mon-$mday/g;
@@ -295,7 +301,7 @@ while( $FileIn = <*.in> )
 	# print STDERR "2\n";
 	
 	$contenu =~ s/(_#_#_#_#_)+/_#_#_#_#_/g;
-	$contenu =~ s/_#_#_#_#_/\n/g;
+	$contenu =~ s/(_#_#_#_#_|_#_#_O_#_#_)/\n/g;
 	
 	# print STDERR "3\n";
 

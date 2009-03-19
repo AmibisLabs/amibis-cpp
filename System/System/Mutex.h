@@ -63,14 +63,15 @@ private:
 
 #ifdef DEBUG
 	unsigned int OwnerId;
+	unsigned int PreviousOwnerId;
 #endif
 
 #ifdef WIN32
 	HANDLE mutex;
 #else
-	unsigned int before;	/*!< to prevent memory correption by pthread_* functions */
+	unsigned int before[5];	/*!< to prevent memory correption by pthread_* functions */
 	pthread_mutex_t mutex; /*!< Posix Mutex*/
-	unsigned int after;		/*!< to prevent memory correption by pthread_* functions */
+	unsigned int after[5];		/*!< to prevent memory correption by pthread_* functions */
 #endif /* WIN32 */
 
 };

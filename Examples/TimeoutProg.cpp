@@ -2,6 +2,8 @@
 // Standard includes
 #include "TimeoutProg.h"
 
+using namespace Omiscid;
+
 TimeoutProg::TimeoutProg(int TimeInMs) :
 #ifdef DEBUG_THREAD
 	Thread( "TimeoutProg" )
@@ -42,5 +44,3 @@ void FUNCTION_CALL_TYPE TimeoutProg::Run()
 		exit(-1);
 	}
 }
-
-} // namespace Omiscid

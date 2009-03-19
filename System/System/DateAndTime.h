@@ -33,6 +33,7 @@ public:
 	DateAndTime(time_t TimeToSet);
 	DateAndTime(struct timeval& TimeToSet);
 	DateAndTime(struct timeval* TimeToSet);
+	DateAndTime(DateAndTime& TimeToSet);
 
 	/** @brief Virtual destructor */
 	virtual ~DateAndTime();
@@ -44,6 +45,9 @@ public:
 	void Set(time_t TimeToSet);
 	void Set(struct timeval& TimeToSet);
 	void Set(struct timeval* TimeToSet);
+	void Set(DateAndTime& TimeToSet);
+
+	bool operator==(DateAndTime& ToCompare);
 
 public:
 	int Milliseconds;	/*!< Milliseconds part (0 to 999) */

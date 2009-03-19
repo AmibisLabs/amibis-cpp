@@ -25,6 +25,7 @@
 #include <System/ReentrantMutex.h>
 #include <System/SimpleException.h>
 #include <System/SimpleList.h>
+#include <System/MutexedSimpleList.h>
 #include <System/SimpleListException.h>
 #include <System/SimpleString.h>
 #include <System/Socket.h>

@@ -44,14 +44,14 @@ void MultipleReferencedData::AddRef()
 {
 	SmartLocker SL_Myself(*this);
 	InternalAddRef();
-	// fprintf( stderr, "AddRef %p : %u\n", this, this->NbCurrentRef );
+//	fprintf( stderr, "AddRef %p : %u\n", (void*)this, this->NbCurrentRef );
 }
 
 void MultipleReferencedData::RemoveRef()
 {
 	SmartLocker SL_Myself(*this);
 	InternalRemoveRef();
-	// fprintf( stderr, "RemoveRef %p : %u\n", this, this->NbCurrentRef );
+//	fprintf( stderr, "RemoveRef %p : %u\n", (void*)this, this->NbCurrentRef );
 }
 
 bool MultipleReferencedData::IsStillUseful() const

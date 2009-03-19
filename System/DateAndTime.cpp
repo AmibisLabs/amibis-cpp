@@ -34,6 +34,13 @@ DateAndTime::DateAndTime(struct timeval* TimeToSet)
 	Set(TimeToSet);
 }
 
+/** @brief Constructor */
+DateAndTime::DateAndTime(DateAndTime& TimeToSet)
+{
+	// Set a time given as time_t
+	Set(TimeToSet);
+}
+
 /** @brief Destructor */
 DateAndTime::~DateAndTime()
 {
@@ -95,3 +102,23 @@ void DateAndTime::Set(struct timeval* TimeToSet)
 	Month = SpittedTime->tm_mon+1;			/* month */
 	Year = SpittedTime->tm_year+1900;		/* year */
 }
+
+void DateAndTime::Set(DateAndTime& TimeToSet)
+{
+	Milliseconds = TimeToSet.Milliseconds;	/* milliseconds */
+	Seconds = TimeToSet.Seconds;			/* seconds */
+	Minutes = TimeToSet.Minutes;			/* minutes */
+	Hours = TimeToSet.Hours;			/* hours */
+	Day = TimeToSet.Day;				/* day of the month */
+	Month = TimeToSet.Month;			/* month */
+	Year = TimeToSet.Year;		/* year */
+}
+
+bool DateAndTime::operator==(DateAndTime& ToCompare)
+{
+	return ( Year == ToCompare.Year && Month == ToCompare.Month &&
+		Day == ToCompare.Day && Hours == ToCompare.Hours &&
+		Minutes == ToCompare.Minutes && Seconds == ToCompare.Seconds
+		&& Milliseconds == ToCompare.Milliseconds );
+}
+

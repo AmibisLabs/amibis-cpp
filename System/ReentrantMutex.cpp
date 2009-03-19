@@ -5,6 +5,7 @@
 
 #include <System/ReentrantMutex.h>
 #include <System/SimpleException.h>
+#include <System/SimpleList.h>
 #include <System/Thread.h>
 
 using namespace Omiscid;
@@ -25,11 +26,12 @@ ReentrantMutex::ReentrantMutex()
 
 	if ( pthread_mutex_init(&mutex, &attr) != 0 )
 	{
-		throw  SimpleException("Error Mutex Init");
+		throw SimpleException("Error Mutex Init");
 	}
 #endif
 #ifdef DEBUG
-	OwnerId = 0;
+	OwnerIds = new SimpleList<unsigned int>;
+	PreviousOwnerId = 0xffffffff;
 #endif
 }
 
@@ -43,6 +45,13 @@ ReentrantMutex::~ReentrantMutex()
 #else
 	pthread_mutex_destroy(&mutex);
 #endif
+
+#ifdef DEBUG
+	if ( OwnerIds != (SimpleList<unsigned int>*)NULL )
+	{
+		delete OwnerIds;
+	}
+#endif
 }
 
 bool ReentrantMutex::Lock()
@@ -53,7 +62,7 @@ bool ReentrantMutex::Lock()
 	{
 #ifdef DEBUG
 		// In debug mode, set the owner id
-		OwnerId = Thread::GetThreadId();
+		OwnerIds->AddHead( Thread::GetThreadId() );
 #endif
 		// Here we go, we've got the mutex
 		return true;
@@ -63,7 +72,7 @@ bool ReentrantMutex::Lock()
 	{
 #ifdef DEBUG
 		// In debug mode, set the owner id
-		OwnerId = Thread::GetThreadId();
+		OwnerIds.AddHead( Thread::GetThreadId() );
 #endif
 		return true;
 	}
@@ -86,7 +95,7 @@ bool ReentrantMutex::Unlock()
 	}
 #endif
 #ifdef DEBUG
-	OwnerId = 0;
+	PreviousOwnerId = OwnerIds->ExtractFirst();
 #endif
 
 	return true;

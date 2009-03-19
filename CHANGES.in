@@ -1,8 +1,5 @@
-
-
-			CHANGES
-
-In this files, you will find changes between OMiSCID versions.
+_#_#_O_#_#__#_#_O_#_#__#_#_O_#_#_				CHANGES_#_#_O_#_#__#_#_O_#_#__#_#_O_#_#_
+In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_#_#__#_#_O_#_#_
 
 %OMISCID_VERSION%	%OMISCID_DAY%
 	[Global modifications]
@@ -16,11 +13,11 @@ In this files, you will find changes between OMiSCID versions.
 	- change VariableAttribute working paradigme. Do not use anymore
 	MutexedSimpleList as list and as mutex. Now, use a normal
 	SimpleList and a Mutex.
-	- Add an empty line between sections in this CHANGE file.
-	
+	- Put MutexedSimpleList in a separate file : must not impact
+	usual users who includes 'UserFriendlyAPI.h'.
+	- correct managing list of owners in debug mode for ReentrantMutex.
+	- Add an empty line between sections in this CHANGE file.	
 	[Bug corrections]
-	- correct name of GetServiceAccessType (was GetServiceAccessTypeType
-	in Service and ServiceProxy classes).
 	- add body to ServiceProxy::GetServiceAccessType.
 	- correct memory leak problem when memory leak tracker is on and
 	nobody is tacking memory leak (sic).
@@ -28,7 +25,8 @@ In this files, you will find changes between OMiSCID versions.
 	the same variable
 	- correct deadlock problem when (massively) multithreading
 	access to ControlSever/ControlClient
-	
+	- correct name of GetServiceAccessType (was GetServiceAccessTypeType
+	in Service and ServiceProxy classes).
 	[API]
 	- MultipleReferencedData now works subclassing ReentrantMutex and
 	not with an simple AtomicCounter anymore. We also add Internal
@@ -41,7 +39,6 @@ In this files, you will find changes between OMiSCID versions.
 	- start to add CopyConstructor for every class.
 	- Remove body of Display* functions in non debug mode for class
 	ControlClient (they are inline empty functions in non debug mode).
-	
 	[Documentation]
 	- still documentation effort.
 

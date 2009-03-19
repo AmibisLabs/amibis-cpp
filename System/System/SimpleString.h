@@ -10,7 +10,6 @@
 
 #include <System/ConfigSystem.h>
 #include <System/ReentrantMutex.h>
-#include <System/LockManagement.h>
 
 #include <string.h>
 

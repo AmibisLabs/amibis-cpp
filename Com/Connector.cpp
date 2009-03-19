@@ -48,6 +48,8 @@ void Connector::Create(int port_tcp, int port_udp)
 	TcpServer::SetSyncLinkData( tmps );
 	TcpServer::SetCallbackSyncLink( ProcessLyncSyncMsg, (void*)this, (void*)0 );
 	TcpServer::Create(port_tcp);
+
+	DevOmiscidTrace( "Start connector '%s' on %d\n", TcpServer::GetName().GetStr(), TcpServer::GetPortNb() );
 }
 
 void Connector::SetName(const SimpleString NewName)

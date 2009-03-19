@@ -23,7 +23,7 @@ namespace Omiscid {
 class TimeoutProg : public Thread
 {
 public:
-	TimeoutProg(int TimeInMs);
+	TimeoutProg( int TimeInMs = 2*60*1000 );
 	~TimeoutProg();
 
 	void FUNCTION_CALL_TYPE Run();
@@ -36,5 +36,7 @@ public:
 private:
 	unsigned int TimeToTimeOutInMs;
 };
+
+} // namespace Omiscid
 
 #endif // __TIMEOUT_PROG_H__

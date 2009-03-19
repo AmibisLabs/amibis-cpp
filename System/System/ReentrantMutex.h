@@ -12,6 +12,8 @@
 
 namespace Omiscid {
 
+template <typename TYPE> class SimpleList;
+
 /**
  * @class ReentrantMutex ReentrantMutex.h System/ReentrantMutex.h
  * @brief ReentrantMutex Implementation
@@ -63,15 +65,24 @@ public:
 private:
 
 #ifdef DEBUG
-	unsigned int OwnerId;
+	SimpleList<unsigned int> * OwnerIds;
+	unsigned int PreviousOwnerId;
 #endif
 
 #ifdef WIN32
 	HANDLE mutex;
 #else
-	unsigned int before;	/*!< to prevent memory correption by pthread_* functions */
+	unsigned int before1;	/*!< to prevent memory correption by pthread_* functions */
+	unsigned int before2;	/*!< to prevent memory correption by pthread_* functions */
+	unsigned int before3;	/*!< to prevent memory correption by pthread_* functions */
+	unsigned int before4;	/*!< to prevent memory correption by pthread_* functions */
+	unsigned int before5;	/*!< to prevent memory correption by pthread_* functions */
 	pthread_mutex_t mutex; /*!< Posix Mutex */
-	unsigned int after;		/*!< to prevent memory correption by pthread_* functions */
+	unsigned int after1;		/*!< to prevent memory correption by pthread_* functions */
+	unsigned int after2;		/*!< to prevent memory correption by pthread_* functions */
+	unsigned int after3;		/*!< to prevent memory correption by pthread_* functions */
+	unsigned int after4;		/*!< to prevent memory correption by pthread_* functions */
+	unsigned int after5;		/*!< to prevent memory correption by pthread_* functions */
 #endif /* WIN32 */
 };
 

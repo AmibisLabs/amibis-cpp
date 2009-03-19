@@ -670,7 +670,28 @@ void MsgSocket::Receive()
 					//cerr << "good beginning ";
 					//cerr.write(aBuffer+offset, keyword_min);
 					//cerr << endl;
-					if ( mid == 0 )
+					if ( (unsigned int)size < length_header + length_msg + tag_end_size )
+					{
+						// OmiscidTrace( "wait more byte\n");
+						int total = (int)(length_header + length_msg + tag_end_size);
+						if ( total >= bufferSize )
+						{
+							OmiscidTrace( "buffer too small : new buffer allocation\n");
+							//allocation new buffer
+							bufferSize = (total+1023)&~1023; // bufferSize = rouded to the KB over
+							unsigned char* tmp_buffer = new OMISCID_TLM unsigned char[bufferSize+1];
+							if ( tmp_buffer )
+							{
+								memcpy(tmp_buffer, buffer+offset, size*sizeof(unsigned char));
+								offset = 0;
+								occupiedSize = size;
+								delete [] buffer;
+								buffer = tmp_buffer;
+							}
+						}
+						stop = true;
+					}
+					else if ( mid == 0 )
 					{
 #ifdef DEBUG
 						if ( Debug & DBG_LINKSYNC )
@@ -751,28 +772,7 @@ void MsgSocket::Receive()
 					//						offset += length_header;
 					//						size =  occupiedSize - offset;
 					//					}
-					else if ( (unsigned int)size < length_header + length_msg + tag_end_size )
-					{
-						// OmiscidTrace( "wait more byte\n");
-						int total = (int)(length_header + length_msg + tag_end_size);
-						if ( total >= bufferSize )
-						{
-							OmiscidTrace( "buffer too small : new buffer allocation\n");
-							//allocation new buffer
-							bufferSize = (total+1023)&~1023; // bufferSize = rouded to the KB over
-							unsigned char* tmp_buffer = new OMISCID_TLM unsigned char[bufferSize+1];
-							if(tmp_buffer)
-							{
-								memcpy(tmp_buffer, buffer+offset, size*sizeof(unsigned char));
-								offset = 0;
-								occupiedSize = size;
-								delete [] buffer;
-								buffer = tmp_buffer;
-							}
-						}
-						stop = true;
-					}
-					else
+					else 
 					{
 						offset += length_header;
 
