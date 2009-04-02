@@ -25,8 +25,6 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 	the same variable
 	- correct deadlock problem when (massively) multithreading
 	access to ControlSever/ControlClient
-	- correct name of GetServiceAccessType (was GetServiceAccessTypeType
-	in Service and ServiceProxy classes).
 	[API]
 	- MultipleReferencedData now works subclassing ReentrantMutex and
 	not with an simple AtomicCounter anymore. We also add Internal
@@ -39,6 +37,11 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 	- start to add CopyConstructor for every class.
 	- Remove body of Display* functions in non debug mode for class
 	ControlClient (they are inline empty functions in non debug mode).
+	- correct name of GetVariableAccessType (was GetServiceAccessTypeType
+	in Service and ServiceProxy classes).
+	- Change Service::GetVariableAccessType to return, as its version
+	in ServiceProxy::GetVariableAccessType an enum (no longer the
+	représentation string).
 	[Documentation]
 	- still documentation effort.
 

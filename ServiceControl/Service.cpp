@@ -390,19 +390,19 @@ SimpleString Service::GetVariableValue(SimpleString VarName)
 	/**
 	 * Returns the variable access type
 	 * @param VarName the variable name
-	 * @return the access type (SimpleString version)
+	 * @return the access type
 	 * @see Service#addVariable
 	 */
-SimpleString Service::GetVariableAccessType(SimpleString VarName)
+VariableAccessType Service::GetVariableAccessType(SimpleString VarName)
 {
 	VariableAttribute * pVar = FindVariable( VarName );
 	if ( pVar == NULL )
 	{
-		OmiscidError( "Could not find variable named '%s'.\n", VarName.GetStr() );
-		return SimpleString::EmptyString;
+		SimpleString Err = "Could not find variable named " + VarName;
+		throw SimpleException( Err );
 	}
 
-	return VariableAttribute::AccessToStr(pVar->GetAccess());
+	return pVar->GetAccess();
 }
 
 	/**
@@ -414,9 +414,14 @@ SimpleString Service::GetVariableAccessType(SimpleString VarName)
 	 */
 SimpleString Service::GetVariableType(SimpleString VarName)
 {
-	SimpleString Empty(SimpleString::EmptyString);
+	VariableAttribute * pVar = FindVariable( VarName );
+	if ( pVar == NULL )
+	{
+		SimpleString Err = "Could not find variable named " + VarName;
+		throw SimpleException( Err );
+	}
 
-	return Empty;
+	return pVar->GetType();
 }
 
 	/**
