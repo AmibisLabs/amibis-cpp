@@ -10,7 +10,7 @@ $OMISCID_DEBUG = '';
 $OMISCID_ZEROCONF = '';
 $PackageSuffix = '';
 
-$Archi{32}{'computer'} = 'desdemona';
+$Archi{32}{'computer'} = 'rhea';
 $Archi{32}{'suffix'} = '_i386';
 $Archi{64}{'computer'} = 'carme';
 $Archi{64}{'suffix'} = '_amd64';
@@ -22,7 +22,7 @@ $PackageArch = 32;		# default 32 bits
 $CurrentArg = 0;
 while( defined $ARGV[$CurrentArg] )
 {
-	if ( $ARGV[$CurrentArg] =~ /^zeroconf\=(.+)$/ )
+	if ( $ARGV[$CurrentArg] =~ /^-zeroconf\=(.+)$/ )
 	{
 		if ( $OMISCID_ZEROCONF ne '' )
 		{
@@ -295,36 +295,45 @@ print STDERR "Move debian folder in OMiSCID\n";
 
 $PackageFolder = $OMISCID_PACKAGENAME . '-' . $OMISCID_MAJORVERSION;
 
-print STDERR "Remove oberon:tmp/$PackageFolder if any\n";
-`ssh oberon "rm -rf tmp/$PackageFolder"`;
-
-print STDERR "Copy Temp/OMiSCID to oberon:tmp/$PackageFolder\n";
-`scp -r  OMiSCID oberon:tmp/$PackageFolder`;
-
-print STDERR "Change permission in tmp/$PackageFolder\n";
-`ssh oberon "cd tmp; chmod -R 755 $PackageFolder; chmod 777 $PackageFolder/debian/rules"`;
-
-print STDERR "Create tmp/$PackageFolder.orig\n";
-`ssh oberon "cd tmp; rm -rf $PackageFolder.orig; cp -r $PackageFolder $PackageFolder.orig"`;
-
 $computer = $Archi{$PackageArch}{'computer'};
 
-if ( $OMISCID_ZEROCONF eq 'mdns' )
+print STDERR "Create $computer:tmp/ if not exists\n";
+`ssh $computer "mkdir tmp"`;
+
+print STDERR "Remove $computer:tmp/$PackageFolder if any\n";
+`ssh $computer "rm -rf tmp/$PackageFolder"`;
+
+print STDERR "Remove $computer:tmp/$OMISCID_PACKAGENAME* if any\n";
+`ssh $computer "rm -rf tmp/omiscid*"`;
+
+print STDERR "Copy Temp/OMiSCID to $computer:tmp/$PackageFolder\n";
+`scp -r  OMiSCID $computer:tmp/$PackageFolder`;
+
+print STDERR "Change permission in tmp/$PackageFolder\n";
+`ssh $computer "cd tmp; chmod -R 755 $PackageFolder; chmod 777 $PackageFolder/debian/rules"`;
+
+print STDERR "Create tmp/$PackageFolder.orig\n";
+`ssh $computer "cd tmp; rm -rf $PackageFolder.orig; cp -r $PackageFolder $PackageFolder.orig"`;
+
+
+# if ( $OMISCID_ZEROCONF eq 'mdns' )
 {
-	system( "ssh $computer \"cd tmp/$PackageFolder; debuild -us -uc\"" );
+	# system( "ssh $computer \"cd tmp/$PackageFolder; debuild -us -uc\"" );
+	system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage -d\"" );
 	# die "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage\"\n";
 	# system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage\"" );
 	chdir('..');
-	print "scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb oberon:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
-	`scp oberon:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb oberon:tmp/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
+	print "scp $computer:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
+	`scp $computer:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:tmp/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
 }
-else
-{
- 	system( "ssh $computer \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
- 	chdir('..');
- 	print "scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
- 	`scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
-}
+# else
+# {
+#  	# system( "ssh $computer \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
+#  	system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage -d\"" );
+#  	chdir('..');
+#  	print "scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
+# 	`scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
+# }
 
 print STDERR "Remove OMiSCID folder in tmp on oberon\n";
 # `ssh oberon "rm -rf tmp/omiscid*"`;

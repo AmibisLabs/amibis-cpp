@@ -18,9 +18,9 @@ close( $fd );
 
 # Generate all packages name
 
-@DaemonNames = ( 'mdns', 'avahi' );
-@DebugModes = ( '', '-debug' );
-@Archies = ( '-arch=64bits', '-arch=32bits' );
+@DaemonNames = ( 'avahi', 'mdns' );
+@DebugModes = ( '-debug', '' );
+@Archies = ( '64bits', '32bits' );
 
 $OriginalReplacesString = '';
 for $DaemonName ( @DaemonNames )
@@ -29,11 +29,11 @@ for $DaemonName ( @DaemonNames )
 	{
 		if ( $OriginalReplacesString eq '' )
 		{
-			$OriginalReplacesString = "omiscid-$DaemonName$DebugMode(= $CurrentVersion)";
+			$OriginalReplacesString = "omiscid-$DaemonName$DebugMode(<= $CurrentVersion)";
 		}
 		else
 		{
-			$OriginalReplacesString .= ", omiscid-$DaemonName$DebugMode(= $CurrentVersion)";
+			$OriginalReplacesString .= ", omiscid-$DaemonName$DebugMode(<= $CurrentVersion)";
 		}
 	}
 }
@@ -49,7 +49,8 @@ for $ArchName ( @Archies )
 			$ReplaceString =~ s/^[, ]+//;
 			
 			print STDERR "Generate omiscid-$DaemonName$DebugMode($CurrentVersion) for $ArchName\n";
-			system( "perl CreateDebianPackage.pl $ArchName zeroconf=$DaemonName $DebugMode \"replaces=$ReplaceString\"");
+			# print "perl CreateDebianPackage.pl -arch=$ArchName -zeroconf=$DaemonName $DebugMode \"replaces=$ReplaceString\"\n";
+			system( "perl CreateDebianPackage.pl -arch=$ArchName zeroconf=$DaemonName $DebugMode \"replaces=$ReplaceString\"");
 		}
 	}
 }

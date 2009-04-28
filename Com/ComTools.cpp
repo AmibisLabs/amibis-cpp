@@ -9,6 +9,7 @@ unsigned short ComTools::GetTcpPort()
 {
   return 0;
 }
+
 unsigned short ComTools::GetUdpPort()
 {
   return 0;

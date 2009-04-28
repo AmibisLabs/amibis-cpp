@@ -193,10 +193,6 @@ void VariableAttribute::ExtractDataFromXml(xmlNodePtr node)
 			{
 				SetDescription(XMLMessage::ExtractTextContent(cur_node->children));
 			}
-			else if( cur_name == "formatDescription" )
-			{
-				SetFormatDescription(XMLMessage::ExtractTextContent(cur_node->children));
-			}
 			else if ( cur_name == "value" )
 			{
 				tmp_value = XMLMessage::ExtractTextContent(cur_node->children);

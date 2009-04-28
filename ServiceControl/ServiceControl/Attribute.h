@@ -46,14 +46,12 @@ class Attribute
   //@{
   const SimpleString& GetName() const;
   const SimpleString& GetDescription() const;
-  const SimpleString& GetFormatDescription() const;
   //@}
 
   /** \name Write Accessors */
   //@{
   void SetName(const SimpleString str);
   void SetDescription(const SimpleString str);
-  void SetFormatDescription(const SimpleString str);
   //@}
 
   /** \name XML Generation */
@@ -110,8 +108,6 @@ class Attribute
  private:
   SimpleString name; /*!< name of the attribute*/
   SimpleString description; /*!< description of the attribute*/
-  /** \brief description of the format of the attribut (example for xml : the associated xsd) */
-  SimpleString formatDescription;
 };
 
 } // namespace Omiscid

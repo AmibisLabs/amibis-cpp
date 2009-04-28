@@ -24,13 +24,6 @@ void Attribute::AddTagDescriptionToStr(SimpleString& str)
 			+ description
 			+ "</description>";
 	}
-
-	if ( formatDescription != "" )
-	{
-		str += "<formatDescription>";
-		PutAValueInCData(formatDescription, str);
-		str += "</formatDescription>";
-	}
 }
 
 void Attribute::PutAValueInCData(const SimpleString val, SimpleString& str)
@@ -81,14 +74,4 @@ void Attribute::GenerateHeaderDescription(const SimpleString& type,
 	//str = str + "<"+ type + " name=\"" + name;
 	//if(end) str = str + "\"/>";
 	//else  str = str + "\">";
-}
-
-const SimpleString& Attribute::GetFormatDescription() const
-{
-	return formatDescription;
-}
-
-void Attribute::SetFormatDescription(const SimpleString str)
-{
-	formatDescription = str;
 }

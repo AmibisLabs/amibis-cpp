@@ -50,13 +50,22 @@ sub EnterDirectory()
 {
  	my $DirName = shift @_;
 	my $UserData = shift @_;
+ 	my $TmpDirName;
 	
 	if ( $DirName =~ /\.svn/ || $DirName =~ /VisualStudio.in|WorkingForOMiSCID|Spec|Xsd/ )
 	{
 		return 0;
 	}
-		
-	# print "$DirName\n";
+	
+	foreach $TmpDirName ( keys %ToExclude )
+	{
+		if ( $DirName =~ /^$TmpDirName/ || $DirName =~ /^\.\/$TmpDirName/ )
+		{
+			return 0;
+		}
+	}
+	
+	# print STDERR "$DirName is ok\n";
  
  	return 1;
 }
@@ -76,6 +85,13 @@ while ( defined $ARGV[$ParamPos] )
 		$ParamPos++;
 		next;
 	}
+	if ( $ARGV[$ParamPos] =~ /^-exclude\=(.+)$/ )
+	{
+		# print STDERR "$1 is excluded\n";
+		$ToExclude{$1} = 1;
+		$ParamPos++;
+		next;
+	}	
 	if ( $FolderToWorkOn ne '' )
 	{
 		die "Bad parameter : folder already defined.\n";

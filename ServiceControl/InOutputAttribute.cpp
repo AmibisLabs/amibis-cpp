@@ -198,10 +198,6 @@ void InOutputAttribute::ExtractDataFromXml(xmlNodePtr node)
 		  {
 			  SetDescription( XMLMessage::ExtractTextContent(cur_node->children) );
 		  }
-		  else if( cur_name == "formatDescription" )
-		  {
-			  SetDescription( XMLMessage::ExtractTextContent(cur_node->children) );
-		  }
 		  else if ( cur_name == "tcp" )
 		  {
 			  SetTcpPort( (unsigned short)atoi(XMLMessage::ExtractTextContent(cur_node->children).GetStr()) );

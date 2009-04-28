@@ -1,0 +1,1 @@
+rsync -avzu --exclude Doc --exclude Release --exclude Debug --exclude .svn --exclude WorkingForOMiSCID --exclude Temp --delete OMiSCID-Dev/ StableVersions/OMiSCID/

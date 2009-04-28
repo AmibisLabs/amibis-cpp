@@ -8,7 +8,7 @@ print $fdh qq{/* \@file XsdSchema.h
 #ifndef __XSD_SCHEMA_H__
 #define __XSD_SCHEMA_H__
 
-#include <ServiceControl/Config.h>
+#include <ServiceControl/ConfigServiceControl.h>
 #include <System/SimpleString.h>
 
 namespace Omiscid \{

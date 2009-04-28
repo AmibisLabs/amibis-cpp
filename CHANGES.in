@@ -3,6 +3,8 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 
 %OMISCID_VERSION%	%OMISCID_DAY%
 	[Global modifications]
+	- remove all reference (internal API, data and external XSD) to
+	formatDescription
 	- add support for 64 bits packages
 	- put TemporaryMemoryBuffer into separate files (TemporaryMemoryBuffer.h
 	and .cpp). You can always include Portage.h to include them.

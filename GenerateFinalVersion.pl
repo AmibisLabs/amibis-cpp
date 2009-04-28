@@ -54,20 +54,21 @@ sub WakeOnLan()
 	my $TestComputer = shift @_;		
 	my $MacAddress;
 	my $res;
-	
-	if ( !defined $Computers{$TestComputer} )
+	my $NbTry;
+		
+	if ( !defined $Computer{$TestComputer} )
 	{
 		return 0;
 	}
 	
-	$MacAddress = $Computers{$TestComputer};
+	$MacAddress = $Computer{$TestComputer};
 	
 	$MacAddress =~ s/://g;
 	`./wol $MacAddress`;
 	$NbTry = 5;
 	while( $NbTry > 0 )
 	{
-		$res = `ssh $TestComputer "echo 'ssh is now ok.'"`;
+		$res = `ssh $Computer{$TestComputer} "echo 'ssh is now ok.'"`;
 		if ( $res =~ /^ssh is now ok\./ )
 		{
 			return 1;
@@ -78,6 +79,83 @@ sub WakeOnLan()
 		$NbTry--;
 	}
 	return 0;
+}
+
+sub StartAndWaitVM()
+{
+	my $TestComputer = shift @_;		
+	my $res;
+	my $NbTry;
+	
+	# ask VirtualBox to start current VM
+	print STDERR "VBoxManage startvm '$TestComputer' ('$Computer{$TestComputer}')\n";
+	`VBoxManage startvm $TestComputer`;
+	# $res = `perl TestVM.pl`;
+	
+	# print "$res\n";
+	
+	# Wait 30 seconds
+	sleep(30);
+
+	$NbTry = 20;
+	while( $NbTry > 0 )
+	{
+		$res = `ssh $Computer{$TestComputer} "echo 'ssh is now ok.'"`;
+		if ( $res =~ /^ssh is now ok\./ )
+		{
+			return 1;
+		}
+		sleep( 5 );
+		print STDERR "Retry to connect to $Computer{$TestComputer}.\n";
+		$NbTry--;
+	}
+	return 0;
+}
+
+sub StopVM()
+{
+	my $TestComputer = shift @_;		
+	my $res;
+	
+	# ask VirtualBox to start current VM
+	`VBoxManage controlvm $TestComputer acpipowerbutton`;
+	
+	# Wait 30 seconds, we do not want to have 2 running VMs
+	print STDERR "Wait 30 seconds for VM to stop (we do not want 2 VMs at the same time\n";
+	sleep(30);
+}
+
+sub StartComputer()
+{
+	my $TestComputer = shift @_;
+	
+	print STDERR "Trying to start $TestComputer.\n";
+	&AddLog( "TRY: Trying to start $TestComputer." );	
+	if ( $Computer{$TestComputer} =~ /^[0-9][a-z]$/ )
+	{
+		# MacAdress WakeOnLan
+		&WakeOnLan( $TestComputer );
+	}
+	else
+	{
+		# Start corresponding VM
+		&StartAndWaitVM( $TestComputer );
+	}
+}
+
+sub StopComputer()
+{
+	my $TestComputer = shift @_;
+	if ( $Computer{$TestComputer} =~ /^[0-9][a-z]$/ )
+	{
+		# MacAdress WakeOnLan
+		# nothing to do
+	}
+	else
+	{
+		# Start corresponding VM
+		&StopVM( $TestComputer );
+	}
 }
 
 $NameOfLogFile = 'Problems.txt';
@@ -311,7 +389,7 @@ while( $FileIn = <*.in> )
 	close( $fd );
 }
 
-`perl RecursiveDos2Unix.pl .`;
+`perl RecursiveDos2Unix.pl . -exclude=Doc`;
 
 # generate testing archive
 &RecurseWork::RecurseWork("System/");
@@ -366,19 +444,19 @@ $TestSuite .= "CMT: Compilation environment\n";
 $TestSuite .= "C++: Microsoft Visual Studio 2005\n";
 $TestSuite .= "     Version 8.0.50727.867  (vsvista.050727-8600)\n";
 $TestSuite .= "     Microsoft .NET Framework\n";
-$TestSuite .= "     Version 2.0.50727 SP1\n";
+$TestSuite .= "     Version 2.0.50727 SP2\n";
 $TestSuite .= "     Édition installée : Professional\n";
-$TestSuite .= "     Microsoft Visual C# 2005   77915-009-0000007-41342\n";
-$TestSuite .= "     Microsoft Visual C++ 2005   77915-009-0000007-41342\n";
-$TestSuite .= "     Microsoft Visual J# 2005   77915-009-0000007-41342\n";
-$TestSuite .= "     Microsoft Web Application Projects 2005   77915-009-0000007-41342\n";
-$TestSuite .= "     Version 8.0.50727.867\n";
-$TestSuite .= "     Crystal Reports    AAC6G-G0CSA4K-U7000P7\n";
+$TestSuite .= "     Microsoft Visual C# 2005\n";
+$TestSuite .= "     Microsoft Visual C++ 2005\n";
+$TestSuite .= "     Microsoft Visual J# 2005\n";
+$TestSuite .= "     Microsoft Web Application Projects 2005\n";
+$TestSuite .= "     Crystal Reports\n";
 $TestSuite .= "     Microsoft Visual Studio 2005 Professional - Français Service Pack 1 (KB926607)\n";
 $TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB937061)\n";
+$TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB947738)\n";
 $TestSuite .= "     Update pour Microsoft Visual Studio 2005 Professional - Français (KB932233)\n";
 $TestSuite .= "     Insure++ Version 7.1.2 (build 2007-09-10)\n";
-$TestSuite .= "XML: libxml2 version 2.6.23 with iconv 1.9.1\n";
+$TestSuite .= "XML: libxml2 version libxml2-2.7.3 with iconv-1.9.2\n";
 
 # Construct the actual tests done
 foreach $DebugFlag ( ('1', '0') )
@@ -403,24 +481,19 @@ foreach $DebugFlag ( ('1', '0') )
 
 if ( $DoTest == 1 )
 {
-# 	$Computers{'astree'} = '000e0c5e4586';
-# 	$Options{'astree'}   = '("zeroconf=avahi")'; # debugthread=1")';
- 	$Computers{'prometheus'} = '0013202e4fae';
- 	$Options{'prometheus'}   = '("zeroconf=avahi")'; # debugthread=1")';
-# 	$Computers{'metis'}  = '000d936fc38c';
-# 	$Options{'metis'}   = '("")';
- 	$Computers{'protee'}  = '000d561ff276';
- 	$Options{'protee'}   = '("zeroconf=avahi ChMemMode=1")';
-# 	# $Options{'protee'}   = '("zeroconf=mdns ChMemMode=1")';
-# 	# $Options{'protee'}   = '("zeroconf=mdns chmem=1")';
-# 	# $SupportedDebugMode{'protee'} = 'insure';
- 	$Computers{'puck'}  = '0019b94b4902';
- 	$Options{'puck'}   = '("")';
-	
-	$Computers{'carme'}  = '000f1f74c296';
-	# $Options{'carme'}   = '("zeroconf=mdns")';
-	$Options{'carme'}   = '("")';
-	
+	# $Configs{'debian-i386-with-avahi'} = 1;
+ 	# $Computer{'debian-i386-with-avahi'} = 'rhea';
+ 	# $Options{'debian-i386-with-avahi'} = '("zeroconf=avahi")';
+ 	# $SupportedDebugMode{'rhea-i386-with-avahi'} = 'insure';
+
+	$Configs{'debian-i386-with-mdns'} = 1;
+ 	$Computer{'debian-i386-with-mdns'} = 'rhea';
+ 	$Options{'debian-i386-with-mdns'} = '("zeroconf=mdns")';
+
+	# $Configs{'MaxOsX'} = 1;
+ 	# $Computer{'MaxOsX'} = 'metis';
+ 	# $Options{'MaxOsX'} = '("")';
+ 	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';
 	$TestsList{'SendHugeData.cpp'} = 'SendHugeData';
@@ -435,25 +508,25 @@ if ( $DoTest == 1 )
 	local (*READ, *WRITE, *ERROR);
 	
 	$NumComputer = 1;
-	foreach $TestComputer ( keys %Computers )
-	{
+	foreach $TestConfig ( keys %Configs )
+	{	
 		# Check if computer if available
-		print STDERR "Trying to connect to $TestComputer.\n";
-		&AddLog( "TRY: Trying to connect to $TestComputer." );
-		print STDERR "Send an etherwake command to $TestComputer.\n";
-		if ( &WakeOnLan($TestComputer) == 0 )
+		if ( &StartComputer($TestConfig) == 0 )
 		{
 			$Tested = 0;
-			&AddLog( "WRN: Could not connect to $TestComputer" );
+			&AddLog( "WRN: Could not start and connect to $TestComputer" );
 			next;
 		}
+		
+		$TestComputer = $Computer{$TestConfig};
 		
 		&AddLog( "TOK: Connected to $TestComputer." );
 		
 		# incr num of computer 1
 		$NumComputer++;
 		
-		$TestSuite .= "\n\n##################\n# Computer $NumComputer\n##################\n\n";
+		$TestSuite .= "\n\n##################\n# Computer $NumComputer ($TestConfig) \n##################\n\n";
+		$TestSuite .= "\n\n##################\n# rhea is the network name of all virtual OSes \n##################\n\n";
 		
 		@DebugModesForTest = ('1', '0'); # 'valgrind',
 		
@@ -498,12 +571,12 @@ if ( $DoTest == 1 )
 				}
 			}
 			
-			if ( $Options{$TestComputer} =~ /debugthread\=(1|yes|true)/ )
+			if ( $Options{$TestConfig} =~ /debugthread\=(1|yes|true)/ )
 			{
 				$CompilerOptions .= ' -DDEBUG_THREAD ';
 			}
 			
-			if ( $Options{$TestComputer} =~ /chmem\=(1|yes|true)/ )
+			if ( $Options{$TestConfig} =~ /chmem\=(1|yes|true)/ )
 			{
 				$CompilerOptions .= ' -DTRACKING_MEMORY_LEAKS ';
 			}		
@@ -527,7 +600,7 @@ if ( $DoTest == 1 )
 			
 			# cleaning up everything
 			print STDERR "$TestComputer: Cleanup /tmp/\n";
-			`ssh $TestComputer "cd /tmp/;rm -rf $WorkingRep OmiscidInstall $VersionFile"`;	
+			system("ssh $TestComputer \"cd /tmp/;rm -rf $WorkingRep OmiscidInstall $VersionFile\"");	
 		        
 			# copy Archive to the test computer
 			print STDERR "$TestComputer: Copy and unzip Omiscid in /tmp/\n";
@@ -535,17 +608,19 @@ if ( $DoTest == 1 )
 			
 			print STDERR "$TestComputer: Change permissions on test scripts in /tmp/$WorkingRep/Test/\n";
 			`ssh $TestComputer "chmod 755 /tmp/$WorkingRep/Test"`;
-	
+			
 			# set that it is not tested successfully
 			$Tested = 0;
 			foreach $TraceFlag ( ('1', '0') )
 			{
-				$OptionString = "\@OptionsTable = $Options{$TestComputer};";
+				$OptionString = "\@OptionsTable = $Options{$TestConfig};";
 				eval( $OptionString );
 
 				foreach $Option ( @OptionsTable )
 				{
 					# &WakeOnLan($TestComputer);
+					
+					# die $Option;
 					
 					$TestSuite .= "CMT: Test Omiscid with 'debug=$DebugFlag trace=$TraceFlag $Option' flags.\n";
 					
@@ -571,7 +646,7 @@ if ( $DoTest == 1 )
 					foreach $test ( keys %TestsList )
 					{
 						# try to compile Test Examples
-						$LastTry = "ssh $TestComputer $Options{$TestComputer} : \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test' '$Compiler' '$CompilerOptions' '$InvoqueDebugger'\"";
+						$LastTry = "ssh $TestComputer $Options{$TestConfig} : \"/tmp/$WorkingRep/Test/CompileAndRunTest.sh $WorkingRep '$test' '$Compiler' '$CompilerOptions' '$InvoqueDebugger'\"";
 						$Tested = 0;
 						$NbTestsTried = 0;
 						$NbTestsOk = 0;
@@ -627,6 +702,8 @@ if ( $DoTest == 1 )
 		`ssh $TestComputer "cd /tmp/;rm -rf $WorkingRep OmiscidInstall $VersionFile"`;
 		
 		$TestSuite .= "\n";
+		
+		&StopComputer( $TestConfig );
 	}
 }
 else
