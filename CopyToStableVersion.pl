@@ -67,6 +67,12 @@ sub WorkOnFile()
  	`cp $CompleteFileName $FileOut`;
 }
 
+# Create if not exists ../StableVersions/OMiSCID/
+if ( !-e '../StableVersions/OMiSCID/' )
+{
+	`mkdir ../StableVersions/OMiSCID/`;
+}
+
 # copy back files to save from StableVersion
 `cp -f ../StableVersions/OMiSCID/Problems.txt ../StableVersions/OMiSCID/Doxygen.log .`;
 

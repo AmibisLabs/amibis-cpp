@@ -3,9 +3,11 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 
 %OMISCID_VERSION%	%OMISCID_DAY%
 	[Global modifications]
-	- remove all reference (internal API, data and external XSD) to
-	formatDescription
+	- All tests and package constructions are made in virtual
+	debian clean installation
 	- add support for 64 bits packages
+	- remove all reference (internal API, data and external XSD) to
+	formatDescription (not use anymore)
 	- put TemporaryMemoryBuffer into separate files (TemporaryMemoryBuffer.h
 	and .cpp). You can always include Portage.h to include them.
 	- add ability for TemporaryMemoryBuffer to grow and to be empty.
@@ -45,7 +47,7 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 	in ServiceProxy::GetVariableAccessType an enum (no longer the
 	représentation string).
 	[Documentation]
-	- still documentation effort.
+	- no more documentation since previous release.
 
 1.5.1	2008-10-24
     [Bug corrections]

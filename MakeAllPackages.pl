@@ -49,8 +49,8 @@ for $ArchName ( @Archies )
 			$ReplaceString =~ s/^[, ]+//;
 			
 			print STDERR "Generate omiscid-$DaemonName$DebugMode($CurrentVersion) for $ArchName\n";
-			# print "perl CreateDebianPackage.pl -arch=$ArchName -zeroconf=$DaemonName $DebugMode \"replaces=$ReplaceString\"\n";
-			system( "perl CreateDebianPackage.pl -arch=$ArchName zeroconf=$DaemonName $DebugMode \"replaces=$ReplaceString\"");
+			# print "perl CreateDebianPackage.pl -arch=$ArchName -zeroconf=$DaemonName $DebugMode \"-replaces=$ReplaceString\"\n";
+			system( "perl CreateDebianPackage.pl -arch=$ArchName -zeroconf=$DaemonName $DebugMode \"-replaces=$ReplaceString\"");
 		}
 	}
 }

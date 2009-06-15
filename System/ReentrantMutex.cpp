@@ -95,7 +95,14 @@ bool ReentrantMutex::Unlock()
 	}
 #endif
 #ifdef DEBUG
-	PreviousOwnerId = OwnerIds->ExtractFirst();
+	if ( OwnerIds->GetNumberOfElements() != 0 )
+	{
+		PreviousOwnerId = OwnerIds->ExtractFirst();
+	}
+	else
+	{
+		PreviousOwnerId = 0;
+	}
 #endif
 
 	return true;

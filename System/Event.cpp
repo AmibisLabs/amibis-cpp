@@ -7,6 +7,9 @@ using namespace Omiscid;
 
 /** @brief Constructor */
 Event::Event()
+#ifndef WIN32
+: Signaled(false)
+#endif
 {
 #ifndef WIN32
 	if(pthread_mutex_init(&mutex, NULL) != 0)
@@ -35,6 +38,7 @@ void Event::Signal()
 {
 #ifndef WIN32
 	pthread_mutex_lock(&mutex);
+	Signaled = true;
 	pthread_cond_broadcast(&condition);
 	pthread_mutex_unlock(&mutex);
 #else
@@ -50,6 +54,10 @@ void Event::Reset()
 {
 #ifdef WIN32
 	ResetEvent(handle);
+#else
+	pthread_mutex_lock(&mutex);
+	Signaled = false;
+	pthread_mutex_unlock(&mutex);
 #endif
 }
 
@@ -64,34 +72,43 @@ bool Event::Wait(unsigned long timer)
 {
 #ifndef WIN32
 	pthread_mutex_lock(&mutex);
-	if(timer == 0)
+	if ( timer == 0 )
 	{
-		pthread_cond_wait(&condition, &mutex);
+		// If state is not Signaled, wait forever for it !
+		if ( Signaled == false )
+		{
+			pthread_cond_wait(&condition, &mutex);
+		}
 		pthread_mutex_unlock(&mutex);
 		return true;
 	}
 	else
 	{
-		struct timeval now;
-		struct timespec timeout;
-		int retcode;
+		int retcode = 0;
 
-		int second = timer/1000;
-		int nanos = (timer-second*1000)*1000000;
-
-		gettimeofday(&now, NULL);
-
-		// Compute time until where we must wait
-		timeout.tv_sec = now.tv_sec + second;
-		timeout.tv_nsec = now.tv_usec * 1000 + nanos;
-		// If nano is over 1 s, remove it. Shoud appear only once but put a while...
-		while ( timeout.tv_nsec > 1000000000 )
+		/ If state is not Signaled, wait for it !
+		if ( Signaled == false )
 		{
-			timeout.tv_nsec -= 1000000000;
-			timeout.tv_sec  += 1;
-		}
+			struct timeval now;
+			struct timespec timeout;
 
-		retcode = pthread_cond_timedwait(&condition, &mutex, &timeout);
+			int second = timer/1000;
+			int nanos = (timer-second*1000)*1000000;
+
+			gettimeofday(&now, NULL);
+
+			// Compute time until where we must wait
+			timeout.tv_sec = now.tv_sec + second;
+			timeout.tv_nsec = now.tv_usec * 1000 + nanos;
+			// If nano is over 1 s, remove it. Shoud appear only once but put a while...
+			while ( timeout.tv_nsec > 1000000000 )
+			{
+				timeout.tv_nsec -= 1000000000;
+				timeout.tv_sec  += 1;
+			}
+
+			retcode = pthread_cond_timedwait(&condition, &mutex, &timeout);
+		}
 		pthread_mutex_unlock(&mutex);
 
 		return (retcode == 0);

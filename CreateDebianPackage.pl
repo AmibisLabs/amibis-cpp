@@ -1,4 +1,5 @@
 use Cwd;
+require ComputerManagement;
 
 $ZeroconfInfo{'avahi'} = 'Avahi (see http://avahi.org/)';
 $ZeroconfDepends{'avahi'} = ', libavahi-client-dev';
@@ -11,9 +12,9 @@ $OMISCID_ZEROCONF = '';
 $PackageSuffix = '';
 
 $Archi{32}{'computer'} = 'rhea';
-$Archi{32}{'suffix'} = '_i386';
-$Archi{64}{'computer'} = 'carme';
-$Archi{64}{'suffix'} = '_amd64';
+$Archi{32}{'suffix'} = 'i386';
+$Archi{64}{'computer'} = 'rhea';
+$Archi{64}{'suffix'} = 'amd64';
 
 
 $PackageArch = 32;		# default 32 bits
@@ -36,7 +37,7 @@ while( defined $ARGV[$CurrentArg] )
 		$CurrentArg++;
 		next;
 	}
-	if ( $ARGV[$CurrentArg] =~ /^replaces=(.+)$/ )
+	if ( $ARGV[$CurrentArg] =~ /^-replaces=(.+)$/ )
 	{
 		$OMISCID_REPLACES = $1;
 		$CurrentArg++;
@@ -80,6 +81,23 @@ if ( $ErrorInArg == 1 )
 {
 	exit(-1);
 }
+
+
+if ( $OMISCID_ZEROCONF eq 'mdns' )
+{
+	$VMName = 'debian-' . $Archi{$PackageArch}{'suffix'} . '-with-mdns';
+}
+else
+{
+	$VMName = 'debian-' . $Archi{$PackageArch}{'suffix'} . '-with-avahi';
+}
+
+if ( ! defined $Configs{$VMName} )
+{
+	die "VM '$VMName' unknown...\n";
+}
+
+&StartAndWaitVM( $VMName );
 
 $OMISCID_ZEROCONF_INFO = $ZeroconfInfo{$OMISCID_ZEROCONF};
 $OMISCID_DEPENDANCY = $ZeroconfDepends{$OMISCID_ZEROCONF};
@@ -315,29 +333,19 @@ print STDERR "Change permission in tmp/$PackageFolder\n";
 print STDERR "Create tmp/$PackageFolder.orig\n";
 `ssh $computer "cd tmp; rm -rf $PackageFolder.orig; cp -r $PackageFolder $PackageFolder.orig"`;
 
-
-# if ( $OMISCID_ZEROCONF eq 'mdns' )
-{
-	# system( "ssh $computer \"cd tmp/$PackageFolder; debuild -us -uc\"" );
-	system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage -d\"" );
-	# die "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage\"\n";
-	# system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage\"" );
-	chdir('..');
-	print "scp $computer:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
-	`scp $computer:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:tmp/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
-}
-# else
-# {
-#  	# system( "ssh $computer \"cd tmp/$PackageFolder; sudo pbuilder create --distribution lenny; sudo pbuilder update; pdebuild\" ");
-#  	system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage -d\"" );
-#  	chdir('..');
-#  	print "scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .\n";
-# 	`scp $computer:/var/cache/pbuilder/result/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb $computer:/var/cache/pbuilder/result/omiscid-dev_${OMISCID_MAJORVERSION}$Archi{$PackageArch}{'suffix'}.deb .`;
-# }
+# system( "ssh $computer \"cd tmp/$PackageFolder; debuild -us -uc\"" );
+system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage -d\"" );
+# die "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage\"\n";
+# system( "ssh $computer \"cd tmp/$PackageFolder; dpkg-buildpackage\"" );
+chdir('..');
+print "scp $computer:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_$Archi{$PackageArch}{'suffix'}.deb $computer:tmp/${OMISCID_PACKAGENAME}-dev_${OMISCID_MAJORVERSION}_$Archi{$PackageArch}{'suffix'}.deb .\n";
+`scp $computer:tmp/${OMISCID_PACKAGENAME}_${OMISCID_MAJORVERSION}_$Archi{$PackageArch}{'suffix'}.deb $computer:tmp/omiscid-dev_${OMISCID_MAJORVERSION}_$Archi{$PackageArch}{'suffix'}.deb .`;
 
 print STDERR "Remove OMiSCID folder in tmp on oberon\n";
 # `ssh oberon "rm -rf tmp/omiscid*"`;
 
 print STDERR "Remove OMiSCID folder in Temp\n";
 # `rm -rf OMiSCID`;
+
+&StopVM( $VMName );
 

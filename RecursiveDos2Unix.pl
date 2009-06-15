@@ -35,7 +35,7 @@ sub WorkOnFile()
  	my $FileName = shift @_;
  	my $UserData = shift @_;
 
-	if ( $FileName =~ /\.(cpp|h|txt|xml|xsd)/ )
+	if ( $FileName =~ /\.(cpp|h|txt|xml|xsd)$/ )
 	{
 		&Reformat($FileName);
 	}

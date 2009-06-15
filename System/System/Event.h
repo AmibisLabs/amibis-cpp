@@ -48,6 +48,8 @@ private:
 #ifdef WIN32
 	HANDLE handle; /*!< A Windows Event object */
 #else
+	bool Signaled;	/*!< Variable used to make linux event statefull */
+
 	unsigned int before;	/*!< Unused variable only to prevent memory correption by pthread_* functions */
 	pthread_cond_t condition; /*!< The condition object */
 	pthread_mutex_t mutex; /*!< A Mutex to protect the access to the condition */
