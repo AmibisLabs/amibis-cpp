@@ -6,6 +6,7 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 	- All tests and package constructions are made in virtual
 	debian clean installation
 	- add support for 64 bits packages
+	- change Event on Linux. Now work as on Windows in statefull mode
 	- remove all reference (internal API, data and external XSD) to
 	formatDescription (not use anymore)
 	- put TemporaryMemoryBuffer into separate files (TemporaryMemoryBuffer.h

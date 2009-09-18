@@ -70,7 +70,7 @@ public:
 	 * <li> the list of connectors (and port)
 	 * </ul>
 	 */
-	void UpdateDescription();
+	void UpdateDescription(bool ForceUpdate = false);
 
 	/**
 	 * Host name where the remote service is located

@@ -86,7 +86,7 @@ bool Event::Wait(unsigned long timer)
 	{
 		int retcode = 0;
 
-		/ If state is not Signaled, wait for it !
+		// If state is not Signaled, wait for it !
 		if ( Signaled == false )
 		{
 			struct timeval now;

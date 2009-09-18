@@ -301,9 +301,9 @@ MutexedSimpleList<SimpleString>& ServiceProxy::GetInputOutputConnectors()
 	 * <li> the list of connectors
 	 * </ul>
 	 */
-void ServiceProxy::UpdateDescription()
+void ServiceProxy::UpdateDescription(bool ForceUpdate /* = false */)
 {
-	if ( FullDescription == true )
+	if ( ForceUpdate == false && FullDescription == true )
 	{
 		return;
 	}
@@ -716,6 +716,8 @@ SimpleString ServiceProxy::GetConnectorDescription(const SimpleString ConnectorN
 		ErrMesg += "'. Call HasConnector First.";
 		throw  SimpleException( ErrMesg );
 	}
+
+	UpdateDescription(true);
 
 	return pAtt->GetDescription();
 }
