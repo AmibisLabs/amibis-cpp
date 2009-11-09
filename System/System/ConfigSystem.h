@@ -198,6 +198,13 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
+// Check if DEBUG and NDEBUG are set simultaneously
+#ifdef DEBUG
+	#if defined NDEBUG || defined _NDEBUG
+		#error "You must not define DEBUG and NDEBUG simultaneously"
+	#endif
+#endif
+
 #ifdef TRACKING_MEMORY_LEAKS
 
 	// include redefinition of new/delete operator

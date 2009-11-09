@@ -11,7 +11,7 @@ env = conf.Finish()
 
 if env['UseInsure'] == 'yes' :
  OmiscidMessage('compiling using insure')
- env.Replace(CXX = '/home/oberon/vaufreyd/bin/parasoft/bin/insure')
+ env.Replace(CXX = 'insure')
 
 binToInstall = []
 libToInstall = []
