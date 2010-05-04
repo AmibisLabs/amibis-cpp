@@ -1,0 +1,60 @@
+cmake_minimum_required(VERSION 2.6)
+project(OMiSCID)
+
+# Set version number
+SET(OMISCID_VERSION 1.6.0)
+SET(OMISCID_SO_VERSION 1.6)
+
+# By default, build a release
+IF(NOT CMAKE_BUILD_TYPE)
+  SET(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build")
+ENDIF(NOT CMAKE_BUILD_TYPE)
+
+# Configurable values
+SET(USE_AVAHI no CACHE BOOL "Look for and use Avahi native API")
+SET(DEBUG_CHMEM no CACHE BOOL "Compile Debug version using memory leak detection mode")
+SET(DEBUG_THREAD no CACHE BOOL "Compile Debug version with thread debug mode")
+SET(DEBUG_TRACE no CACHE BOOL "Compile Debug version with tracing mode on")
+
+# Check the dependencies
+SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+FIND_PACKAGE(Iconv REQUIRED) # For LibXml2, needed on Windows?
+FIND_PACKAGE(LibXml2 REQUIRED)
+IF(NOT USE_AVAHI)
+   FIND_PACKAGE(DNS-SD REQUIRED)
+ELSE(NOT USE_AVAHI)
+   FIND_PACKAGE(Avahi-Client REQUIRED)
+ENDIF(NOT USE_AVAHI)
+FIND_PACKAGE(Threads REQUIRED)
+
+# Set common compilation options
+SET(CMAKE_CXX_FLAGS "-g -Werror -Wall -pedantic -std=c++98")
+SET(OMISCID_CXX_FLAGS "")
+# Set the debug flags
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -fno-inline -DDEBUG")
+IF(DEBUG_CHMEM)
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DTRACKING_MEMORY_LEAKS")
+ENDIF(DEBUG_CHMEM)
+IF(DEBUG_THREAD)
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG_THREAD")
+ENDIF(DEBUG_THREAD)
+IF(DEBUG_TRACE)
+  SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DOMISCID_TRACE_ENABLE")
+ENDIF(DEBUG_TRACE)
+
+# Optionnal compilation options
+# We could use the config.h way too, but let's use the same way as with SCons
+IF(DNS-SD_FOUND)
+  ADD_DEFINITIONS(-DOMISCID_USE_MDNS)
+  SET(OMISCID_CXX_FLAGS "${OMISCID_CXX_FLAGS} -DOMISCID_USE_MDNS")
+ENDIF(DNS-SD_FOUND)
+IF(AVAHI-CLIENT_FOUND)
+  ADD_DEFINITIONS(-DOMISCID_USE_AVAHI)
+  SET(OMISCID_CXX_FLAGS "${OMISCID_CXX_FLAGS} -DOMISCID_USE_AVAHI")
+ENDIF(AVAHI-CLIENT_FOUND)
+
+# Go into the subprojects
+ADD_SUBDIRECTORY(System)
+ADD_SUBDIRECTORY(Com)
+ADD_SUBDIRECTORY(ServiceControl)
+
