@@ -233,7 +233,7 @@ unsigned int Thread::GetThreadId()
 #ifdef WIN32
 	return (unsigned int)GetCurrentThreadId();
 #else
-	return (unsigned int)pthread_self();
+	return (unsigned int)((unsigned long)pthread_self());
 #endif
 }
 
