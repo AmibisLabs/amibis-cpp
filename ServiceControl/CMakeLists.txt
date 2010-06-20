@@ -7,7 +7,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 FILE(GLOB OmiscidControl_SRCS "*.cpp")
 FILE(GLOB OmiscidControl_HEADERS "ServiceControl/*.h")
-ADD_LIBRARY(OmiscidControl SHARED ${OmiscidControl_SRCS} ${OmiscidControl_HEADERS})
+ADD_LIBRARY(OmiscidControl ${LIB_TYPE} ${OmiscidControl_SRCS} ${OmiscidControl_HEADERS})
 TARGET_LINK_LIBRARIES(OmiscidControl 
     OmiscidCom ${ZEROCONF_LIBRARIES} ${LIBXML2_LIBRARIES})
 SET_TARGET_PROPERTIES(OmiscidControl PROPERTIES 

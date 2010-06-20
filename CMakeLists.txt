@@ -40,6 +40,13 @@ IF(NOT ZEROCONF_INCLUDE_DIR)
   MESSAGE(FATAL_ERROR "Could NOT find any supported zeroconf implementation (DNS-SD or Avahi)")
 ENDIF(NOT ZEROCONF_INCLUDE_DIR)
 
+# Set lib type (shared everywhere else than windows, static in windows)
+IF(NOT WIN32)
+  SET(LIB_TYPE SHARED)
+ELSE(NOT WIN32)
+  SET(LIB_TYPE STATIC)
+ENDIF(NOT WIN32)
+
 # Set common compilation options
 IF(NOT MSVC)
   SET(CMAKE_CXX_FLAGS "-g -Werror -Wall -pedantic -std=c++98")
