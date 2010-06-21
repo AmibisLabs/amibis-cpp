@@ -80,3 +80,4 @@ ADD_SUBDIRECTORY(Json)
 ADD_SUBDIRECTORY(Messaging)
 ADD_SUBDIRECTORY(Examples)
 
+INCLUDE(OmiscidPackaging)
