@@ -244,6 +244,135 @@ void StructuredMessage::Put( const SimpleString Key, const std::vector<double> &
   Put(Key, Val);
 }
 
+/** std::list serialization */
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<std::string> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<std::string>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(*it) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<unsigned int> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<unsigned int>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(static_cast<int>(*it)) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<int> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<int>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(*it) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<unsigned short> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<unsigned short>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(static_cast<int>(*it)) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<short> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<short>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(*it) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<unsigned char> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<unsigned char>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(static_cast<int>(*it)) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<char> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<char>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(*it) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<float> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<float>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(*it) );
+  }
+  
+  Put(Key, Val);
+}
+
+void StructuredMessage::Put( const SimpleString Key, const std::list<double> & Vec )
+{
+  json_spirit::Array Val;
+  
+  for( std::list<double>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    Val.push_back( json_spirit::Value(*it) );
+  }
+  
+  Put(Key, Val);
+}
+
+
 bool StructuredMessage::Pop( const SimpleString Key )
 {
   json_spirit::Object::iterator it;
@@ -358,6 +487,7 @@ void StructuredMessage::Get( const SimpleString Key, float & Val ) const
   Val = static_cast<float>(Get(Key).get_real());
 }
 
+/* std::vector deserialization */
 void StructuredMessage::Get( const SimpleString Key, std::vector<std::string> & Vec ) const
 {
   Vec.clear();
@@ -476,6 +606,137 @@ void StructuredMessage::Get( const SimpleString Key, std::vector<double> & Vec )
 }
 
 void StructuredMessage::Get( const SimpleString Key, std::vector<float> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_real() );
+  }
+}
+
+/* std::list deserialization */
+void StructuredMessage::Get( const SimpleString Key, std::list<std::string> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_str() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<unsigned int> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_int() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<int> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_int() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<unsigned short> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_int() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<short> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_int() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<unsigned char> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_int() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<char> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_int() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<bool> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_bool() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<double> & Vec ) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    Vec.push_back( (*it).get_real() );
+  }
+}
+
+void StructuredMessage::Get( const SimpleString Key, std::list<float> & Vec ) const
 {
   Vec.clear();
   json_spirit::Value Val = Get(Key);

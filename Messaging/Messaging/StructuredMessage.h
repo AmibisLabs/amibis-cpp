@@ -20,6 +20,7 @@
 #include <Messaging/Access.h>
 
 #include <vector>
+#include <list>
 
 namespace Omiscid { namespace Messaging {
 
@@ -108,6 +109,17 @@ public:
   void Put( const SimpleString Key, const std::vector<double> & Vec );
   void Put( const SimpleString Key, const std::vector<float> & Vec );
   
+  void Put( const SimpleString Key, const std::list<std::string> & Vec );
+  void Put( const SimpleString Key, const std::list<unsigned int> & Vec );
+  void Put( const SimpleString Key, const std::list<int> & Vec );
+  void Put( const SimpleString Key, const std::list<unsigned short> & Vec );
+  void Put( const SimpleString Key, const std::list<short> & Vec );
+  void Put( const SimpleString Key, const std::list<unsigned char> & Vec );
+  void Put( const SimpleString Key, const std::list<char> & Vec );
+  void Put( const SimpleString Key, const std::list<bool> & Vec );
+  void Put( const SimpleString Key, const std::list<double> & Vec );
+  void Put( const SimpleString Key, const std::list<float> & Vec );
+
   /** \brief Put an object of any type in the object
    * \param Key [in] the key that identifies the value
    * \param msg [in] the StructuredMessage to insert.
@@ -122,10 +134,17 @@ public:
   template <class C>
     void Put( const Omiscid::SimpleString Key, const std::vector<C>& Vec);
 
+  /** \brief Put a list of object of any type in the object
+   * \param Key [in] the key that identifies the value
+   * \param msg [in] the StructuredMessage to insert.
+   */
+  template <class C>
+    void Put( const Omiscid::SimpleString Key, const std::list<C>& Vec);
+  
   /** \brief Remove an element from the object
-  * \param Key [in] the key that identifies the value to remove
-  * \return true if removed one, false otherwise.
-  */
+   * \param Key [in] the key that identifies the value to remove
+   * \return true if removed one, false otherwise.
+   */
   bool Pop( const SimpleString Key );
 
   /** \brief Set the value of an element, identified by Key, in the object
@@ -184,6 +203,17 @@ public:
   void Get( const SimpleString Key, std::vector<double> & Vec ) const;
   void Get( const SimpleString Key, std::vector<float> & Vec ) const;
 
+  void Get( const SimpleString Key, std::list<std::string> & Vec ) const;
+  void Get( const SimpleString Key, std::list<unsigned int> & Vec ) const;
+  void Get( const SimpleString Key, std::list<int> & Vec ) const;
+  void Get( const SimpleString Key, std::list<unsigned short> & Vec ) const;
+  void Get( const SimpleString Key, std::list<short> & Vec ) const;
+  void Get( const SimpleString Key, std::list<unsigned char> & Vec ) const;
+  void Get( const SimpleString Key, std::list<char> & Vec ) const;
+  void Get( const SimpleString Key, std::list<bool> & Vec ) const;
+  void Get( const SimpleString Key, std::list<double> & Vec ) const;
+  void Get( const SimpleString Key, std::list<float> & Vec ) const;
+
   /** \brief Get an object of any type
    * \param Key [in] the key that identifies the value
    * \param obj [out] the object to write hte value.
@@ -197,6 +227,13 @@ public:
    */
   template <class C>
   void Get( const Omiscid::SimpleString Key, std::vector<C>& Vec) const;
+
+  /** \brief Get a list of object of any type from the object
+   * \param Key [in] the key that identifies the value
+   * \param msg [out] the vector to write the value.
+   */
+  template <class C>
+  void Get( const Omiscid::SimpleString Key, std::list<C>& Vec) const;
 
   /** \brief Encode the structured message to a string
   *
@@ -283,6 +320,22 @@ template <class C>
 }
 
 template <class C>
+  void StructuredMessage::Put( const Omiscid::SimpleString Key, const std::list<C>& Vec)
+{
+  json_spirit::Array Val;
+  
+  for( class std::list<C>::const_iterator it = Vec.begin();
+       it != Vec.end();
+       ++it )
+  {
+    StructuredMessage msg;
+    Save(msg, *it);
+    Val.push_back( json_spirit::Value(msg.GetObject()) );
+  }  
+  Put(Key, Val);
+}
+
+template <class C>
 void StructuredMessage::Get( const Omiscid::SimpleString Key, C& obj) const
 {
   StructuredMessage msg(Get(Key).get_obj());
@@ -291,6 +344,23 @@ void StructuredMessage::Get( const Omiscid::SimpleString Key, C& obj) const
 
 template <class C>
 void StructuredMessage::Get( const Omiscid::SimpleString Key, std::vector<C>& Vec) const
+{
+  Vec.clear();
+  json_spirit::Value Val = Get(Key);
+  const json_spirit::Array & arr = Val.get_array();
+  for(json_spirit::Array::const_iterator it = arr.begin();
+      it != arr.end();
+      ++it)
+  {
+    StructuredMessage msg((*it).get_obj());
+    C obj;
+    Load(msg, obj);
+    Vec.push_back( obj );
+  }
+}
+
+template <class C>
+void StructuredMessage::Get( const Omiscid::SimpleString Key, std::list<C>& Vec) const
 {
   Vec.clear();
   json_spirit::Value Val = Get(Key);
