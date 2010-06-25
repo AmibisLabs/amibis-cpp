@@ -38,10 +38,10 @@ case "$1" in
 	usage 0
 	;;
     --cflags)
-	echo -n " -I@CMAKE_INSTALL_PREFIX@/include @OMISCID_CXX_FLAGS@"
+	echo -n " -I@CMAKE_INSTALL_PREFIX@/include/Omiscid @OMISCID_CXX_FLAGS@"
 	;;
     --cflags-only-I)
-	echo -n " -I@CMAKE_INSTALL_PREFIX@/include "
+	echo -n " -I@CMAKE_INSTALL_PREFIX@/include/Omiscid "
 	;;
     --libs)
 	echo -n " -L@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@ -lOmiscidSystem "
@@ -56,7 +56,7 @@ case "$1" in
 	echo -n " @CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@ "
 	;;
     --includedir)
-	echo -n " @CMAKE_INSTALL_PREFIX@/include "
+	echo -n " @CMAKE_INSTALL_PREFIX@/include/Omiscid "
 	;;
     --prefix)
 	echo -n " $prefix "
@@ -68,7 +68,7 @@ case "$1" in
 	echo -n " @DOCDIR_SYSTEM@/doc_system.tag=@DOCDIR_SYSTEM@ "
 	;;
     --all)
-	echo -n " -I@CMAKE_INSTALL_PREFIX@/include -L@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@ -lOmiscidSystem @OMISCID_CXX_FLAGS@ "
+	echo -n " -I@CMAKE_INSTALL_PREFIX@/include/Omiscid -L@CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@ -lOmiscidSystem @OMISCID_CXX_FLAGS@ "
 	;;
     *)
 	echo "Unknown mode \"$1\""

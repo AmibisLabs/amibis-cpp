@@ -1,0 +1,12 @@
+/**
+ * @file ServiceControl/ConfigZeroconf.h
+ * @ingroup ServiceControl
+ * @brief defines global values for the Zeroconf configuration
+ */
+
+#ifndef __CONFIG_ZEROCONF_H__
+#define __CONFIG_ZEROCONF_H__
+
+#define @ZEROCONF_USED_IMPL@
+
+#endif // __CONFIG_ZEROCONF_H__

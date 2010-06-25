@@ -5,6 +5,9 @@ INCLUDE_DIRECTORIES(${OMiSCID_SOURCE_DIR}/System)
 INCLUDE_DIRECTORIES(${OMiSCID_SOURCE_DIR}/Com)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
+CONFIGURE_FILE(ServiceControl/ConfigZeroconf.h.in
+    ${CMAKE_CURRENT_SOURCE_DIR}/ServiceControl/ConfigZeroconf.h @ONLY)  
+
 FILE(GLOB OmiscidControl_SRCS "*.cpp")
 FILE(GLOB OmiscidControl_HEADERS "ServiceControl/*.h")
 ADD_LIBRARY(OmiscidControl ${LIB_TYPE} ${OmiscidControl_SRCS} ${OmiscidControl_HEADERS})
@@ -15,15 +18,15 @@ SET_TARGET_PROPERTIES(OmiscidControl PROPERTIES
     SOVERSION ${OMISCID_SO_VERSION})
 
 CONFIGURE_FILE(OmiscidControl-config.in.cmake 
-    ${CMAKE_CURRENT_BINARY_DIR}/OmiscidControl-config @ONLY)
-
+    ${CMAKE_CURRENT_BINARY_DIR}/OmiscidControl-config @ONLY)  
+  
 INSTALL(TARGETS OmiscidControl
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib${LIB_SUFFIX}
     ARCHIVE DESTINATION lib${LIB_SUFFIX}
 )
 INSTALL(
-  DIRECTORY ServiceControl DESTINATION include
+  DIRECTORY ServiceControl DESTINATION include/Omiscid
   FILES_MATCHING PATTERN "*.h"
   PATTERN ".svn" EXCLUDE
   )

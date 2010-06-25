@@ -13,6 +13,7 @@
 #ifndef __CONFIG_SERVICE_CONTROL_H__
 #define __CONFIG_SERVICE_CONTROL_H__
 
+#include <ServiceControl/ConfigZeroconf.h>
 #include <Com/ConfigCom.h>
 #include <System/SimpleString.h>
 

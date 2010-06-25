@@ -56,7 +56,7 @@ case "$1" in
 	echo -n " @CMAKE_INSTALL_PREFIX@/lib@LIB_SUFFIX@ "
 	;;
     --includedir)
-	echo -n " @CMAKE_INSTALL_PREFIX@/include "
+	echo -n " @CMAKE_INSTALL_PREFIX@/include/Omiscid "
 	;;
     --prefix)
 	echo -n " $prefix "
