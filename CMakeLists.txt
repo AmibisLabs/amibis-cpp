@@ -82,4 +82,5 @@ ADD_SUBDIRECTORY(Json)
 ADD_SUBDIRECTORY(Messaging)
 ADD_SUBDIRECTORY(Examples)
 
-INCLUDE(OmiscidPackaging)
+# Make packages
+INCLUDE(OmiscidPackaging NO_POLICY_SCOPE)
