@@ -84,3 +84,6 @@ ADD_SUBDIRECTORY(Examples)
 
 # Make packages
 INCLUDE(OmiscidPackaging NO_POLICY_SCOPE)
+
+# For tests
+INCLUDE(CTest)
