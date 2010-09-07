@@ -5,6 +5,12 @@
 
 #include <Json/json_spirit_reader.h>
 #include <Json/json_spirit_value.h>
+#include <cassert>
+#include <iostream>
+#include <iterator>
+
+
+#ifdef USE_BOOST_SPIRIT
 
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
@@ -12,12 +18,14 @@
 #include <boost/spirit/include/classic_confix.hpp>
 #include <boost/spirit/include/classic_escape_char.hpp>
 #include <boost/spirit/include/classic_lists.hpp>
-
-using namespace json_spirit;
-using namespace std;
 using namespace boost;
 using namespace boost::spirit;
 using namespace boost::spirit::classic;
+#endif //USE_BOOST_SPIRIT
+
+using namespace json_spirit;
+using namespace std;
+
 namespace
 {
     string remove_trailing_quote( const string& s )
@@ -48,7 +56,8 @@ namespace
         void new_null ( const char* str, const char* end );
         void new_int ( int i );
         void new_real( double d );
-
+        void set_current_str( const string& str);
+        
     private:
 
         template< class Array_or_obj > void begin_compound();
@@ -71,6 +80,11 @@ namespace
     {
     }
 
+    void Semantic_actions::set_current_str( const string& str)
+    {
+        current_str_ = str;
+    }
+    
     void Semantic_actions::begin_obj( char c )
     {
         assert( c == '{' );
@@ -201,13 +215,17 @@ namespace
 
     string Semantic_actions::get_current_str()
     {
+#ifdef USE_BOOST_SPIRIT
         string result = remove_trailing_quote( current_str_ );
-
+#else
+        string result = current_str_;
+#endif
         current_str_ = "";
-
         return result;
     }
 
+#ifdef USE_BOOST_SPIRIT
+  
     // the spirit grammer 
     //
     class Json_grammer : public grammar< Json_grammer >
@@ -317,6 +335,8 @@ namespace
         Semantic_actions& actions_;
     };
 
+#endif // USE_BOOST_SPIRIT
+  
     void stream_to_string( std::istream& is, string& s )
     {
         is.unsetf( ios::skipws );
@@ -325,6 +345,7 @@ namespace
     }
 }
 
+#ifdef USE_BOOST_SPIRIT
 bool json_spirit::read( const std::string& s, Value& value )
 {
     Semantic_actions semantic_actions( value );
@@ -342,3 +363,116 @@ bool json_spirit::read( std::istream& is, Value& value )
   
     return read( s, value );
 }
+
+#else // USE_BOOST_SPIRIT
+
+#include <Json/JSON_parser.h>
+#include <sstream>
+using namespace std;
+using namespace json_spirit;
+
+static int json_calback(void* ctx, int type, const JSON_value* value);
+
+bool json_spirit::read( std::istream& is, Value& value )
+{
+  bool result = true;
+
+  Semantic_actions semantic_actions( value );
+  
+  JSON_config config;
+  struct JSON_parser_struct* jc = NULL;
+  init_JSON_config(&config);
+  config.callback = &json_calback;
+  config.callback_ctx = static_cast<void*>(&semantic_actions);
+  jc = new_JSON_parser(&config);
+
+  while(is.good()) {
+    int next_char = is.get();
+    if (next_char <= 0) {
+      break;
+    }
+    if (!JSON_parser_char(jc, next_char)) {
+      result = false;
+      goto done;
+    }
+  }
+
+  if (!JSON_parser_done(jc)) {
+    result = false;
+    goto done;
+  }
+  
+  done:
+    delete_JSON_parser(jc);
+    return result; 
+}
+  
+bool json_spirit::read( const std::string& s, Value& value )
+{
+  istringstream ss(s);
+  return read(ss, value);
+}
+
+int json_calback(void* ctx, int type, const JSON_value* value)
+{
+  Semantic_actions * semantic_actions = static_cast<Semantic_actions *>(ctx);
+  
+  switch(type) {
+  case JSON_T_ARRAY_BEGIN:
+    semantic_actions->begin_array('[');
+    break;
+  case JSON_T_ARRAY_END:
+    semantic_actions->end_array(']');
+    break;
+  case JSON_T_OBJECT_BEGIN:
+    semantic_actions->begin_obj('{');
+    break;
+  case JSON_T_OBJECT_END:
+    semantic_actions->end_obj('}');
+    break;
+  case JSON_T_INTEGER:
+    semantic_actions->new_int(value->vu.integer_value);
+    break;
+  case JSON_T_FLOAT:
+    semantic_actions->new_real(value->vu.float_value);
+    break;
+  case JSON_T_NULL:
+  {
+    char snull[] = "null";
+    semantic_actions->new_null(snull, snull+4);
+  }
+  break;
+  case JSON_T_TRUE:
+  {
+    char strue[] = "true";
+    semantic_actions->new_true(strue, strue+4);
+  }
+  break;
+  case JSON_T_FALSE:
+  {
+    char sfalse[] = "false";
+    semantic_actions->new_false(sfalse, sfalse+5);
+  }
+  break;
+  case JSON_T_KEY:
+  {
+    string str(value->vu.str.value, value->vu.str.length);
+    semantic_actions->set_current_str(str);
+    semantic_actions->new_name(value->vu.str.value, value->vu.str.value+value->vu.str.length);
+    break;
+  }
+  case JSON_T_STRING:
+  {
+    string str(value->vu.str.value, value->vu.str.length);
+    semantic_actions->set_current_str(str);
+    semantic_actions->new_str(value->vu.str.value, value->vu.str.value+value->vu.str.length);
+    break;
+  }
+  default:
+    break;
+  }
+  return 1;
+}
+
+
+#endif // USE_BOOST_SPIRIT

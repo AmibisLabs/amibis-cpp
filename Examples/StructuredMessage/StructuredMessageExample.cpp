@@ -36,11 +36,11 @@ public:
   float height;
   Info info;
 
-  Person(const std::string& n="", int a=0, float h=0.)
+  Person(const std::string& n="", int a=0, float h=0., bool terran=true)
     : name(n)
     , age(a)
     , height(h)
-    , info(true)
+    , info(terran)
   {}
 
   Person(const Person& p)
@@ -85,6 +85,7 @@ void Load(Omiscid::Messaging::StructuredMessage& msg, MyStruct& s)
   msg.Get("y", s.y);
 }
 
+using namespace Omiscid;
 using namespace Omiscid::Messaging;
 using namespace std;
 
@@ -110,7 +111,7 @@ int main(int argc, char **argv)
 
   vector<Person> vecp;
   vecp.push_back(Person("Dominique", 52, 1.5));
-  vecp.push_back(Person("Remi", 26, 1.75));
+  vecp.push_back(Person("Remi", 26, 1.75, false));
 
   msg.Put("VecP", vecp);
 
@@ -118,8 +119,7 @@ int main(int argc, char **argv)
   msg.Put("MyStruct", my_struct);
   
   std::cout << msg.Encode() << std::endl;
-
-
+  
   Person p2;
   msg.Get("Person", p2);
   
@@ -138,5 +138,11 @@ int main(int argc, char **argv)
   
 //   msg.Put("Person2", p2);
 //   std::cout << msg.Encode() << std::endl;
+  
+  SimpleString str = msg.Encode();
+
+  StructuredMessage msg2;
+  StructuredMessage::DecodeStructuredMessage(str, msg2);
+  std::cout << msg2.Encode() << std::endl;
   
 }
