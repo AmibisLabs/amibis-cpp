@@ -6,10 +6,13 @@ INCLUDE_DIRECTORIES(${OMiSCID_SOURCE_DIR}/Com)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 CONFIGURE_FILE(ServiceControl/ConfigZeroconf.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/ServiceControl/ConfigZeroconf.h @ONLY)  
+    ${CMAKE_CURRENT_BINARY_DIR}/ServiceControl/ConfigZeroconf.h @ONLY)  
 
 FILE(GLOB OmiscidControl_SRCS "*.cpp")
-FILE(GLOB OmiscidControl_HEADERS "ServiceControl/*.h")
+FILE(GLOB OmiscidControl_HEADERS 
+    "ServiceControl/*.h" 
+    "${CMAKE_CURRENT_BINARY_DIR}/ServiceControl/*.h")
+
 ADD_LIBRARY(OmiscidControl ${LIB_TYPE} ${OmiscidControl_SRCS} ${OmiscidControl_HEADERS})
 TARGET_LINK_LIBRARIES(OmiscidControl 
     OmiscidCom ${ZEROCONF_LIBRARIES} ${LIBXML2_LIBRARIES})
@@ -23,14 +26,11 @@ CONFIGURE_FILE(OmiscidControl-config.in.cmake
 INSTALL(TARGETS OmiscidControl
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib${LIB_SUFFIX}
-    ARCHIVE DESTINATION lib${LIB_SUFFIX}
-)
-INSTALL(
-  DIRECTORY ServiceControl DESTINATION include/Omiscid
-  FILES_MATCHING PATTERN "*.h"
-  PATTERN ".svn" EXCLUDE
-  )
-
+    ARCHIVE DESTINATION lib${LIB_SUFFIX})
+INSTALL(DIRECTORY ServiceControl 
+    DESTINATION include/Omiscid
+    FILES_MATCHING PATTERN "*.h"
+    PATTERN ".svn" EXCLUDE)
 INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/OmiscidControl-config
     DESTINATION bin
     PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
