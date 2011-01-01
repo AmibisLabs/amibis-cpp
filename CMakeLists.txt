@@ -16,12 +16,17 @@ SET(DEBUG_THREAD no CACHE BOOL "Compile Debug version with thread debug mode")
 SET(DEBUG_TRACE no CACHE BOOL "Compile Debug version with tracing mode on")
 
 # Check the dependencies
+INCLUDE (CheckFunctionExists)
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-FIND_PACKAGE(Iconv REQUIRED)
-FIND_PACKAGE(LibXml2 REQUIRED)
 FIND_PACKAGE(Threads REQUIRED)
+CHECK_FUNCTION_EXISTS(memrchr HAVE_MEMRCHR)
+IF(NOT HAVE_MEMRCHR)
+  MESSAGE(FATAL_ERROR "Could NOT find memrchr")
+ENDIF(NOT HAVE_MEMRCHR)
 FIND_PACKAGE(DNS-SD)
 FIND_PACKAGE(Avahi COMPONENTS common client)
+FIND_PACKAGE(Iconv REQUIRED)
+FIND_PACKAGE(LibXml2 REQUIRED)
 
 # Choose the zeroconf implementation
 IF(AVAHI_FOUND)
