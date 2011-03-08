@@ -6,8 +6,7 @@ INCLUDE_DIRECTORIES(
   ${OMiSCID_SOURCE_DIR}/Json
   ${ICONV_INCLUDE_DIR}
   ${LIBXML2_INCLUDE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  )
+  ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable( StructuredMessageExample StructuredMessageExample.cpp  )
-target_link_libraries( StructuredMessageExample OmiscidMessaging OmiscidControl JsonSpirit OmiscidCom OmiscidSystem )
+ADD_EXECUTABLE(StructuredMessageExample StructuredMessageExample.cpp)
+TARGET_LINK_LIBRARIES(StructuredMessageExample Omiscid)

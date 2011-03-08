@@ -6,8 +6,7 @@ INCLUDE_DIRECTORIES(
   ${OMiSCID_SOURCE_DIR}/Json
   ${ICONV_INCLUDE_DIR}
   ${LIBXML2_INCLUDE_DIR}
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  )
+  ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_executable( calculator Calculator.cpp Client.cpp Server.cpp ServerRPC.cpp )
-target_link_libraries( calculator OmiscidMessaging OmiscidControl JsonSpirit OmiscidCom OmiscidSystem)
+ADD_EXECUTABLE(calculator Calculator.cpp Client.cpp Server.cpp ServerRPC.cpp)
+TARGET_LINK_LIBRARIES(calculator Omiscid)

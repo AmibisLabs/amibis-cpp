@@ -1,2 +1,2 @@
-add_subdirectory( Calculator )
-add_subdirectory( StructuredMessage )
+ADD_SUBDIRECTORY(Calculator)
+ADD_SUBDIRECTORY(StructuredMessage)
