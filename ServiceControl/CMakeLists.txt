@@ -5,8 +5,9 @@ INCLUDE_DIRECTORIES(${OMiSCID_SOURCE_DIR}/System)
 INCLUDE_DIRECTORIES(${OMiSCID_SOURCE_DIR}/Com)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
-CONFIGURE_FILE(ServiceControl/ConfigZeroconf.h.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/ServiceControl/ConfigZeroconf.h @ONLY)  
+#for future release
+#CONFIGURE_FILE(ServiceControl/ConfigZeroconf.h.in
+#    ${CMAKE_CURRENT_SOURCE_DIR}/ServiceControl/ConfigZeroconf.h @ONLY)  
 
 FILE(GLOB OmiscidControl_SRCS "*.cpp")
 FILE(GLOB OmiscidControl_HEADERS "ServiceControl/*.h")
