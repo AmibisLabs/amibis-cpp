@@ -42,7 +42,7 @@ int Omiscid::gettimeofday(struct timeval * tv,struct timezone * tz )
 
 #endif // WIN32
 
-#if defined WIN32 || defined __APPLE__
+#if defined WIN32 || defined __APPLE__ || !defined HAVE_MEMCHR
 
 // Add libc extension from gnu to Windows/Mac OSX
 

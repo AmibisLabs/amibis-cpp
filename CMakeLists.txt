@@ -18,9 +18,9 @@ SET(DEBUG_TRACE no CACHE BOOL "Compile Debug version with tracing mode on")
 # Check the dependencies -- System
 INCLUDE (CheckFunctionExists)
 CHECK_FUNCTION_EXISTS(memrchr HAVE_MEMRCHR)
-IF(NOT HAVE_MEMRCHR)
-  MESSAGE(FATAL_ERROR "Could NOT find memrchr")
-ENDIF(NOT HAVE_MEMRCHR)
+IF(HAVE_MEMRCHR)
+  ADD_DEFINITIONS(-DHAVE_MEMCHR)
+ENDIF(HAVE_MEMRCHR)
 FIND_PACKAGE(Threads REQUIRED)
 # Check the dependencies -- 3rd party
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
