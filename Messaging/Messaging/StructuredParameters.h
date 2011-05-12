@@ -15,11 +15,11 @@
 
 #include <System/SimpleString.h>
 
-#include <Messaging/Json.h>
+#include <Messaging/SerializeManager.h>
 #include <Messaging/StructuredMessage.h>
 #include <Messaging/StructuredMessageException.h>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid {
   class StructuredParameters;
   class StructuredMessageException;
 
@@ -181,6 +181,6 @@ void StructuredParameters::GetParameter( int Index, C& Val) const throw( Structu
   msg.Get("p", Val);
 }
 
-}} // Omiscid::Messaging
+} // Omiscid
 
 #endif // __STRUCTURED_PARAMETERS_H__

@@ -3,8 +3,8 @@
  * \ingroup Messaging
  * \brief Definition of Structured Method Callback Factory type
  */
-#ifndef __STRUCTURED_METHOD_CALL_BACK_FACTORY__
-#define __STRUCTURED_METHOD_CALL_BACK_FACTORY__
+#ifndef __STRUCTURED_METHOD_CALLBACK_FACTORY_H__
+#define __STRUCTURED_METHOD_CALLBACK_FACTORY_H__
 
 #include <Messaging/StructuredResult.h>
 #include <Messaging/StructuredParameters.h>
@@ -14,7 +14,7 @@
 #include <Messaging/StructuredMethodCallback_NP.h>
 
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid { 
   class StructuredMethodCallbackFactory;
 
 /**
@@ -129,7 +129,7 @@ public:
     Callbacks[MethodName.GetStr()] = new StructuredMethodCallback_3P_V<Class, TP1, TP2, TP3>(TheObject, TheMethod);
   }
 
-}} // Omiscid::Messaging
+} // Omiscid
 
-#endif // __STRUCTURED_METHOD_CALL_BACK_FACTORY__
+#endif // __STRUCTURED_METHOD_CALLBACK_FACTORY_H__
 

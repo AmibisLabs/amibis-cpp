@@ -54,7 +54,7 @@ namespace json_spirit
         inline void get_val(bool& b) const {b = get_bool();}
         inline void get_val(int& i) const {i = get_int();}
         inline void get_val(double& d) const {d = get_real();}
-        inline void get_val(float& f) const {f = get_real();}
+        inline void get_val(float& f) const {f = (float)get_real();}
         
         Object& get_obj();
         Array&  get_array();

@@ -2,9 +2,12 @@
 
 using namespace std;
 using namespace Omiscid;
-using namespace Messaging;
 
-#define BETWEEN(x,a,b) ((a) <= (x)) && ((x) < (b))
+// #define BETWEEN(x,a,b) ((a) <= (x)) && ((x) < (b))
+inline bool BETWEEN(int x, int a, int b)
+{
+	return ((a) <= (x)) && ((x) < (b));
+}
 
 StructuredParameters::StructuredParameters()
 {

@@ -47,4 +47,7 @@
 #include <ServiceControl/ServiceRepository.h>
 #include <ServiceControl/ServiceRepositoryListener.h>
 
+#include <Messaging/StructuredMessage.h>
+#include <Messaging/Serializable.h>
+
 #endif // __USER_FRIENDLY_API_H__

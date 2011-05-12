@@ -10,7 +10,7 @@
 #include <System/ConfigSystem.h>
 #include <System/SimpleException.h>
 
-namespace Omiscid { namespace Messaging { 
+namespace Omiscid { 
 
 /**
  * \class StructuredMessageException StructuredMessageException.h Messaging/StructuredMessageException.h
@@ -41,6 +41,6 @@ public:
   SimpleString GetExceptionType() const;
 };
 
-}} // Omiscid::Messaging
+} // Omiscid
 
 #endif // __STRUCTURED_MESSAGE_EXCEPTION_H__

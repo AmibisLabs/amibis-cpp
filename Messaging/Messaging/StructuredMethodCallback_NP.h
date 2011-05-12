@@ -3,13 +3,12 @@
  * \ingroup Messaging
  * \brief Definition of Structured Method CallBack fot N Parameters types
  */
-#ifndef __STRUCTURED_METHOD_CALL_BACK_NP__
-#define __STRUCTURED_METHOD_CALL_BACK_NP__
+#ifndef __STRUCTURED_METHOD_CALLBACK_NP__
+#define __STRUCTURED_METHOD_CALLBACK_NP__
 
 #include <Messaging/StructuredMethodCallback.h>
 
-namespace Omiscid { namespace Messaging {
-
+namespace Omiscid {
 
 template <class Class, typename Result>
   class StructuredMethodCallback_0P : public StructuredMethodCallback<Class>
@@ -297,6 +296,6 @@ template <class Class, typename TP1, typename TP2, typename TP3>
   }
 }
 
-}} // Omiscid::Messaging
+} // Omiscid
 
-#endif // __STRUCTURED_METHOD_CALL_BACK_NP__
+#endif // __STRUCTURED_METHOD_CALLBACK_NP__

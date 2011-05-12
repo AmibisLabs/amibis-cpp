@@ -1,5 +1,4 @@
-// BipService.cpp : définit le point d'entrée pour l'application console.
-//
+// 
 
 #include <ServiceControl/UserFriendlyAPI.h>
 

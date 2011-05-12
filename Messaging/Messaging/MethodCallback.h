@@ -3,12 +3,12 @@
  * \ingroup Messaging
  * \brief Definition of Method Callback class and function
  */
-#ifndef __METHOD_CALLBACK__
-#define __METHOD_CALLBACK__
+#ifndef __METHOD_CALLBACK_H__
+#define __METHOD_CALLBACK_H__
 
 #include <System/SimpleList.h>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid {
   template <typename Parameter, typename Result> class MethodCallbackBase;
   template <class Class, typename Parameter, typename Result> class MethodCallback;
 
@@ -47,7 +47,7 @@ public:
  * \author Rémi Barraquand
  */
 template <class Class, typename Parameter, typename Result>
-class MethodCallback : public Omiscid::Messaging::MethodCallbackBase<Parameter, Result>
+class MethodCallback : public MethodCallbackBase<Parameter, Result>
 {
 protected:
   /** \brief Define the type of a method callback */
@@ -99,6 +99,6 @@ bool MethodCallback<Class, Parameter, Result>::Call(const Parameter& Param, Resu
   }
 }
 
-}} // Omiscid::Messaging
+} // Omiscid
 
-#endif // __METHOD_CALLBACK__
+#endif // __METHOD_CALLBACK_H__

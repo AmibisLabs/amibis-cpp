@@ -1,7 +1,6 @@
 #include <Messaging/StructuredMethodCallbackFactory.h>
 
 using namespace Omiscid;
-using namespace Messaging;
 
 bool StructuredMethodCallbackFactory::Call(const SimpleString& MethodName, const StructuredParameters& Param, StructuredResult& Res)
 {

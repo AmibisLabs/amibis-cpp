@@ -15,26 +15,18 @@
 
 #include <System/SimpleString.h>
 
-#include <Messaging/Json.h>
+#include <Messaging/SerializeValue.h>
 #include <Messaging/StructuredMessageException.h>
 #include <Messaging/Access.h>
 
-#include <vector>
-#include <list>
+#include <Com/Message.h>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid { 
 
 /**
  * \class StructuredMessage StructuredMessage.h Messaging/StructuredMessage.h
- * \ingroup Messaging
- * \brief Group Data about a structured message
  *
- * contain the data about a structured message :
- * 
- * - to be detailed :)
- *
- * \author Remi Barraquand
- * \author Amaury Negre
+ * \author Dominique Vaufreydaz
  */
 class StructuredMessage {
 public:
@@ -42,37 +34,99 @@ public:
   */
   StructuredMessage();
 
-  /** \brief Constructor
-  *
-  * \param msg [in] Copy constructor
+ /** \brief Constructor
   */
-  StructuredMessage( const StructuredMessage& Msg);
+  StructuredMessage( SerializeValue& SerValue );
 
-  /** \brief Constructor
-  *
-  * \param val [in] Copy constructor
+ /** \brief Constructor from a Message received
   */
-  StructuredMessage( const json_spirit::Object& Obj);
+  StructuredMessage( Message& Msg );
 
-  /** \brief Constructor
-  *
-  * \param str [in] Construct a Json object from str
+ /** \brief Copy Constructor
   */
-  StructuredMessage( const SimpleString Str) throw( StructuredMessageException );
+  StructuredMessage( StructuredMessage& SMsg );
 
   /** \brief Desctuctor
   */
   ~StructuredMessage();
 
+  operator SerializeValue() const
+  {
+	  return Serializer;
+  }
+
+ /** \find Find an element value hashed by Key
+  * \param Key [in] the key to identifies the pair.
+  * \return a value
+  */
+  operator SerializeValue()
+  {
+	  return Serializer;
+  }
+
+  bool IsAnObject() const;
+  bool IsASimpleValue() const;
+  bool IsNullValue() const;
+  bool IsAnArray() const;
+
+  void Put( const SimpleString Key, const SerializeArray& Val );
+  void Put( const SimpleString Key, const StructuredMessage& Val );
+  void Put( const SimpleString Key, const SerializeValue& Val );
+  void Put( const SimpleString Key, const SerializeObject& Val );
+
+  operator SimpleString() 
+  {
+	  return SimpleString(json_spirit::write_formatted(Serializer).c_str());
+  }
+
+ /** \find Find an element value hashed by Key
+  * \param Key [in] the key to identifies the pair.
+  * \return a value
+  */
+  SerializeValue FindAndGetValue( const SimpleString& Key ) const;
+
+
+
+protected:
+ /** \find Find an element identified by Key
+  * \param Key [in] the key to identifies the pair.
+  * \return an iterator
+  */
+  SerializeObjectConstIterator Find( const SimpleString& Key ) const;
+
+ /** \find Find an element identified by Key
+  * \param Key [in] the key to identifies the pair.
+  * \return an iterator
+  */
+  SerializeObjectIterator Find( const SimpleString& Key );
+
+  SerializeValue Serializer;
+};
+
+
+
+#if 0
+  /** \brief Constructor
+  *
+  * \param msg [in] Copy constructor
+  */
+  StructuredMessage( const StructuredMessage& Msg );
+
+  /** \brief Constructor
+  *
+  * \param str [in] Construct a Json object from str
+  */
+  StructuredMessage( const SimpleString Str ) throw( StructuredMessageException );
+
   /** \brief Overload of the = operator
   */
-  const StructuredMessage& operator= ( const StructuredMessage& Msg);
+  const StructuredMessage& operator= ( const StructuredMessage& Msg );
 
   /** \brief Put a new element in the object
   * \param Key [in] the key that identifies the value
   * \param Val [in] the value to insert.
   */
-  virtual void Put( const SimpleString Key, const json_spirit::Value Val );
+  virtual void Put( const SimpleString Key, const SerializeValue Val );
 
   /** \brief Put a new element described by a StructuredMessage
    * \param Key [in] the key that identifies the value
@@ -84,10 +138,12 @@ public:
    * \param Key [in] the key that identifies the value
    * \param Val [in] the value to insert.
    */
-  void Put( const SimpleString Key, const char* Val );
-  void Put( const SimpleString Key, const std::string& Val );
-  void Put( const SimpleString Key, const json_spirit::Array& Val );
-  void Put( const SimpleString Key, const json_spirit::Object& Val );
+
+public:
+  // void Put( const SimpleString Key, const char* Val );
+  // void Put( const SimpleString Key, const std::string& Val );
+  // void Put( const SimpleString Key, const json_spirit::Array& Val );
+  // void Put( const SimpleString Key, const json_spirit::Object& Val );
   void Put( const SimpleString Key, bool Val );
   void Put( const SimpleString Key, unsigned int Val );
   void Put( const SimpleString Key, int Val );
@@ -125,7 +181,7 @@ public:
    * \param msg [in] the StructuredMessage to insert.
    */
   template <class C>
-  void Put( const Omiscid::SimpleString Key, const C& obj);
+  void Put( const Omiscid::SimpleString Key, const C& obj );
   
   /** \brief Put a vector of object of any type in the object
    * \param Key [in] the key that identifies the value
@@ -153,7 +209,7 @@ public:
   * \remark If no element identified by Key exist, this one will be created. However to create
   * a new element we will prefer to use Put method (Fastest)
   */
-  void Set( const SimpleString Key, json_spirit::Value Val );
+  void Set( const SimpleString Key, SerializeValue Val );
 
   template <typename T>
     void Set( const SimpleString Key, const T & Val );
@@ -169,8 +225,8 @@ public:
   * \param Val [in] the value of the pair.
   * \return true if found, false otherwise
   */
-  bool Has( const SimpleString Key, json_spirit::Value Val ) const;
-  
+  bool Has( const SimpleString Key, SerializeValue Val ) const;
+
   /** \brief Clear the Structured message
   */
   virtual void Clear();
@@ -179,7 +235,7 @@ public:
   * \param Key [in] the key to identifies the value we are looking for.
   * \return the value if found, json_spirit::Null otherwise
   */
-  json_spirit::Value Get( const SimpleString Key ) const;
+  SerializeValue Get( const SimpleString Key ) const;
   
   void Get( const SimpleString Key, std::string& Val ) const;
   void Get( const SimpleString Key, bool & Val ) const;
@@ -191,6 +247,7 @@ public:
   void Get( const SimpleString Key, char & Val ) const;
   void Get( const SimpleString Key, double & Val ) const;
   void Get( const SimpleString Key, float & Val ) const;
+  void Get( const SimpleString Key, SimpleString& Val ) const;
 
   void Get( const SimpleString Key, std::vector<std::string> & Vec ) const;
   void Get( const SimpleString Key, std::vector<unsigned int> & Vec ) const;
@@ -214,26 +271,37 @@ public:
   void Get( const SimpleString Key, std::list<double> & Vec ) const;
   void Get( const SimpleString Key, std::list<float> & Vec ) const;
 
+  void Get( const SimpleString Key, SimpleList<SimpleString> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<unsigned int> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<int> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<unsigned short> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<short> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<unsigned char> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<char> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<bool> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<double> & Vec ) const;
+  void Get( const SimpleString Key, SimpleList<float> & Vec ) const;
+
   /** \brief Get an object of any type
    * \param Key [in] the key that identifies the value
    * \param obj [out] the object to write hte value.
    */
   template <class C>
-  void Get( const Omiscid::SimpleString Key, C& obj) const;
+  void Get( const Omiscid::SimpleString Key, C& obj ) const;
 
   /** \brief Get a vector of object of any type from the object
    * \param Key [in] the key that identifies the value
    * \param msg [out] the vector to write the value.
    */
   template <class C>
-  void Get( const Omiscid::SimpleString Key, std::vector<C>& Vec) const;
+  void Get( const Omiscid::SimpleString Key, std::vector<C>& Vec ) const;
 
   /** \brief Get a list of object of any type from the object
    * \param Key [in] the key that identifies the value
    * \param msg [out] the vector to write the value.
    */
   template <class C>
-  void Get( const Omiscid::SimpleString Key, std::list<C>& Vec) const;
+  void Get( const Omiscid::SimpleString Key, std::list<C>& Vec ) const;
 
   /** \brief Encode the structured message to a string
   *
@@ -241,18 +309,12 @@ public:
   */
   SimpleString Encode() const throw( StructuredMessageException );
 
-  /** \brief Get a reference of the internel object
-  *
-  * \return return a reference of the internal object
-  */
-  const json_spirit::Object& GetObject() const;
-
   /** \brief Function to encode a Json object in a structured message
    *
    * \param Obj [in] the object to encode
    * \return Json object serialized into a string
    */
-  static SimpleString EncodeStructuredMessage( const json_spirit::Object& Obj);
+  static SimpleString EncodeStructuredMessage( const json_spirit::Object& Obj );
 
   /** \brief Function to decode a structured message to a Json object
    *
@@ -282,9 +344,16 @@ public:
   */
   static void DecodeStructuredMessage( std::istream& Stream, StructuredMessage& StrMsg ) throw( StructuredMessageException );
 
-protected:
-  json_spirit::Object o;
-};
+
+
+ /** \brief Get a reference of the internel object
+  *
+  * \return return a reference of the internal object
+  */
+  SerializeObject& GetSerializeObject()
+  {
+	  return JsonParser;
+  }
 
 
 template<class T>
@@ -314,7 +383,7 @@ template <class C>
   {
     StructuredMessage msg;
     Save(msg, *it);
-    Val.push_back( json_spirit::Value(msg.GetObject()) );
+    Val.push_back( SerializeValue(msg.GetObject()) );
   }  
   Put(Key, Val);
 }
@@ -330,7 +399,7 @@ template <class C>
   {
     StructuredMessage msg;
     Save(msg, *it);
-    Val.push_back( json_spirit::Value(msg.GetObject()) );
+    Val.push_back( SerializeValue(msg.GetObject()) );
   }  
   Put(Key, Val);
 }
@@ -346,7 +415,7 @@ template <class C>
 void StructuredMessage::Get( const Omiscid::SimpleString Key, std::vector<C>& Vec) const
 {
   Vec.clear();
-  json_spirit::Value Val = Get(Key);
+  SerializeValue Val = Get(Key);
   const json_spirit::Array & arr = Val.get_array();
   for(json_spirit::Array::const_iterator it = arr.begin();
       it != arr.end();
@@ -363,7 +432,7 @@ template <class C>
 void StructuredMessage::Get( const Omiscid::SimpleString Key, std::list<C>& Vec) const
 {
   Vec.clear();
-  json_spirit::Value Val = Get(Key);
+  SerializeValue Val = Get(Key);
   const json_spirit::Array & arr = Val.get_array();
   for(json_spirit::Array::const_iterator it = arr.begin();
       it != arr.end();
@@ -377,7 +446,7 @@ void StructuredMessage::Get( const Omiscid::SimpleString Key, std::list<C>& Vec)
 }
 
 template <typename T>
-  void StructuredMessage::Set( const SimpleString Key, const T & Val )
+void StructuredMessage::Set( const SimpleString Key, const T & Val )
 {
   if( Has( Key ) ) {
     // If exist then change it
@@ -398,9 +467,9 @@ template<class T>
 inline void Load( StructuredMessage &Msg, T& t){
     Access::Load(Msg, t);
 }
+#endif
 
-
-}} // Omiscid::Messaging
+} // Omiscid
 
 #endif //__STRUCTURED_MESSAGE_H__
 

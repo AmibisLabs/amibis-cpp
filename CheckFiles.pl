@@ -661,6 +661,8 @@ sub WorkOnFile()
 &RecurseWork::RecurseWork( 'Com', 0 );
 &RecurseWork::RecurseWork( 'ServiceControl', 0 );
 &RecurseWork::RecurseWork( 'Examples', 0 );
+&RecurseWork::RecurseWork( 'Messaging', 0 );
+&RecurseWork::RecurseWork( 'Json', 0 );
 
 foreach $prep ( keys %Headers )
 {

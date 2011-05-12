@@ -50,7 +50,7 @@ case "$1" in
 	echo -n " `@bindir@/OmiscidCom-config --libs-only-L` -L@libdir@ "
 	;;
     --libs-only-l)
-	echo -n " `@bindir@/OmiscidCom-config --libs-only-l` -lOmiscidControl "
+	echo -n " `@bindir@/OmiscidCom-config --libs-only-l`"
 	;;
     --libdir)
 	echo -n " @libdir@ "
@@ -61,14 +61,8 @@ case "$1" in
     --prefix)
 	echo -n " $prefix "
 	;;
-    --doc)
-	echo -n " @DOCDIR_CONTROL@ "
-	;;
-    --doc-tag)
-	echo -n " @DOCDIR_CONTROL@/doc_control.tag=@DOCDIR_CONTROL@ "
-	;;
     --all)
-	echo -n " `@bindir@/OmiscidCom-config --libs --cflags-only-I` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ -lOmiscidControl `xml2-config --libs` @OmiscidTraceFlags@  @OmiscidCompilFlags@"
+	echo -n " `@bindir@/OmiscidCom-config --libs --cflags-only-I` `xml2-config --cflags` @zeroconfflag@ @zeroconflib@ -L@libdir@ `xml2-config --libs` @OmiscidTraceFlags@  @OmiscidCompilFlags@"
 	;;	    
     *)
 	echo "Unknown mode \"$1\""

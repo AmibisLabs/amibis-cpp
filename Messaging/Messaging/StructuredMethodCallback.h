@@ -1,10 +1,10 @@
 /**
- * \file Messaging/StructuredMethodCallBack.h
+ * \file Messaging/StructuredMethodCallback.h
  * \ingroup Messaging
  * \brief Definition of Structured Method CallBack type
  */
-#ifndef __STRUCTURED_METHOD_CALL_BACK__
-#define __STRUCTURED_METHOD_CALL_BACK__
+#ifndef __STRUCTURED_METHOD_CALLBACK__
+#define __STRUCTURED_METHOD_CALLBACK__
 
 #include <System/SimpleList.h>
 #include <Messaging/MethodCallback.h>
@@ -12,7 +12,7 @@
 #include <Messaging/StructuredResult.h>
 #include <Messaging/StructuredParameters.h>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid {
 
 template <class Class> class StructuredMethodCallback;
 
@@ -48,7 +48,7 @@ StructuredMethodCallback<Class>::StructuredMethodCallback(Class* TheObject,typen
 {
 }
 
-}} // Omiscid::Messaging
+} // Omiscid
 
-#endif // __STRUCTURED_METHOD_CALL_BACK__
+#endif // __STRUCTURED_METHOD_CALLBACK__
 

@@ -44,13 +44,13 @@ case "$1" in
 	echo -n " -I@includedir@ "
 	;;
     --libs)
-	echo -n " -L@libdir@ -lOmiscidSystem "
+	echo -n " -L@libdir@ -lOmiscid "
 	;;
     --libs-only-L)
 	echo -n " -L@libdir@ "
 	;;
     --libs-only-l)
-	echo -n " -lOmiscidSystem "
+	echo -n " -lOmiscid "
 	;;
     --libdir)
 	echo -n " @libdir@ "
@@ -61,14 +61,8 @@ case "$1" in
     --prefix)
 	echo -n " $prefix "
 	;;
-    --doc)
-	echo -n " @DOCDIR_SYSTEM@ "
-	;;
-    --doc-tag)
-	echo -n " @DOCDIR_SYSTEM@/doc_system.tag=@DOCDIR_SYSTEM@ "
-	;;
     --all)
-	echo -n " -I@includedir@ -L@libdir@ -lOmiscidSystem @OmiscidTraceFlags@ @OmiscidCompilFlags@ "
+	echo -n " -I@includedir@ -L@libdir@ -lOmiscid @OmiscidTraceFlags@ @OmiscidCompilFlags@ "
 	;;
     *)
 	echo "Unknown mode \"$1\""

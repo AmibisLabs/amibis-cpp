@@ -1,34 +1,33 @@
 #include <Messaging/Messaging.h>
 
 using namespace Omiscid;
-using namespace Messaging;
 using namespace std;
 
-bool Omiscid::Messaging::SendToAllClients( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, bool UnreliableButFastSend ) throw( StructuredMessageException )
+bool SendToAllClients( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, bool UnreliableButFastSend ) throw( StructuredMessageException )
 {
   SimpleString s = Msg.Encode();
   return TheService.SendToAllClients( ConnectorName, (char*) s.GetStr(), s.GetLength(), UnreliableButFastSend);
 }
 
-bool Omiscid::Messaging::SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend ) throw( StructuredMessageException )
+bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend ) throw( StructuredMessageException )
 {
   SimpleString s = Msg.Encode();
   return TheService.SendToOneClient( ConnectorName, (char*) s.GetStr(), s.GetLength(), PeerId, UnreliableButFastSend);
 }
 
-bool Omiscid::Messaging::SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy& ServProxy, bool UnreliableButFastSend ) throw( StructuredMessageException )
+bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy& ServProxy, bool UnreliableButFastSend ) throw( StructuredMessageException )
 {
   SimpleString s = Msg.Encode();
   return TheService.SendToOneClient( ConnectorName, (char*) s.GetStr(), s.GetLength(), ServProxy, UnreliableButFastSend);
 }
 
-bool Omiscid::Messaging::SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy * ServProxy, bool UnreliableButFastSend ) throw( StructuredMessageException )
+bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy * ServProxy, bool UnreliableButFastSend ) throw( StructuredMessageException )
 {
   SimpleString s = Msg.Encode();
   return TheService.SendToOneClient( ConnectorName, (char*) s.GetStr(), s.GetLength(), ServProxy, UnreliableButFastSend);
 }
 
-DelayedResult* Omiscid::Messaging::SendToOneClientWithExpectedResult(Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend ) throw( StructuredMessageException )
+DelayedResult* SendToOneClientWithExpectedResult(Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend ) throw( StructuredMessageException )
 {
   int id = ComTools::GeneratePeerId();
   StructuredMessage msg = Msg;
@@ -40,7 +39,7 @@ DelayedResult* Omiscid::Messaging::SendToOneClientWithExpectedResult(Service& Th
   return new DelayedResult(TheService, ConnectorName, id);
 }
 
-DelayedResult* Omiscid::Messaging::SendToOneClientWithExpectedResult(Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy &ServProxy, bool UnreliableButFastSend ) throw(StructuredMessageException )
+DelayedResult* SendToOneClientWithExpectedResult(Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy &ServProxy, bool UnreliableButFastSend ) throw(StructuredMessageException )
 {
   int id = ComTools::GeneratePeerId();
   StructuredMessage msg = Msg;
@@ -52,7 +51,7 @@ DelayedResult* Omiscid::Messaging::SendToOneClientWithExpectedResult(Service& Th
   return new DelayedResult(TheService, ConnectorName, id);
 }
 
-bool Omiscid::Messaging::SendReplyToMessage( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Reply, const Message& Msg, bool UnreliableButFastSend ) throw( StructuredMessageException )
+bool SendReplyToMessage( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Reply, const Message& Msg, bool UnreliableButFastSend ) throw( StructuredMessageException )
 {
   StructuredMessage msg(Msg.GetBuffer());
   StructuredMessage reply = Reply;
@@ -66,7 +65,7 @@ bool Omiscid::Messaging::SendReplyToMessage( Service& TheService, SimpleString C
   }
 }
 
-bool Omiscid::Messaging::SendReplyToMessage( Service& TheService, const StructuredMessage& Reply, const Message& Msg, bool UnreliableButFastSend ) throw( StructuredMessageException )
+bool SendReplyToMessage( Service& TheService, const StructuredMessage& Reply, const Message& Msg, bool UnreliableButFastSend ) throw( StructuredMessageException )
 {
   StructuredMessage msg(Msg.GetBuffer());
   StructuredMessage reply = Reply;

@@ -21,12 +21,12 @@
 #include <ServiceControl/Service.h>
 #include <ServiceControl/ConnectorListener.h>
 
-#include <Messaging/Json.h>
+#include <Messaging/SerializeManager.h>
 #include <Messaging/StructuredResult.h>
 #include <Messaging/StructuredMessage.h>
 #include <Messaging/StructuredMessageException.h>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid {
 
 /**
  * \class DelayedResult DelayedResult.h Messaging/DelayedResult.h
@@ -86,7 +86,7 @@ private:
   bool WontReceive;
 };
 
-}} // Omiscid::Messaging
+} // Omiscid
 
 #endif //__DELAYED_RESULT_H__
 

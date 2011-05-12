@@ -218,20 +218,25 @@ private:
 
 	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
 	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
+
+	void Init()
+	{
+		// There is nothing in the list
+		NumberOfElements = 0;
+		Head = NULL;
+		Tail = NULL;
+
+		// There is no position at all
+		PreviousElement = NULL;
+		CurrentElement = NULL;
+		RemoveCurrentHasOccured = false;
+	}
 };
 
 template <typename TYPE>
 SimpleList<TYPE>::SimpleList()
 {
-	// There is nothing in the list
-	NumberOfElements = 0;
-	Head = NULL;
-	Tail = NULL;
-
-	// There is no position at all
-	PreviousElement = NULL;
-	CurrentElement = NULL;
-	RemoveCurrentHasOccured = false;
+	Init();
 }
 
 /** @brief Copy constructor
@@ -241,6 +246,8 @@ SimpleList<TYPE>::SimpleList()
 template <typename TYPE>
 SimpleList<TYPE>::SimpleList(SimpleList<TYPE>& ToCopy)
 {
+	Init();
+
 	// From the first to the last
 	for( ToCopy.First(); ToCopy.NotAtEnd(); ToCopy.Next() )
 	{
@@ -499,6 +506,8 @@ void SimpleList<TYPE>::Empty()
 		ReleaseSimpleListElement(tmp);
 		NumberOfElements--; // Non obligatoire !
 	}
+
+	Init();
 }
 
 template <typename TYPE>

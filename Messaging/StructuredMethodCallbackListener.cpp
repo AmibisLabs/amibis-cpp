@@ -2,7 +2,6 @@
 #include <Messaging/Messaging.h>
 
 using namespace Omiscid;
-using namespace Messaging;
 
 StructuredMethodCallbackListener::StructuredMethodCallbackListener()
 {
@@ -40,11 +39,11 @@ void StructuredMethodCallbackListener::MessageReceived(Service& TheService, cons
     }
 
     // Send reply
-    SendReplyToMessage(TheService, LocalConnectorName, result, Msg);
+    // SendReplyToMessage(TheService, LocalConnectorName, result, Msg);
   } else if( msg.Has("id") ) {
     StructuredMessage result;
     result.Put("error", "Bad Structured Message request.");
-    SendReplyToMessage(TheService, LocalConnectorName, result, Msg);
+    // SendReplyToMessage(TheService, LocalConnectorName, result, Msg);
   } else {
     // We cannot do anything since no id is given...
   }

@@ -210,7 +210,7 @@ int Omiscid::DoAccumulatorTest( int argc, char*argv[] )
 	ClientsAccu[1].Start();
 
 	// Sleep for 60 seconds, clients runs for 30 seconds
-	Sleep( 60*1000 );
+	Thread::Sleep( 60*1000 );
 
 	// delete the Cliens
 	delete [] ClientsAccu;
@@ -220,4 +220,28 @@ int Omiscid::DoAccumulatorTest( int argc, char*argv[] )
 
 	return 0;
 }
+
+#else
+
+/* @brief main program entry for the Accumulator. No need to give parameter */
+int main( int argc, char*argv[] )
+{
+	// Create dynamically an accumulator sever
+	Accumulator * pAccuServer = new OMISCID_TLM Accumulator;
+
+#ifdef DEBUG
+	if ( pAccuServer == (Accumulator *)NULL )
+	{
+		printf( "Test failed.\n" );
+		return -1;
+	}
+#endif
+	
+	// Wait forever on an unsignaled event
+	Event Forever;
+	Forever.Wait();
+
+	return 0;
+}
+
 #endif // OMISCID_RUNING_TEST

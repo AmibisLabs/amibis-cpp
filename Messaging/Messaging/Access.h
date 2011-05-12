@@ -8,7 +8,7 @@
 #ifndef ACCESS_H_
 #define ACCESS_H_
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid { 
 
 class StructuredMessage;
 
@@ -27,6 +27,6 @@ public:
   }
 };
 
-}} // Omiscid::Messaging
+} // Omiscid
 
 #endif /* ACCESS_H_ */

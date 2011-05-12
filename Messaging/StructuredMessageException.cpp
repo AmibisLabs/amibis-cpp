@@ -1,7 +1,6 @@
 #include <Messaging/StructuredMessageException.h>
 
 using namespace Omiscid;
-using namespace Messaging;
 
 StructuredMessageException::StructuredMessageException(const SimpleString m, int i)
  : SimpleException(m, i)

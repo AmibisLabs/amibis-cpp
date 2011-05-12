@@ -42,6 +42,8 @@ void RandomInit();
 // Retrieve the logged username
 SimpleString GetLoggedUser();
 
+// retreive the local host name
+SimpleString GetLocaHostName();
 
 } // namespace Omiscid
 

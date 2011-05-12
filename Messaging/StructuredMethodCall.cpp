@@ -1,8 +1,8 @@
 #include <algorithm>
-#include <boost/bind.hpp>
+// #include <boost/bind.hpp>
 
 #include <System/SimpleString.h>
-#include <Messaging/Json.h>
+#include <Messaging/SerializeManager.h>
 #include <Messaging/StructuredMessage.h>
 #include <Messaging/StructuredParameters.h>
 #include <Messaging/StructuredMethodCall.h>
@@ -10,8 +10,6 @@
 
 using namespace std;
 using namespace Omiscid;
-using namespace Messaging;
-using namespace boost;
 
 StructuredMethodCall::StructuredMethodCall()
 : StructuredMessage()
@@ -45,9 +43,9 @@ void StructuredMethodCall::Init( const SimpleString& MethodName, const Structure
   Put( "params", Params.GetArray() );
 }
 
-const StructuredMessage& StructuredMethodCall::operator=( const StructuredMethodCall& Msg)
+const StructuredMessage& StructuredMethodCall::operator=( const StructuredMethodCall& Msg )
 {
-  this->o = Msg.GetObject();
+  JsonParser = Msg.GetObject();
   fprintf(stderr, "toto\n");
   return *this;
 }

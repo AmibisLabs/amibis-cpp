@@ -2,7 +2,6 @@
 
 using namespace std;
 using namespace Omiscid;
-using namespace Messaging;
 
 StructuredResult::StructuredResult()
 {
@@ -10,7 +9,7 @@ StructuredResult::StructuredResult()
   Set( "error", json_spirit::Value() );
 }
 
-StructuredResult::StructuredResult( const StructuredMessage& Msg) throw( Omiscid::Messaging::StructuredMessageException )
+StructuredResult::StructuredResult( const StructuredMessage& Msg) throw( StructuredMessageException )
 {
   BuildFromStructuredMessage(Msg);
 }
@@ -164,7 +163,7 @@ bool StructuredResult::IsResult( const StructuredMessage& Msg)
 //   }
 }
 
-void StructuredResult::BuildFromStructuredMessage( const StructuredMessage& Msg ) throw( Omiscid::Messaging::StructuredMessageException )
+void StructuredResult::BuildFromStructuredMessage( const StructuredMessage& Msg ) throw( StructuredMessageException )
 {
   if( IsResult(Msg) ) {
     json_spirit::Value error = Msg.Get("error");

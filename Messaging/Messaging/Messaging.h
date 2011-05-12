@@ -37,7 +37,7 @@
 #include <Messaging/StructuredMethodCallbackFactory.h>
 #include <Messaging/StructuredMethodCallbackListener.h>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid { 
 
 /**
 * Sends a message to all the clients connected to a specific connector of the service
@@ -48,7 +48,7 @@ namespace Omiscid { namespace Messaging {
 * \param Msg The structured message to send.
 * \param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
 */
-bool SendToAllClients( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, bool UnreliableButFastSend = false ) throw( Omiscid::Messaging::StructuredMessageException );
+bool SendToAllClients( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, bool UnreliableButFastSend = false ) throw( StructuredMessageException );
 
 /**
 * Sends a message to a particular client. This client is identified by its Peer id (pid).
@@ -65,7 +65,7 @@ bool SendToAllClients( Service& TheService, SimpleString ConnectorName, const St
 * \param PeerId : the identification of the client that must receive the message
 * \param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
 */
-bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend = false ) throw( Omiscid::Messaging::StructuredMessageException );
+bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend = false ) throw( StructuredMessageException );
 
 /**
 * Sends a mesage to a particular client. This client is identified by ServiceProxy because
@@ -79,7 +79,7 @@ bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const Str
 * \param ServProxy the service proxy we want to send data
 * \param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
 */
-bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy& ServProxy, bool UnreliableButFastSend = false ) throw( Omiscid::Messaging::StructuredMessageException );
+bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy& ServProxy, bool UnreliableButFastSend = false ) throw( StructuredMessageException );
 
 /**
 * Sends a message to a particular client. This client is identified by ServiceProxy because
@@ -93,7 +93,7 @@ bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const Str
 * \param ServProxy the service proxy we want to send data
 * \param UnreliableButFastSend should Omiscid send data, if possible, maybe faster but with possibly message lost
 */
-bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy * ServProxy, bool UnreliableButFastSend = false ) throw( Omiscid::Messaging::StructuredMessageException );
+bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy * ServProxy, bool UnreliableButFastSend = false ) throw( StructuredMessageException );
 
 /**
 * Sends a message to a particular client. This client is identified by its Peer id (pid).
@@ -112,7 +112,7 @@ bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const Str
 * \param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
 * \return A ref to a DelayedResult on which we can wait for a reply.
 */
-DelayedResult* SendToOneClientWithExpectedResult( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend = false ) throw( Omiscid::Messaging::StructuredMessageException );
+DelayedResult* SendToOneClientWithExpectedResult( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, int PeerId, bool UnreliableButFastSend = false ) throw( StructuredMessageException );
 
 /**
 * Sends a message to a particular client. This client is identified by its Peer id (pid).
@@ -131,7 +131,7 @@ DelayedResult* SendToOneClientWithExpectedResult( Service& TheService, SimpleStr
 * \param UnreliableButFastSend Should Omiscid send data, if possible, faster but with possibly message lost ?
 * \return A ref to a DelayedResult on which we can wait for a reply.
 */
-DelayedResult* SendToOneClientWithExpectedResult( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy &ServProxy, bool UnreliableButFastSend = false ) throw( Omiscid::Messaging::StructuredMessageException );
+DelayedResult* SendToOneClientWithExpectedResult( Service& TheService, SimpleString ConnectorName, const StructuredMessage& Msg, ServiceProxy &ServProxy, bool UnreliableButFastSend = false ) throw( StructuredMessageException );
 
 /**
 * Sends a message back to the sender of a message just received.
@@ -163,7 +163,7 @@ bool SendReplyToMessage( Service& TheService, SimpleString ConnectorName, const 
 */
 bool SendReplyToMessage( Service& TheService, const StructuredMessage& Reply, const Message& Msg, bool UnreliableButFastSend = false ) throw( StructuredMessageException );
 
-}} // Omiscid::Messaging
+} // Omiscid::Messaging
 
 #endif // __EXTENSION_H__
 

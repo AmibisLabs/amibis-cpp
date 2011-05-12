@@ -5,7 +5,6 @@
 
 using namespace std;
 using namespace Omiscid;
-using namespace Messaging;
 using namespace boost;
 
 DelayedResult::DelayedResult(Service& TheService, const SimpleString LocalConnectorName, int Id)

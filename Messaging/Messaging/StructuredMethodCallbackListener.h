@@ -3,8 +3,8 @@
  * \ingroup Messaging
  * \brief Definition of Structured Method Callback Listener Class and Method
  */
-#ifndef __STRUCTURED_METHOD_CALLBACK_LISTENER__
-#define __STRUCTURED_METHOD_CALLBACK_LISTENER__
+#ifndef __STRUCTURED_METHOD_CALLBACK_LISTENER_H__
+#define __STRUCTURED_METHOD_CALLBACK_LISTENER_H__
 
 #include <ServiceControl/ConnectorListener.h>
 #include <Messaging/StructuredResult.h>
@@ -13,10 +13,8 @@
 #include <Messaging/MethodCallbackFactory.h>
 #include <Messaging/StructuredMethodCallbackFactory.h>
 
-namespace Omiscid { namespace Messaging {
-#if 0
-  }}
-#endif
+namespace Omiscid { 
+
 class StructuredMethodCallbackListener;
 
 /**
@@ -64,7 +62,7 @@ public:
 /*   MethodFactory.RegisterMethod( MethodName, Callback ); */
 /* } */
 
-}} // Omiscid::Messaging
+} // Omiscid
 
-#endif // __STRUCTURED_METHOD_CALLBACK_LISTENER__
+#endif // __STRUCTURED_METHOD_CALLBACK_LISTENER_H__
 

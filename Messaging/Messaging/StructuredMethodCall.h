@@ -15,12 +15,12 @@
 
 #include <System/SimpleString.h>
 
-#include <Messaging/Json.h>
+#include <Messaging/SerializeManager.h>
 #include <Messaging/StructuredMessage.h>
 #include <Messaging/StructuredParameters.h>
 #include <Messaging/StructuredMessageException.h>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid {
 	class StructuredMethodCall;
 
 /**
@@ -178,7 +178,7 @@ StructuredMethodCall::StructuredMethodCall( const SimpleString& MethodName, TP1 
 	Init(MethodName, params);
 }
 
-}} // Omiscid::Messaging
+} // Omiscid::Messaging
 
 #endif //__STRUCTURED_METHOD_CALL_H__
 

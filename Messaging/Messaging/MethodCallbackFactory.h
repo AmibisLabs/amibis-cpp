@@ -11,7 +11,7 @@
 
 #include <map>
 
-namespace Omiscid { namespace Messaging {
+namespace Omiscid {
   template <typename Parameter, typename Result> class MethodCallbackFactory;
 
 /**
@@ -145,6 +145,6 @@ int MethodCallbackFactory<Parameter, Result>::GetNumberOfMethod()
 	return Callbacks.size();
 }
 
-}} // Omiscid::Messaging
+} // Omiscid
 
 #endif // __METHOD_CALLBACK_FACTORY__

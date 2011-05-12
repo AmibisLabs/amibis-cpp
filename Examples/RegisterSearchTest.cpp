@@ -94,7 +94,7 @@ int main(int argc, char*argv[] )
 		RegisterAndSearchUsage(argv[0]);
 	}
 
-	NumberOfServicesToRegister = 5;
+	// NumberOfServicesToRegister = 5;
 
 	// A simple list to store RegisterThread objects
 	SimpleList<RegisterThread*> ListOfRegisterThreads;
@@ -310,7 +310,7 @@ int main(int argc, char*argv[] )
 #ifdef WIN32
 	// Create an even in order to Stop here forever
 	Event Forever;
-	// Forever.Wait();
+	Forever.Wait();
 #endif
 
 	// exit

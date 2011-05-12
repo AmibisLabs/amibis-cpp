@@ -175,7 +175,7 @@ int main( int argc, char*argv[] )
 			pAccuClient->SendToAllClients( "SendCommands", LocalCommand, false );
 
 			// Go to sleep for 50 ms
-			Sleep( 50 );
+			Thread::Sleep( 50 );
 		}
 		while( TotalRunTime.Get() < 30*1000 /* 30 seconds */ );
 
