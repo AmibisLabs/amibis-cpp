@@ -13,25 +13,26 @@
 #ifndef __CONFIG_SERVICE_CONTROL_H__
 #define __CONFIG_SERVICE_CONTROL_H__
 
-//#include <ServiceControl/ConfigZeroconf.h> // for future release
 #include <Com/ConfigCom.h>
+
+// manage zeroconf
+#ifdef WIN32
+	// Check if we plan to use AVAHI under Windows
+	#ifdef OMISCID_USE_AVAHI
+		#error "Could not use Avahi under Windows\n"
+	#endif
+
+	// If not already defined, defines OMISCID_USE_MDNS
+	#ifndef OMISCID_USE_MDNS
+		#define OMISCID_USE_MDNS
+	#endif
+#else
+	// #include <ServiceControl/ConfigZeroconf.h>
+#endif
+
 #include <System/SimpleString.h>
 
 namespace Omiscid {
-
-#ifdef WIN32
-
-// Check if we plan to use AVAHI under Windows
-#ifdef OMISCID_USE_AVAHI
-#error "Could not use Avahi under Windows\n"
-#endif
-
-// If not already defined, defines OMISCID_USE_MDNS
-#ifndef OMISCID_USE_MDNS
-#define OMISCID_USE_MDNS
-#endif
-
-#endif
 
 enum ControlServerStatus { STATUS_INIT = 1, STATUS_RUNNING = 2 };
 enum VariableAccessType { ReadAccess = 0, ConstantAccess = 1, ReadWriteAccess = 2 };
