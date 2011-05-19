@@ -3,7 +3,7 @@
  * @brief Header of the Xsd Schema Strings definition. Automatically generated using GenerateXsdSupportFiles script.
  * @date 2004-2006
  */
- 
+
 #ifndef __XSD_SCHEMA_H__
 #define __XSD_SCHEMA_H__
 

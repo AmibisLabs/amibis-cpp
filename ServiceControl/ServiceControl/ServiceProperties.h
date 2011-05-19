@@ -19,8 +19,8 @@
 
 namespace Omiscid {
 
-/*! \class ServicePropertiesException
- *	\brief Exception for service properties managment.
+/*! @class ServicePropertiesException
+ *	@brief Exception for service properties managment.
  *
  *	This class inherited from ServiceException and just overrides #GetExceptionType.
  */
@@ -42,8 +42,8 @@ class ServicePropertiesException  : public ServiceException
 // A container for service properties, will be defined later in this file
 class ServiceProperties;
 
-/*! \class ServiceProperty
- *	\brief A basic property for a DNS-SD service.
+/*! @class ServiceProperty
+ *	@brief A basic property for a DNS-SD service.
  *
  *	This class implements the basic properties for a service as defined in the DNS-SD
  *	documentation. It works using a real memory image of the final data : a 255 bytes buffer
@@ -56,15 +56,15 @@ class ServiceProperties;
 class ServiceProperty
 {
 public:
-	/*! \brief Default constructor.
+	/*! @brief Default constructor.
 	 *
 	 *	The default constructor constructs an empty property (see ServiceProperty#Empty).
 	*/
 	ServiceProperty();
 
-	/*! \brief Alternate constructor.
-	 *	\param[in] Name a const c-SimpleString containing the property name.
-	 *	\param[in] Value an optional const c-SimpleString containing the value of the property
+	/*! @brief Alternate constructor.
+	 *	@param[in] Name a const c-SimpleString containing the property name.
+	 *	@param[in] Value an optional const c-SimpleString containing the value of the property
 	 *	\throw #ServicePropertiesException The value of the error message sould be "Bad parameter(s) for the ServiceProperty constructor"
 	 *
 	 *	This constructor takes a name and optionaly a value for the new constructed property. See ServiceProperty#SetProperty.
@@ -73,7 +73,7 @@ public:
 
 	virtual ~ServiceProperty();
 
-	/*! \brief Empty a property.
+	/*! @brief Empty a property.
 	*
 	*	This function empty a property. The #Length is set to 1 (just the byte containing
 	*	the length of the property), the intinsect #BinaryLength of the property (the only byte) is set to 0
@@ -83,10 +83,10 @@ public:
 	*/
 	void Empty();
 
-	/*! \brief Set name and optionaly value for a property.
-	 *	\param[in] Name a const c-SimpleString containing the property name.
-	 *	\param[in] Value an optional const c-SimpleString containing the value of the property
-	 *  \return a boolean answer if changes are made.
+	/*! @brief Set name and optionaly value for a property.
+	 *	@param[in] Name a const c-SimpleString containing the property name.
+	 *	@param[in] Value an optional const c-SimpleString containing the value of the property
+	 *  @return a boolean answer if changes are made.
 	 *
 	 *	This function changes name and optionaly value for a property. If a problem occurs, the
 	 *	property remains unchanged. You can define property as follow:
@@ -96,9 +96,9 @@ public:
 	 */
 	virtual bool SetProperty( const SimpleString Name, const SimpleString Value = SimpleString::EmptyString );	// Set a property with a name and optionaly a value
 
-	/*! \brief Change a value for a property that have already a name.
-	 *	\param[in] Value an mandatory const c-SimpleString containing the value of the property
-	 *  \return a boolean answer if changes are made.
+	/*! @brief Change a value for a property that have already a name.
+	 *	@param[in] Value an mandatory const c-SimpleString containing the value of the property
+	 *  @return a boolean answer if changes are made.
 	 *
 	 *	This function changes value for a property. If a problem occurs, the
 	 *	property will be empty.<BR> See ServiceProperty#SetProperty for possible values.

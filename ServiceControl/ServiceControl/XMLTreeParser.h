@@ -30,7 +30,7 @@ class MsgSocketCallBackData;
  * Similar to Message (in part Com) but it is used with XML Message,
  * and stored the message as a XML tree.
  * The XML tree is based on the structure given by the library XML 2.
- * \author Sebastien Pesnel
+ * @author Sebastien Pesnel
  */
 class XMLMessage
 {

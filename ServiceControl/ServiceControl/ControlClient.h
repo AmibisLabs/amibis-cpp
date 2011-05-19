@@ -45,8 +45,8 @@ private:
 };
 
 /**
- * \class AnswersManager ControlClient.h ServiceControl/ControlClient.h
- * \brief This class is used to manadge answer from ControlServer.
+ * @class AnswersManager ControlClient.h ServiceControl/ControlClient.h
+ * @brief This class is used to manadge answer from ControlServer.
  */
 class AnswersManager
 {
@@ -56,10 +56,10 @@ public:
 
 	AnswerWaiter * CreateAnswerWaiter(unsigned int MessageId);
 
-	/** \brief check the id of 'msg'
-	 * \param msg [in] the received messages
-	 * \param msg_id [in] the waited id
-	 * \return true if the id of 'msg' has the value 'msg_id'
+	/** @brief check the id of 'msg'
+	 * @param msg [in] the received messages
+	 * @param msg_id [in] the waited id
+	 * @return true if the id of 'msg' has the value 'msg_id'
 	 */
 	bool CheckMessage(XMLMessage* msg, unsigned int msg_id);
 
@@ -71,8 +71,8 @@ private:
 };
 
 /**
- * \class ControlClient ControlClient.h ServiceControl/ControlClient.h
- * \brief This class is used to discuss with ControlServer.
+ * @class ControlClient ControlClient.h ServiceControl/ControlClient.h
+ * @brief This class is used to discuss with ControlServer.
  *
  * To ask description of input, output, variable.
  * To modify variable.
@@ -93,37 +93,37 @@ private:
 class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersManager
 {
  public:
-  /** \brief Event listener type */
+  /** @brief Event listener type */
   typedef void (FUNCTION_CALL_TYPE *CtrlEventListener)(XMLMessage*, void*);
 
-  /** \brief Constructor
-   * \param serviceId [in] the id of the service associated to this object
+  /** @brief Constructor
+   * @param serviceId [in] the id of the service associated to this object
    */
   ControlClient(unsigned int serviceId);
 
-  /** \brief Desctructor */
+  /** @brief Desctructor */
   virtual ~ControlClient();
 
-  /** \brief Connection t a Control Server
-   * \param host [in] host where is the control server
-   * \param port [in] port where listen the control server
-   * \return if the connection is correctly established
+  /** @brief Connection t a Control Server
+   * @param host [in] host where is the control server
+   * @param port [in] port where listen the control server
+   * @return if the connection is correctly established
    */
   bool ConnectToCtrlServer(const SimpleString host, int port);
 
-  /** \brief Define the callback for the event processing
-   * \param fct callback for the event processing
-   * \param user_ptr pointer on data given to the callback
+  /** @brief Define the callback for the event processing
+   * @param fct callback for the event processing
+   * @param user_ptr pointer on data given to the callback
    */
   void SetCtrlEventListener(CtrlEventListener fct, void* user_ptr);
 
   /** \name Query to the ControlServer */
   //@{
 
-  /** \brief Query a global description
+  /** @brief Query a global description
    *
    * Obtain the names of all variable, input, and output.
-   * \return if the request has succeeded
+   * @return if the request has succeeded
    */
   bool QueryGlobalDescription();
 
@@ -230,42 +230,42 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
 
   /** \name Accss to list of attribute by kind */
   //@{
-  /** \brief Access to the list of variable name */
+  /** @brief Access to the list of variable name */
   MutexedSimpleList<SimpleString>& GetVariableNameList();
-  /** \brief Access to the list of variable object */
+  /** @brief Access to the list of variable object */
   MutexedSimpleList<VariableAttribute*>& GetVariableList();
 
-  /** \brief Access to the list of input name */
+  /** @brief Access to the list of input name */
   MutexedSimpleList<SimpleString>& GetInputNameList();
-  /** \brief Access to the list of input object */
+  /** @brief Access to the list of input object */
   MutexedSimpleList<InOutputAttribute*>& GetInputList();
 
-  /** \brief Access to the list of output name */
+  /** @brief Access to the list of output name */
   MutexedSimpleList<SimpleString>& GetOutputNameList();
-  /** \brief Access to the list of output object */
+  /** @brief Access to the list of output object */
   MutexedSimpleList<InOutputAttribute*>& GetOutputList();
 
-  /** \brief Access to the list of inoutput name */
+  /** @brief Access to the list of inoutput name */
   MutexedSimpleList<SimpleString>& GetInOutputNameList();
-  /** \brief Access to the list of inoutput object */
+  /** @brief Access to the list of inoutput object */
   MutexedSimpleList<InOutputAttribute*>& GetInOutputList();
   //@}
 
-  /** \brief Process Control Event
+  /** @brief Process Control Event
    *
    * For the event about value modification, the value contained in the VariableAttribute
    * object is set to the new value.
    * <br> Can be used with in user callback
-   * \param msg the message containing the ControlEvent
-   * \param ptr pointer on a ControlClient object
+   * @param msg the message containing the ControlEvent
+   * @param ptr pointer on a ControlClient object
    */
   void CtrlEventProcess(XMLMessage* msg);
 
  protected:
-  /** \brief Process a message from a ControlServer
+  /** @brief Process a message from a ControlServer
    *
    * Implemented to manage query answer, and event.
-   * \param msg The message to process
+   * @param msg The message to process
    */
   void ProcessAMessage(XMLMessage* msg);
 
@@ -282,77 +282,77 @@ private:
    * \verbatim
 	str <-- <controlQuery id="..."> + str + </controlQuery>
 	\endverbatim
-   * \param str the message to complete
-   * \return the message id
+   * @param str the message to complete
+   * @return the message id
    */
   unsigned int BeginEndTag(SimpleString& str);
 
   /**
-   * \brief Send a query to the control server
+   * @brief Send a query to the control server
    *
    * if 'wait_answer' wait for the answer and check that the returned message has the good id
-   * \return the XMLMessage object associed to the query (to be deleted by user)
+   * @return the XMLMessage object associed to the query (to be deleted by user)
    */
   XMLMessage* QueryToServer(SimpleString& str, bool wait_answer = true);
 
   /** \name Message processing */
   //@{
-  /** \brief Extract global description from message
-   * \param xml_msg [in] message to parse */
+  /** @brief Extract global description from message
+   * @param xml_msg [in] message to parse */
   void ProcessGlobalDescription(XMLMessage* xml_msg);
 
   /** \name Message processing */
   //@{
-  /** \brief Extract global description from message
-   * \param xml_msg [in] message to parse */
+  /** @brief Extract global description from message
+   * @param xml_msg [in] message to parse */
   void ProcessDetailedDescription(XMLMessage* xml_msg);
 
-  /** \brief Extract variable description from a message
-   * \param node part of message where extract data
-   * \param var_attr structure where store data. Can be null
-   * \return a structure with the data. It is var_attr if var_attr is non null,
+  /** @brief Extract variable description from a message
+   * @param node part of message where extract data
+   * @param var_attr structure where store data. Can be null
+   * @return a structure with the data. It is var_attr if var_attr is non null,
    * else return a pointer to a new allocated struture
    */
   VariableAttribute* ProcessVariableDescription(xmlNodePtr node, VariableAttribute* var_attr);
-  /** \brief Extract input description from a message
-   * \param node part of message where extract data
-   * \param input_attr structure where store data. Can be null
-   * \return a structure with the data. It is input_attr if input_attr is non null,
+  /** @brief Extract input description from a message
+   * @param node part of message where extract data
+   * @param input_attr structure where store data. Can be null
+   * @return a structure with the data. It is input_attr if input_attr is non null,
    * else return a pointer to a new allocated struture
    */
   InOutputAttribute* ProcessInputDescription(xmlNodePtr node, InOutputAttribute* input_attr);
-  /** \brief Extract output description from a message
-   * \param node part of message where extract data
-   * \param output_attr structure where store data. Can be null
-   * \return a structure with the data. It is output_attr if output_attr is non null,
+  /** @brief Extract output description from a message
+   * @param node part of message where extract data
+   * @param output_attr structure where store data. Can be null
+   * @return a structure with the data. It is output_attr if output_attr is non null,
    * else return a pointer to a new allocated struture
    */
   InOutputAttribute* ProcessOutputDescription(xmlNodePtr node, InOutputAttribute* output_attr);
-  /** \brief Extract inoutput description from a message
-   * \param node part of message where extract data
-   * \param in_output_attr structure where store data. Can be null
-   * \return a structure with the data. It is in_output_attr if in_output_attr is non null,
+  /** @brief Extract inoutput description from a message
+   * @param node part of message where extract data
+   * @param in_output_attr structure where store data. Can be null
+   * @return a structure with the data. It is in_output_attr if in_output_attr is non null,
    * else return a pointer to a new allocated struture
    */
   InOutputAttribute* ProcessInOutputDescription(xmlNodePtr node, InOutputAttribute* in_output_attr);
 
-  /** \brief Extract input/output/inoutput description from a message*/
+  /** @brief Extract input/output/inoutput description from a message*/
   // void ProcessInOutputDescription(xmlNodePtr node, InOutputAttribute* io_attr);
   //@}
 
-  /** \brief Display the names from a list on the standard output
+  /** @brief Display the names from a list on the standard output
    *
    * Before display the names, 'entete' is displayed.
    * It enables to give the kind of name displayed.
-   * \param list_of_name [in] list with the name to display
-   * \param entete [in] give the kind of name displayed
+   * @param list_of_name [in] list with the name to display
+   * @param entete [in] give the kind of name displayed
    */
   void DisplayListName(MutexedSimpleList<SimpleString>& list_of_name, const SimpleString& entete);
 
-  /** \brief Test if a name is existing in a list
-   * \param name [in] the researched name
-   * \param list_name [in] the list of name
-   * \return true if the name is in the list of name
+  /** @brief Test if a name is existing in a list
+   * @param name [in] the researched name
+   * @param list_name [in] the list of name
+   * @return true if the name is in the list of name
    */
   bool NameInList(const SimpleString name, MutexedSimpleList<SimpleString>& list_name);
 

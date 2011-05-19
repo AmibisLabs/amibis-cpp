@@ -140,35 +140,35 @@ public:
   // void GenerateValueMessage(SimpleString& str);
   //@}
 
-  /** \brief Display on standard output the data about the variable.
+  /** @brief Display on standard output the data about the variable.
    *
    * The display is a set of line as 'name attribute :  value'
    */
   void Display();
 
-  /** \brief Add a listener to this variable.
+  /** @brief Add a listener to this variable.
    *
    */
   bool AddListener( VariableAttributeListener *  ListenerToAdd );
 
-   /** \brief remove a listener to this variable.
+   /** @brief remove a listener to this variable.
    *
    */
   bool RemoveListener( VariableAttributeListener *  ListenerToAdd );
 
-  /** \brief remove a listener to this variable.
+  /** @brief remove a listener to this variable.
    *
    */
   unsigned int GetNumberOfListeners();
 
- /** \brief Extract data from a XML node.
+ /** @brief Extract data from a XML node.
    *
    * Extract attribute 'name', and child node.
-   * \param node A node of service description with the tag VariableAttribute::VariableStr
+   * @param node A node of service description with the tag VariableAttribute::VariableStr
    */
   void ExtractDataFromXml(xmlNodePtr node);
 
-  /**  \brief to parse/generate XML data.
+  /**  @brief to parse/generate XML data.
    */
 	static const SimpleString VariableStr;	// = "variable"
 
@@ -178,7 +178,7 @@ protected:
 	VariableAccessType access; /*!< kind of access.*/
 	SimpleString valueStr; /*!< SimpleString representation of the value of the variable*/
 
-    /**
+	/**
 	 * SimpleString representation for 'constant' access (used in XML description)
 	 */
 	static const SimpleString AccessConstantStr;	// "constant"

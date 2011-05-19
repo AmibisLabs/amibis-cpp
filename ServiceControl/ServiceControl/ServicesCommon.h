@@ -44,8 +44,8 @@
 
 namespace Omiscid {
 
-/*! \class ServiceException
- *  \brief The mother class of all exceptions of the OMiSCID service Package.
+/*! @class ServiceException
+ *  @brief The mother class of all exceptions of the OMiSCID service Package.
  *
  *  This class is the mother class of all exceptions raised by the OMiSCID service
  *  package. All derived classes must define their own exception type (const char*)
@@ -54,25 +54,25 @@ namespace Omiscid {
 class ServiceException : public SimpleException
 {
  public:
-  /** \brief Constructor
-   * \param m [in] the message for the exception
+  /** @brief Constructor
+   * @param m [in] the message for the exception
    */
   ServiceException(const SimpleString m, int Err = UnkownSimpleExceptionCode );
 
-  /** \brief Copy Constructor
-   * \param ExceptionToCopy [in] the exception to copy
+  /** @brief Copy Constructor
+   * @param ExceptionToCopy [in] the exception to copy
    */
   ServiceException(const ServiceException& ExceptionToCopy);
 
-  /** \brief Destructor */
+  /** @brief Destructor */
   virtual ~ServiceException();
 
-  /** \brief Return a human readable exception type */
+  /** @brief Return a human readable exception type */
   virtual SimpleString GetExceptionType() const;
 };
 
-/*! \class CommonServiceValues
- *	\brief The mother class of all service oriented classes of the OMiSCID service package.
+/*! @class CommonServiceValues
+ *	@brief The mother class of all service oriented classes of the OMiSCID service package.
  *
  *	This class is the mother class of all service oriented classes. It defines common values
  *	defined in DNS-SD documentation like fields length.

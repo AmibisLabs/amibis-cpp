@@ -372,40 +372,40 @@ public:
 	bool RemoveConnectorListener(SimpleString ConnectorName, ConnectorListener * MsgListener);
 
 	/**
-     * Removes all listeners on a given connector.
-     * @param ConnectorName the connector on which listeners will be removed.
-     */
-    void RemoveAllConnectorListeners(SimpleString ConnectorName);
+	 * Removes all listeners on a given connector.
+	 * @param ConnectorName the connector on which listeners will be removed.
+	 */
+	void RemoveAllConnectorListeners(SimpleString ConnectorName);
 
 	/**
-     * Removes all listeners on a all connectors.
-     */
+	 * Removes all listeners on a all connectors.
+	 */
 	void RemoveAllConnectorListeners();
 
-    /**
-     * Closes a connection on a given connector to a given remote peer.
-     * @param ConnectorName the connector on which connection will be closed
-     * @param PeerId the id of the remote peer which connection is to be closed
-     */
-    bool CloseConnection(SimpleString ConnectorName, unsigned int PeerId);
+	/**
+	 * Closes a connection on a given connector to a given remote peer.
+	 * @param ConnectorName the connector on which connection will be closed
+	 * @param PeerId the id of the remote peer which connection is to be closed
+	 */
+	bool CloseConnection(SimpleString ConnectorName, unsigned int PeerId);
 
-    /**
-     * Closes a connection on a given connector to a given remote peer.
-     * @param ConnectorName the connector on which connection will be closed
-     * @param SrvProxy a ServiceProxy we want to close connection to.
-     */
+	/**
+	 * Closes a connection on a given connector to a given remote peer.
+	 * @param ConnectorName the connector on which connection will be closed
+	 * @param SrvProxy a ServiceProxy we want to close connection to.
+	 */
 	bool CloseConnection(SimpleString ConnectorName, ServiceProxy * SrvProxy);
-    
-    /**
-     * Closes all connections on a given connector.
-     * @param connectorName the connector on which connections will be closed
-     */
-    void CloseAllConnections(SimpleString ConnectorName);
 
-    /**
-     * Closes all connections on all connectors.
-     */
-    void CloseAllConnections();
+	/**
+	 * Closes all connections on a given connector.
+	 * @param connectorName the connector on which connections will be closed
+	 */
+	void CloseAllConnections(SimpleString ConnectorName);
+
+	/**
+	 * Closes all connections on all connectors.
+	 */
+	void CloseAllConnections();
 
 	/**
 	 * Adds a listener that will be triggered at every variable change

@@ -1,8 +1,8 @@
-/*! \file
- *  \brief Header of the common classes and values for the OMiSCID service package
- *  \author Dominique Vaufreydaz
- *  \author Special thanks to Sébastien Pesnel for debugging and testing
- *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
+/*! @file
+ *  @brief Header of the common classes and values for the OMiSCID service package
+ *  @author Dominique Vaufreydaz
+ *  @author Special thanks to Sébastien Pesnel for debugging and testing
+ *  @author Special thanks to Julien Letessier for his kind help about DNS-SD
  *  \version 1.0
  *  \date	2004-2006
  */
@@ -19,7 +19,7 @@ ServicePropertiesException::~ServicePropertiesException()
 {
 }
 
-/*! \brief Empty a property.
+/*! @brief Empty a property.
  *
  *	This function empty a property. The #Length is set to 1 (just the byte containing
  *	the length of the property), the intinsect #BinaryLength of the property (the only byte) is set to 0
@@ -34,7 +34,7 @@ void ServiceProperty::Empty()
 	Value.Empty();
 }
 
-/*! \brief Default constructor.
+/*! @brief Default constructor.
  *
  *	The default constructor constructs an empty property (see ServiceProperty#Empty).
  */
@@ -44,9 +44,9 @@ ServiceProperty::ServiceProperty()
 	Empty();
 }
 
-/*! \brief Alternate constructor.
- *	\param[in] Name a const c-SimpleString containing the property name.
- *	\param[in] Value an optional const c-SimpleString containing the value of the property
+/*! @brief Alternate constructor.
+ *	@param[in] Name a const c-SimpleString containing the property name.
+ *	@param[in] Value an optional const c-SimpleString containing the value of the property
  *	\throw ServicePropertiesException The value of the error message sould be "Bad parameter(s) for the ServiceProperty constructor"
  *
  *	This constructor takes a name and optionaly a value for the new constructed property. See ServiceProperty#SetProperty.
@@ -64,10 +64,10 @@ ServiceProperty::ServiceProperty( const SimpleString Name, const SimpleString Va
 ServiceProperty::~ServiceProperty()
 {}
 
-/*! \brief Set name and optionaly value for a property.
- *	\param[in] Name a const c-SimpleString containing the property name.
- *	\param[in] Value an optional const c-SimpleString containing the value of the property
- *  \return a boolean answer if changes are made.
+/*! @brief Set name and optionaly value for a property.
+ *	@param[in] Name a const c-SimpleString containing the property name.
+ *	@param[in] Value an optional const c-SimpleString containing the value of the property
+ *  @return a boolean answer if changes are made.
  *
  *	This function changes name and optionaly value for a property. If a problem occurs, the
  *	property will be empty. You can define property as follow:
@@ -588,6 +588,3 @@ const ServiceProperties& ServiceProperties::operator=(const ServiceProperties& T
 	ImportTXTRecord( ToCopy.GetTXTRecordLength(), ToCopy.ExportTXTRecord() );
 	return *this;
 }
-
-
-

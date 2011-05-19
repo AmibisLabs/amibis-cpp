@@ -331,7 +331,7 @@ bool VariableAttribute::CanBeModifiedFromOutside(ControlServerStatus status) con
 	return (access == ReadWriteAccess || (access == ConstantAccess && status != STATUS_RUNNING));
 }
 
- /** \brief Add a listener to this variable.
+ /** @brief Add a listener to this variable.
    *
    */
 bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
@@ -358,7 +358,7 @@ bool VariableAttribute::AddListener( VariableAttributeListener * ListenerToAdd )
 	return true;
 }
 
-   /** \brief remove a listener to this variable.
+   /** @brief remove a listener to this variable.
    *
    */
 bool VariableAttribute::RemoveListener( VariableAttributeListener *  ListenerToRemove )

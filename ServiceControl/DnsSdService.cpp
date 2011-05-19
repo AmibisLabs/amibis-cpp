@@ -1,8 +1,8 @@
-/*! \file
- *  \brief Header of the common classes and values for the OMiSCID service package
- *  \author Dominique Vaufreydaz
- *  \author Special thanks to Sébastien Pesnel for debugging and testing
- *  \author Special thanks to Julien Letessier for his kind help about DNS-SD
+/*! @file
+ *  @brief Header of the common classes and values for the OMiSCID service package
+ *  @author Dominique Vaufreydaz
+ *  @author Special thanks to Sébastien Pesnel for debugging and testing
+ *  @author Special thanks to Julien Letessier for his kind help about DNS-SD
  *  \version 1.0
  *  \date	2004-2006
  */

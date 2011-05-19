@@ -79,7 +79,7 @@ void ControlServer::InitInstance()
 	registerDnsSd = NULL;
 }
 
-ControlServer::ControlServer(const SimpleString service_name): 
+ControlServer::ControlServer(const SimpleString service_name):
   port(0),
   serviceId(0),
   localConnectorId(0),

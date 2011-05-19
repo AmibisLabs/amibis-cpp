@@ -304,7 +304,7 @@ ControlClient::~ControlClient()
 	SmartLocker SL_listVariableAttr(listVariableAttr);
 	SmartLocker SL_listInputAttr(listInputAttr);
 	SmartLocker SL_listOutputAttr(listOutputAttr);
-	
+
 	TcpClient::RemoveAllCallbackObjects();
 	TcpClient::Stop();
 

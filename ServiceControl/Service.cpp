@@ -159,7 +159,7 @@ bool Service::AddConnector(SimpleString ConnectorName, SimpleString ConnectorDes
 	 * @param localConnectorName the name of the local connector
 	 * @return
 	 */
-unsigned int Service::GetConnectorClientCount(SimpleString ConnectorName) 
+unsigned int Service::GetConnectorClientCount(SimpleString ConnectorName)
 {
 	InOutputAttribute * pAtt = FindInOutput( ConnectorName );
 	if ( pAtt == (InOutputAttribute *)NULL )
@@ -627,9 +627,9 @@ bool Service::RemoveConnectorListener(SimpleString ConnectorName, ConnectorListe
 }
 
 	/**
-     * Removes all listeners on a given connector.
-     * @param ConnectorName the connector on which listeners will be removed.
-     */
+	 * Removes all listeners on a given connector.
+	 * @param ConnectorName the connector on which listeners will be removed.
+	 */
 void Service::RemoveAllConnectorListeners(SimpleString ConnectorName)
 {
 	// Search connector
@@ -648,8 +648,8 @@ void Service::RemoveAllConnectorListeners(SimpleString ConnectorName)
 }
 
 	/**
-     * Removes all listeners on a all connectors.
-     */
+	 * Removes all listeners on a all connectors.
+	 */
 void Service::RemoveAllConnectorListeners()
 {
 	// Walk amoung all connector
@@ -663,12 +663,12 @@ void Service::RemoveAllConnectorListeners()
 	}
 }
 
-    /**
-     * Closes a connection on a given connector to a given remote peer.
-     * @param connectorName the connector on which connection will be closed
-     * @param peerId the id of the remote peer which connection is to be closed
+	/**
+	 * Closes a connection on a given connector to a given remote peer.
+	 * @param connectorName the connector on which connection will be closed
+	 * @param peerId the id of the remote peer which connection is to be closed
  	 * @return a boolean to say if we managed to close the connection
-    */
+	*/
 bool Service::CloseConnection(SimpleString ConnectorName, unsigned int PeerId)
 {
 	// Search connector
@@ -685,12 +685,12 @@ bool Service::CloseConnection(SimpleString ConnectorName, unsigned int PeerId)
 	return pConnector->DisconnectPeerId( PeerId );
 }
 
-    /**
-     * Closes a connection on a given connector to a given remote peer.
-     * @param ConnectorName the connector on which connection will be closed
-     * @param SrvProxy a ServiceProxy we want to close connection to.
+	/**
+	 * Closes a connection on a given connector to a given remote peer.
+	 * @param ConnectorName the connector on which connection will be closed
+	 * @param SrvProxy a ServiceProxy we want to close connection to.
 	 * @return a boolean to say if we managed to close the connection
-     */
+	 */
 bool Service::CloseConnection(SimpleString ConnectorName, ServiceProxy * SrvProxy)
 {
 	if ( SrvProxy == (ServiceProxy *)NULL )
@@ -703,10 +703,10 @@ bool Service::CloseConnection(SimpleString ConnectorName, ServiceProxy * SrvProx
 	return CloseConnection( ConnectorName, SrvProxy->GetPeerId() );
 }
 
-    /**
-     * Closes all connections on a given connector.
-     * @param connectorName the connector on which connections will be closed
-     */
+	/**
+	 * Closes all connections on a given connector.
+	 * @param connectorName the connector on which connections will be closed
+	 */
 void Service::CloseAllConnections(SimpleString ConnectorName)
 {
 	// Search connector
@@ -729,9 +729,9 @@ void Service::CloseAllConnections(SimpleString ConnectorName)
 	}
 }
 
-    /**
-     * Closes all connections on all connectors.
-     */
+	/**
+	 * Closes all connections on all connectors.
+	 */
 void Service::CloseAllConnections()
 {
 	SimpleList<unsigned int> PeerIdsList;
