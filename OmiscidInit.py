@@ -19,8 +19,8 @@ JsonHeaders=[['Json/Json/JSON_parser.h','Json'],['Json/Json/json_spirit.h','Json
 JsonSources=['Json/JSON_parser.cpp','Json/json_spirit_reader.cpp','Json/json_spirit_value.cpp','Json/json_spirit_writer.cpp']
 
 # Layer Messaging
-MessagingHeaders=[['Messaging/Messaging/Access.h','Messaging'],['Messaging/Messaging/DelayedResult.h','Messaging'],['Messaging/Messaging/Messaging.h','Messaging'],['Messaging/Messaging/MethodCallback.h','Messaging'],['Messaging/Messaging/MethodCallbackFactory.h','Messaging'],['Messaging/Messaging/Serializable.h','Messaging'],['Messaging/Messaging/SerializeManager.h','Messaging'],['Messaging/Messaging/SerializeValue.h','Messaging'],['Messaging/Messaging/StructuredMessage.h','Messaging'],['Messaging/Messaging/StructuredMessageException.h','Messaging'],['Messaging/Messaging/StructuredMethodCall.h','Messaging'],['Messaging/Messaging/StructuredMethodCallback.h','Messaging'],['Messaging/Messaging/StructuredMethodCallback_NP.h','Messaging'],['Messaging/Messaging/StructuredMethodCallbackFactory.h','Messaging'],['Messaging/Messaging/StructuredMethodCallbackListener.h','Messaging'],['Messaging/Messaging/StructuredParameters.h','Messaging'],['Messaging/Messaging/StructuredResult.h','Messaging']]
-MessagingSources=['Messaging/DelayedResult.cpp','Messaging/Messaging.cpp','Messaging/Serializable.cpp','Messaging/SerializeManager.cpp','Messaging/SerializeValue.cpp','Messaging/StructuredMessage.cpp','Messaging/StructuredMessageException.cpp','Messaging/StructuredMethodCall.cpp','Messaging/StructuredMethodCallbackFactory.cpp','Messaging/StructuredMethodCallbackListener.cpp','Messaging/StructuredParameters.cpp','Messaging/StructuredResult.cpp']
+MessagingHeaders=[['Messaging/Messaging/Serializable.h','Messaging'],['Messaging/Messaging/SerializeException.h','Messaging'],['Messaging/Messaging/SerializeManager.h','Messaging'],['Messaging/Messaging/SerializeValue.h','Messaging'],['Messaging/Messaging/StructuredMessage.h','Messaging']]
+MessagingSources=['Messaging/Serializable.cpp','Messaging/SerializeException.cpp','Messaging/SerializeManager.cpp','Messaging/SerializeValue.cpp','Messaging/StructuredMessage.cpp']
 
 # Full sources
 

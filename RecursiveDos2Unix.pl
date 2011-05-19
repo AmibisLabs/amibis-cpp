@@ -78,7 +78,7 @@ sub EnterDirectory()
 }
 
 $ToReplace = "\t";
-$ReplaceBy = '    ';
+$ReplaceBy = '        ';
 $ReverseMode = 0;
 
 $FolderToWorkOn = '';
@@ -88,7 +88,7 @@ while ( defined $ARGV[$ParamPos] )
 {
 	if ( $ARGV[$ParamPos] eq '-reverse' )
 	{
-		$ToReplace = '    ';
+		$ToReplace = '        ';
 		$ReplaceBy = "\t";
 		$ReverseMode = 1;
 		$ParamPos++;

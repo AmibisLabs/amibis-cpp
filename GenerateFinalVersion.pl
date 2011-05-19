@@ -168,10 +168,11 @@ while( defined $ARGV[$PosArgv] )
 	die "Wrong parameter\n";
 }
 
-@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile', 'TESTS' );
+@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile', 'TESTS', 'Omiscid-config.scons.in', 'Omiscid.h' );
 $Version = "1.0.0";
 
-$WorkingRep = cwd;
+$CurrentPath = cwd;
+$WorkingRep = $CurrentPath;
 
 $WorkingRep =~ /\/([^\/]+)\/?$/;
 $WorkingRep = $1;
@@ -291,21 +292,29 @@ while( $FileIn = <../*.in> )
 }
 
 print STDERR "Copying files\n";
-`rsync -avzu --exclude=.svn --delete ../System ../Com ../ServiceControl ../Messaging ../Examples ../Test OMiSCID`;
+$command = "rsync -avzu --exclude=.svn --delete ../System ../Com ../ServiceControl ../Messaging ../Json ../Examples ../Test ";
+foreach $file ( @UsualFiles )
+{
+	$command .= "../$file ";
+}
+$command .= " OMiSCID";
+system( $command );
 
-die;
+chdir( $CurrentPath );
+`perl RecursiveDos2Unix.pl ./CreateFinalVersion/OMiSCID -exclude=Doc`;
 
-`perl RecursiveDos2Unix.pl . -exclude=Doc`;
+chdir( './CreateFinalVersion/OMiSCID' );
 
 # generate testing archive
 &RecurseWork::RecurseWork("System/");
 &RecurseWork::RecurseWork("Com/");
 &RecurseWork::RecurseWork("ServiceControl/");
 &RecurseWork::RecurseWork("Messaging/");
+&RecurseWork::RecurseWork("Json/");
 &RecurseWork::RecurseWork("Examples/");
 &RecurseWork::RecurseWork("Test/");
 
-$command = "zip -9 $VersionFile ";
+$command = "zip -9 ../$VersionFile ";
 foreach $file ( @UsualFiles )
 {
 	$command .= "$file ";
@@ -315,7 +324,7 @@ foreach $file ( keys %FilesToAdd )
 	$command .= "$file ";
 }
 
-# print $command;
+# print $command
 
 system( $command );
 
@@ -323,6 +332,8 @@ if ( $StopAfterZip == 1 )
 {
 	exit();
 }
+
+chdir( '..' );
 
 $TestSuite  = "###########################################################\n";
 $TestSuite .= "#\n";
@@ -342,29 +353,31 @@ $TestSuite .= "#    TOK: the test is ok\n";
 $TestSuite .= "#    TFA: the test failed\n";
 $TestSuite .= "###########################################################\n";
 $TestSuite .= "\n\n";
-$TestSuite .= "##################\n";
-$TestSuite .= "# Computer 1\n";
-$TestSuite .= "##################\n";
-$TestSuite .= "CMT: Compilation environment\n";
-$TestSuite .= "C++: Microsoft Visual Studio 2005\n";
-$TestSuite .= "     Version 8.0.50727.867  (vsvista.050727-8600)\n";
-$TestSuite .= "     Microsoft .NET Framework\n";
-$TestSuite .= "     Version 2.0.50727 SP2\n";
-$TestSuite .= "     Édition installée : Professional\n";
-$TestSuite .= "     Microsoft Visual C# 2005\n";
-$TestSuite .= "     Microsoft Visual C++ 2005\n";
-$TestSuite .= "     Microsoft Visual J# 2005\n";
-$TestSuite .= "     Microsoft Web Application Projects 2005\n";
-$TestSuite .= "     Crystal Reports\n";
-$TestSuite .= "     Microsoft Visual Studio 2005 Professional - Français Service Pack 1 (KB926607)\n";
-$TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB937061)\n";
-$TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB947738)\n";
-$TestSuite .= "     Update pour Microsoft Visual Studio 2005 Professional - Français (KB932233)\n";
-$TestSuite .= "     Insure++ Version 7.1.2 (build 2007-09-10)\n";
-$TestSuite .= "XML: libxml2 version libxml2-2.7.3 with iconv-1.9.2\n\n";
 
 if ( $DoTest == 1 )
 {	
+	$TestSuite .= "##################\n";
+	$TestSuite .= "# Computer 1\n";
+	$TestSuite .= "##################\n";
+	$TestSuite .= "CMT: Compilation environment\n";
+	$TestSuite .= "C++: Microsoft Visual Studio 2005\n";
+	$TestSuite .= "     Version 8.0.50727.867  (vsvista.050727-8600)\n";
+	$TestSuite .= "     Microsoft .NET Framework\n";
+	$TestSuite .= "     Version 2.0.50727 SP2\n";
+	$TestSuite .= "     Édition installée : Professional\n";
+	$TestSuite .= "     Microsoft Visual C# 2005\n";
+	$TestSuite .= "     Microsoft Visual C++ 2005\n";
+	$TestSuite .= "     Microsoft Visual J# 2005\n";
+	$TestSuite .= "     Microsoft Web Application Projects 2005\n";
+	$TestSuite .= "     Crystal Reports\n";
+	$TestSuite .= "     Microsoft Visual Studio 2005 Professional - Français Service Pack 1 (KB926607)\n";
+	$TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB937061)\n";
+	$TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB947738)\n";
+	$TestSuite .= "     Update pour Microsoft Visual Studio 2005 Professional - Français (KB932233)\n";
+	$TestSuite .= "     Insure++ Version 7.1.2 (build 2007-09-10)\n";
+	$TestSuite .= "XML: libxml2 version libxml2-2.7.3 with iconv-1.9.2\n\n";
+	
+	
 	$TestsList{'RegisterSearchTest.cpp RegisterThread.cpp'} = 'RegisterTest';
 	$TestsList{'BrowsingTest.cpp RegisterThread.cpp'} = 'BrowsingTest';
 	$TestsList{'SendHugeData.cpp'} = 'SendHugeData';
@@ -596,6 +609,7 @@ print STDERR "\n\n\t=> $VersionFile successfully tested.\n";
 `echo $Version > LastVersion.info`;
 print STDERR "Generate final version of $VersionFile.\n";
 
+chdir( 'OMiSCID' );
 # generate report of tests
 open( $fdtests, '>TESTS' );
 print $fdtests $TestSuite;
@@ -620,6 +634,8 @@ if ( $DoDoc == 1 )
 &RecurseWork::RecurseWork("System/");
 &RecurseWork::RecurseWork("Com/");
 &RecurseWork::RecurseWork("ServiceControl/");
+&RecurseWork::RecurseWork("Messaging/");
+&RecurseWork::RecurseWork("Json/");
 &RecurseWork::RecurseWork("Examples/");
 if ( $DoDoc == 1 )
 {
@@ -630,7 +646,7 @@ print STDERR "Remove BipService.cpp & TimeoutProg.cpp from list\n";
 undef($FilesToAdd{'Examples/BipService.cpp'});
 undef($FilesToAdd{'Examples/TimeoutProg.cpp'});
 
-$command = "zip -9 $VersionFile ";
+$command = "zip -9 ../$VersionFile ";
 foreach $file ( @UsualFiles )
 {
 	$command .= "$file ";
@@ -647,25 +663,11 @@ foreach $file ( keys %FilesToAdd )
 # print $command;
 system( $command );
 
-if ( !-e './Temp' )
-{
-	mkdir './Temp', 0755;
-}
-else
-{
-	`rm -rf ./Temp/*`;
-}
+chdir( '..' );
 
-chdir('./Temp');
-`rm -rf ./OMiSCID`;
-mkdir './OMiSCID', 0755;
-`cp ../$VersionFile `;
-`unzip $VersionFile`;
 $VersionFile =~ s/\.zip/\.tgz/;
-`rm -rf ../$VersionFile`;
-`tar cvfz ../$VersionFile OMiSCID`;
-
-chdir('..');
+`rm -rf $VersionFile`;
+`tar cvfz $VersionFile OMiSCID`;
 
 # Generate package
 if ( $DoPackage == 1 )

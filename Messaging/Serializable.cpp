@@ -1,12 +1,7 @@
-/* @file Messaging/Serializable.cpp
-/**
- * @file MEssaging/Messaging/SerializeException.h
+/** @file Messaging/Serializable.cpp
  * @ingroup Messaging
  * @ingroup UserFriendlyAPI
- * @brief Definition of SerializeException class
- */
-
- * @ingroup UserFriendly
+ * @brief Definition of Serializable class
  * @date 2004-2011
  * @author Dominique Vaufreydaz
  */
