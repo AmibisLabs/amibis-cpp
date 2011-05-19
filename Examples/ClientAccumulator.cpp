@@ -46,7 +46,7 @@ public:
 	/* @ brief callback for variable changes notification */
 	void VariableChanged(ServiceProxy& SP, const SimpleString VarName, const SimpleString NewValue )
 	{
-		// cout << "Current Accu value: " << NewValue << endl;
+		cerr << "Current Accu value: " << NewValue << endl;
 	};
 };
 

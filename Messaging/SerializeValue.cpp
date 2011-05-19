@@ -1,5 +1,5 @@
 #include <Messaging/SerializeValue.h>
-#include <System/SimpleException.h>
+#include <Messaging/SerializeException.h>
 
 using namespace Omiscid;
 
@@ -24,7 +24,7 @@ SerializeValue::SerializeValue( const int Val )
 
 SerializeValue::SerializeValue( const unsigned int Val )
 {
-	throw SimpleException("...");
+	throw SerializeException("unsigned int not supported, please send as a string", SerializeException::IllegalTypeConversion );
 }
 
 SerializeValue::SerializeValue( const bool Val )
@@ -61,7 +61,7 @@ SerializeValue::operator int()
 {
 	if ( type() != json_spirit::int_type )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("Object is not an int", SerializeException::IllegalTypeConversion );
 	}
 
 	return get_int();
@@ -69,7 +69,7 @@ SerializeValue::operator int()
 
 SerializeValue::operator unsigned int()
 {
-	throw SimpleException( "..." );
+	throw SerializeException("unsigned int not supported, please send as a string", SerializeException::UnsupportedType );
 	return 0;
 }
 
@@ -77,7 +77,7 @@ SerializeValue::operator bool()
 {
 	if ( type() != json_spirit::bool_type )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("Value is not a bool", SerializeException::IllegalTypeConversion );
 	}
 
 	return get_bool();
@@ -87,7 +87,7 @@ SerializeValue::operator double()
 {
 	if ( type() != json_spirit::real_type )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("Value is not a double", SerializeException::IllegalTypeConversion );
 	}
 
 	return get_real();
@@ -97,7 +97,7 @@ SerializeValue::operator float()
 {
 	if ( type() != json_spirit::real_type )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("Value is not a float", SerializeException::IllegalTypeConversion );
 	}
 
 	return (float)get_real();
@@ -107,7 +107,7 @@ SerializeValue::operator SimpleString()
 {
 	if ( type() != json_spirit::str_type )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("Value is not a string", SerializeException::IllegalTypeConversion );
 	}
 
 	return SimpleString( get_str().c_str() );
@@ -117,7 +117,7 @@ SerializeValue::operator char*()
 {
 	if ( type() != json_spirit::str_type )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("Value is not a string", SerializeException::IllegalTypeConversion );
 	}
 
 	return strdup((char*)get_str().c_str());
@@ -143,7 +143,7 @@ SerializeValue& SerializeValue::operator=( const int Val )
 
 SerializeValue& SerializeValue::operator=( const unsigned int Val )
 {
-	throw SimpleException( "..." );
+	throw SerializeException("unsigned int not supported, please send as a string", SerializeException::UnsupportedType );
 }
 
 SerializeValue& SerializeValue::operator=( const bool Val )
@@ -240,23 +240,23 @@ bool SerializeValue::IsAnArray() const
 	// Encoding functions
 	SerializeValue Omiscid::SerializeUnsignedInt( unsigned int Data )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("unsigned int not supported, please send as a string", SerializeException::UnsupportedType );
 		return SerializeValue();
 	}
 	SerializeValue Omiscid::SerializeUnsignedIntFromAddress( void * pTmpData )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("unsigned int not supported, please send as a string", SerializeException::UnsupportedType );
 		return SerializeValue();
 	}
 	// Decoding functions
 	unsigned int Omiscid::UnserializeUnsignedInt( const SerializeValue& Val )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("unsigned int not supported, please send as a string", SerializeException::UnsupportedType );
 		return 0;
 	}
 	void Omiscid::UnserializeUnsignedIntFromAddress( const SerializeValue& Val, void * pTmpData )
 	{
-		throw SimpleException( "..." );
+		throw SerializeException("unsigned int not supported, please send as a string", SerializeException::UnsupportedType );
 	}
 
 // unsigned short management
@@ -265,7 +265,7 @@ bool SerializeValue::IsAnArray() const
 	{
 		return SerializeValue( (int)Data );
 	}
-	SerializeValue Omiscid::SerializeUnsignedShortFromAdress( void * pTmpData )
+	SerializeValue Omiscid::SerializeUnsignedShortFromAddress( void * pTmpData )
 	{
 		return SerializeValue( (int)(*(static_cast<unsigned short*>(pTmpData))) );
 	}
@@ -419,4 +419,3 @@ bool SerializeValue::IsAnArray() const
 	{
 		*(static_cast<char**>(pTmpData)) = UnserializeCharStar( Val );
 	}
-

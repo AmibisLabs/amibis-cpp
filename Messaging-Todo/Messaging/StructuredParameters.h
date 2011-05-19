@@ -6,8 +6,8 @@
 #ifndef __STRUCTURED_PARAMETERS_H__
 #define __STRUCTURED_PARAMETERS_H__
 
-// Desable Warning C4290: Visual C++ does not implement checked exceptions, 
-// C4290 is just informing you that other exceptions may still be throw from 
+// Desable Warning C4290: Visual C++ does not implement checked exceptions,
+// C4290 is just informing you that other exceptions may still be throw from
 // these functions
 #ifdef WIN32
 #pragma warning(disable: 4290)
@@ -29,7 +29,7 @@ namespace Omiscid {
  * \brief Group Data about a structured parameters
  *
  * contain the data about a structured parameters :
- * 
+ *
  * - to be detailed :)
  *
  * \author R�mi Barraquand
@@ -63,7 +63,7 @@ public:
    * \param Param the param to add in the structure
    */
   template< class C >
-    void AddParameter( const C & Param );
+	void AddParameter( const C & Param );
 
   /** \brief Get number of parameters
   * \return The number of parameters
@@ -93,13 +93,13 @@ public:
   * \param Val [out] the value of the parameter
   */
   void GetParameter( int Index, json_spirit::Object& Val ) const throw( StructuredMessageException );
-  
+
   /** \brief Get parameter of type Array
   * \param Index [in] the index of the parameter to get.
   * \param Val [out] the value of the parameter
   */
   void GetParameter( int Index, json_spirit::Array& Val ) const throw( StructuredMessageException );
-  
+
   /** \brief Get parameter of type bool
   * \param Index [in] the index of the parameter to get.
   * \param Val [out] the value of the parameter
@@ -119,15 +119,15 @@ public:
   void GetParameter( int Index, float& Val ) const throw( StructuredMessageException );
 
   /** \brief Get parameter of type vector
-    * \param Index [in] the index of the parameter to get.
-    * \param Val [out] the value of the parameter
-    */
+	* \param Index [in] the index of the parameter to get.
+	* \param Val [out] the value of the parameter
+	*/
   template<class T>
   void GetParameter( int Index, std::vector<T>& Val) const throw( StructuredMessageException );
 
   template<class C>
   void GetParameter( int Index, C& Val) const throw( StructuredMessageException );
-  
+
   /** \brief Output as string for debug purpose
   * \return A string representing the parameters
   */
@@ -143,7 +143,7 @@ template<class C>
   void StructuredParameters::AddParameter( const C & Param )
 {
   StructuredMessage msg;
-  msg.Put( "p", Param );  
+  msg.Put( "p", Param );
   AddParameter(msg.Get("p"));
 }
 
@@ -151,22 +151,22 @@ template<class T>
   void StructuredParameters::GetParameter( int Index, std::vector<T>& Val) const throw( StructuredMessageException )
   {
 	 if( Index>= 0 && Index < GetNumberOfParameters() ) {
-	    if( this->Params[Index].type() == json_spirit::array_type ) {
-	      const json_spirit::Array& array = Params[Index].get_array();
-	      Val.clear();
-	      for(json_spirit::Array::const_iterator it = array.begin();
-	    	it != array.end();
-	    	++it)
-	      {
-	    	  T v;
-	    	  it->get_val(v);
-	    	  Val.push_back(v);
-	      }
-	    } else {
-	      throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
-	    }
+		if( this->Params[Index].type() == json_spirit::array_type ) {
+		  const json_spirit::Array& array = Params[Index].get_array();
+		  Val.clear();
+		  for(json_spirit::Array::const_iterator it = array.begin();
+			it != array.end();
+			++it)
+		  {
+			  T v;
+			  it->get_val(v);
+			  Val.push_back(v);
+		  }
+		} else {
+		  throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
+		}
 	  } else {
-	    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+		throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
 	  }
 
   }

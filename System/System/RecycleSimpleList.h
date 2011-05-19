@@ -22,7 +22,7 @@ namespace Omiscid {
  *
  * The kept cells can bee deleted by calling the static methods DeleteTheAvailableCells
  *
- * \author Sebastien Pesnel
+ * @author Sebastien Pesnel
  */
 template <typename TYPE>
 class SimpleRecycleList : public SimpleList<TYPE>
@@ -46,14 +46,14 @@ class SimpleRecycleList : public SimpleList<TYPE>
 	}
 	}
  protected:
-	/** \brief Obtain a new SimpleListElement object
+	/** @brief Obtain a new SimpleListElement object
 	 *
 	 * Create a new instance of SimpleListElement object if there is no available cell else
 	 * use a cell present in the static list of cells associate to the class SimpleRecycleList
 	 */
 	SimpleListElement<TYPE>* GetNewSimpleListElement() const;
 
-	/** \brief Release a SimpleListElement object
+	/** @brief Release a SimpleListElement object
 	 *
 	 * Add the SimpleListElement object to the list of available cells
 	 * @param elt the element to release
@@ -137,17 +137,17 @@ public:
 	// Virtual destructor always
 	virtual ~MutexedSimpleRecycleList();
 
-		/** \brief Lock the access to the list
+		/** @brief Lock the access to the list
 	 *
 	 * Wait until the mutex can be locked.
-	 * \return if the 'lock' on the mutex is successful
+	 * @return if the 'lock' on the mutex is successful
 		 */
 	bool Lock();
 
-	/** \brief Unlock the access to the list
+	/** @brief Unlock the access to the list
 	 *
 	 * Enable another thread to lock the list.
-	 * \return if the 'unlock' on the mutex is successful
+	 * @return if the 'unlock' on the mutex is successful
 	 */
 	bool Unlock();
 

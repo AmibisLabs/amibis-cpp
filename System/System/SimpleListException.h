@@ -14,24 +14,24 @@ namespace Omiscid {
 
 /**
  * @class SimpleListException SimpleListException.h System/SimpleListException.h
- * \brief Exception thrown by the class SimpleList.
- * \author Sebastien Pesnel
+ * @brief Exception thrown by the class SimpleList.
+ * @author Sebastien Pesnel
  */
 class SimpleListException : public SimpleException
 {
 public:
-  /** \brief Constructor
-   * \param m [in] message for the exception
+  /** @brief Constructor
+   * @param m [in] message for the exception
    */
   SimpleListException(const SimpleString m, int i = UnkownSimpleExceptionCode );
 
-  /** \brief Copy Constrcutor */
+  /** @brief Copy Constrcutor */
   SimpleListException(const SimpleListException& ExceptionToCopy);
 
 	// Virtual destructor always
 	virtual ~SimpleListException();
 
-  /** \brief Return a human readable exception type */
+  /** @brief Return a human readable exception type */
   SimpleString GetExceptionType() const;
 };
 

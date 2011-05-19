@@ -48,4 +48,3 @@ private:
 };
 
 #endif //__CLIENT__
-

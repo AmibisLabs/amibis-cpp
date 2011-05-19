@@ -65,7 +65,7 @@ int main(int argc, char* argv[])
 	if ( ReturnCode != 0 )
 	{
 		printf( "Test failed.\n" );
-		return -1; 
+		return -1;
 	}
 
 	/***********************************************************
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 	if ( ReturnCode != 0 )
 	{
 		printf( "Test failed.\n" );
-		return -1; 
+		return -1;
 	}
 
 	/***********************************************************

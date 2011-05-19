@@ -6,8 +6,8 @@
 #ifndef __STRUCTURED_RESULT_H__
 #define __STRUCTURED_RESULT_H__
 
-// Desable Warning C4290: Visual C++ does not implement checked exceptions, 
-// C4290 is just informing you that other exceptions may still be throw from 
+// Desable Warning C4290: Visual C++ does not implement checked exceptions,
+// C4290 is just informing you that other exceptions may still be throw from
 // these functions
 #ifdef WIN32
 #pragma warning(disable: 4290)
@@ -19,7 +19,7 @@
 #include <Messaging/StructuredMessage.h>
 #include <Messaging/StructuredMessageException.h>
 
-namespace Omiscid { 
+namespace Omiscid {
   class StructuredResult;
 
 /**
@@ -28,7 +28,7 @@ namespace Omiscid {
  * \brief Group Data about a structured result
  *
  * contain the data about a structured result :
- * 
+ *
  * - to be detailed :)
  *
  * \author Rémi Barraquand
@@ -58,27 +58,27 @@ public:
 //   * \param Val the value to set
 //   */
 //   void SetResult( const json_spirit::Value& Val );
-  
+
 //   /** \brief Set the result
 //   * \param Val the value to set
 //   */
 //   void SetResult( const json_spirit::Object& Val );
-  
+
 //   /** \brief Set the result
 //   * \param Val the value to set
 //   */
 //   void SetResult( const json_spirit::Array& Val );
-  
+
 //   /** \brief Set the result
 //   * \param Val the value to set
 //   */
 //   void SetResult( bool Val );
-  
+
 //   /** \brief Set the result
 //   * \param Val the value to set
 //   */
 //   void SetResult( int Val );
-  
+
 //   /** \brief Set the result
 //   * \param Val the value to set
 //   */
@@ -93,8 +93,8 @@ public:
   * \param Val the value to set
   */
   template <typename T>
-    void SetResult( const T & Val );
-  
+	void SetResult( const T & Val );
+
   /** \brief Set the error
   * \param Error the error message.
   */
@@ -109,27 +109,27 @@ public:
 //   * \param Val the value to set
 //   */
 //   void GetResult( json_spirit::Value& Val ) const;
-  
+
 //   /** \brief Get the result
 //   * \param Val the value to set
 //   */
 //   void GetResult( json_spirit::Object& Val ) const throw( StructuredMessageException );
-  
+
 //   /** \brief Get the result
 //   * \param Val the value to set
 //   */
 //   void GetResult( json_spirit::Array& Val ) const throw( StructuredMessageException );
-  
+
 //   /** \brief Get the result
 //   * \param Val the value to set
 //   */
 //   void GetResult( bool& Val ) const throw( StructuredMessageException );
-  
+
 //   /** \brief Get the result
 //   * \param Val the value to set
 //   */
 //   void GetResult( int& Val ) const throw( StructuredMessageException );
-  
+
 //   /** \brief Get the result
 //   * \param Val the value to set
 //   */
@@ -141,8 +141,8 @@ public:
 //   void GetResult( float& Val ) const throw( StructuredMessageException );
 
   template <typename T>
-    void GetResult( T & Val ) const throw( StructuredMessageException );
-  
+	void GetResult( T & Val ) const throw( StructuredMessageException );
+
   /** \brief Get error if it has.
   * \return the error message.
   */
@@ -177,18 +177,17 @@ protected:
 
 /* Implementation */
   template <typename T>
-    void StructuredResult::SetResult( const T & Val )
+	void StructuredResult::SetResult( const T & Val )
   {
-    Set("result", Val);
+	Set("result", Val);
   }
-  
+
   template <typename T>
-    void StructuredResult::GetResult( T & Val ) const throw( StructuredMessageException )
+	void StructuredResult::GetResult( T & Val ) const throw( StructuredMessageException )
   {
-    Get("result", Val);
+	Get("result", Val);
   }
-  
+
 } // Omiscid
 
 #endif // __STRUCTURED_PARAMETERS_H__
-

@@ -20,7 +20,7 @@
 using namespace std;
 
 using namespace Omiscid;
-	
+
 #ifdef OMISCID_RUNING_TEST
 #include "TimeoutProg.h"
 
@@ -45,7 +45,7 @@ int main( int argc, char*argv[] )
 
 
 	StructuredMessage SerializationOfObject = ObjectToSerialize.Serialize();
-	
+
 	fprintf( stderr, "%s\n", ((SimpleString)SerializationOfObject).GetStr() );
 
 	ObjectToSerialize.MyInt = 0;
@@ -78,5 +78,3 @@ int main( int argc, char*argv[] )
 
 	return 0;
 }
-
-

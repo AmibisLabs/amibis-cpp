@@ -1,3 +1,16 @@
+/* @file Messaging/Serializable.cpp
+/**
+ * @file MEssaging/Messaging/SerializeException.h
+ * @ingroup Messaging
+ * @ingroup UserFriendlyAPI
+ * @brief Definition of SerializeException class
+ */
+
+ * @ingroup UserFriendly
+ * @date 2004-2011
+ * @author Dominique Vaufreydaz
+ */
+
 #include <Messaging/Serializable.h>
 
 using namespace Omiscid;
@@ -21,8 +34,8 @@ Serializable::~Serializable()
 #if 0
 
  /** \find Find an element identified by Key
-  * \param Key [in] the key to identifies the pair.
-  * \return true if found, false otherwise
+  * @param Key [in] the key to identifies the pair.
+  * @return true if found, false otherwise
   */
 SerializeObjectIterator Serializable::Find( const SimpleString& Key, SerializeObject& SerializeManager )
 {
@@ -62,7 +75,7 @@ Serializable::EncodeMapping * Serializable::Find( const SimpleString& Key )
 	return (Serializable::EncodeMapping*)NULL;
 }
 
-Serializable::EncodeMapping * Serializable::Create( const SimpleString& Key )
+Serializable::EncodeMapping * Serializable::Create( const SimpleString& Key ) throw (SimpleException)
 {
 	// Check if SerializeMappingIsDone
 	CallDeclareSerializeMappingIfNeeded();
@@ -98,6 +111,71 @@ void Serializable::AddToSerialization( const SimpleString& Key, int& Val )
 	tmpMapping->AddressOfObject = (void*)&Val;
 	tmpMapping->FunctionToEncode = SerializeIntFromAddress;
 	tmpMapping->FunctionToDecode = UnserializeIntFromAddress;
+}
+
+void Serializable::AddToSerialization( const SimpleString& Key, unsigned int& Val )
+{
+	throw SerializeException("unsigned int not supported, please send as a string", SerializeException::UnsupportedType );
+}
+
+void Serializable::AddToSerialization( const SimpleString& Key, short int& Val )
+{
+	SmartLocker SL_this((const LockableObject&)*this);
+
+	// Check if SerializeMappingIsDone
+	CallDeclareSerializeMappingIfNeeded();
+
+	Serializable::EncodeMapping * tmpMapping = Create( Key );
+
+	// Fill (new) structure
+	tmpMapping->AddressOfObject = (void*)&Val;
+	tmpMapping->FunctionToEncode = SerializeShortIntFromAddress;
+	tmpMapping->FunctionToDecode = UnserializeShortIntFromAddress;
+}
+
+void Serializable::AddToSerialization( const SimpleString& Key, unsigned short& Val )
+{
+	SmartLocker SL_this((const LockableObject&)*this);
+
+	// Check if SerializeMappingIsDone
+	CallDeclareSerializeMappingIfNeeded();
+
+	Serializable::EncodeMapping * tmpMapping = Create( Key );
+
+	// Fill (new) structure
+	tmpMapping->AddressOfObject = (void*)&Val;
+	tmpMapping->FunctionToEncode = SerializeUnsignedShortFromAddress;
+	tmpMapping->FunctionToDecode = UnserializeUnsignedShortFromAddress;
+}
+
+void Serializable::AddToSerialization( const SimpleString& Key, double& Val )
+{
+	SmartLocker SL_this((const LockableObject&)*this);
+
+	// Check if SerializeMappingIsDone
+	CallDeclareSerializeMappingIfNeeded();
+
+	Serializable::EncodeMapping * tmpMapping = Create( Key );
+
+	// Fill (new) structure
+	tmpMapping->AddressOfObject = (void*)&Val;
+	tmpMapping->FunctionToEncode = SerializeDoubleFromAddress;
+	tmpMapping->FunctionToDecode = UnserializeDoubleFromAddress;
+}
+
+void Serializable::AddToSerialization( const SimpleString& Key, float& Val )
+{
+	SmartLocker SL_this((const LockableObject&)*this);
+
+	// Check if SerializeMappingIsDone
+	CallDeclareSerializeMappingIfNeeded();
+
+	Serializable::EncodeMapping * tmpMapping = Create( Key );
+
+	// Fill (new) structure
+	tmpMapping->AddressOfObject = (void*)&Val;
+	tmpMapping->FunctionToEncode = SerializeFloatFromAddress;
+	tmpMapping->FunctionToDecode = UnserializeFloatFromAddress;
 }
 
 void Serializable::AddToSerialization( const SimpleString& Key, bool& Val )
@@ -145,7 +223,7 @@ void Serializable::AddToSerialization( const SimpleString& Key, char *& Val )
 	tmpMapping->FunctionToDecode = UnserializeCharStarFromAddress;
 }
 
-SerializeValue Serializable::Serialize()
+StructuredMessage Serializable::Serialize()
 {
 	SmartLocker SL_this((const LockableObject&)*this);
 
@@ -161,25 +239,17 @@ SerializeValue Serializable::Serialize()
 		MySMsg.Put( tmpMapping->GetKey(), tmpMapping->Encode() );
 	}
 
-	return (SerializeValue)MySMsg;
+	// this form is ugly *but* trying to call it using cast or event static_cast fail at compile time with g++...
+	// return MySMsg.operator SerializeValue();
+	return MySMsg;
 }
 
-void Serializable::Unserialize( const SerializeValue& Val )
+void Serializable::Unserialize( const StructuredMessage& SMsg )
 {
 	SmartLocker SL_this((const LockableObject&)*this);
 
 	// Check if SerializeMappingIsDone
 	CallDeclareSerializeMappingIfNeeded();
-
-/*
-	json_spirit::Value JSonMsg;
-	string sJSONMsg(SerializationMessage.GetStr());
-
-	if( !json_spirit::read(sJSONMsg, JSonMsg) && (JSonMsg.type() != json_spirit::obj_type) ) 
-	{
-		throw SimpleException("Argument is not a valid serialization stream", 0 );
-	}
-
 
 	// Parse serialising objet
 	for( SerialiseMapping.First(); SerialiseMapping.NotAtEnd(); SerialiseMapping.Next() )
@@ -187,6 +257,5 @@ void Serializable::Unserialize( const SerializeValue& Val )
 		Serializable::EncodeMapping * tmpMapping = SerialiseMapping.GetCurrent();
 
 		tmpMapping->Decode( SMsg.FindAndGetValue( tmpMapping->Key ) );
-	}*/
+	}
 }
-

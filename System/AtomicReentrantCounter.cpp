@@ -21,7 +21,7 @@ AtomicReentrantCounter::AtomicReentrantCounter(int init_value /* = 0 */)
 }
 
 /** @brief Copy constructor
- *  @param ToCopy [in] The AtomicCounter to copy 
+ *  @param ToCopy [in] The AtomicCounter to copy
  */
 AtomicReentrantCounter::AtomicReentrantCounter(const AtomicReentrantCounter& ToCopy)
 {
@@ -58,7 +58,7 @@ int AtomicReentrantCounter::operator++()
 }
 
 /** @brief Equal operator
- *  @param ToCopy [in] The AtomicCounter to copy 
+ *  @param ToCopy [in] The AtomicCounter to copy
  */
 const AtomicReentrantCounter& AtomicReentrantCounter::operator=(const AtomicReentrantCounter& ToCopy)
 {

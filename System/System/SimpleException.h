@@ -26,33 +26,33 @@ namespace Omiscid {
  * by rewriting the virtual function GetExceptionType.
  * <br>Inherited by SocketException raised by Socket objects
  * and SimpleListException raised by SimpleList object.
- * \author Domnique Vaufreydaz
- * \author Sebastien Pesnel
+ * @author Domnique Vaufreydaz
+ * @author Sebastien Pesnel
  */
 class SimpleException
 {
 public:
 	enum SimpleExceptionCode { UnkownSimpleExceptionCode = -1 };
 
-  /** \brief Constructor
+  /** @brief Constructor
    *
    * Create a new SimpleException.
-   * \param m [in] message for the error. This string is copied.
-   * \param i [in] value for error number
+   * @param m [in] message for the error. This string is copied.
+   * @param i [in] value for error number
    */
   SimpleException(const SimpleString m, int i = UnkownSimpleExceptionCode);
 
-  /** \brief Copy Constructor */
+  /** @brief Copy Constructor */
   SimpleException(const SimpleException& ExceptionToCopy);
 
-  /** \brief Destructor */
+  /** @brief Destructor */
   virtual ~SimpleException();
 
-  /** \brief Display the message followed by the error number on stderr. */
+  /** @brief Display the message followed by the error number on stderr. */
   void Display() const;
 
-  /** \brief The virtual function to return the exception type.
-   *  \return A const char * pointer to a human readable exception type, usualy the class name.
+  /** @brief The virtual function to return the exception type.
+   *  @return A const char * pointer to a human readable exception type, usualy the class name.
    *
    *  All classes derived from SimpleException must described themselves by
    *  implementing this fonction.

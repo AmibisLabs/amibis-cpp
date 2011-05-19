@@ -16,41 +16,41 @@ namespace Omiscid {
 
 /**
  * @class ComTools ComTools.h Com/ComTools.h
- * \brief Interface the communication tools
+ * @brief Interface the communication tools
  *
  * Common interface for TcpServer, TcpClient, UdpExchange, Connector
- * \author Sebastien Pesnel
- * \author Dominique Vaufreydaz
+ * @author Sebastien Pesnel
+ * @author Dominique Vaufreydaz
  */
 class ComTools
 {
  public:
   virtual ~ComTools();
 
-  /** \brief Access to the TCP port
-   * \return 0 if there is no TCP port (default implementation do that)*/
+  /** @brief Access to the TCP port
+   * @return 0 if there is no TCP port (default implementation do that)*/
   virtual unsigned short GetTcpPort();
 
-  /** \brief Access to the UDP port
-   * \return 0 if there is no UDP port (default implementation do that)*/
+  /** @brief Access to the UDP port
+   * @return 0 if there is no UDP port (default implementation do that)*/
   virtual unsigned short GetUdpPort();
 
   /** List of Connected Peer
-   * \param listId [in,out] add to this list the peer id connected to this tool of communication
-   * \return the number of id added to the list
+   * @param listId [in,out] add to this list the peer id connected to this tool of communication
+   * @return the number of id added to the list
    */
   virtual int GetListPeerId(SimpleList<unsigned int>& listId) = 0;
 
-  /** \brief Access to the service Id
-   * \return the service id */
+  /** @brief Access to the service Id
+   * @return the service id */
   virtual unsigned int GetServiceId() const = 0;
 
-  /** \brief Define the service id*/
+  /** @brief Define the service id*/
   virtual void SetServiceId(unsigned int service_id) = 0;
 
-  /** \brief Cast in ComTools
+  /** @brief Cast in ComTools
    *
-   * \return the Comtool pointer on an object that derived Comtool
+   * @return the Comtool pointer on an object that derived Comtool
    */
   virtual ComTools* Cast() = 0;
 

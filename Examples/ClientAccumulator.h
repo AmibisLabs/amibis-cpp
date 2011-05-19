@@ -38,7 +38,7 @@ public:
 	{
 		StartThread();
 	}
-	
+
 	virtual void FUNCTION_CALL_TYPE Run()
 	{
 		// Just call the client accumulator function

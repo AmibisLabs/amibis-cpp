@@ -6,274 +6,274 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 	- Add support for serialization
 	- One Omiscid library now, no longer 3 libraries
 	- Use Omiscid-config instead of other Omiscid*-config.
-	
+
 	[Bug corrections]
 	- correct bug in copy mecanism in SimpleList
-	
+
 	[API]
 	- Add SerializeValue, Serializable, StructuredMessage
 	add SerializeException classes.
-		
+
 1.6.0	2009-7-23
-    [Global modifications]
-    - add support for 64 bits packages
-    - put TemporaryMemoryBuffer into separate files (TemporaryMemoryBuffer.h
-    and .cpp). You can always include Portage.h to include them.
-    - add ability for TemporaryMemoryBuffer to grow and to be empty.
-    - add memory integrity checker facilities when tracking memory
-    leaks (when CHECK_MEMORY_BOUNDARIES is also defined) to check
-    if someone *wrote* out of its memory.
-    - change VariableAttribute working paradigme. Do not use anymore
-    MutexedSimpleList as list and as mutex. Now, use a normal
-    SimpleList and a Mutex.
-    - Put MutexedSimpleList in a separate file : must not impact
-    usual users who includes 'UserFriendlyAPI.h'.
-    - correct managing list of owners in debug mode for ReentrantMutex.
-    - Add an empty line between sections in this CHANGE file.
+	[Global modifications]
+	- add support for 64 bits packages
+	- put TemporaryMemoryBuffer into separate files (TemporaryMemoryBuffer.h
+	and .cpp). You can always include Portage.h to include them.
+	- add ability for TemporaryMemoryBuffer to grow and to be empty.
+	- add memory integrity checker facilities when tracking memory
+	leaks (when CHECK_MEMORY_BOUNDARIES is also defined) to check
+	if someone *wrote* out of its memory.
+	- change VariableAttribute working paradigme. Do not use anymore
+	MutexedSimpleList as list and as mutex. Now, use a normal
+	SimpleList and a Mutex.
+	- Put MutexedSimpleList in a separate file : must not impact
+	usual users who includes 'UserFriendlyAPI.h'.
+	- correct managing list of owners in debug mode for ReentrantMutex.
+	- Add an empty line between sections in this CHANGE file.
 
-    [Bug corrections]
-    - add body to ServiceProxy::GetServiceAccessType.
-    - correct memory leak problem when memory leak tracker is on and
-    nobody is tacking memory leak (sic).
-    - correct core dump problem when modifying localy and remotely
-    the same variable
-    - correct deadlock problem when (massively) multithreading
-    access to ControlSever/ControlClient
+	[Bug corrections]
+	- add body to ServiceProxy::GetServiceAccessType.
+	- correct memory leak problem when memory leak tracker is on and
+	nobody is tacking memory leak (sic).
+	- correct core dump problem when modifying localy and remotely
+	the same variable
+	- correct deadlock problem when (massively) multithreading
+	access to ControlSever/ControlClient
 
-    [API]
-    - MultipleReferencedData now works subclassing ReentrantMutex and
-    not with an simple AtomicCounter anymore. We also add Internal
-    (inline) protected method to manipulate data without locking in
-    order to prevent multiple call to expensive system calls.
-    - Use MutexedSimpleList as return values for several functions
-    in ControlClient and ServiceProxy. User must used lock facilities
-    on these returned objects when using it from several threads at the
-    same time.
-    - start to add CopyConstructor for every class.
-    - Remove body of Display* functions in non debug mode for class
-    ControlClient (they are inline empty functions in non debug mode).
-    - correct name of GetVariableAccessType (was GetServiceAccessTypeType
-    in Service and ServiceProxy classes).
-    - Change Service::GetVariableAccessType to return, as its version
-    in ServiceProxy::GetVariableAccessType an enum (no longer the
-    représentation string).
+	[API]
+	- MultipleReferencedData now works subclassing ReentrantMutex and
+	not with an simple AtomicCounter anymore. We also add Internal
+	(inline) protected method to manipulate data without locking in
+	order to prevent multiple call to expensive system calls.
+	- Use MutexedSimpleList as return values for several functions
+	in ControlClient and ServiceProxy. User must used lock facilities
+	on these returned objects when using it from several threads at the
+	same time.
+	- start to add CopyConstructor for every class.
+	- Remove body of Display* functions in non debug mode for class
+	ControlClient (they are inline empty functions in non debug mode).
+	- correct name of GetVariableAccessType (was GetServiceAccessTypeType
+	in Service and ServiceProxy classes).
+	- Change Service::GetVariableAccessType to return, as its version
+	in ServiceProxy::GetVariableAccessType an enum (no longer the
+	représentation string).
 
-    [Documentation]
-    - still documentation effort.
+	[Documentation]
+	- still documentation effort.
 
 1.5.1	2008-10-24
-    [Bug corrections]
-    - correct bug in udp message construction.
-    [Documentation]
-    - start of documentation effort.
+	[Bug corrections]
+	- correct bug in udp message construction.
+	[Documentation]
+	- start of documentation effort.
 
 1.5.0	2008-9-1
-    [Global modifications]
-    - add support for some environment variable to be compliant with the
-    java version : OMISCID_DNSSD_FACTORY (message indicating that this
-    choice is supported only at compile time for the C++ version) and
-    OMISCID_DNSSD_FACTORY_VERBOSE_MODE (print if Bonjour or Avahi is used).
-    - in order to be coherent, now when compiling with omiscid, your
-    project will be in debug (-DDEBUG) mode also under Linux/MacOS.
-    - remove all "typedef enum" to be gcc 4.3 compliant.
-    [Bug corrections]
-    - prevent sending data before the init config exchange was completed
-    between connectors.
-    - correct signal handling in Socket::select on linux (prevent signal
-    problems using ::select function).
-    [Scons changes]
-    - change from env.Copy() (deprecated) to env.Clone() in SConstruct.
-    [Version number]
-    - change package middle number to be compliant with the java version.
-    
+	[Global modifications]
+	- add support for some environment variable to be compliant with the
+	java version : OMISCID_DNSSD_FACTORY (message indicating that this
+	choice is supported only at compile time for the C++ version) and
+	OMISCID_DNSSD_FACTORY_VERBOSE_MODE (print if Bonjour or Avahi is used).
+	- in order to be coherent, now when compiling with omiscid, your
+	project will be in debug (-DDEBUG) mode also under Linux/MacOS.
+	- remove all "typedef enum" to be gcc 4.3 compliant.
+	[Bug corrections]
+	- prevent sending data before the init config exchange was completed
+	between connectors.
+	- correct signal handling in Socket::select on linux (prevent signal
+	problems using ::select function).
+	[Scons changes]
+	- change from env.Copy() (deprecated) to env.Clone() in SConstruct.
+	[Version number]
+	- change package middle number to be compliant with the java version.
+
 1.4.0	2008-3-27
-    [Global modifications]
-    - change remote access rigth to the "Lock" variable in order to be compliant
-      with the Java version.
-    - add defines in the Examples in order to compile them
-      in only one main test (toi check code with insure and get back
-      code coverage value).
-    - for the same reason, change Accumulator example source code and
-      add some new files in Examples.
-    - uninitialized SimpleStrings are now considered as empty by default.
-    - in System Layer, Config.h and .cpp become ConfigSystem.h and .cpp.
-      Identically for the Com and ServiceControlLayer
-    - SimpleString is totally rebuilt to be more secure. With less
-      Mutex acces, it runs also faster.
-    - remove last StartThread() in constructors. As Run() is virtual and
-      virtual table is not safe *before* the end of constructor, one
-      *MUST NOT* call StartThread() in Thread or subclass constructor
-      as we do now. Refactor Examples to be compliant with this rule.
-    - remove validation/noitification when changing variable value for
-      the same value. Now we only notify real change of value.
-    - to allow integration in interpreted language (like python but
-      not only) we do not try enymore to cope with memory management
-      of ServiceFilter instances. We do not call anymore Duplicate
-      inside OMiSCID even if we think this method must be implemented
-      so it stay abstact. Now to release ServiceFilter, you must
-      call Empty(). Destroy the object will not delete included filters :
-      one may want to reuse its filters for anoither research.
-    [API]
-    - Add ability to connect to undiscovered services connectors
-      (using hostname and port) in order to facilitate communications
-      on non local area network.
-    - Add a port number parameter to AddConnector function in order
-      to decide on which port we want to run it. Usefull to work
-      with previous adding. This parameter is not mandatory.
-    - Add filtering facilities when registering listener
-      to a ServiceRepository. It inproves service event
-      notification by filtering.
-    - Add access to Variable Type and description, to Connector
-      description in ServiceProxy
-    - Add the ability to skip validation phase when changing a variable
-      value localy.
-    - You can now get the number of connected clients to one connector
-      using Service::GetConnectorClientCount
-    - Remove autostart from BrowseForDNSSDService constructor (virtual
-      members problems).
-    [Known features]
-    - pthread_* functions seems to be incorrect (or pthread.h is now incorrect)
-      and thus, pthread_create for exemple overite extra memory (2 weeks of debugging
-      thinking it is our fault). Under non Windows plateforms, add before and
-      after data for pthread_* functions, one unsigned int to prevent memory
-      corruption. Everything works fine now.
-    [Bug corrections]
-    - Correct memory leak when trying to add a connector after starting
-      the service.
-    - Correct connection failure (due to bad implementation of MsgSocket::WaitSyncLinkMsg)
-    - correct lost (some times) of the first sent paquet over TCP.
-    - correct static object paradigm to prevent bad initialization.
-      Now, the subsystem is not longer started before main. It is started
-      at first factory call.
-    - correct linking problems on Linux/MacOS
-    - correct memory leaks
-    - some other minor bug corrections
-    
+	[Global modifications]
+	- change remote access rigth to the "Lock" variable in order to be compliant
+	  with the Java version.
+	- add defines in the Examples in order to compile them
+	  in only one main test (toi check code with insure and get back
+	  code coverage value).
+	- for the same reason, change Accumulator example source code and
+	  add some new files in Examples.
+	- uninitialized SimpleStrings are now considered as empty by default.
+	- in System Layer, Config.h and .cpp become ConfigSystem.h and .cpp.
+	  Identically for the Com and ServiceControlLayer
+	- SimpleString is totally rebuilt to be more secure. With less
+	  Mutex acces, it runs also faster.
+	- remove last StartThread() in constructors. As Run() is virtual and
+	  virtual table is not safe *before* the end of constructor, one
+	  *MUST NOT* call StartThread() in Thread or subclass constructor
+	  as we do now. Refactor Examples to be compliant with this rule.
+	- remove validation/noitification when changing variable value for
+	  the same value. Now we only notify real change of value.
+	- to allow integration in interpreted language (like python but
+	  not only) we do not try enymore to cope with memory management
+	  of ServiceFilter instances. We do not call anymore Duplicate
+	  inside OMiSCID even if we think this method must be implemented
+	  so it stay abstact. Now to release ServiceFilter, you must
+	  call Empty(). Destroy the object will not delete included filters :
+	  one may want to reuse its filters for anoither research.
+	[API]
+	- Add ability to connect to undiscovered services connectors
+	  (using hostname and port) in order to facilitate communications
+	  on non local area network.
+	- Add a port number parameter to AddConnector function in order
+	  to decide on which port we want to run it. Usefull to work
+	  with previous adding. This parameter is not mandatory.
+	- Add filtering facilities when registering listener
+	  to a ServiceRepository. It inproves service event
+	  notification by filtering.
+	- Add access to Variable Type and description, to Connector
+	  description in ServiceProxy
+	- Add the ability to skip validation phase when changing a variable
+	  value localy.
+	- You can now get the number of connected clients to one connector
+	  using Service::GetConnectorClientCount
+	- Remove autostart from BrowseForDNSSDService constructor (virtual
+	  members problems).
+	[Known features]
+	- pthread_* functions seems to be incorrect (or pthread.h is now incorrect)
+	  and thus, pthread_create for exemple overite extra memory (2 weeks of debugging
+	  thinking it is our fault). Under non Windows plateforms, add before and
+	  after data for pthread_* functions, one unsigned int to prevent memory
+	  corruption. Everything works fine now.
+	[Bug corrections]
+	- Correct memory leak when trying to add a connector after starting
+	  the service.
+	- Correct connection failure (due to bad implementation of MsgSocket::WaitSyncLinkMsg)
+	- correct lost (some times) of the first sent paquet over TCP.
+	- correct static object paradigm to prevent bad initialization.
+	  Now, the subsystem is not longer started before main. It is started
+	  at first factory call.
+	- correct linking problems on Linux/MacOS
+	- correct memory leaks
+	- some other minor bug corrections
+
 1.3.0	2007-8-31
-    [Global modifications]
-    - you can now have any number for you DnsSD daemon. So, you can
-      hibernate/wake up as you want.
-    [API]
-    - Add disconnect facilities for Connector at Service level. You
-      can also remove all callback objects for a Connector in one
-      call. You can do both operations for the whole service at once.
-    - Add DateAndTime class to retrieve date and time (up to ms)
-      on all plateforms (Linux/MacOSX/Win32) in System layer.
-    - Add a GetTheadId() member to the Thread class (System layer).
-    [Known features]
-    - look at previous version, features using avahi seems to
-      be solved by version 0.6.61 of avahi (Test ok).
-      
+	[Global modifications]
+	- you can now have any number for you DnsSD daemon. So, you can
+	  hibernate/wake up as you want.
+	[API]
+	- Add disconnect facilities for Connector at Service level. You
+	  can also remove all callback objects for a Connector in one
+	  call. You can do both operations for the whole service at once.
+	- Add DateAndTime class to retrieve date and time (up to ms)
+	  on all plateforms (Linux/MacOSX/Win32) in System layer.
+	- Add a GetTheadId() member to the Thread class (System layer).
+	[Known features]
+	- look at previous version, features using avahi seems to
+	  be solved by version 0.6.61 of avahi (Test ok).
+
 1.2.0    2007-6-12
-    [Global modifications]
-    - change stuff in order to be actually able to install several
-      instances of Omiscid on the same computer.
-    - add automatic test processing (compilation with many combination
-      of parameters). As Avahi is not stable for our test suite (see
-      [Known features]), failed test using avahi are not considered as
-      relevant.
-    [API]
-    - change API in Service and ServiceProxy class. Now you have the
-      same API to get the PeerIf for both classes: GetPeerId() in order
-      to get numerical value of the peerId and GetPeerIdAsString() to get
-      a SimpleString containing its string representation.
-    - add 2 static member methods to ComTools: PeerIdFromString and
-      PeerIdAsString to handle peerId transformation.
-    - change java callback paradigm for local variable listeners to
-      be compliant with the C++ version (do not affect your C++ code).
-    [Known features]
-    - still crash (segmentation fault, corrupted double chained list in
-      glibc, problem in D-BUS) when using Avahi to (un)register many
-      services in the same process (even with Avahi 0.6.19). No longer
-      trying to cope with this features. Let's Avahi team solve this.
-    - Avahi and mDns can now collaborate on the same computer. mDns
-      works fine and Avahi do not work worst.
-    - You can have up to 9 DnsSD daemon at the same time (sic...).
-      Be carrefull, when using hibernate functionnality under linux,
-      some time the DnsSd daemon can generate at each wake up a false
-      new instance and a new daemon number. If this number goes
-      over 9, you may encounter problems.
-      
+	[Global modifications]
+	- change stuff in order to be actually able to install several
+	  instances of Omiscid on the same computer.
+	- add automatic test processing (compilation with many combination
+	  of parameters). As Avahi is not stable for our test suite (see
+	  [Known features]), failed test using avahi are not considered as
+	  relevant.
+	[API]
+	- change API in Service and ServiceProxy class. Now you have the
+	  same API to get the PeerIf for both classes: GetPeerId() in order
+	  to get numerical value of the peerId and GetPeerIdAsString() to get
+	  a SimpleString containing its string representation.
+	- add 2 static member methods to ComTools: PeerIdFromString and
+	  PeerIdAsString to handle peerId transformation.
+	- change java callback paradigm for local variable listeners to
+	  be compliant with the C++ version (do not affect your C++ code).
+	[Known features]
+	- still crash (segmentation fault, corrupted double chained list in
+	  glibc, problem in D-BUS) when using Avahi to (un)register many
+	  services in the same process (even with Avahi 0.6.19). No longer
+	  trying to cope with this features. Let's Avahi team solve this.
+	- Avahi and mDns can now collaborate on the same computer. mDns
+	  works fine and Avahi do not work worst.
+	- You can have up to 9 DnsSD daemon at the same time (sic...).
+	  Be carrefull, when using hibernate functionnality under linux,
+	  some time the DnsSd daemon can generate at each wake up a false
+	  new instance and a new daemon number. If this number goes
+	  over 9, you may encounter problems.
+
 1.1.1	2007-04-28
-    [Global modifications]
-    - add some specific changes for gcc problematic version under
-      gentoo (it do not see that a variable will be initialised
-      in all path of the function, so add initialisation).
-      
+	[Global modifications]
+	- add some specific changes for gcc problematic version under
+	  gentoo (it do not see that a variable will be initialised
+	  in all path of the function, so add initialisation).
+
 1.1.0	2007-04-27
-    [Global modifications]
-    - change this file grouping changes by section.
-    - add Avahi support for DNS-SD (with Avahi 0.6.17)
-    - Default choice is still mDNS under Linux/MacOSX (see known
-      features to understand why). Add an option for scons to
-      override this automatic choice. (zeroconf=Avahi)
-    - enable automatically DnsSdProxy when using ServiceControl
-      Layer (due to Avahi limitation)
-    - internal refactoring dues to Avahi stuff (sic...). No
-      changes in exposed API.
-    - Change examples codes, add new one.
-    [API modification]
-    - change Thread constructor behaviour because of virtualisation
-      problem with gcc. You can not anymore create an autostart
-      Thread. You must start it in you inherited class as shown
-      previously in 'Examples/RegisterSearchTest.cpp'.
-    - check init constraints to static global values, so replace
-      global values like DynamicNameSolving by a method call
-      like GetDynamicNameSolving().
-    - add SharedMemSegment class in the System layer in order to
-      propose multiplateform shared memory management
-    - add UserFriendly API in order to provide browsing fonctionnality
-      ServiceRepository and ServiceRepositoryBrowser. Add an example
-      showing this functionality : BrowsingTest.cpp.
-    - Thread::GetThreadId() is now a public static function. It returns
-      the Id of the calling thread.
-    - Mutex::EnterMutex() and Mutex::LeaveMutex() are replaced
-      respectively by Lock() and Unlock() funtions. Identically for
-      ReentrantMutex.
-    [Bug corrections]
-    - Change Event::Wait() bug when asking for subsecond timers
-        under Linux/OSX
-    - correct huge data send problem when sending to all clients
-    - some other minor bug corrections
-    [Known features]
-    - Crash (segmentation fault, corrupted double chained list in glibc,
-      problem in D-BUS) when using Avahi to (un)register many services
-      in the same process. Still trying to cope with this feature but
-      it seems to be internal to Avahi.
-    - Avahi and mDns do not like to collaborate on the same computer.
-      Even if in this version OMiSCID can handle service with multiple
-      local DNS-SD daemons, try to avoid this feature mixing both on
-      the same computer. Running Avahi and mDNS on separate computer
-      seems to word fine.
-      
+	[Global modifications]
+	- change this file grouping changes by section.
+	- add Avahi support for DNS-SD (with Avahi 0.6.17)
+	- Default choice is still mDNS under Linux/MacOSX (see known
+	  features to understand why). Add an option for scons to
+	  override this automatic choice. (zeroconf=Avahi)
+	- enable automatically DnsSdProxy when using ServiceControl
+	  Layer (due to Avahi limitation)
+	- internal refactoring dues to Avahi stuff (sic...). No
+	  changes in exposed API.
+	- Change examples codes, add new one.
+	[API modification]
+	- change Thread constructor behaviour because of virtualisation
+	  problem with gcc. You can not anymore create an autostart
+	  Thread. You must start it in you inherited class as shown
+	  previously in 'Examples/RegisterSearchTest.cpp'.
+	- check init constraints to static global values, so replace
+	  global values like DynamicNameSolving by a method call
+	  like GetDynamicNameSolving().
+	- add SharedMemSegment class in the System layer in order to
+	  propose multiplateform shared memory management
+	- add UserFriendly API in order to provide browsing fonctionnality
+	  ServiceRepository and ServiceRepositoryBrowser. Add an example
+	  showing this functionality : BrowsingTest.cpp.
+	- Thread::GetThreadId() is now a public static function. It returns
+	  the Id of the calling thread.
+	- Mutex::EnterMutex() and Mutex::LeaveMutex() are replaced
+	  respectively by Lock() and Unlock() funtions. Identically for
+	  ReentrantMutex.
+	[Bug corrections]
+	- Change Event::Wait() bug when asking for subsecond timers
+		under Linux/OSX
+	- correct huge data send problem when sending to all clients
+	- some other minor bug corrections
+	[Known features]
+	- Crash (segmentation fault, corrupted double chained list in glibc,
+	  problem in D-BUS) when using Avahi to (un)register many services
+	  in the same process. Still trying to cope with this feature but
+	  it seems to be internal to Avahi.
+	- Avahi and mDns do not like to collaborate on the same computer.
+	  Even if in this version OMiSCID can handle service with multiple
+	  local DNS-SD daemons, try to avoid this feature mixing both on
+	  the same computer. Running Avahi and mDNS on separate computer
+	  seems to word fine.
+
 1.0.5	2007-02-01
-    - correct some portability problem with Mac OSX
-    - change tabs into 4 spaces
-    - minor corrections
-    
+	- correct some portability problem with Mac OSX
+	- change tabs into 4 spaces
+	- minor corrections
+
 1.0.4	2007-01-09
-    - correct some dead lock problems
-    - correct send huge TCP messages under linux (worked fine
-      under windows).
-    - correct some bugs
-    
+	- correct some dead lock problems
+	- correct send huge TCP messages under linux (worked fine
+	  under windows).
+	- correct some bugs
+
 1.0.3	2006-10-26
-    - Add a global include file for the User Friendly Interface
-      and change examples to use this include. The new include
-      file can be use with this statement:
-        #include <ServiceControl/UserFriendlyAPI.h>
-    - change all "Attribut" (in French) to "Attribute" in English
-      either in file, function or class names
-    - correct a little memory leak problem (problem in reference
-      count) when using SubString.
-      
+	- Add a global include file for the User Friendly Interface
+	  and change examples to use this include. The new include
+	  file can be use with this statement:
+		#include <ServiceControl/UserFriendlyAPI.h>
+	- change all "Attribut" (in French) to "Attribute" in English
+	  either in file, function or class names
+	- correct a little memory leak problem (problem in reference
+	  count) when using SubString.
+
 1.0.2   2006-10-02
-    - Change to be compliant with Bonjour version 107.6 (changes
-      made by Apple in API, 2006-09-18) and at the same time with
-      previous versions.
-      
+	- Change to be compliant with Bonjour version 107.6 (changes
+	  made by Apple in API, 2006-09-18) and at the same time with
+	  previous versions.
+
 1.0.1
-    - Add missing folder ServiceControl
-    
+	- Add missing folder ServiceControl
+
 1.0.0
-    - Initial version
+	- Initial version

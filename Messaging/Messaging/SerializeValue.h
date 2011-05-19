@@ -1,6 +1,7 @@
 #ifndef __SERIALIZE_VALUE_H__
 #define __SERIALIZE_VALUE_H__
 
+#include <Messaging/SerializeException.h>
 #include <Messaging/SerializeManager.h>
 
 #include <vector>
@@ -56,8 +57,8 @@ public:
 	void UnserializeIntFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( int Data ) { return SerializeInt(Data); }
-	inline void Unserialize( const SerializeValue& Val, int * pData ) { UnserializeIntFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, int& Data ) { Data = UnserializeInt(Val); };
+	inline void Unserialize( const SerializeValue& Val, int * pData ) { UnserializeIntFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, int& Data ) { Data = UnserializeInt(Val); }
 
 // short int management
 	// Encoding functions
@@ -68,8 +69,8 @@ public:
 	void UnserializeShortIntFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( short int Data ) { return SerializeShortInt(Data); }
-	inline void Unserialize( const SerializeValue& Val, short int * pData ) { UnserializeShortIntFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, short int& Data ) { Data = UnserializeShortInt(Val); };
+	inline void Unserialize( const SerializeValue& Val, short int * pData ) { UnserializeShortIntFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, short int& Data ) { Data = UnserializeShortInt(Val); }
 
 // unsigned int management
 // unsigned are not supported due to incompatibility among programming language
@@ -81,20 +82,20 @@ public:
 	void UnserializeUnsignedIntFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( unsigned int Data ) { return SerializeUnsignedInt(Data); }
-	inline void Unserialize( const SerializeValue& Val, unsigned int * pData ) { UnserializeUnsignedIntFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, unsigned int& Data ) { Data = UnserializeUnsignedInt(Val); };
+	inline void Unserialize( const SerializeValue& Val, unsigned int * pData ) { UnserializeUnsignedIntFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, unsigned int& Data ) { Data = UnserializeUnsignedInt(Val); }
 
 // unsigned short management
 	// Encoding functions
 	SerializeValue SerializeUnsignedShort( unsigned short Data );
-	SerializeValue SerializeUnsignedShortFromAdress( void * pData );
+	SerializeValue SerializeUnsignedShortFromAddress( void * pData );
 	// Decoding functions
 	unsigned short UnserializeUnsignedShort( const SerializeValue& Val );
 	void UnserializeUnsignedShortFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( unsigned short Data ) { return SerializeUnsignedShort(Data); }
-	inline void Unserialize( const SerializeValue& Val, unsigned short * pData ) { UnserializeUnsignedShortFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, unsigned short& Data ) { Data = UnserializeUnsignedShort(Val); };
+	inline void Unserialize( const SerializeValue& Val, unsigned short * pData ) { UnserializeUnsignedShortFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, unsigned short& Data ) { Data = UnserializeUnsignedShort(Val); }
 
 // char management
 	// Encoding functions
@@ -105,8 +106,8 @@ public:
 	void UnserializeCharFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( char Data ) { return SerializeChar(Data); }
-	inline void Unserialize( const SerializeValue& Val, char * pData ) { UnserializeCharFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, char& Data ) { Data = UnserializeChar(Val); };
+	inline void Unserialize( const SerializeValue& Val, char * pData ) { UnserializeCharFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, char& Data ) { Data = UnserializeChar(Val); }
 
 // unsigned char management
 	// Encoding functions
@@ -117,8 +118,8 @@ public:
 	void UnserializeUnsignedCharFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( unsigned char Data ) { return SerializeUnsignedChar(Data); }
-	inline void Unserialize( const SerializeValue& Val, unsigned char * pData ) { UnserializeUnsignedCharFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, unsigned char& Data ) { Data = UnserializeUnsignedChar(Val); };
+	inline void Unserialize( const SerializeValue& Val, unsigned char * pData ) { UnserializeUnsignedCharFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, unsigned char& Data ) { Data = UnserializeUnsignedChar(Val); }
 
 // double management
 	// Encoding functions
@@ -129,8 +130,8 @@ public:
 	void UnserializeDoubleFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( double Data ) { return SerializeDouble(Data); }
-	inline void Unserialize( const SerializeValue& Val, double * pData ) { UnserializeDoubleFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, double& Data ) { Data = UnserializeDouble(Val); };
+	inline void Unserialize( const SerializeValue& Val, double * pData ) { UnserializeDoubleFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, double& Data ) { Data = UnserializeDouble(Val); }
 
 // float management
 	// Encoding functions
@@ -141,8 +142,8 @@ public:
 	void UnserializeFloatFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( float Data ) { return SerializeFloat(Data); }
-	inline void Unserialize( const SerializeValue& Val, float * pData ) { UnserializeFloatFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, float& Data ) { Data = UnserializeFloat(Val); };
+	inline void Unserialize( const SerializeValue& Val, float * pData ) { UnserializeFloatFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, float& Data ) { Data = UnserializeFloat(Val); }
 
 // bool management
 	// Encoding functions
@@ -153,8 +154,8 @@ public:
 	void UnserializeBoolFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( bool Data ) { return SerializeBool(Data); }
-	inline void Unserialize( const SerializeValue& Val, bool * pData ) { UnserializeBoolFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, bool& Data ) { Data = UnserializeBool(Val); };
+	inline void Unserialize( const SerializeValue& Val, bool * pData ) { UnserializeBoolFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, bool& Data ) { Data = UnserializeBool(Val); }
 
 // SimpleString management
 	// Encoding functions
@@ -165,8 +166,8 @@ public:
 	void UnserializeSimpleStringFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( SimpleString& Data ) { return SerializeSimpleString(Data); }
-	inline void Unserialize( const SerializeValue& Val, SimpleString * pData ) { UnserializeSimpleStringFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, SimpleString& Data ) { Data = UnserializeSimpleString(Val); };
+	inline void Unserialize( const SerializeValue& Val, SimpleString * pData ) { UnserializeSimpleStringFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, SimpleString& Data ) { Data = UnserializeSimpleString(Val); }
 
 // char * management
 	// Encoding functions
@@ -177,8 +178,8 @@ public:
 	void UnserializeCharStarFromAddress( const SerializeValue& Val, void * pData );
 	// Generic versions
 	inline SerializeValue Serialize( char * Data ) { return SerializeCharStar(Data); }
-	inline void Unserialize( const SerializeValue& Val, char ** pData ) { UnserializeCharStarFromAddress(Val,(void*)pData); };
-	inline void Unserialize( const SerializeValue& Val, char *& Data ) { Data = UnserializeCharStar(Val); };
+	inline void Unserialize( const SerializeValue& Val, char ** pData ) { UnserializeCharStarFromAddress(Val,(void*)pData); }
+	inline void Unserialize( const SerializeValue& Val, char *& Data ) { Data = UnserializeCharStar(Val); }
 
 // SimleList management
 	// Encoding functions
@@ -192,8 +193,10 @@ public:
 		return SerializeValue(ValArray);
 	}
 
-	template <typename TYPE_NAME> SerializeValue SerializeSimpleListFromAddress( SimpleList<TYPE_NAME> * pData )
+	template <typename TYPE_NAME> SerializeValue SerializeSimpleListFromAddress( void * pAddress )
 	{
+		SimpleList<TYPE_NAME> * pData = (SimpleList<TYPE_NAME> *)pAddress;
+
 		SerializeArray ValArray;
 		for( pData->First(); pData->NotAtEnd(); pData->Next() )
 		{
@@ -206,7 +209,7 @@ public:
 	{
 		if ( Val.type() != json_spirit::array_type )
 		{
-			throw SimpleException( "Mauvais type de paramètre" );
+			throw SerializeException( "Parameter must be a Serialize Array", SerializeException::IllegalTypeConversion  );
 		}
 		const SerializeArray& ValArray = Val.get_array();
 		SerializeArrayConstIterator it;
@@ -221,12 +224,13 @@ public:
 
 		return ResultList;
 	}
-	template <typename TYPE_NAME> void UnserializeSimpleListFromAddress( const SerializeValue& Val, SimpleList<TYPE_NAME> * pData )
+	template <typename TYPE_NAME> void UnserializeSimpleListFromAddress( const SerializeValue& Val, void * pAddress )
 	{
 		if ( Val.type() != json_spirit::array_type )
 		{
-			throw SimpleException( "Mauvais type de paramètre" );
+			throw SerializeException( "Parameter must be a Serialize Array", SerializeException::IllegalTypeConversion  );
 		}
+		SimpleList<TYPE_NAME> * pData = (SimpleList<TYPE_NAME> *)pAddress;
 		const SerializeArray& ValArray = Val.get_array();
 		SerializeArrayConstIterator it;
 		TYPE_NAME Listelement;
@@ -240,8 +244,8 @@ public:
 	}
 	// Generic versions
 	template <typename TYPE_NAME> inline SerializeValue Serialize( SimpleList<TYPE_NAME>& Data ) { return SerializeSimpleListFromAddress<TYPE_NAME>(&Data); }
-	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, SimpleList<TYPE_NAME> * pData ) { UnserializeSimpleListFromAddress<TYPE_NAME>(Val,(void*)pData); };
-	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, SimpleList<TYPE_NAME>& Data ) { UnserializeSimpleListFromAddress<TYPE_NAME>(Val,&Data); };
+	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, SimpleList<TYPE_NAME> * pData ) { UnserializeSimpleListFromAddress<TYPE_NAME>(Val,(void*)pData); }
+	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, SimpleList<TYPE_NAME>& Data ) { UnserializeSimpleListFromAddress<TYPE_NAME>(Val,&Data); }
 
 // std::vector management
 	// Encoding functions
@@ -271,7 +275,7 @@ public:
 	{
 		if ( Val.type() != json_spirit::array_type )
 		{
-			throw SimpleException( "Mauvais type de paramètre" );
+			throw SerializeException( "Parameter must be a Serialize Array", SerializeException::IllegalTypeConversion  );
 		}
 		const SerializeArray& ValArray = Val.get_array();
 		SerializeArrayConstIterator it;
@@ -290,7 +294,7 @@ public:
 	{
 		if ( Val.type() != json_spirit::array_type )
 		{
-			throw SimpleException( "Mauvais type de paramètre" );
+			throw SerializeException( "Parameter must be a Serialize Array", SerializeException::IllegalTypeConversion  );
 		}
 		const SerializeArray& ValArray = Val.get_array();
 		SerializeArrayConstIterator it;
@@ -305,8 +309,8 @@ public:
 	}
 	// Generic versions
 	template <typename TYPE_NAME> inline SerializeValue Serialize( std::vector<TYPE_NAME>& Data ) { return SerializeStdVectorFromAddress<TYPE_NAME>(&Data); }
-	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::vector<TYPE_NAME> * pData ) { UnserializeStdVectorFromAddress<TYPE_NAME>(Val,(void*)pData); };
-	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::vector<TYPE_NAME>& Data ) { UnserializeStdVectorFromAddress<TYPE_NAME>(Val,&Data); };
+	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::vector<TYPE_NAME> * pData ) { UnserializeStdVectorFromAddress<TYPE_NAME>(Val,(void*)pData); }
+	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::vector<TYPE_NAME>& Data ) { UnserializeStdVectorFromAddress<TYPE_NAME>(Val,&Data); }
 
 // std::list management
 	// Encoding functions
@@ -336,7 +340,7 @@ public:
 	{
 		if ( Val.type() != json_spirit::array_type )
 		{
-			throw SimpleException( "Mauvais type de paramètre" );
+			throw SerializeException( "Parameter must be a Serialize Array", SerializeException::IllegalTypeConversion  );
 		}
 		const SerializeArray& ValArray = Val.get_array();
 		SerializeArrayConstIterator it;
@@ -355,7 +359,7 @@ public:
 	{
 		if ( Val.type() != json_spirit::array_type )
 		{
-			throw SimpleException( "Mauvais type de paramètre" );
+			throw SerializeException( "Parameter must be a Serialize Array", SerializeException::IllegalTypeConversion  );
 		}
 		const SerializeArray& ValArray = Val.get_array();
 		SerializeArrayConstIterator it;
@@ -370,10 +374,9 @@ public:
 	}
 	// Generic versions
 	template <typename TYPE_NAME> inline SerializeValue Serialize( std::list<TYPE_NAME>& Data ) { return SerializeStdListFromAddress<TYPE_NAME>(&Data); }
-	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::list<TYPE_NAME> * pData ) { UnserializeStdListFromAddress<TYPE_NAME>(Val,(void*)pData); };
-	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::list<TYPE_NAME>& Data ) { UnserializeStdListFromAddress<TYPE_NAME>(Val,&Data); };
+	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::list<TYPE_NAME> * pData ) { UnserializeStdListFromAddress<TYPE_NAME>(Val,(void*)pData); }
+	template <typename TYPE_NAME> inline void Unserialize( const SerializeValue& Val, std::list<TYPE_NAME>& Data ) { UnserializeStdListFromAddress<TYPE_NAME>(Val,&Data); }
 
-}; // Omiscid
+} // Omiscid
 
 #endif // __SERIALIZE_VALUE_H__
-

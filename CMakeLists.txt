@@ -75,14 +75,14 @@ ENDIF(DEBUG_TRACE)
 
 # Set the include directories
 INCLUDE_DIRECTORIES(
-    ${ICONV_INCLUDE_DIR}
-    ${LIBXML2_INCLUDE_DIR}
-    ${ZEROCONF_INCLUDE_DIR}
-    Com
-    Json
-    Messaging
-    ServiceControl
-    System)
+	${ICONV_INCLUDE_DIR}
+	${LIBXML2_INCLUDE_DIR}
+	${ZEROCONF_INCLUDE_DIR}
+	Com
+	Json
+	Messaging
+	ServiceControl
+	System)
 
 # The System module sources
 FILE(GLOB OmiscidSystem_SRCS "System/*.cpp")
@@ -103,64 +103,64 @@ FILE(GLOB OmiscidMessaging_HEADERS "Messaging/Messaging/*.h")
 # Set lib type (shared everywhere else than windows, static in windows)
 IF(NOT WIN32)
   SET(LIB_TYPE SHARED)
-  # If Linux and 64bit, set the lib suffix to 64, see  
+  # If Linux and 64bit, set the lib suffix to 64, see
   # http://www.pathname.com/fhs/pub/fhs-2.3.html#LIB64 for more information
   # (actually, we should test the mentionned set of archs and not sizeof(void),
   # but cmake do not offer such test right now, sorry itanium users...)
-  STRING(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" LINUX) 
+  STRING(COMPARE EQUAL ${CMAKE_SYSTEM_NAME} "Linux" LINUX)
   IF(LINUX AND CMAKE_SIZEOF_VOID_P EQUAL 8)
-    SET(LIB_SUFFIX 64)
+	SET(LIB_SUFFIX 64)
   ENDIF(LINUX AND CMAKE_SIZEOF_VOID_P EQUAL 8)
 ELSE(NOT WIN32)
   SET(LIB_TYPE STATIC)
 ENDIF(NOT WIN32)
 # The library
-ADD_LIBRARY(Omiscid ${LIB_TYPE} 
-    ${OmiscidSystem_SRCS} 
-    ${OmiscidSystem_HEADERS}
-    ${OmiscidCom_SRCS} 
-    ${OmiscidCom_HEADERS}
-    ${OmiscidControl_SRCS} 
-    ${OmiscidControl_HEADERS}
-    ${OmiscidJson_SRCS} 
-    ${OmiscidJson_HEADERS}
-    ${OmiscidMessaging_SRCS} 
-    ${OmiscidMessaging_HEADERS})
-TARGET_LINK_LIBRARIES(Omiscid 
-    ${CMAKE_THREAD_LIBS_INIT} 
-    ${LIBXML2_LIBRARIES}
-    ${SOCK_LIBRARIES}
-    ${ZEROCONF_LIBRARIES})
-SET_TARGET_PROPERTIES(Omiscid PROPERTIES 
-    VERSION ${OMISCID_VERSION} 
-    SOVERSION ${OMISCID_SO_VERSION})
+ADD_LIBRARY(Omiscid ${LIB_TYPE}
+	${OmiscidSystem_SRCS}
+	${OmiscidSystem_HEADERS}
+	${OmiscidCom_SRCS}
+	${OmiscidCom_HEADERS}
+	${OmiscidControl_SRCS}
+	${OmiscidControl_HEADERS}
+	${OmiscidJson_SRCS}
+	${OmiscidJson_HEADERS}
+	${OmiscidMessaging_SRCS}
+	${OmiscidMessaging_HEADERS})
+TARGET_LINK_LIBRARIES(Omiscid
+	${CMAKE_THREAD_LIBS_INIT}
+	${LIBXML2_LIBRARIES}
+	${SOCK_LIBRARIES}
+	${ZEROCONF_LIBRARIES})
+SET_TARGET_PROPERTIES(Omiscid PROPERTIES
+	VERSION ${OMISCID_VERSION}
+	SOVERSION ${OMISCID_SO_VERSION})
 
 # Omiscid-config creation
 CONFIGURE_FILE(Omiscid-config.in
-    ${CMAKE_CURRENT_BINARY_DIR}/Omiscid-config @ONLY)
+	${CMAKE_CURRENT_BINARY_DIR}/Omiscid-config @ONLY)
 
 # Compile the examples
 ADD_SUBDIRECTORY(Examples)
 
 # Installation rules
 INSTALL(TARGETS Omiscid
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib${LIB_SUFFIX}
-    ARCHIVE DESTINATION lib${LIB_SUFFIX})
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib${LIB_SUFFIX}
+	ARCHIVE DESTINATION lib${LIB_SUFFIX})
 INSTALL(
-    FILES ${OmiscidSystem_HEADERS} DESTINATION include/Omiscid/System)
+	FILES ${OmiscidSystem_HEADERS} DESTINATION include/Omiscid/System)
 INSTALL(
-    FILES ${OmiscidCom_HEADERS} DESTINATION include/Omiscid/Com)
+	FILES ${OmiscidCom_HEADERS} DESTINATION include/Omiscid/Com)
 INSTALL(
-    FILES ${OmiscidControl_HEADERS} DESTINATION include/Omiscid/ServiceControl)
+	FILES ${OmiscidControl_HEADERS} DESTINATION include/Omiscid/ServiceControl)
 INSTALL(
-    FILES ${OmiscidJson_HEADERS} DESTINATION include/Omiscid/Json)
+	FILES ${OmiscidJson_HEADERS} DESTINATION include/Omiscid/Json)
 INSTALL(
-    FILES ${OmiscidMessaging_HEADERS} DESTINATION include/Omiscid/Messaging)
+	FILES ${OmiscidMessaging_HEADERS} DESTINATION include/Omiscid/Messaging)
 INSTALL(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/Omiscid-config
-    DESTINATION bin
-    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+	FILES ${CMAKE_CURRENT_BINARY_DIR}/Omiscid-config
+	DESTINATION bin
+	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 # Make packages
 INCLUDE(OmiscidPackaging NO_POLICY_SCOPE)

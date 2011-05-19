@@ -30,7 +30,7 @@ public:
 	AtomicReentrantCounter(int init_value = 0);
 
 	/** @brief Copy constructor
-	 *  @param ToCopy [in] The AtomicReentrantCounter to copy 
+	 *  @param ToCopy [in] The AtomicReentrantCounter to copy
 	 */
 	AtomicReentrantCounter(const AtomicReentrantCounter& ToCopy);
 
@@ -96,7 +96,7 @@ public:
 	int operator=(int value);
 
 	/** @brief Equal operator
-	 *  @param ToCopy [in] The AtomicCounter to copy 
+	 *  @param ToCopy [in] The AtomicCounter to copy
 	 */
 	const AtomicReentrantCounter& operator=(const AtomicReentrantCounter& ToCopy);
 	//@}

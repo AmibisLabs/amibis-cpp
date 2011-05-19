@@ -1,4 +1,4 @@
-// 
+//
 
 #include <ServiceControl/UserFriendlyAPI.h>
 

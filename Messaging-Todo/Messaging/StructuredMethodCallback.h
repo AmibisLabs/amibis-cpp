@@ -31,7 +31,7 @@ class StructuredMethodCallback : public MethodCallback<Class, StructuredParamete
 protected:
   /** \brief Define the type of a method callback */
   typedef void (Class::*Method)(const StructuredParameters&, StructuredResult&);
-  
+
 public:
   /** \brief Constructor
    * \param Object [in] object from which the method is from.
@@ -51,4 +51,3 @@ StructuredMethodCallback<Class>::StructuredMethodCallback(Class* TheObject,typen
 } // Omiscid
 
 #endif // __STRUCTURED_METHOD_CALLBACK__
-

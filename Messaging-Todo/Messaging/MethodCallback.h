@@ -28,7 +28,7 @@ public:
   /** \brief Overload operator() to call method directly
   */
   virtual bool operator()(const Parameter& Param, Result& Res) = 0;
-	
+
   /** \brief Call the method with Param and Res
   * \param Param [in] the parameter of the function.
   * \param Res [out] the result of the method we call.
@@ -62,11 +62,11 @@ public:
 
   /** \brief Overload */
   virtual bool operator()(const Parameter& Param, Result& Res);
-  
+
   /** \brief Overload */
   virtual bool Call(const Parameter& Param, Result& Res);
-  
-protected:  
+
+protected:
   Class* TheObject;
   Method TheMethod;
 };
@@ -92,8 +92,8 @@ bool MethodCallback<Class, Parameter, Result>::Call(const Parameter& Param, Resu
 {
   if(TheObject && TheMethod)
   {
-    (TheObject->*TheMethod)(Param, Res);
-    return true;
+	(TheObject->*TheMethod)(Param, Res);
+	return true;
   } else {
 	  return false;
   }

@@ -2,7 +2,7 @@
 
 using namespace Messaging;
 
-Server::Server() 
+Server::Server()
 {
   pServer = NULL;
 }
@@ -12,7 +12,7 @@ Server::~Server()
   if( pServer) delete pServer;
 }
 
-bool Server::start() 
+bool Server::start()
 {
   // Ask to the service factory to create a Service. The service is not
   // register yet. We do not provide the service class, the default value 'Service'
@@ -22,10 +22,10 @@ bool Server::start()
   // If something tricky occurred, exit
   if ( pServer == NULL )
   {
-      fprintf( stderr, "Could not register the Server.\n" );
+	  fprintf( stderr, "Could not register the Server.\n" );
 
-      // Fail
-      return false;
+	  // Fail
+	  return false;
   }
 
   // Add a Connector to receive and send messages (AnInOutput) and set my callback
@@ -42,12 +42,12 @@ bool Server::start()
   return true;
 }
 
-ServerListener::ServerListener() 
+ServerListener::ServerListener()
 {
   // Register method from the Calculator.
   RegisterMethod( "add", StructuredMethodCallback<Calculator>(&Calc, &Calculator::Add) );
   RegisterMethod( "mult", StructuredMethodCallback<Calculator>(&Calc, &Calculator::Multiply) );
-  
+
   RegisterMethod( "msg", &Calc, &Calculator::Msg);
   RegisterMethod( "opp", &Calc, &Calculator::Opp);
   RegisterMethod( "nop", &Calc, &Calculator::Nop);
@@ -56,7 +56,7 @@ ServerListener::ServerListener()
   RegisterMethod( "mad", &Calc, &Calculator::Mad);
   RegisterMethod( "sum", &Calc, &Calculator::Sum);
   RegisterMethod( "add2", &Calc, &Calculator::Add2);
-  
+
 }
 
 ServerListener::~ServerListener()
@@ -72,11 +72,10 @@ void ServerListener::MessageReceived(Service& TheService, const SimpleString Loc
   // If Hello message
   if( msg.Has("message") && msg.Has("id") )
   {
-    StructuredMessage result;
-    result.Put("return", "world !");
-    SendReplyToMessage(TheService, LocalConnectorName, result, Msg);
+	StructuredMessage result;
+	result.Put("return", "world !");
+	SendReplyToMessage(TheService, LocalConnectorName, result, Msg);
   } else {
-    StructuredMethodCallbackListener::MessageReceived( TheService, LocalConnectorName, Msg);
+	StructuredMethodCallbackListener::MessageReceived( TheService, LocalConnectorName, Msg);
   }
 }
-

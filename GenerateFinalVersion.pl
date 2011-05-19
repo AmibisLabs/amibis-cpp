@@ -183,9 +183,16 @@ if ( $WorkingRep eq '' )
 
 # $WorkingRep = 'OMiSCID-Dev'; # 'OMiSCID';
 
-if ( -e '../LastVersion.info' )
+# Change current Working directory to a subdirectory
+if ( !-e './CreateFinalVersion' )
 {
-	open( $fd, '<../LastVersion.info' ) or die "Unable to open '../LastVersion.info'\n";
+	mkdir './CreateFinalVersion', 0755;
+}
+chdir('./CreateFinalVersion');
+
+if ( -e 'LastVersion.info' )
+{
+	open( $fd, '<LastVersion.info' ) or die "Unable to open 'LastVersion.info'\n";
 	$line = <$fd>;
 	if ( $line =~ /^(\d+)\.(\d+)\.(\d+)[\s\r\n]+$/ )
 	{
@@ -226,10 +233,10 @@ print "=> $Version\n";
 # die;
 
 $VersionFile = "Omiscid-$Version.zip";
-if ( -e "../$VersionFile" )
+if ( -e $VersionFile )
 {
 	print "Remove $VersionFile\n";
-	unlink "../$VersionFile";
+	unlink $VersionFile;
 }
 
 # generate date
@@ -241,14 +248,16 @@ my $ligne;
 my $contenu;
 my $FileIn, $FileWithoutIn;
 
-while( $FileIn = <*.in> )
+mkdir 'OMiSCID', 0755;
+
+while( $FileIn = <../*.in> )
 {
-	$FileIn =~ /^(.+)\.in$/;
-	$FileWithoutIn = $1;
+	$FileIn =~ /^\.\.\/(.+)\.in$/;
+	$FileWithoutIn = "OMiSCID/$1";
 	
 	$contenu = '';
 	
-	# print STDERR "1\n";
+	print STDERR "Process $FileIn\n";
 	
 	open( $fd, "<$FileIn" ) or die "Could not open '$FileIn'\n";
 	
@@ -281,30 +290,34 @@ while( $FileIn = <*.in> )
 	close( $fd );
 }
 
+print STDERR "Copying files\n";
+`rsync -avzu --exclude=.svn --delete ../System ../Com ../ServiceControl ../Messaging ../Examples ../Test OMiSCID`;
+
+die;
+
 `perl RecursiveDos2Unix.pl . -exclude=Doc`;
 
 # generate testing archive
 &RecurseWork::RecurseWork("System/");
 &RecurseWork::RecurseWork("Com/");
 &RecurseWork::RecurseWork("ServiceControl/");
+&RecurseWork::RecurseWork("Messaging/");
 &RecurseWork::RecurseWork("Examples/");
 &RecurseWork::RecurseWork("Test/");
 
 $command = "zip -9 $VersionFile ";
 foreach $file ( @UsualFiles )
 {
-	$command .= "$WorkingRep/$file ";
+	$command .= "$file ";
 }
 foreach $file ( keys %FilesToAdd )
 {
-	$command .= "$WorkingRep/$file ";
+	$command .= "$file ";
 }
 
 # print $command;
 
-chdir('..');
 system( $command );
-chdir($WorkingRep);
 
 if ( $StopAfterZip == 1 )
 {
@@ -348,28 +361,7 @@ $TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Profession
 $TestSuite .= "     Security Update pour Microsoft Visual Studio 2005 Professional - Français (KB947738)\n";
 $TestSuite .= "     Update pour Microsoft Visual Studio 2005 Professional - Français (KB932233)\n";
 $TestSuite .= "     Insure++ Version 7.1.2 (build 2007-09-10)\n";
-$TestSuite .= "XML: libxml2 version libxml2-2.7.3 with iconv-1.9.2\n";
-
-# Construct the actual tests done
-foreach $DebugFlag ( ('1', '0') )
-{
-	if ( $DebugFlag eq '1' )
-	{
-		$DebugTag = '1 chmem=1 ';
-	}
-	else
-	{
-		$DebugTag = '0';
-	}
-	
-	foreach $TraceFlag ( ('1', '0') )
-	{
-		$TestSuite .= "CMT: Test Omiscid with 'debug=$DebugTag trace=$TraceFlag' flags.\n";
-		$TestSuite .= "IOK: Compile Omiscid.\n";
-		$TestSuite .= "TOK: Compile GlobalTest and run it successfully (1)\n";
-		$TestSuite .= "     files used 'GlobalTest.cpp Accumulator.cpp BrowsingTest.cpp ClientAccumulator.cpp RegisterSearchTest.cpp RegisterThread.cpp SendHugeData.cpp'\n";
-	}
-}
+$TestSuite .= "XML: libxml2 version libxml2-2.7.3 with iconv-1.9.2\n\n";
 
 if ( $DoTest == 1 )
 {	
@@ -598,10 +590,10 @@ if ( &LogOk() == 0 )
 
 &AddLog( "TOK: All tests passed." );
 
-`rm ../$VersionFile`;
+`rm $VersionFile`;
 
 print STDERR "\n\n\t=> $VersionFile successfully tested.\n";
-`echo $Version > ../LastVersion.info`;
+`echo $Version > LastVersion.info`;
 print STDERR "Generate final version of $VersionFile.\n";
 
 # generate report of tests
@@ -641,7 +633,7 @@ undef($FilesToAdd{'Examples/TimeoutProg.cpp'});
 $command = "zip -9 $VersionFile ";
 foreach $file ( @UsualFiles )
 {
-	$command .= "$WorkingRep/$file ";
+	$command .= "$file ";
 }
 foreach $file ( keys %FilesToAdd )
 {
@@ -649,28 +641,31 @@ foreach $file ( keys %FilesToAdd )
 	{
 		next;
 	}
-	$command .= "$WorkingRep/$file ";
+	$command .= "$file ";
 }
 
 # print $command;
-chdir('..');
 system( $command );
 
-if ( -e './Temp' )
+if ( !-e './Temp' )
 {
 	mkdir './Temp', 0755;
 }
+else
+{
+	`rm -rf ./Temp/*`;
+}
 
-`cp $VersionFile ./Temp`;
 chdir('./Temp');
 `rm -rf ./OMiSCID`;
+mkdir './OMiSCID', 0755;
+`cp ../$VersionFile `;
 `unzip $VersionFile`;
 $VersionFile =~ s/\.zip/\.tgz/;
 `rm -rf ../$VersionFile`;
 `tar cvfz ../$VersionFile OMiSCID`;
 
 chdir('..');
-chdir($WorkingRep);
 
 # Generate package
 if ( $DoPackage == 1 )

@@ -71,88 +71,88 @@ Value::Value( double value )
 
 bool Value::operator==( const Value& lhs ) const
 {
-    if( this == &lhs ) return true;
+	if( this == &lhs ) return true;
 
-    if( type() != lhs.type() ) return false;
+	if( type() != lhs.type() ) return false;
 
-    switch( type_ )
-    {
-        case str_type:   return get_str()   == lhs.get_str();
-        case obj_type:   return get_obj()   == lhs.get_obj();
-        case array_type: return get_array() == lhs.get_array();
-        case bool_type:  return get_bool()  == lhs.get_bool();
-        case int_type:   return get_int()   == lhs.get_int();
-        case real_type:  return get_real()  == lhs.get_real();
-        case null_type:  return true;
-    };
+	switch( type_ )
+	{
+		case str_type:   return get_str()   == lhs.get_str();
+		case obj_type:   return get_obj()   == lhs.get_obj();
+		case array_type: return get_array() == lhs.get_array();
+		case bool_type:  return get_bool()  == lhs.get_bool();
+		case int_type:   return get_int()   == lhs.get_int();
+		case real_type:  return get_real()  == lhs.get_real();
+		case null_type:  return true;
+	};
 
-    assert( false );
+	assert( false );
 
-    return false; 
+	return false;
 }
 
 Value_type Value::type() const
 {
-    return type_;
+	return type_;
 }
 
 const std::string& Value::get_str() const
 {
-    assert( type() == str_type );
+	assert( type() == str_type );
 
-    return str_;
+	return str_;
 }
 
 const Object& Value::get_obj() const
 {
-    assert( type() == obj_type );
+	assert( type() == obj_type );
 
-    return obj_;
+	return obj_;
 }
- 
+
 const Array& Value::get_array() const
 {
-    assert( type() == array_type );
+	assert( type() == array_type );
 
-    return array_;
+	return array_;
 }
- 
+
 bool Value::get_bool() const
 {
-    assert( type() == bool_type );
+	assert( type() == bool_type );
 
-    return bool_;
+	return bool_;
 }
- 
+
 int Value::get_int() const
 {
-    assert( type() == int_type );
+	assert( type() == int_type );
 
-    return i_;
+	return i_;
 }
 
 double Value::get_real() const
 {
-    assert( type() == real_type || type() == int_type);
+	assert( type() == real_type || type() == int_type);
 
-    if(type() == real_type)
-    	return d_;
-    else
-    	return i_;
+	if(type() == real_type)
+		return d_;
+	else
+		return i_;
 }
 
 Object& Value::get_obj()
 {
-    assert( type() == obj_type );
+	assert( type() == obj_type );
 
-    return obj_;
+	return obj_;
 }
 
 Array& Value::get_array()
 {
-    assert( type() == array_type );
+	assert( type() == array_type );
 
-    return array_;
+	return array_;
 }
 
 Pair::Pair( const std::string& name, const Value& value )
@@ -163,7 +163,7 @@ Pair::Pair( const std::string& name, const Value& value )
 
 bool Pair::operator==( const Pair& lhs ) const
 {
-    if( this == &lhs ) return true;
+	if( this == &lhs ) return true;
 
-    return ( name_ == lhs.name_ ) && ( value_ == lhs.value_ );
+	return ( name_ == lhs.name_ ) && ( value_ == lhs.value_ );
 }

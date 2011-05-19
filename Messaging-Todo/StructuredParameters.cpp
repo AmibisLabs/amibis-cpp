@@ -40,39 +40,39 @@ int StructuredParameters::GetNumberOfParameters() const
 void StructuredParameters::GetParameter( int Index, int& Val ) const throw( StructuredMessageException )
 {
   if( BETWEEN(Index, 0,GetNumberOfParameters()) ) {
-    if( this->Params[Index].type() == json_spirit::int_type ) {
-      Val = Params[Index].get_int();
-    } else {
-      throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
-    }
+	if( this->Params[Index].type() == json_spirit::int_type ) {
+	  Val = Params[Index].get_int();
+	} else {
+	  throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
+	}
   } else {
-    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+	throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
   }
 }
 
 void StructuredParameters::GetParameter( int Index, SimpleString& Val ) const throw( StructuredMessageException )
 {
   if( BETWEEN(Index, 0,GetNumberOfParameters()) ) {
-    if( this->Params[Index].type() == json_spirit::str_type ) {
-      Val = Params[Index].get_str().c_str();
-    } else {
-      throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
-    }
+	if( this->Params[Index].type() == json_spirit::str_type ) {
+	  Val = Params[Index].get_str().c_str();
+	} else {
+	  throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
+	}
   } else {
-    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+	throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
   }
 }
-  
+
 void StructuredParameters::GetParameter( int Index, bool& Val ) const throw( StructuredMessageException )
 {
   if( BETWEEN(Index, 0,GetNumberOfParameters()) ) {
-    if( this->Params[Index].type() == json_spirit::bool_type ) {
-      Val = Params[Index].get_bool();
-    } else {
-      throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
-    }
+	if( this->Params[Index].type() == json_spirit::bool_type ) {
+	  Val = Params[Index].get_bool();
+	} else {
+	  throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
+	}
   } else {
-    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+	throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
   }
 }
 
@@ -80,16 +80,16 @@ void StructuredParameters::GetParameter( int Index, double& Val ) const throw( S
 {
   if( BETWEEN(Index, 0,GetNumberOfParameters()) ) {
 	  json_spirit::Value_type param_type = this->Params[Index].type();
-    if( param_type == json_spirit::real_type ) {
-      Val = Params[Index].get_real();
-    } else if(param_type == json_spirit::int_type)
-    {
-    	Val = Params[Index].get_int();
-    }else{
-      throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
-    }
+	if( param_type == json_spirit::real_type ) {
+	  Val = Params[Index].get_real();
+	} else if(param_type == json_spirit::int_type)
+	{
+		Val = Params[Index].get_int();
+	}else{
+	  throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
+	}
   } else {
-    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+	throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
   }
 }
 
@@ -104,35 +104,35 @@ void StructuredParameters::GetParameter( int Index, float& Val ) const throw( St
 void StructuredParameters::GetParameter( int Index, json_spirit::Value& Val ) const throw( StructuredMessageException )
 {
   if( BETWEEN(Index, 0,GetNumberOfParameters()) ) {
-    Val = Params[Index];
+	Val = Params[Index];
   } else {
-    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
-  } 
+	throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+  }
 }
 
 void StructuredParameters::GetParameter( int Index, json_spirit::Object& Val ) const throw( StructuredMessageException )
 {
   if( BETWEEN(Index, 0,GetNumberOfParameters()) ) {
-    if( this->Params[Index].type() == json_spirit::obj_type ) {
-      Val = Params[Index].get_obj();
-    } else {
-      throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
-    }
+	if( this->Params[Index].type() == json_spirit::obj_type ) {
+	  Val = Params[Index].get_obj();
+	} else {
+	  throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
+	}
   } else {
-    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+	throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
   }
 }
 
 void StructuredParameters::GetParameter( int Index, json_spirit::Array& Val ) const throw( StructuredMessageException )
 {
   if( BETWEEN(Index, 0,GetNumberOfParameters()) ) {
-    if( this->Params[Index].type() == json_spirit::array_type ) {
-      Val = Params[Index].get_array();
-    } else {
-      throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
-    }
+	if( this->Params[Index].type() == json_spirit::array_type ) {
+	  Val = Params[Index].get_array();
+	} else {
+	  throw StructuredMessageException( "Bad argument's type.", StructuredMessageException::IllegalTypeConversion );
+	}
   } else {
-    throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
+	throw StructuredMessageException( "Index out of bound.", StructuredMessageException::Exception );
   }
 }
 
@@ -140,4 +140,3 @@ SimpleString StructuredParameters::ToString()
 {
   return json_spirit::write_formatted(Params).c_str();
 }
-

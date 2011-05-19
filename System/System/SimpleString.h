@@ -65,42 +65,42 @@ private:
 		 */
 		/* virtual */ ~StringData();
 
-		/** \brief Change the string contained by the object if possible
+		/** @brief Change the string contained by the object if possible
 		 *
 		 * The string is changed if only a reference exist on this object.
-		 * \return true if the string has changed.
+		 * @return true if the string has changed.
 		 */
 		// bool ChangeData(const char* str);
 
 		/** \name Comparaison */
 		//@{
-		/** \return if the string contained by this object match the string contained in 'sd'*/
+		/** @return if the string contained by this object match the string contained in 'sd'*/
 		bool Equals(const StringData& sd);
-		/** \return if the string contained by this object match the string 'str'*/
+		/** @return if the string contained by this object match the string 'str'*/
 		bool Equals(const char* str);
-		/** \return if the string contained by this object match the string contained in 'sd'*/
+		/** @return if the string contained by this object match the string contained in 'sd'*/
 		bool EqualsCaseInsensitive(const StringData& sd);
-		/** \return if the string contained by this object match the string 'str'*/
+		/** @return if the string contained by this object match the string 'str'*/
 		bool EqualsCaseInsensitive(const char* str);
-		/** \return if the string contained by this object do not match the string contained in 'sd'*/
+		/** @return if the string contained by this object do not match the string contained in 'sd'*/
 		bool NotEquals(const StringData& sd);
-		/** \return if the string contained by this object do not match the string 'str''*/
+		/** @return if the string contained by this object do not match the string 'str''*/
 		bool NotEquals(const char* str);
-		/** \return if the string contained by this object do not match the string contained in 'sd'*/
+		/** @return if the string contained by this object do not match the string contained in 'sd'*/
 		bool NotEqualsCaseInsensitive(const StringData& sd);
-		/** \return if the string contained by this object do not match the string 'str''*/
+		/** @return if the string contained by this object do not match the string 'str''*/
 		bool NotEqualsCaseInsensitive(const char* str);
 		//@}
 
 	private:
-		/** \brief set the buffer value
+		/** @brief set the buffer value
 		 *
 		 * allocate and free the buffer if necessary.
-		 * \param b [in] the buffer to copy
+		 * @param b [in] the buffer to copy
 		 */
 		void SetData(const char* b);
 
-		/** \brief generate an empty string
+		/** @brief generate an empty string
 		 *
 		 */
 		inline char * GetEmptyBuffer()
@@ -269,13 +269,13 @@ public:
 #endif
 
 private:
-	/** \brief Remove the reference on the StringData object.
+	/** @brief Remove the reference on the StringData object.
 	 *
 	 * Delete the StringData object, if the number of reference becomes 0.
 	 */
 	void DestroyStringData();
 
-	/** \brief Set a StringData object. Do not incr the references
+	/** @brief Set a StringData object. Do not incr the references
 	 *
 	 */
 	void SetStringData(StringData* to_set);

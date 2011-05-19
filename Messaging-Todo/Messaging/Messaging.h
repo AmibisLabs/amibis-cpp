@@ -9,15 +9,15 @@
 * This extends Omsicid to Structured Message sending as well as Remote Procedure Call.
 *
 * \section StructuredMessage Structured Message
-* 
+*
 * blabla...
 *
 * \section StructuredMethodCall Structured Method Call
-* 
+*
 * blabla...
 *
 * \section StructuredMethodCallbackFactory Structured Method Callback Factory
-* 
+*
 * blabla...
 *
 */
@@ -37,7 +37,7 @@
 #include <Messaging/StructuredMethodCallbackFactory.h>
 #include <Messaging/StructuredMethodCallbackListener.h>
 
-namespace Omiscid { 
+namespace Omiscid {
 
 /**
 * Sends a message to all the clients connected to a specific connector of the service
@@ -97,7 +97,7 @@ bool SendToOneClient( Service& TheService, SimpleString ConnectorName, const Str
 
 /**
 * Sends a message to a particular client. This client is identified by its Peer id (pid).
-* This method is usually used to send a structured message with an expected reply from another service. 
+* This method is usually used to send a structured message with an expected reply from another service.
 * We know this service from its pid inside its request message (see Message#). We
 * do not have a ServiceProxy for it because we have not found this service to initiate the connexion. If the
 * Peer Id is a service peerid and not a connector one, the message will be sent to the
@@ -116,7 +116,7 @@ DelayedResult* SendToOneClientWithExpectedResult( Service& TheService, SimpleStr
 
 /**
 * Sends a message to a particular client. This client is identified by its Peer id (pid).
-* This method is usually used to send a structured message with an expected reply from another service. 
+* This method is usually used to send a structured message with an expected reply from another service.
 * We know this service from its pid inside its request message (see Message#). We
 * do not have a ServiceProxy for it because we have not found this service to initiate the connexion. If the
 * Peer Id is a service peerid and not a connector one, the message will be sent to the
@@ -166,4 +166,3 @@ bool SendReplyToMessage( Service& TheService, const StructuredMessage& Reply, co
 } // Omiscid::Messaging
 
 #endif // __EXTENSION_H__
-

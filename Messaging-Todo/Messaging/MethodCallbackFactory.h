@@ -32,15 +32,15 @@ public:
 
   /** \brief Destructor */
   ~MethodCallbackFactory();
-  
+
   /** \brief Register a new method in the factory (NEW...)
   * \param MethodName The name of the method to register.
   * \param TheObject The object where to call the function.
   * \param TheMetho The actual callback method.
   */
   template<class Class>
-    void RegisterMethod(const SimpleString& MethodName, Class *TheObject, void (Class::*TheMethod)(const Parameter&, Result&));
-  
+	void RegisterMethod(const SimpleString& MethodName, Class *TheObject, void (Class::*TheMethod)(const Parameter&, Result&));
+
   /** \brief Register a new method in the factory
   * \param MethodName The name of the method to register.
   * \param Callback The call back to link.
@@ -91,7 +91,7 @@ MethodCallbackFactory<Parameter, Result>::~MethodCallbackFactory()
 
   for(it = Callbacks.begin(); it!= Callbacks.end(); ++it)
   {
-    delete it->second;
+	delete it->second;
   }
 
   Callbacks.clear();
@@ -109,12 +109,12 @@ void MethodCallbackFactory<Parameter, Result>::RegisterMethod(const SimpleString
   Callbacks[MethodName.GetStr()] = new MethodCallback<Class, Parameter, Result>(Callback);
 }
 
-template<typename Parameter, typename Result> 
+template<typename Parameter, typename Result>
 void MethodCallbackFactory<Parameter, Result>::UnRegisterMethod(const SimpleString& MethodName)
 {
   typename CallBackMap::iterator it = Callbacks.find(MethodName.GetStr());
   if ( it != Callbacks.end() ) {
-      Callbacks.erase(it);
+	  Callbacks.erase(it);
   }
 }
 
@@ -122,9 +122,9 @@ template<typename Parameter, typename Result>
 bool MethodCallbackFactory<Parameter, Result>::Call(const SimpleString& MethodName, const Parameter& Param, Result& Res)
 {
   if( IsRegistered(MethodName) ) {
-    return Callbacks[MethodName.GetStr()]->Call(Param, Res);
+	return Callbacks[MethodName.GetStr()]->Call(Param, Res);
   } else {
-    return false;
+	return false;
   }
 }
 
@@ -133,9 +133,9 @@ bool MethodCallbackFactory<Parameter, Result>::IsRegistered(const SimpleString& 
 {
   typename CallBackMap::iterator it = Callbacks.find(MethodName.GetStr());
   if( it != Callbacks.end() ) {
-    return true;
+	return true;
   } else {
-    return false;
+	return false;
   }
 }
 

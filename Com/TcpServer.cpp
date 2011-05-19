@@ -380,7 +380,7 @@ bool TcpServer::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
 	return true;
 }
 
-/** \brief Remove all callback objects for notification
+/** @brief Remove all callback objects for notification
 *
 */
 void TcpServer::RemoveAllCallbackObjects()
@@ -511,7 +511,7 @@ MsgSocket* TcpServer::FindClientFromId(unsigned int id)
 	return NULL;
 }
 
-/** \brief Destroy a specific connection */
+/** @brief Destroy a specific connection */
 bool TcpServer::DisconnectPeerId(unsigned int PeerId)
 {
 	MsgSocket * ms;

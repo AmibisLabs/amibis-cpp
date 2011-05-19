@@ -434,7 +434,7 @@ bool MsgSocket::AddCallbackObject(MsgSocketCallbackObject * CallbackObject)
 }
 
 
-/** \brief Remove the callback for message reception
+/** @brief Remove the callback for message reception
 *
 */
 bool MsgSocket::RemoveCallbackObject(MsgSocketCallbackObject * CallbackObject)
@@ -772,7 +772,7 @@ void MsgSocket::Receive()
 					//						offset += length_header;
 					//						size =  occupiedSize - offset;
 					//					}
-					else 
+					else
 					{
 						offset += length_header;
 
@@ -1024,7 +1024,7 @@ int MsgSocket::SendCuttedMsg(int* tab_length, const char** tab_buf, int nb_buf)
 	{
 		SendLen += tab_length[i];
 	}
-	
+
 	SmartLocker SL_protectSend(protectSend);
 	try
 	{
@@ -1494,7 +1494,7 @@ bool MsgSocket::ReceivedSyncLinkMsg()
 	return tmpb;
 }
 
-  /** \brief wait for a synclink message
+  /** @brief wait for a synclink message
    *
    * @param[in]	TimeToWait the max time to wait in ms (default 250 ms)
    * @return	true if the Socket has received a SyncLink message before timeout

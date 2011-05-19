@@ -6,8 +6,8 @@
 #ifndef __STRUCTURED_METHOD_CALL_H__
 #define __STRUCTURED_METHOD_CALL_H__
 
-// Desable Warning C4290: Visual C++ does not implement checked exceptions, 
-// C4290 is just informing you that other exceptions may still be throw from 
+// Desable Warning C4290: Visual C++ does not implement checked exceptions,
+// C4290 is just informing you that other exceptions may still be throw from
 // these functions
 #ifdef WIN32
 #pragma warning(disable: 4290)
@@ -29,7 +29,7 @@ namespace Omiscid {
  * \brief Group Data about a Structured Method Call
  *
  * contain the data about a Structured Method Call:
- * 
+ *
  * - to be detailed :)
  *
  * \author R�mi Barraquand
@@ -181,4 +181,3 @@ StructuredMethodCall::StructuredMethodCall( const SimpleString& MethodName, TP1 
 } // Omiscid::Messaging
 
 #endif //__STRUCTURED_METHOD_CALL_H__
-

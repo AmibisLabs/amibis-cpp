@@ -29,13 +29,13 @@ StructuredResult::~StructuredResult()
 //   this->Result = Val;
 //   Set( "result", this->Result );
 // }
-  
+
 // void StructuredResult::SetResult( const json_spirit::Object& Val )
 // {
 //   this->Result = Val;
 //   Set( "result", this->Result );
 // }
-  
+
 // void StructuredResult::SetResult( const json_spirit::Array& Val )
 // {
 //   this->Result = Val;
@@ -47,13 +47,13 @@ StructuredResult::~StructuredResult()
 //   this->Result = json_spirit::Value(Val);
 //   Set( "result", this->Result );
 // }
-  
+
 // void StructuredResult::SetResult( int Val )
 // {
 //   this->Result = json_spirit::Value(Val);
 //   Set( "result", this->Result );
 // }
-  
+
 // void StructuredResult::SetResult( double Val )
 // {
 //   this->Result = json_spirit::Value(Val);
@@ -121,7 +121,7 @@ void StructuredResult::SetError( const SimpleString& Error )
 //     throw StructuredMessageException("Bad Type Request.", StructuredMessageException::IllegalTypeConversion);
 //   }
 // }
-  
+
 // void StructuredResult::GetResult( double& Val ) const  throw( StructuredMessageException )
 // {
 //   if( this->Result.type() == json_spirit::real_type ) {
@@ -153,7 +153,7 @@ bool StructuredResult::HasError() const
 bool StructuredResult::IsResult( const StructuredMessage& Msg)
 {
   return Msg.Has("result") && Msg.Has("error");
-  
+
 //   json_spirit::Value error = Msg.Get("error");
 //   json_spirit::Value result = Msg.Get("result");
 //   if( error.type() == json_spirit::str_type || result.type() != json_spirit::null_type ) {
@@ -166,11 +166,11 @@ bool StructuredResult::IsResult( const StructuredMessage& Msg)
 void StructuredResult::BuildFromStructuredMessage( const StructuredMessage& Msg ) throw( StructuredMessageException )
 {
   if( IsResult(Msg) ) {
-    json_spirit::Value error = Msg.Get("error");
-    json_spirit::Value result = Msg.Get("result");
-    if( error.type() != json_spirit::null_type ) SetError(error.get_str().c_str());
-    if( result.type() != json_spirit::null_type ) SetResult( result );
+	json_spirit::Value error = Msg.Get("error");
+	json_spirit::Value result = Msg.Get("result");
+	if( error.type() != json_spirit::null_type ) SetError(error.get_str().c_str());
+	if( result.type() != json_spirit::null_type ) SetResult( result );
   } else {
-    throw StructuredMessageException("Bad StructuredMethodCall format.", StructuredMessageException::InvalidFormat);
+	throw StructuredMessageException("Bad StructuredMethodCall format.", StructuredMessageException::InvalidFormat);
   }
 }

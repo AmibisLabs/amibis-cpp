@@ -183,7 +183,7 @@ UdpConnection* UdpExchange::FindConnectionFromId(unsigned int id)
 	return NULL;
 }
 
-/** \brief Destroy a specific connection */
+/** @brief Destroy a specific connection */
 bool UdpExchange::DisconnectPeerId(unsigned int PeerId)
 {
 	bool ret = false;

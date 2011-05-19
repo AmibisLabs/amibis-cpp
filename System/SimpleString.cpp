@@ -368,7 +368,7 @@ void SimpleString::DestroyStringData()
 	}
 }
 
- /** \brief Set a StringData object.
+ /** @brief Set a StringData object.
   *
   */
 void SimpleString::SetStringData(StringData* to_set)
@@ -433,7 +433,7 @@ const SimpleString& SimpleString::operator= (const char* str)
 const SimpleString& SimpleString::operator= (int i)
 {
 	Lock();
-	
+
 	DestroyStringData();
 
 	TemporaryMemoryBuffer tmp(25);
@@ -447,7 +447,7 @@ const SimpleString& SimpleString::operator= (int i)
 const SimpleString& SimpleString::operator= (unsigned int ui)
 {
 	Lock();
-	
+
 	DestroyStringData();
 
 	TemporaryMemoryBuffer tmp(25);
@@ -463,7 +463,7 @@ const SimpleString& SimpleString::operator= (unsigned int ui)
 const SimpleString& SimpleString::operator= (long int li)
 {
 	Lock();
-	
+
 	DestroyStringData();
 
 	TemporaryMemoryBuffer tmp(55);
@@ -478,7 +478,7 @@ const SimpleString& SimpleString::operator= (long int li)
 const SimpleString& SimpleString::operator= (float f)
 {
 	Lock();
-	
+
 	DestroyStringData();
 
 	TemporaryMemoryBuffer tmp(55);
@@ -493,7 +493,7 @@ const SimpleString& SimpleString::operator= (float f)
 const SimpleString& SimpleString::operator= (double d)
 {
 	Lock();
-	
+
 	DestroyStringData();
 
 	TemporaryMemoryBuffer tmp(55);

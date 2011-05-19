@@ -3,4 +3,3 @@
 // Nothing
 
 using namespace Omiscid;
-

@@ -15,27 +15,27 @@ namespace Omiscid {
 /**
  * @class SocketException SocketException.h System/SocketException.h
  * @brief Exception thrown by the class Socket.
- * \author Domnique Vaufreydaz
- * \author Sebastien Pesnel
+ * @author Domnique Vaufreydaz
+ * @author Sebastien Pesnel
  */
 class SocketException : public SimpleException
 {
 public:
-  /** \brief Constructor
-   * \param m [in] the message for the exception
-   * \param i [in] the number for the error
+  /** @brief Constructor
+   * @param m [in] the message for the exception
+   * @param i [in] the number for the error
    */
   SocketException(const SimpleString m, int i = -1);
 
-  /** \brief Copy Constructor
-   * \param ExceptionToCopy [in] the exception to copy
+  /** @brief Copy Constructor
+   * @param ExceptionToCopy [in] the exception to copy
    */
   SocketException(const SocketException& ExceptionToCopy);
 
 	// Virtual destructor always
 	virtual ~SocketException();
 
-  /** \brief Return a human readable exception type */
+  /** @brief Return a human readable exception type */
   SimpleString GetExceptionType() const;
 
 protected:

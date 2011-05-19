@@ -21,7 +21,7 @@ namespace Omiscid
 * It is released when there is no more reference on it.
 * After use, the users release the object by calling ReleaseMultimediaBuffer
 */
-class MultipleReferencedData : public ReentrantMutex 
+class MultipleReferencedData : public ReentrantMutex
 {
 public:
 	typedef void (FUNCTION_CALL_TYPE *MethodForRelease)(MultipleReferencedData*);

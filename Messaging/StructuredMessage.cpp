@@ -1,39 +1,122 @@
 #include <Messaging/StructuredMessage.h>
 
-using namespace Omiscid;
-
 using namespace std;
 using namespace Omiscid;
 
-  /** \brief Constructor
+  /** @brief Constructor
   */
-StructuredMessage::StructuredMessage()
+StructuredMessage::StructuredMessage() : Serializer()
 {
 }
 
- /** \brief Constructor
+ /** @brief Constructor
+  */
+StructuredMessage::StructuredMessage( const SerializeValue& SerValue )
+{
+	Serializer = SerValue;
+}
+
+ /** @brief Constructor
   */
 StructuredMessage::StructuredMessage( SerializeValue& SerValue )
 {
 	Serializer = SerValue;
 }
 
- /** \brief Constructor from a Message received
+ /** @brief Constructor from a Message received
+  */
+StructuredMessage::StructuredMessage( const Message& Msg )
+{
+	std::string sTmp =  Msg.GetBuffer();
+
+	if( !json_spirit::read(sTmp, Serializer) && (Serializer.type() != json_spirit::obj_type) )
+	{
+		throw SerializeException("Argument is not a valid serialization stream", SerializeException::MalformedStream );
+	}
+}
+
+ /** @brief Constructor from a Message received
   */
 StructuredMessage::StructuredMessage( Message& Msg )
 {
+	std::string sTmp =  Msg.GetBuffer();
+
+	if( !json_spirit::read(sTmp, Serializer) && (Serializer.type() != json_spirit::obj_type) )
+	{
+		throw SerializeException("Argument is not a valid serialization stream", SerializeException::MalformedStream );
+	}
 }
 
- /** \brief Copy Constructor
+ /** @brief Copy Constructor
+  */
+StructuredMessage::StructuredMessage( const StructuredMessage& SMsg )
+{
+	Serializer = SMsg.Serializer;
+}
+
+ /** @brief Copy Constructor
   */
 StructuredMessage::StructuredMessage( StructuredMessage& SMsg )
 {
+	Serializer = SMsg.Serializer;
 }
 
-  /** \brief Desctuctor
+
+ /** @brief Copy Constructor
+  */
+StructuredMessage::StructuredMessage( SimpleString& SMsg )
+{
+	std::string sTmp =  SMsg.GetStr();
+
+	if( !json_spirit::read(sTmp, Serializer) && (Serializer.type() != json_spirit::obj_type) )
+	{
+		throw SerializeException("Argument is not a valid serialization stream", SerializeException::MalformedStream );
+	}
+}
+
+ /** @brief Copy Constructor
+  */
+StructuredMessage:: StructuredMessage( const SimpleString& SMsg )
+{
+	std::string sTmp =  SMsg.GetStr();
+
+	if( !json_spirit::read(sTmp, Serializer) && (Serializer.type() != json_spirit::obj_type) )
+	{
+		throw SerializeException("Argument is not a valid serialization stream", SerializeException::MalformedStream );
+	}
+}
+
+  /** @brief Desctructor
   */
 StructuredMessage::~StructuredMessage()
 {
+}
+
+ /** operator=
+  */
+StructuredMessage& StructuredMessage::operator=( SerializeValue& SerValue )
+{
+	Serializer = SerValue;
+
+	return *this;
+}
+
+ /** operator=
+  */
+StructuredMessage& StructuredMessage::operator=( const SerializeValue& SerValue )
+{
+	Serializer = SerValue;
+
+	return *this;
+}
+
+ /** operator=
+  */
+StructuredMessage& StructuredMessage::operator=( StructuredMessage& sMsg )
+{
+	Serializer = sMsg.Serializer;
+
+	return *this;
 }
 
 bool StructuredMessage::IsAnObject() const
@@ -52,8 +135,8 @@ bool StructuredMessage::IsNullValue() const
 }
 
   /** \find Find an element identified by Key
-  * \param Key [in] the key to identifies the pair.
-  * \return true if found, false otherwise
+  * @param Key [in] the key to identifies the pair.
+  * @return true if found, false otherwise
   */
 SerializeObjectConstIterator StructuredMessage::Find( const SimpleString& Key ) const
 {
@@ -80,8 +163,8 @@ SerializeObjectConstIterator StructuredMessage::Find( const SimpleString& Key ) 
 }
 
  /** \find Find an element identified by Key
-  * \param Key [in] the key to identifies the pair.
-  * \return true if found, false otherwise
+  * @param Key [in] the key to identifies the pair.
+  * @return true if found, false otherwise
   */
 SerializeObjectIterator StructuredMessage::Find( const SimpleString& Key )
 {
@@ -108,8 +191,8 @@ SerializeObjectIterator StructuredMessage::Find( const SimpleString& Key )
 }
 
  /** \find Find an element value hashed by Key
-  * \param Key [in] the key to identifies the pair.
-  * \return a value
+  * @param Key [in] the key to identifies the pair.
+  * @return a value
   */
 SerializeValue StructuredMessage::FindAndGetValue( const SimpleString& Key ) const
 {

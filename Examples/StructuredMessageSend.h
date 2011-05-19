@@ -31,7 +31,7 @@ class ClassIntToSerialize : public Serializable
 public:
 
 	int MyInt;
-	
+
 	ClassIntToSerialize()
 	{
 		MyInt = -1;
@@ -50,7 +50,7 @@ class ClassIntListToSerialize : public Serializable
 public:
 
 	SimpleList<int> MyInts;
-	
+
 	ClassIntListToSerialize()
 	{
 		for( int i = 0; i < 10; i++ )

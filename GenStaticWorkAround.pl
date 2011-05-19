@@ -9,5 +9,5 @@ while( 1 )
 	print "Entrez l'init de la variable : ";
 	$InitVar = <STDIN>;
 	$InitVar =~ s/[\r\n]+//g;
-	print "inline static ${Type}& $Nom()\n{\n\tstatic $Type Internal_$Nom${InitVar};\n\treturn Internal_$Nom;\n}\n";
+	print "inline static ${Type}& $Nom()\n{\n\tstatic $Type Internal_$Nom=${InitVar};\n\treturn Internal_$Nom;\n}\n";
 }

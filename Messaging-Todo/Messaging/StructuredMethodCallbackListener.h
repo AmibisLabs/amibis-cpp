@@ -13,7 +13,7 @@
 #include <Messaging/MethodCallbackFactory.h>
 #include <Messaging/StructuredMethodCallbackFactory.h>
 
-namespace Omiscid { 
+namespace Omiscid {
 
 class StructuredMethodCallbackListener;
 
@@ -29,11 +29,11 @@ class StructuredMethodCallbackListener;
 class StructuredMethodCallbackListener : public ConnectorListener, public StructuredMethodCallbackFactory
 {
 public:
-  /* @breif constructor 
+  /* @breif constructor
    */
   StructuredMethodCallbackListener();
-    
-  /* @brief destructor 
+
+  /* @brief destructor
    */
   virtual ~StructuredMethodCallbackListener();
 
@@ -65,4 +65,3 @@ public:
 } // Omiscid
 
 #endif // __STRUCTURED_METHOD_CALLBACK_LISTENER_H__
-

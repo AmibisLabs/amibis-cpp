@@ -12,15 +12,15 @@
 
 namespace json_spirit
 {
-    class Value;
+	class Value;
 
-    // converts a JSON object or array to text, 
-    // the "formatted" versions add whitespace to format the output nicely
-    //
-    void        write          ( const Value& value, std::ostream& os );
-    void        write_formatted( const Value& value, std::ostream& os );
-    std::string write          ( const Value& value );
-    std::string write_formatted( const Value& value );
+	// converts a JSON object or array to text,
+	// the "formatted" versions add whitespace to format the output nicely
+	//
+	void        write          ( const Value& value, std::ostream& os );
+	void        write_formatted( const Value& value, std::ostream& os );
+	std::string write          ( const Value& value );
+	std::string write_formatted( const Value& value );
 }
 
 #endif

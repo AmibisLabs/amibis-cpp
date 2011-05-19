@@ -13,12 +13,12 @@
 
 namespace json_spirit
 {
-    class Value;
+	class Value;
 
-    // converts text to a JSON value that will be either a JSON object or array
-    //
-    bool read( const std::string& s, Value& value );
-    bool read( std::istream& is,     Value& value );
+	// converts text to a JSON value that will be either a JSON object or array
+	//
+	bool read( const std::string& s, Value& value );
+	bool read( std::istream& is,     Value& value );
 }
 
 #endif

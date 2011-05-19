@@ -6,8 +6,8 @@
 #ifndef __DELAYED_RESULT_H__
 #define __DELAYED_RESULT_H__
 
-// Desable Warning C4290: Visual C++ does not implement checked exceptions, 
-// C4290 is just informing you that other exceptions may still be throw from 
+// Desable Warning C4290: Visual C++ does not implement checked exceptions,
+// C4290 is just informing you that other exceptions may still be throw from
 // these functions
 #ifdef WIN32
 #pragma warning(disable: 4290)
@@ -34,7 +34,7 @@ namespace Omiscid {
  * \brief Group Data about a Delayed Result
  *
  * contain the data about a Delayed Result :
- * 
+ *
  * - to be detailed :)
  *
  * \author Rémi Barraquand
@@ -74,7 +74,7 @@ public:
   * \param Msg the message to process
   */
   virtual void MessageReceived(Service& TheService, const SimpleString LocalConnectorName, const Message& Msg);
-  
+
 private:
   SimpleList<StructuredMessage> Results;
   Event TheEvent;
@@ -89,4 +89,3 @@ private:
 } // Omiscid
 
 #endif //__DELAYED_RESULT_H__
-

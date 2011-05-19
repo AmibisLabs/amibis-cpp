@@ -50,7 +50,7 @@ public:
 	const ThreadMessage& operator=(const ThreadMessage& ToCopy);
 
 public:
-	int		Code;	
+	int		Code;
 	void *	Param1;
 	void *	Param2;
 };
@@ -109,7 +109,7 @@ public:
 	virtual bool StopThread(int wait_ms = DEFAULT_THREAD_DESTRUCTOR_TIMEOUT);
 
 	/** @brief the calling thread sleep
-	 * \param nb_ms [in] number of milliseconds to sleep
+	 * @param nb_ms [in] number of milliseconds to sleep
 	 */
 	static void Sleep(int nb_ms);
 

@@ -236,7 +236,7 @@ int main( int argc, char*argv[] )
 		return -1;
 	}
 #endif
-	
+
 	// Wait forever on an unsignaled event
 	Event Forever;
 	Forever.Wait();

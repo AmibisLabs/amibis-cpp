@@ -22,7 +22,14 @@ sub Reformat()
 	close( $fd );
 	
 	$contenu =~ s/(_#_#_#_#_)+$//;
-	$contenu =~ s/(_#_#_#_#_)/\n/g;
+	if ( $ReverseMode == 0 )
+	{
+		$contenu =~ s/(_#_#_#_#_)/\n/g;
+	}
+	else
+	{
+		$contenu =~ s/(_#_#_#_#_)/\r\n/g;
+	}
 	
 	open( $fd, ">$FileName" ) or die "Could not write to '$FileName'\n";
 	print $fd $contenu;
@@ -72,6 +79,7 @@ sub EnterDirectory()
 
 $ToReplace = "\t";
 $ReplaceBy = '    ';
+$ReverseMode = 0;
 
 $FolderToWorkOn = '';
 
@@ -82,6 +90,7 @@ while ( defined $ARGV[$ParamPos] )
 	{
 		$ToReplace = '    ';
 		$ReplaceBy = "\t";
+		$ReverseMode = 1;
 		$ParamPos++;
 		next;
 	}

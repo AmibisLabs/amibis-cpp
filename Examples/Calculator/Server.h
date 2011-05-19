@@ -24,11 +24,11 @@ using namespace Omiscid::Messaging;
  */
 class ServerListener : public StructuredMethodCallbackListener {
 public:
-  /* @breif constructor 
+  /* @breif constructor
   */
   ServerListener();
-  
-  /* @brief destructor 
+
+  /* @brief destructor
   */
   virtual ~ServerListener();
 
@@ -66,4 +66,3 @@ private:
 };
 
 #endif //__SERVER__
-

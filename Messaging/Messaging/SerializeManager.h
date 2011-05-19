@@ -30,7 +30,6 @@ inline bool same_name( const json_spirit::Pair& pair, const Omiscid::SimpleStrin
 }
 
 
-}; // Omiscid
+} // Omiscid
 
 #endif // __SERIALIZE_MANAGER_H__
-

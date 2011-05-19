@@ -121,4 +121,3 @@ bool DateAndTime::operator==(DateAndTime& ToCompare)
 		Minutes == ToCompare.Minutes && Seconds == ToCompare.Seconds
 		&& Milliseconds == ToCompare.Milliseconds );
 }
-

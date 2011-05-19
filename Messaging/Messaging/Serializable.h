@@ -1,14 +1,15 @@
 /**
- * \file Messaging/Serializable.h
+ * @file Messaging/Messaging/Serializable.h
  * \ingroup Messaging
- * \brief Definition of Serializable class
- * \author Dominique Vaufreydaz
+ * @brief Definition of Serializable class
+ * @author Dominique Vaufreydaz
  */
+
 #ifndef __SERIALIZABLE_H__
 #define __SERIALIZABLE_H__
 
-// Desable Warning C4290: Visual C++ does not implement checked exceptions, 
-// C4290 is just informing you that other exceptions may still be throw from 
+// Desable Warning C4290: Visual C++ does not implement checked exceptions,
+// C4290 is just informing you that other exceptions may still be throw from
 // these functions
 #ifdef WIN32
 #pragma warning(disable: 4290)
@@ -34,7 +35,7 @@ public:
 	virtual ~Serializable();
 
 	virtual void DeclareSerializeMapping() = 0;
-	
+
 	void AddToSerialization( const SimpleString& Key, int& Val );
 	void AddToSerialization( const SimpleString& Key, unsigned int& Val );
 	void AddToSerialization( const SimpleString& Key, short int& Val );
@@ -57,14 +58,14 @@ public:
 	template <typename CurrentType>
 	void AddToSerialization( const SimpleString& Key, std::list<CurrentType>& Val );
 
-	SerializeValue Serialize();
-	void Unserialize( const SerializeValue& Val );
+	StructuredMessage Serialize();
+	void Unserialize( const StructuredMessage& Val );
 
 protected:
-	/** \brief Callback for the encoding function */
-    typedef SerializeValue (*SerializeFunction)(void *);
+	/** @brief Callback for the encoding function */
+	typedef SerializeValue (*SerializeFunction)(void *);
 
-	/** \brief Callback for the decoding function */
+	/** @brief Callback for the decoding function */
 	typedef void (*UnserializeFunction)(const SerializeValue&, void *);
 
 	class EncodeMapping
@@ -116,6 +117,8 @@ protected:
 template <typename CurrentType>
 void Serializable::AddToSerialization( const SimpleString& Key, SimpleList<CurrentType>& Val )
 {
+	// template SerializeSimpleListFromAddress<CurrentType>( SimpleList<CurrentType> * pAddress );
+
 	SmartLocker SL_this((const LockableObject&)*this);
 
 	// Check if SerializeMappingIsDone
@@ -161,7 +164,6 @@ void Serializable::AddToSerialization( const SimpleString& Key, std::list<Curren
 	tmpMapping->FunctionToDecode = (UnserializeFunction)UnserializeStdListFromAddress<CurrentType>;
 }
 
-} // Omiscid 
+} // Omiscid
 
 #endif //__SERIALIZABLE_H__
-

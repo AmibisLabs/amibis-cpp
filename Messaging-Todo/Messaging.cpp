@@ -57,11 +57,11 @@ bool SendReplyToMessage( Service& TheService, SimpleString ConnectorName, const 
   StructuredMessage reply = Reply;
 
   if( msg.Has("id") ) {
-    reply.Put("id", msg.Get("id"));
-    SimpleString s = reply.Encode();
-    return TheService.SendReplyToMessage(ConnectorName, (char*) s.GetStr(), s.GetLength(), Msg, UnreliableButFastSend );
+	reply.Put("id", msg.Get("id"));
+	SimpleString s = reply.Encode();
+	return TheService.SendReplyToMessage(ConnectorName, (char*) s.GetStr(), s.GetLength(), Msg, UnreliableButFastSend );
   } else {
-    return false;
+	return false;
   }
 }
 
@@ -71,11 +71,11 @@ bool SendReplyToMessage( Service& TheService, const StructuredMessage& Reply, co
   StructuredMessage reply = Reply;
 
   if( msg.Has("id") ) {
-    reply.Put("id", msg.Get("id"));
-    SimpleString s = reply.Encode();
-        
-    return TheService.SendReplyToMessage(s, s.GetLength(), UnreliableButFastSend );
+	reply.Put("id", msg.Get("id"));
+	SimpleString s = reply.Encode();
+
+	return TheService.SendReplyToMessage(s, s.GetLength(), UnreliableButFastSend );
   } else {
-    return false;
+	return false;
   }
 }

@@ -26,7 +26,7 @@ namespace Omiscid {
 class Socket
 {
 public:
-  /** \brief Socket Kind */
+  /** @brief Socket Kind */
   enum SocketKind { SOCKET_KIND_UNDEFINED = -1, TCP = SOCK_STREAM, UDP = SOCK_DGRAM};
 
 public:

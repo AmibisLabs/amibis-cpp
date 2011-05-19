@@ -21,7 +21,7 @@ StructuredMethodCall::StructuredMethodCall( const StructuredMessage& Obj) throw(
   BuildFromStructuredMessage(Obj);
 }
 
-StructuredMethodCall::StructuredMethodCall( const StructuredMethodCall& Obj) 
+StructuredMethodCall::StructuredMethodCall( const StructuredMethodCall& Obj)
 {
   Init( Obj.GetMethodName(), Obj.GetParameters() );
 }
@@ -77,19 +77,19 @@ bool StructuredMethodCall::IsMethodCall( const StructuredMessage& Msg)
   json_spirit::Value method = Msg.Get("method");
   json_spirit::Value params = Msg.Get("params");
   if( method.type() == json_spirit::str_type && params.type() == json_spirit::array_type ) {
-    return true;
+	return true;
   } else {
-    return false;
+	return false;
   }
 }
 
 void StructuredMethodCall::BuildFromStructuredMessage( const StructuredMessage& Msg ) throw( StructuredMessageException )
 {
   if( IsMethodCall(Msg) ) {
-    json_spirit::Value method = Msg.Get("method");
-    json_spirit::Value params = Msg.Get("params");
-    Init( method.get_str().c_str(), params.get_array() );
+	json_spirit::Value method = Msg.Get("method");
+	json_spirit::Value params = Msg.Get("params");
+	Init( method.get_str().c_str(), params.get_array() );
   } else {
-    throw StructuredMessageException("Bad StructuredMethodCall format.", StructuredMessageException::InvalidFormat);
+	throw StructuredMessageException("Bad StructuredMethodCall format.", StructuredMessageException::InvalidFormat);
   }
 }

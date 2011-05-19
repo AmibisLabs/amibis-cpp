@@ -194,7 +194,7 @@ using namespace Omiscid;
 namespace Omiscid {
 
 /**
- * \author Dominique Vaufreydaz
+ * @author Dominique Vaufreydaz
  */
 struct SimpleMemoryElement
 {
@@ -208,113 +208,113 @@ struct SimpleMemoryElement
  * @class MemoryList MemoryList.h System/MemoryList.h
  * @brief class to manage list of allocated memory blocks.
  *
- * \author Dominique Vaufreydaz
+ * @author Dominique Vaufreydaz
  */
 class MemoryList
 {
 public:
-	/** \brief Constructor
+	/** @brief Constructor
 	 *
 	 * Build an empty list
 	 */
 	MemoryList();
 
-	/** \brief Destructor */
+	/** @brief Destructor */
 	virtual ~MemoryList();
 
-	/** \brief Function to add a SimpleMemoryElement
-	 * \param Val [in] the item to add
-	 * \return false if a new cell has not been allocated
+	/** @brief Function to add a SimpleMemoryElement
+	 * @param Val [in] the item to add
+	 * @return false if a new cell has not been allocated
 	 */
 	bool Add( size_t SizeOfBlock );
 
-	/** \brief Function to add a SimpleMemoryElement
-	 * \param Val [in] the item to add
-	 * \return false if a new cell has not been allocated
+	/** @brief Function to add a SimpleMemoryElement
+	 * @param Val [in] the item to add
+	 * @return false if a new cell has not been allocated
 	 */
 	bool AddHead( size_t SizeOfBlock );
 
-	/** \brief Function to add a SimpleMemoryElement
-	 * \param Val [in] the item to add
-	 * \return false if a new cell has not been allocated
+	/** @brief Function to add a SimpleMemoryElement
+	 * @param Val [in] the item to add
+	 * @return false if a new cell has not been allocated
 	 */
 	bool AddTail( size_t SizeOfBlock );
 
-	/** \brief Retrieve the current number of elements in the list
-	 * \return the current number of elements
+	/** @brief Retrieve the current number of elements in the list
+	 * @return the current number of elements
 	 */
 	unsigned int GetNumberOfElements() const;
 
 	/** \name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
 	//@{
-	/** \brief Set position to the first element */
+	/** @brief Set position to the first element */
 	void First();
 
-	/** \brief Set position to the next element
-	 * \return false if there is not a next element : it is the end of the list.
+	/** @brief Set position to the next element
+	 * @return false if there is not a next element : it is the end of the list.
 	 */
 	bool Next();
 
-	/** \brief Do we reach the end of the list
-	 * \return true is we have reached the end of the list
+	/** @brief Do we reach the end of the list
+	 * @return true is we have reached the end of the list
 	 */
 	bool AtEnd() const;
 
-	/** \brief Are we at the begining of the middle of the list ?
-	 * \return true is we don't have reached the end of the list
+	/** @brief Are we at the begining of the middle of the list ?
+	 * @return true is we don't have reached the end of the list
 	 */
 	bool NotAtEnd() const;
 
-	/** \brief Get the current element of the list
-	 * \return the current element of the list
+	/** @brief Get the current element of the list
+	 * @return the current element of the list
 	 * \exception SimpleListException raised if GetCurrent is called after a call to RemoveCurrent
 	 */
 	SimpleMemoryElement * GetCurrent() const;
 
-	/** \brief Remove the current element
-	 * \return false if called on an empty list
+	/** @brief Remove the current element
+	 * @return false if called on an empty list
 	 * \exception SimpleListException raised if this method has already been called on the same element
 	 */
 	bool RemoveCurrent();
 	//@}
 
-	/** \brief Test if the list is empty or not
-	 * \return true if the list is empty
+	/** @brief Test if the list is empty or not
+	 * @return true if the list is empty
 	 */
 	bool IsEmpty() const;
 
-	/** \brief Test if the list is empty or not
-	 * \return true if the list is not empty
+	/** @brief Test if the list is empty or not
+	 * @return true if the list is not empty
 	 */
 	bool IsNotEmpty() const;
 
-	/** \brief Extract the first element of the list
+	/** @brief Extract the first element of the list
 	 *
 	 * Return the first element in the list and remove it from the list
-	 * \return the first element in the list
+	 * @return the first element in the list
 	 * \exception  SimpleListException raised if the list is empty
 	 */
 	SimpleMemoryElement * ExtractFirst();
 
-	/** \brief Remove a specific element
-	 * \param Element [in] the element to remove
-	 * \return false if the element to delete has not been found in the list
+	/** @brief Remove a specific element
+	 * @param Element [in] the element to remove
+	 * @return false if the element to delete has not been found in the list
 	 */
 	bool Remove(void * LegalPointer);
 
 
-	/** \brief  Empty (so empty) the whole list */
+	/** @brief  Empty (so empty) the whole list */
 	void Empty();
 
 
  protected:
-	/** \brief Obtain a new struct SimpleMemoryElement object
+	/** @brief Obtain a new struct SimpleMemoryElement object
 	 *
 	 * Create a new instance of struct SimpleMemoryElement object
 	 */
 	struct SimpleMemoryElement* GetNewSimpleListElement(size_t SizeOfBlock) const;
 
-	/** \brief Release a struct SimpleMemoryElement object
+	/** @brief Release a struct SimpleMemoryElement object
 	 *
 	 * Delete the struct SimpleMemoryElement object
 	 * @param elt the element to release
@@ -322,7 +322,7 @@ public:
 	void ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const;
 
 #ifdef CHECK_MEMORY_BOUNDARIES
-	/** \brief Check
+	/** @brief Check
 	*/
 	void CheckMemoryBoundaries(struct SimpleMemoryElement* elt) const;
 #endif
@@ -385,9 +385,9 @@ bool MemoryList::Add( size_t SizeOfBlock )
 	return true;
 }
 
-	/** \brief Function to add an item at head of the list
-	 * \param Val [in] the item to add
-	 * \return false if a new cell has not been allocated
+	/** @brief Function to add an item at head of the list
+	 * @param Val [in] the item to add
+	 * @return false if a new cell has not been allocated
 	 */
 bool MemoryList::AddHead( size_t SizeOfBlock )
 {
@@ -416,9 +416,9 @@ bool MemoryList::AddHead( size_t SizeOfBlock )
 	return true;
 }
 
-	/** \brief Function to add an item at tail of the list
-	 * \param Val [in] the item to add
-	 * \return false if a new cell has not been allocated
+	/** @brief Function to add an item at tail of the list
+	 * @param Val [in] the item to add
+	 * @return false if a new cell has not been allocated
 	 */
 bool MemoryList::AddTail( size_t SizeOfBlock )
 {
@@ -618,7 +618,7 @@ void MemoryList::ReleaseSimpleListElement(struct SimpleMemoryElement* elt) const
 }
 
 #ifdef CHECK_MEMORY_BOUNDARIES
-/** \brief Check
+/** @brief Check
 */
 void MemoryList::CheckMemoryBoundaries(struct SimpleMemoryElement* elt) const
 {
@@ -627,18 +627,18 @@ void MemoryList::CheckMemoryBoundaries(struct SimpleMemoryElement* elt) const
 	char * DataBeforeBlock;
 	char * DataAfterBlock;
 
-	// Chack data before 
+	// Chack data before
 	DataBeforeBlock = ((char*)elt->Where) - strlen(BOUNDARY_CHECK_STRING);
 	if ( memcmp(DataBeforeBlock, BOUNDARY_CHECK_STRING, strlen(BOUNDARY_CHECK_STRING)) != 0 )
 	{
-		DataBeforeBlockAreSane = false; 
+		DataBeforeBlockAreSane = false;
 	}
 
 	// Check string after
 	DataAfterBlock = ((char*)elt->Where) + elt->Size - strlen(BOUNDARY_CHECK_STRING);
 	if ( memcmp(DataBeforeBlock, BOUNDARY_CHECK_STRING, strlen(BOUNDARY_CHECK_STRING)) != 0 )
 	{
-		DataAfterBlockAreSane = false; 
+		DataAfterBlockAreSane = false;
 	}
 
 	if ( DataBeforeBlockAreSane == false || DataAfterBlockAreSane == false )

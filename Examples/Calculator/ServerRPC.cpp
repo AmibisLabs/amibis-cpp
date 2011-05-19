@@ -8,17 +8,17 @@ void Calculator::Add(const StructuredParameters& Param, StructuredResult& Result
 {
   int n = Param.GetNumberOfParameters();
   if( n == 2 ) {
-    json_spirit::Value v1, v2;
-    Param.GetParameter(0, v1);
-    Param.GetParameter(1, v2);
+	json_spirit::Value v1, v2;
+	Param.GetParameter(0, v1);
+	Param.GetParameter(1, v2);
 
-    if( v1.type() == v2.type() && v1.type() == json_spirit::int_type ) {
-      Result.SetResult( v1.get_int() + v2.get_int() );
-      return;
-    } else if( v1.type() == v2.type() && v1.type() == json_spirit::real_type ) {
-      Result.SetResult( v1.get_real() + v2.get_real() );
-      return;
-    }
+	if( v1.type() == v2.type() && v1.type() == json_spirit::int_type ) {
+	  Result.SetResult( v1.get_int() + v2.get_int() );
+	  return;
+	} else if( v1.type() == v2.type() && v1.type() == json_spirit::real_type ) {
+	  Result.SetResult( v1.get_real() + v2.get_real() );
+	  return;
+	}
   }
 
   // else it is an error
@@ -29,17 +29,17 @@ void Calculator::Multiply(const StructuredParameters& Param, StructuredResult& R
 {
   int n = Param.GetNumberOfParameters();
   if( n == 2 ) {
-    json_spirit::Value v1, v2;
-    Param.GetParameter(0, v1);
-    Param.GetParameter(1, v2);
+	json_spirit::Value v1, v2;
+	Param.GetParameter(0, v1);
+	Param.GetParameter(1, v2);
 
-    if( v1.type() == v2.type() && v1.type() == json_spirit::int_type ) {
-      Result.SetResult( v1.get_int() * v2.get_int() );
-      return;
-    } else if( v1.type() == v2.type() && v1.type() == json_spirit::real_type ) {
-      Result.SetResult( v1.get_real() * v2.get_real() );
-      return;
-    }
+	if( v1.type() == v2.type() && v1.type() == json_spirit::int_type ) {
+	  Result.SetResult( v1.get_int() * v2.get_int() );
+	  return;
+	} else if( v1.type() == v2.type() && v1.type() == json_spirit::real_type ) {
+	  Result.SetResult( v1.get_real() * v2.get_real() );
+	  return;
+	}
   }
 
   // else it is an error

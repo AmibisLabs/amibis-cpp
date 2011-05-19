@@ -30,7 +30,7 @@ public:
 	AtomicCounter(int init_value = 0);
 
 	/** @brief Copy constructor
-	 *  @param ToCopy [in] The AtomicCounter to copy 
+	 *  @param ToCopy [in] The AtomicCounter to copy
 	 */
 	AtomicCounter(const AtomicCounter& ToCopy);
 
@@ -52,7 +52,7 @@ public:
 	int operator++();
 
 	/** @brief Equal operator
-	 *  @param ToCopy [in] The AtomicCounter to copy 
+	 *  @param ToCopy [in] The AtomicCounter to copy
 	 */
 	const AtomicCounter& operator=(const AtomicCounter& ToCopy);
 

@@ -20,35 +20,35 @@ class Vec2
 public:
   double x;
   double y;
-  
-  Vec2(double x, double y) : x(x), y(y) {} 
+
+  Vec2(double x, double y) : x(x), y(y) {}
   Vec2() : x(0.), y(0.) {}
   Vec2( const Vec2 & v ) : x(v.x), y(v.y) {}
 
   Vec2 & operator=(const Vec2 &v)
-    {
-      x = v.x;
-      y = v.y;
-      return *this;
-    }
+	{
+	  x = v.x;
+	  y = v.y;
+	  return *this;
+	}
   Vec2& operator+=(const Vec2 &v)
-    {
-      x+=v.x;
-      y+=v.y;
-      return *this;
-    }
+	{
+	  x+=v.x;
+	  y+=v.y;
+	  return *this;
+	}
 
   void Save(Omiscid::Messaging::StructuredMessage& msg) const
-    {
-      msg.Put("x", x);
-      msg.Put("y", y);      
-    }
+	{
+	  msg.Put("x", x);
+	  msg.Put("y", y);
+	}
 
   void Load(Omiscid::Messaging::StructuredMessage& msg)
-    {
-      msg.Get("x", x);
-      msg.Get("y", y);      
-    }
+	{
+	  msg.Get("x", x);
+	  msg.Get("y", y);
+	}
 };
 
 /**
@@ -87,7 +87,7 @@ public:
   void Nop2( int a, int b);
 
   float Sum( std::vector<float> vals);
-  
+
   Vec2 Add2( Vec2 v1, Vec2 v2);
 };
 
