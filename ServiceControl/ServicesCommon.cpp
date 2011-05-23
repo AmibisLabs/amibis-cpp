@@ -43,7 +43,7 @@ const SimpleString CommonServiceValues::GetOmiscidServiceDnsSdType()
 		if ( Option == NULL || DefaultDomain == Option )
 		{
 			OmiscidServiceDnsSdType = DefaultDomain;
-			OmiscidTrace( "OMISCID_WORKING_DOMAIN not override. Use '%s'.\n", DefaultDomain.GetStr() );
+			OmiscidTrace( "OMiSCID working domain not override. Use '%s'.\n", DefaultDomain.GetStr() );
 			return OmiscidServiceDnsSdType;
 		}
 
@@ -53,19 +53,36 @@ const SimpleString CommonServiceValues::GetOmiscidServiceDnsSdType()
 
 		if ( size >= RegtypeLength )
 		{
+			SimpleString Msg = "OMiSCID working domain '";
+			Msg += Option;
+			Msg += "' too long (";
+			Msg += (RegtypeLength-1);
+			Msg += ")";
+
+			// Set default domain in cas of exception catch 
 			OmiscidServiceDnsSdType = DefaultDomain;
-			fprintf( stderr, "OMISCID_WORKING_DOMAIN too long (%d max). Use '%s' instead.\n", RegtypeLength-1, DefaultDomain.GetStr() );
-			return OmiscidServiceDnsSdType;
+			
+			OmiscidError( Msg.GetStr() );
+			throw SimpleException( Msg );
 		}
 
-		if ( sscanf( Option, "_bip_%[^.]._tcp", (char*)tmpdomain) != 1 )
+		if ( sscanf( Option, "_bip_%[^.]._tcp", (char*)tmpdomain) == 1 )
 		{
+			// Set default domain in cas of exception catch 
 			OmiscidServiceDnsSdType = DefaultDomain;
-			OmiscidError( "OMISCID_WORKING_DOMAIN do not look like '_bip_XXX._tcp'. Use '%s' instead.\n", DefaultDomain.GetStr() );
+			
+			OmiscidError( "Old style OMiSCID working domain, please conform to new 'XXX._bip._tcp' pattern" );
+			throw SimpleException( "Old style OMiSCID working domain, please conform to new 'XXX._bip._tcp' pattern" );
+		}
+
+		if ( sscanf( Option, "%[^.]._bip._tcp", (char*)tmpdomain) == 1 )
+		{
+			OmiscidServiceDnsSdType = Option;
+			OmiscidTrace( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
 			return OmiscidServiceDnsSdType;
 		}
 
-		// OmiscidServiceDnsSdType = DefaultDomain;
+		// OMiSCID Domain simplest way to define it
 		OmiscidServiceDnsSdType = Option;
 		OmiscidTrace( "OMISCID_WORKING_DOMAIN defined in environment variable. Use '%s'.\n", OmiscidServiceDnsSdType.GetStr() );
 	}

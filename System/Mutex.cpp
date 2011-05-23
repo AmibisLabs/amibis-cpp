@@ -1,8 +1,3 @@
-// Mutex.cpp: implementation of the CMutex class.
-//
-//////////////////////////////////////////////////////////////////////
-
-
 #include <System/Mutex.h>
 #include <System/SimpleException.h>
 #include <System/Thread.h>
@@ -98,3 +93,4 @@ bool Mutex::Unlock()
 
 	return true;
 }
+

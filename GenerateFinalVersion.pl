@@ -168,7 +168,7 @@ while( defined $ARGV[$PosArgv] )
 	die "Wrong parameter\n";
 }
 
-@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile', 'TESTS', 'Omiscid-config.scons.in', 'Omiscid.h' );
+@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile', 'TESTS', 'Omiscid-config.in.scons', 'Omiscid.h' );
 $Version = "1.0.0";
 
 $CurrentPath = cwd;
@@ -190,6 +190,7 @@ if ( !-e './CreateFinalVersion' )
 	mkdir './CreateFinalVersion', 0755;
 }
 chdir('./CreateFinalVersion');
+`rm -rf OMiSCID`;
 
 if ( -e 'LastVersion.info' )
 {
@@ -300,30 +301,20 @@ foreach $file ( @UsualFiles )
 $command .= " OMiSCID";
 system( $command );
 
+# remove unneeded files
+`rm -rf Examples/Calculator Examples/StructuredMessage`;
+
 chdir( $CurrentPath );
-`perl RecursiveDos2Unix.pl ./CreateFinalVersion/OMiSCID -exclude=Doc`;
+$command = "perl RecursiveDos2Unix.pl ./CreateFinalVersion/OMiSCID -exclude=Doc ";
+foreach $file ( @UsualFiles )
+{
+	$command .= "./CreateFinalVersion/OMiSCID/$file ";
+}
+system( $command );
 
 chdir( './CreateFinalVersion/OMiSCID' );
 
-# generate testing archive
-&RecurseWork::RecurseWork("System/");
-&RecurseWork::RecurseWork("Com/");
-&RecurseWork::RecurseWork("ServiceControl/");
-&RecurseWork::RecurseWork("Messaging/");
-&RecurseWork::RecurseWork("Json/");
-&RecurseWork::RecurseWork("Examples/");
-&RecurseWork::RecurseWork("Test/");
-
-$command = "zip -9 ../$VersionFile ";
-foreach $file ( @UsualFiles )
-{
-	$command .= "$file ";
-}
-foreach $file ( keys %FilesToAdd )
-{
-	$command .= "$file ";
-}
-
+$command = "zip -9 -r ../$VersionFile OMiSCID";
 # print $command
 
 system( $command );
@@ -630,40 +621,14 @@ if ( $DoDoc == 1 )
 	`doxygen`;
 }
 
-# generate testing archive
-&RecurseWork::RecurseWork("System/");
-&RecurseWork::RecurseWork("Com/");
-&RecurseWork::RecurseWork("ServiceControl/");
-&RecurseWork::RecurseWork("Messaging/");
-&RecurseWork::RecurseWork("Json/");
-&RecurseWork::RecurseWork("Examples/");
-if ( $DoDoc == 1 )
-{
-	&RecurseWork::RecurseWork("Doc/");
-}
-
 print STDERR "Remove BipService.cpp & TimeoutProg.cpp from list\n";
-undef($FilesToAdd{'Examples/BipService.cpp'});
-undef($FilesToAdd{'Examples/TimeoutProg.cpp'});
+`rm -f Examples/BipService.cpp Examples/TimeoutProg.cpp`;
 
-$command = "zip -9 ../$VersionFile ";
-foreach $file ( @UsualFiles )
-{
-	$command .= "$file ";
-}
-foreach $file ( keys %FilesToAdd )
-{
-	if ( $FilesToAdd{$file} == 0 )
-	{
-		next;
-	}
-	$command .= "$file ";
-}
+chdir( '..' );
+$command = "zip -9 -r $VersionFile OMiSCID";
 
 # print $command;
 system( $command );
-
-chdir( '..' );
 
 $VersionFile =~ s/\.zip/\.tgz/;
 `rm -rf $VersionFile`;

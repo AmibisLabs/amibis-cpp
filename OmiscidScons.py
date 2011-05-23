@@ -162,10 +162,10 @@ def OmiscidDotInFileTarget(env, target, mapping):
 	output = []
 	if len(replacements) == 0:
 		# OmiscidMessage( "cat $SOURCE > $TARGET && chmod 755 $TARGET" )
-		output += env.Command(target,target+".scons.in","cat $SOURCE > $TARGET && chmod 755 $TARGET")
+		output += env.Command(target,target+".in.scons","cat $SOURCE > $TARGET && chmod 755 $TARGET")
 	else:
 		# OmiscidMessage( "sed %s $SOURCE > $TARGET && chmod 755 $TARGET" % replacements )
-		output += env.Command(target,target+".scons.in","sed %s $SOURCE > $TARGET && chmod 755 $TARGET" % replacements)
+		output += env.Command(target,target+".in.scons","sed %s $SOURCE > $TARGET && chmod 755 $TARGET" % replacements)
 	return output
 
 ##############################################

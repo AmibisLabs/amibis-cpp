@@ -82,3 +82,4 @@ void OmiscidSystemLayerInit()
 // object for initialisation. We use also OmiscidSystemLayerInit()
 // for uniformity
 static OmiscidSystemLayerInitClass OmiscidSystemLayerInitObject;
+

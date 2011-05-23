@@ -59,3 +59,4 @@ bool MultipleReferencedData::IsStillUseful() const
 	SmartLocker SL_Myself(*this);
 	return InternalIsStillUseful();
 }
+

@@ -147,3 +147,4 @@ SimpleString Omiscid::GetLoggedUser()
 
 	return Login;
 }
+

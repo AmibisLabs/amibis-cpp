@@ -1,8 +1,3 @@
-// Mutex.cpp: implementation of the CMutex class.
-//
-//////////////////////////////////////////////////////////////////////
-
-
 #include <System/ReentrantMutex.h>
 #include <System/SimpleException.h>
 #include <System/SimpleList.h>
@@ -30,7 +25,7 @@ ReentrantMutex::ReentrantMutex()
 	}
 #endif
 #ifdef DEBUG
-	OwnerIds = new SimpleList<unsigned int>;
+	OwnerIds = new OMISCID_TLM SimpleList<unsigned int>;
 	PreviousOwnerId = 0xffffffff;
 #endif
 }

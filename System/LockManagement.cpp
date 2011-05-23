@@ -85,3 +85,4 @@ bool SmartLocker::Unlock()
 	}
 	return false;
 }
+

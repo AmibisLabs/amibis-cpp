@@ -12,11 +12,11 @@ sub Reformat()
 	open( $fd, "<$FileName" ) or die "Could not open '$FileName'\n";
 	while( $ligne = <$fd> )
 	{
-		$ligne =~ s/[\r\n\s]+$//g;
 		while( $ligne =~ /^(($ReplaceBy)*)($ToReplace)(.*)$/ )
 		{
 			$ligne = $1 . $ReplaceBy . $4;
 		}
+		$ligne =~ s/[\r\n\s]+$//g;
 		$contenu .= $ligne . '_#_#_#_#_';
 	}
 	close( $fd );
@@ -33,7 +33,14 @@ sub Reformat()
 	
 	open( $fd, ">$FileName" ) or die "Could not write to '$FileName'\n";
 	print $fd $contenu;
-	print $fd "\n";
+	if ( $ReverseMode == 0 )
+	{
+		print $fd "\n";
+	}
+	else
+	{
+		print $fd "\r\n";
+	}
 	close( $fd );
 }
 
@@ -42,7 +49,7 @@ sub WorkOnFile()
  	my $FileName = shift @_;
  	my $UserData = shift @_;
 
-	if ( $FileName =~ /\.(cpp|h|txt|xml|xsd)$/ )
+	if ( $FileName =~ /\.(cpp|h|txt|xml|xsd|in\.scons)$/ )
 	{
 		&Reformat($FileName);
 	}
@@ -81,7 +88,7 @@ $ToReplace = "\t";
 $ReplaceBy = '        ';
 $ReverseMode = 0;
 
-$FolderToWorkOn = '';
+@FolderToWorkOn = ();
 
 $ParamPos = 0;
 while ( defined $ARGV[$ParamPos] )
@@ -101,17 +108,19 @@ while ( defined $ARGV[$ParamPos] )
 		$ParamPos++;
 		next;
 	}	
-	if ( $FolderToWorkOn ne '' )
-	{
-		die "Bad parameter : folder already defined.\n";
-	}
-	$FolderToWorkOn = $ARGV[$ParamPos];
+	push @FoldersToWorkOn, $ARGV[$ParamPos];
 	$ParamPos++;
 }
 
-if ( $FolderToWorkOn eq '' )
+foreach $item ( @FoldersToWorkOn )
 {
-	die "Missing parameter : working folder not defined.\n";
+	
+	if ( -d $item )
+	{
+		&RecurseWork::RecurseWork($item,'');
+	}
+	else
+	{
+		&WorkOnFile( $item );
+	}
 }
-
-&RecurseWork::RecurseWork($FolderToWorkOn,'');

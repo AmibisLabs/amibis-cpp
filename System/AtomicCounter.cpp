@@ -144,3 +144,4 @@ int AtomicCounter::operator=(int value)
 
 	return value;
 }
+

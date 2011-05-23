@@ -3,8 +3,8 @@
  * @ingroup Example/Calculator
  * @brief Definition of the server RPC methods
  */
-#ifndef __SERVER_RPC__
-#define __SERVER_RPC__
+#ifndef __SERVER_RPC_H__
+#define __SERVER_RPC_H__
 
 // Standard includes
 #include <Messaging/Messaging.h>
@@ -91,4 +91,4 @@ public:
   Vec2 Add2( Vec2 v1, Vec2 v2);
 };
 
-#endif // __SERVER_RPC__
+#endif // __SERVER_RPC_H__

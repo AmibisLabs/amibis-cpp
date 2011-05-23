@@ -57,3 +57,4 @@ unsigned int ElapsedTime::Get(bool DoReset /* = false */)
 
 	return CurrentElapsedTime;
 }
+

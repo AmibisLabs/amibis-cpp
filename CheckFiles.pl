@@ -12,20 +12,60 @@ sub EnterDirectory()
  	# print "$DirName ok\n";
  	return 1;
 }
+
+sub AddEmptyLineAtEnd()
+{
+	my $FileName = shift @_;
+ 	my $fd;
+
+ 	open( $fd, ">>$FileName" ) or return @FileContent;
+	print $fd "\r\n";
+	close( $fd );
+}
+
+sub LoadFile()
+{
+	my $FileName = shift @_;
+	my $CurrentLine;
+ 	my @FileContent = ();
+ 	my $fd;
+ 		
+ 	open( $fd, "<$FileName" ) or return @FileContent;
+	while( $CurrentLine = <$fd> )
+	{
+		$CurrentLine =~ s/[\r\n]+$//;
+		push @FileContent, $CurrentLine;
+	}
+	close( $fd );
+	
+	return @FileContent;
+}
+
+sub LogCurrentFileVersion()
+{
+	my $CurrentLine;
+	my $CurrentLineNumber = 0;
+ 	my $FileToPrintContent = shift @_;
+ 	
+ 	foreach $CurrentLine ( @$FileToPrintContent )
+ 	{
+ 		$CurrentLineNumber++;
+ 		print $CurrentLineNumber . ': ' . $CurrentLine . "\n";
+ 	}
+	
+	return;
+}
+
 sub RemoveConstantStringFromFile()
 {
 	my $FileIn = shift @_;
-	my $CurrentLine;
- 	my $FileContent = '';
+	my $CurrentLineNumber;
 	
-	foreach $CurrentLine ( split(/\r\n/, $FileIn) )
+	for ( $CurrentLineNumber = 0; defined @$FileIn[$CurrentLineNumber]; $CurrentLineNumber++ )
 	{
-		while ( $CurrentLine =~ s/^([^\"]*\")([^\"]*)\"(.+[\r\n]*)$/$1$3/ ) {}
-	
-		$FileContent .= $CurrentLine;
+		@$FileIn[$CurrentLineNumber] =~ s/\\\"//g;
+		while ( @$FileIn[$CurrentLineNumber] =~ s/^\"([^\"]+)\"/\"\"/ ) {}
 	}
-	
-	return $FileContent;
 }
 
 sub RemoveCommentsFromFile()
@@ -36,12 +76,11 @@ sub RemoveCommentsFromFile()
  	my $StartOfLine;
  	my $EndOfLine;
  	my $LineProcessed;
- 	my $FileContent = '';
+ 	my $CurrentLineNumber;
 	
-	foreach $CurrentLine ( split(/\r\n/, $FileIn) )
+	for( $CurrentLineNumber = 0; defined @$FileIn[$CurrentLineNumber]; $CurrentLineNumber++ )
 	{
-		$CurrentLineNumber++;
-		$CurrentLine =~ s/[\r\n]+$//;
+		$CurrentLine = @$FileIn[$CurrentLineNumber];
 		
 		$LineProcessed = 0;
 		while( $LineProcessed == 0 )
@@ -49,14 +88,14 @@ sub RemoveCommentsFromFile()
 			if ( $Mode == 0 )
 			{
 				# "/*" ?
-				if ( $CurrentLine =~ /^(.*)\/\*(.*)$/ )
+				if ( @$FileIn[$CurrentLineNumber] =~ /^(.*)\/\*(.*)$/ )
 				{
 					$StartOfLine = $1;
 					$EndOfLine = $2;
 					
 					if ( $StartOfLine =~ /^(.*)\/\// )
 					{
-						$FileContent .= $1;
+						@$FileIn[$CurrentLineNumber] = $1;
 						$LineProcessed = 1;
 						next;
 					}
@@ -65,13 +104,12 @@ sub RemoveCommentsFromFile()
 					
 					# ok, we have /*, remove it and go on
 					$Mode = 1;
-					$FileContent .= $StartOfLine;
-					$CurrentLine = $EndOfLine;
+					@$FileIn[$CurrentLineNumber] = $StartOfLine;
 					next;
 				}
 				if ( $CurrentLine =~ /^(.*)\/\// )
 				{
-					$FileContent .= $1;
+					@$FileIn[$CurrentLineNumber] = $1;
 					$LineProcessed = 1;
 					
 					# die "'$FileContent'";
@@ -79,7 +117,6 @@ sub RemoveCommentsFromFile()
 				}
 				
 				# nothing special on this line
-				$FileContent .= $CurrentLine;
 				$LineProcessed = 1;
 				next;
 			}
@@ -87,39 +124,37 @@ sub RemoveCommentsFromFile()
 			{
 				# die "$CurrentLine";
 				# we are looking for "*/"
-				if ( $CurrentLine =~ /^(.*)\*\/(.*)$/ )
+				if (@$FileIn[$CurrentLineNumber] =~ /^(.*)\*\/(.*)$/ )
 				{
-					$CurrentLine = $2;
+					@$FileIn[$CurrentLineNumber] = $2;
 					$Mode = 0;
 					next; # go on on this line
 				}
 				else
 				{
 					# no "*/", skip this line
+					@$FileIn[$CurrentLineNumber] = '';
 					$LineProcessed = 1;
 					next;
 				}
 			}
 		}
-		
-		$FileContent .= "\r\n";
 	}
-	
-	return $FileContent;
 }
 
 sub CheckEmptyLineAtEnd()
 {
  	my $FileName = shift @_;
-	my $fd;
+	my @FileContent;
  	my $CurrentLine;
  	my $PreviousLineWasEndedByReturn;
  	
 	$PreviousLineWasEndedByReturn = 0;
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	
+	@FileContent = &LoadFile( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
-		if ( $CurrentLine =~ /[\r\n]+$/ )
+		if ( $CurrentLine eq '' )
 		{
 			$PreviousLineWasEndedByReturn = 1; 
 		}
@@ -128,11 +163,11 @@ sub CheckEmptyLineAtEnd()
 			$PreviousLineWasEndedByReturn = 0; 
 		}
 	}
-	close( $fd );
 	
 	if ( $PreviousLineWasEndedByReturn == 0 )
 	{
 		print "$FileName: you should add an empty line at end to be gcc compliant\n";
+		&AddEmptyLineAtEnd( $FileName );
 	}
 }
 
@@ -140,12 +175,26 @@ sub CheckIfDef()
 {
  	my $FileName = shift @_;
  	my $ShortFileName = shift @_;
-	my $fd;
+	my @FileContent;
  	my $CurrentLine;
+ 	my $LineNumber;
  	my $CurrentHeader;
  	my $EndFound;
  	my $ExpectedHeader;
  	my $Folder;
+ 	
+ 	my @ExcludedFiles = ( 'System/ConfigSystem.h', 'Com/ConfigCom.h', 'ServiceControl/ConfigServiceControl.h', 'System/TrackingMemoryLeaks.h', 'Examples/Calculator/' );
+ 	my $CurrentFile;
+ 	
+ 	foreach $CurrentFile ( @ExcludedFiles )
+ 	{
+ 		# '/' => '\/'
+ 		$CurrentFile =~ s/\//\\\//g;
+	 	if ( $FileName =~ /$CurrentFile$/ )
+	 	{
+	 		return;
+	 	}
+	}
  	
  	$FileName =~ /([^\/]+)\/[^\/]+$/;
  	$Folder = $1;
@@ -156,9 +205,12 @@ sub CheckIfDef()
  	$ExpectedHeader = '_' . $ExpectedHeader;
  	$ExpectedHeader =~ tr/a-z/A-Z/;
  	
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	@FileContent = &LoadFile ( $FileName );
+	
+	for( $LineNumber = 0; defined $FileContent[$LineNumber]; $LineNumber++ )
 	{
+		$CurrentLine = $FileContent[$LineNumber];
+		
 		if ( $CurrentLine =~ /^\#ifndef/ )
 		{
 			$CurrentLine =~ /^\#ifndef\s+(\w+)/;
@@ -169,7 +221,7 @@ sub CheckIfDef()
 			}
 			$Headers{$CurrentHeader}++;
 			$CurrentLine = <$fd>;
-			if ( !($CurrentLine =~ /^\#define\s+$CurrentHeader[\s\r\n]+$/) )
+			if ( !($CurrentLine =~ /^\#define\s+$CurrentHeader[\s\n]+$/) )
 			{
 				print "$FileName: bad #ifndef/#define sequence\n";
 			}
@@ -184,44 +236,50 @@ sub CheckIfDef()
 	
 	# look fot the end of include prevention
 	$EndFound = 0;
-	while( $CurrentLine = <$fd> )
+	for( ; defined $FileContent[$LineNumber]; $LineNumber++ )
 	{
-		if ( $CurrentLine =~ /^\#endif\s+\/\/\s+$CurrentHeader[\s\r\n]+$/ )
+		$CurrentLine = $FileContent[$LineNumber];
+				
+		if ( $CurrentLine =~ /^\#endif\s+\/\/\s+$CurrentHeader[\s]*$/ )
 		{
 			$EndFound = 1;
+			$LineNumber++;
 			last;
 		}
 	}
 	if ( $EndFound == 1 )
 	{
-		while( $CurrentLine = <$fd> )
+		for( ; defined $FileContent[$LineNumber]; $LineNumber++ )
 		{
-			if ( !($CurrentLine =~ /^[\s\r\n]+$/) )
+			$CurrentLine = $FileContent[$LineNumber];
+		
+			if ( !($CurrentLine =~ /^[\s\n]+$/) )
 			{
-				print "$FileName: something found after '#endif // $CurrentHeader'\n";
+				print "$FileName: something found ('$CurrentLine') after '#endif // $CurrentHeader'\n";
 			}
 		}
 	}
 	else
 	{
 		print "$FileName: '#endif // $CurrentHeader' not found\n";
+		&LogCurrentFileVersion ( \@FileContent );
+		die;
 	}
-	close( $fd );
 }
 
 
 sub FirstIncludeofHeaderFileisConfig()
 {
  	my $FileName = shift @_;
-	my $fd;
+	my @FileContent;
  	my $CurrentLine;
  	my $FirstIncludedFile;
  	my $Folder;
  
-  	my @ExcludedFiles = ( 'System/ConfigSystem.h', 'Com/ConfigCom.h', 'ServiceControl/ConfigServiceControl.h', 'System/TrackingMemoryLeaks.h' );
+  	my @ExcludedFiles = ( 'System/ConfigSystem.h', 'Com/ConfigCom.h', 'ServiceControl/ConfigServiceControl.h', 'ServiceControl/UserFriendlyAPI.h', 'System/TrackingMemoryLeaks.h' );
  	my $CurrentFile;
  	
- 	if ( $FileName =~ /^Examples\// )
+ 	if ( $FileName =~ /^(Examples|Json)\// )
  	{
  		return;
  	}
@@ -239,10 +297,10 @@ sub FirstIncludeofHeaderFileisConfig()
  	$FileName =~ /([^\/]+)\/[^\/]+$/;
  	$Folder = $1;
 
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
-		# $CurrentLine =~ s/[\r\n]+$//;
+		# $CurrentLine =~ s/[\n]+$//;
 		# print "##\n$CurrentLine\n##\n";
 		if ( $CurrentLine =~ /^\#include\s+\<([^\>]+)\>/ )
 		{
@@ -259,14 +317,12 @@ sub FirstIncludeofHeaderFileisConfig()
 			# print "no\n"
 		}
 	}
-	
-	close( $fd );
 }
 
 sub FirstIncludeofSourceFileisItsHeader()
 {
  	my $FileName = shift @_;
-	my $fd;
+	my $FileContent;
  	my $CurrentLine;
  	my $FirstIncludedFile;
  	my $ExpectedInclude;
@@ -289,10 +345,10 @@ sub FirstIncludeofSourceFileisItsHeader()
  	 	return;
  	 }
 
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
-		# $CurrentLine =~ s/[\r\n]+$//;
+		# $CurrentLine =~ s/[\n]+$//;
 		# print "##\n$CurrentLine\n##\n";
 		if ( $CurrentLine =~ /^\#include\s+\"([^\"]+)\"/ )
 		{
@@ -318,8 +374,6 @@ sub FirstIncludeofSourceFileisItsHeader()
 			# print "no\n"
 		}
 	}
-	
-	close( $fd );
 }
 
 @StdLibs = ( 'stdio.h', 'stdlib.h' );
@@ -327,7 +381,7 @@ sub FirstIncludeofSourceFileisItsHeader()
 sub FirstDoesNotIncludeStdLibs()
 {
  	my $FileName = shift @_;
-	my $fd;
+	my @FileContent;
  	my $CurrentLine;
  	my $lib;
  	
@@ -344,10 +398,10 @@ sub FirstDoesNotIncludeStdLibs()
 	 	}
 	}
  	
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
-		# $CurrentLine =~ s/[\r\n]+$//;
+		# $CurrentLine =~ s/[\n]+$//;
 		# print "##\n$CurrentLine\n##\n";
 		foreach $lib ( @StdLibs )
 		{
@@ -361,23 +415,21 @@ sub FirstDoesNotIncludeStdLibs()
 			}
 		}
 	}
-	
-	close( $fd );
 }
 
 sub FilesShouldContainOnlyOneClassDeclaration()
 {
  	my $FileName = shift @_;
 	my $ClassCount = 0;
- 	my $fd;
+ 	my @FileContent;
  	
  	if ( $FileName =~ /System\/Config.h$/ )
  	{
  		return;
  	}
  	
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
 		if ( $CurrentLine =~ /^class\s+/ || $CurrentLine =~ /\s+class\s+/ )
 		{
@@ -390,8 +442,6 @@ sub FilesShouldContainOnlyOneClassDeclaration()
 		}
 	}
 	
-	close( $fd );
-	
 	if ( $ClassCount > 1 )
 	{
 		print "$FileName: check if there are not more than 1 class definition.\n";
@@ -403,37 +453,36 @@ sub GenerateIncludeGraph()
  	my $FileName = shift @_;
   	my $ShortFileName = shift @_;
   	my $CurrentLine;
- 	my $fd;
+ 	my @FileContent;
 	
  	if ( $FileName =~ /System\/Config.h$/ )
  	{
  		return;
  	}
  	
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
 		if ( $CurrentLine =~ /^\#include\s+\<([^\>]+)\>/ )
 		{
 			$IncludeGraphe{$ShortFileName} .= "$1;";
 		}
 	}
-	
-	close( $fd );
 }
 
 sub ConstantStringCount()
 {
  	my $FileName = shift @_;
-	my $fd;
+	my @FileContent;
  	my $CurrentLine;
  	my $String;
  	
 	$PreviousLineWasEndedByReturn = 0;
-	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+	
+	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
-		while ( $CurrentLine =~ /^[^\"]*\"([^\"]*)\"(.+)[\r\n]*$/ )
+		while ( $CurrentLine =~ /^[^\"]*\"([^\"]*)\"(.+)[\n]*$/ )
 		{
 			$String = $1;
 			$CurrentLine = $2;
@@ -443,7 +492,6 @@ sub ConstantStringCount()
 			# print "\"$String\"\n";
 		}
 	}
-	close( $fd );
 }
 
 sub CheckExceptionConsistancy()
@@ -451,7 +499,7 @@ sub CheckExceptionConsistancy()
  	my $FileName = shift @_;
    	my $CurrentLine;
   	my $CurrentLineNumber = 0;
-  	my $fd;
+  	my @FileContent;
  	
    	my @ExcludedFiles = ( 'System/TrackingMemoryLeaks.h', 'System/TrackingMemoryLeaks.cpp' );
  	my $CurrentFile;
@@ -466,8 +514,8 @@ sub CheckExceptionConsistancy()
 	 	}
 	}	
 	
- 	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+ 	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
 		$CurrentLineNumber++;
 		
@@ -499,7 +547,6 @@ sub CheckExceptionConsistancy()
 		}
 		
 	}
-	close( $fd );
 }
 
 sub LockAndUnlockAreProtectedUsingSmartLocker()
@@ -507,9 +554,9 @@ sub LockAndUnlockAreProtectedUsingSmartLocker()
  	my $FileName = shift @_;
  	my $CurrentLine;
   	my $CurrentLineNumber = 0;
- 	my $fd;
+ 	my @FileContent;
  	  	
-  	my @ExcludedFiles = ( 'System/LockManagement.cpp', 'System/LockManagement.h', 'System/TrackingMemoryLeaks.cpp' );
+  	my @ExcludedFiles = ( 'System/LockManagement.cpp', 'System/LockManagement.h', 'System/TrackingMemoryLeaks.cpp', 'System/SimpleString.cpp' );
  	my $CurrentFile;
  	
  	foreach $CurrentFile ( @ExcludedFiles )
@@ -522,8 +569,8 @@ sub LockAndUnlockAreProtectedUsingSmartLocker()
 	 	}
 	}	
 	
- 	open( $fd, "<$FileName" ) or return;
-	while( $CurrentLine = <$fd> )
+ 	@FileContent = &LoadFile ( $FileName );
+	foreach $CurrentLine ( @FileContent )
 	{
 		$CurrentLineNumber++;
 		
@@ -542,30 +589,29 @@ sub LockAndUnlockAreProtectedUsingSmartLocker()
 			}
 		}
 	}
-	close( $fd );
 }
 
 sub CheckThatAll_new_CallsAreInstrumented()
 {
  	my $FileName = shift @_;
- 	my $FileContent;
+ 	my @FileContent;
  	my $CurrentLine;
   	my $CurrentLineNumber = 0;
   	my $fd;
   	
   	# load file
-  	open( $fd, "<$FileName" ) or return;
-  	
-  	$FileContent = '';
-  	while( $CurrentLine = <$fd> )
-  	{
-  		$FileContent .= $CurrentLine;
-  	}
+  	@FileContent = &LoadFile( $FileName );
   	
   	# Remove comments and Constant Strings
-  	$FileContent = &RemoveConstantStringFromFile(&RemoveCommentsFromFile($FileContent));
+  	&RemoveCommentsFromFile( \@FileContent );
+  	
+  	# &LogCurrentFileVersion( \ @FileContent );
+  	
+  	&RemoveConstantStringFromFile( \@FileContent );
   	  	
-	foreach $CurrentLine ( split(/\r\n/, $FileContent) )
+  	# &LogCurrentFileVersion( \ @FileContent );
+  	
+	foreach $CurrentLine ( @FileContent )
 	{
 		$CurrentLineNumber++;
 		
@@ -576,7 +622,8 @@ sub CheckThatAll_new_CallsAreInstrumented()
 			}
 			else
 			{
-				print "$FileName ($CurrentLineNumber): bad new Patern ?\n";
+				print "$FileName ($CurrentLineNumber:'$CurrentLine'): bad new Patern ?\n";
+				# print $FileContent;
 			}
 		}
 	}
@@ -587,7 +634,7 @@ sub ConvertFiles()
 {
  	my $FileName = shift @_;
 
-	`unix2dos $FileName`;
+	# `dos2unix $FileName`;
 }
 
 

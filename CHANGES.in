@@ -6,13 +6,14 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 	- Add support for serialization
 	- One Omiscid library now, no longer 3 libraries
 	- Use Omiscid-config instead of other Omiscid*-config.
+	You can invoke g++ `Omiscid-config --all` Prog.cpp -o Prog
 
 	[Bug corrections]
-	- correct bug in copy mecanism in SimpleList
+	- correct bug in copy constructor mecanism in SimpleList
 
 	[API]
 	- Add SerializeValue, Serializable, StructuredMessage
-	add SerializeException classes.
+	add SerializeException classes. See examples for details.
 
 1.6.0	2009-7-23
 	[Global modifications]

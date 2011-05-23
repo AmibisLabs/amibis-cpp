@@ -144,3 +144,4 @@ int AtomicReentrantCounter::operator=(int value)
 
 	return value;
 }
+

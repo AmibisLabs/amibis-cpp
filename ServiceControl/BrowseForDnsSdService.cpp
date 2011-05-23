@@ -27,7 +27,7 @@ using namespace Omiscid;
 
 void BrowseForDNSSDService::InitZeroconfSubsystem( bool FromConstructor )
 {
-#ifdef OMISCID_USE_MDNS
+#ifdef OMISCID_USE_MDNS 
 	// Nothing to do
 #else
 #ifdef OMISCID_USE_AVAHI

@@ -4,8 +4,8 @@
  * @brief Definition of the client
  */
 
-#ifndef __CLIENT__
-#define __CLIENT__
+#ifndef __CLIENT_H__
+#define __CLIENT_H__
 
 // Standard includes
 #include <ServiceControl/UserFriendlyAPI.h>
@@ -47,4 +47,4 @@ private:
   ServiceProxy* pServer;
 };
 
-#endif //__CLIENT__
+#endif //__CLIENT_H__

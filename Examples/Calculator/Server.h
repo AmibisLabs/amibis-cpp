@@ -3,8 +3,8 @@
  * @ingroup Example/Calculator
  * @brief Definition of the server
  */
-#ifndef __SERVER__
-#define __SERVER__
+#ifndef __SERVER_H__
+#define __SERVER_H__
 
 // Standard includes
 #include <ServiceControl/UserFriendlyAPI.h>
@@ -65,4 +65,4 @@ private:
   Service*        pServer;
 };
 
-#endif //__SERVER__
+#endif //__SERVER_H__

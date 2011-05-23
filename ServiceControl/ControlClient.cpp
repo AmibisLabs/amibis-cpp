@@ -970,7 +970,8 @@ void ControlClient::CtrlEventProcess(XMLMessage* msg)
 				{
 					va->SetValue((const char*)val_node->children->content);
 				}
-				va->Unlock();
+				// Variable was lock by FindVariable
+				va->Unlock(); // Add SL_ as comment in order to prevent false alarm in code checker on locks
 			}
 			else
 			{
