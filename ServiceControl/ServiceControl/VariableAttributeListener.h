@@ -49,3 +49,4 @@ private:
 } // namespace Omiscid
 
 #endif	// __VARIABLE_ATTRIBUTE_LISTENER_H__
+

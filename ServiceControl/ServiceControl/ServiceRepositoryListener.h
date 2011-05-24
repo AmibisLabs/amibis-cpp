@@ -56,3 +56,4 @@ protected:
 } // namespace Omiscid
 
 #endif  // __SERVICE_REPOSITORY_LISTENER_H__
+

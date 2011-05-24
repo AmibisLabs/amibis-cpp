@@ -245,3 +245,4 @@ int main( int argc, char*argv[] )
 }
 
 #endif // OMISCID_RUNING_TEST
+

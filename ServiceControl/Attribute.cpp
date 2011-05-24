@@ -75,3 +75,4 @@ void Attribute::GenerateHeaderDescription(const SimpleString& type,
 	//if(end) str = str + "\"/>";
 	//else  str = str + "\">";
 }
+

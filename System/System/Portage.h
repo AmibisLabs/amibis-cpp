@@ -48,3 +48,4 @@ SimpleString GetLocaHostName();
 } // namespace Omiscid
 
 #endif	// __PORTAGE_H__
+

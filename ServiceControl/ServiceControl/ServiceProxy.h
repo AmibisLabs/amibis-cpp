@@ -191,3 +191,4 @@ private:
 } // namespace Omiscid
 
 #endif  // __SERVICE_PROXY_H__
+

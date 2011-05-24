@@ -424,3 +424,4 @@ bool DnsSdProxy::WaitForChanges(unsigned int TimeToWait)
 
 	return Changes.Wait( TimeToWait );
 }
+

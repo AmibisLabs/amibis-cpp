@@ -237,3 +237,4 @@ private:
 } // namespace Omiscid
 
 #endif // __CONNECTOR_H__
+

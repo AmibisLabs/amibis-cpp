@@ -1132,3 +1132,4 @@ const SimpleString ControlServer::GetClass()
 	SmartLocker SL_AutoProtect(AutoProtect);
 	return ClassVariable->GetValue();
 }
+

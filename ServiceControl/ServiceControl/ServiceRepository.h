@@ -92,3 +92,4 @@ private:
 } // namespace Omiscid
 
 #endif  // __SERVICE_REPOSITORY_H__
+

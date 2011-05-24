@@ -20,3 +20,4 @@ extern const SimpleString ServiceXsdSchema;	// extern definition for service.xsd
 } // namespace Omiscid
 
 #endif // __XSD_SCHEMA_H__
+

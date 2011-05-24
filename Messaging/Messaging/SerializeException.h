@@ -8,7 +8,8 @@
 #ifndef __SERIALIZE_EXCEPTION_H__
 #define __SERIALIZE_EXCEPTION_H__
 
-#include <System/ConfigSystem.h>
+#include <Messaging/ConfigMessaging.h>
+
 #include <System/SimpleException.h>
 
 namespace Omiscid {
@@ -45,3 +46,4 @@ public:
 } // Omiscid
 
 #endif // __SERIALIZE_EXCEPTION_H__
+

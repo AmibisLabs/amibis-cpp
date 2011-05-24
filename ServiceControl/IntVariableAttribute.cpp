@@ -44,3 +44,4 @@ void IntVariableAttribute::Decr()
 {
 	SetValue(IntegerValue - 1);
 }
+

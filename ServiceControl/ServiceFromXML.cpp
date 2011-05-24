@@ -79,3 +79,4 @@ void ServiceFromXML::ProcessInOutputAttribute(xmlNodePtr node)
 	ioa->ExtractDataFromXml(node);
   }
 }
+

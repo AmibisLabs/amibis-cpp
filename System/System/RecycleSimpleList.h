@@ -175,3 +175,4 @@ bool MutexedSimpleRecycleList<TYPE>::Unlock()
 } // namespace Omiscid
 
 #endif // __RECYCLE_SIMPLE_LIST_H__
+

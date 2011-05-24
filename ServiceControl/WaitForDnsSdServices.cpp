@@ -360,3 +360,4 @@ bool SearchService::IsAvailable()
 {
 	return (IsResolved == false);
 }
+

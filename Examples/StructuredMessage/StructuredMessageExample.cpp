@@ -146,3 +146,4 @@ int main(int argc, char **argv)
   std::cout << msg2.Encode() << std::endl;
 
 }
+

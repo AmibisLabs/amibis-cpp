@@ -138,3 +138,4 @@ void OmiscidServiceControlLayerInit()
 }
 
 } // namespace Omiscid
+

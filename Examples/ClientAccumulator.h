@@ -56,3 +56,4 @@ public:
 #endif // OMISCID_RUNING_TEST
 
 #endif // __CLIENT_ACCUMULATOR_H__
+

@@ -753,3 +753,4 @@ bool RegisterService::Register(bool AutoRename /*= true */)
 
 	return Registered;
 }
+

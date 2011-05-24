@@ -115,3 +115,4 @@ SimpleString Message::ToString(unsigned int MaxBufferLenToWrite /* default = 20,
 
 	return TmpMessage;
 }
+

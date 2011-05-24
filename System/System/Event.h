@@ -60,3 +60,4 @@ private:
 } // namespace Omiscid
 
 #endif // __EVENT_H__
+

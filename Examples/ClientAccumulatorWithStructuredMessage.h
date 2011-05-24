@@ -6,8 +6,8 @@
  * @author Dominique Vaufreydaz
  */
 
-#ifndef __CLIENT_ACCUMULATOR_H__
-#define __CLIENT_ACCUMULATOR_H__
+#ifndef __CLIENT_ACCUMULATOR_WITH_STRUCTURED_MESSAGE_H__
+#define __CLIENT_ACCUMULATOR_WITH_STRUCTURED_MESSAGE_H__
 
 // Standard includes
 #include <ServiceControl/UserFriendlyAPI.h>
@@ -58,4 +58,5 @@ public:
 
 #endif // OMISCID_RUNING_TEST
 
-#endif // __CLIENT_ACCUMULATOR_H__
+#endif // __CLIENT_ACCUMULATOR_WITH_STRUCTURED_MESSAGE_H__
+

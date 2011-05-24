@@ -144,3 +144,4 @@ private:
 } // namespace Omiscid
 
 #endif // __MSG_MANAGER_H__
+

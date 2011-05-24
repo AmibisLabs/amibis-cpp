@@ -18,3 +18,4 @@ extern int DoRegisterSearchTest(int argc, char*argv[] );
 #endif // OMISCID_RUNING_TEST
 
 #endif // __REGISTER_SEARCH_TEST_H__
+

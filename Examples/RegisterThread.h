@@ -48,3 +48,4 @@ private:
 } // namespace Omiscid
 
 #endif // __REGISTER_THREAD_H__
+

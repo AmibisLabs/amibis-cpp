@@ -60,3 +60,4 @@ private:
 } // namespace Omiscid
 
 #endif // __STRING_VARIABLE_ATTRIBUTE_H__
+

@@ -54,3 +54,4 @@ public:
 } // namespace Omiscid
 
 #endif // __ACCUMULATOR_STRUCTURED_MESSAGE_H__
+

@@ -149,3 +149,4 @@ SimpleString ComTools::ValueFromKey(const SimpleString array, const SimpleString
 	 // We never come here
 	 // return SimpleString::EmptyString;
 }
+

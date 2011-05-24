@@ -47,4 +47,5 @@ private:
   ServiceProxy* pServer;
 };
 
-#endif //__CLIENT_H__
+#endif // __CLIENT_H__
+

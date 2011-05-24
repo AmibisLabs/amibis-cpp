@@ -349,3 +349,4 @@ bool Thread::GetMessage( ThreadMessage& MsgToSend )
 	MsgToSend = MsgQueue.ExtractFirst();
 	return true;
 }
+

@@ -462,3 +462,4 @@ public:
 } // namespace Omiscid
 
 #endif  // __SERVICE_H__
+

@@ -150,3 +150,4 @@ std::string json_spirit::write_formatted( const Value& value )
 
 	return os.str();
 }
+

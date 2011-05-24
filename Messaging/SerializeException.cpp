@@ -54,3 +54,4 @@ SimpleString SerializeException::GetExceptionType() const
 
 	return type;
 }
+

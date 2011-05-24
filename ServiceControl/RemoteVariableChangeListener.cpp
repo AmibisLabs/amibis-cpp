@@ -35,3 +35,4 @@ bool RemoteVariableChangeListener::IsValid( VariableAttribute * ChangedVariable,
 {
 	return true;
 }
+

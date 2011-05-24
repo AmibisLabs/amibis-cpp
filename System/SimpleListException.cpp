@@ -21,3 +21,4 @@ SimpleString SimpleListException::GetExceptionType() const
 {
 	return SimpleString( "SimpleListException" );
 }
+

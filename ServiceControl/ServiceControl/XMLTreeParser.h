@@ -215,3 +215,4 @@ class XMLTreeParser : public Thread, public MsgSocketCallbackObject
 } // namespace Omiscid
 
 #endif // __XMLTREE_PARSER_H__
+

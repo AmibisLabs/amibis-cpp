@@ -293,3 +293,4 @@ bool XMLTreeParser::HasMessages()
 {
 	return GetNbMessages() != 0;
 }
+

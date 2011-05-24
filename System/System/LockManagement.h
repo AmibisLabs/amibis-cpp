@@ -89,3 +89,4 @@ private:
 } // namespace Omiscid
 
 #endif // __LOCK_MANAGEMENT_H__
+

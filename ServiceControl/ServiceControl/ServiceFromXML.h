@@ -31,3 +31,4 @@ class ServiceFromXML : public ControlServer
 } // namespace Omiscid
 
 #endif // __SERVICE_FROM_XML_H__
+

@@ -167,3 +167,4 @@ bool Pair::operator==( const Pair& lhs ) const
 
 	return ( name_ == lhs.name_ ) && ( value_ == lhs.value_ );
 }
+

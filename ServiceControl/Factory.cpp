@@ -63,5 +63,6 @@ ServiceRepository * Factory::CreateServiceRepository()
 	OmiscidServiceControlLayerInit();
 
 	// For the moment, nothing actually difficult
-	return new ServiceRepository();
+	return new OMISCID_TLM ServiceRepository();
 }
+

@@ -36,3 +36,4 @@ public:
 } // namespace Omiscid
 
 #endif  // __SERVICE_PROXY_LIST_H__
+

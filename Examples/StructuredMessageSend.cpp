@@ -4,17 +4,15 @@
  */
 
  /**
- * @file Examples/Accumulator.cpp
+ * @file Examples/StructuredMessageSend.cpp
  * @ingroup Examples
- * @brief Demonstration of an accumulator server.
- *
+ * @brief Demonstration of a Strustured messages. You can also see Examples/ClientAccumulatorWithStrusturedMessage.cpp
+ * and AccumulatorWithStructuredMessage.cpp.
  * @author Dominique Vaufreydaz
  */
 
-// Standard includes
-#include "StructuredMessageSend.h"
-
-#include <System/LockManagement.h>
+// Standard complete includes
+#include <Omiscid.h>
 
 #include <iostream>
 using namespace std;
@@ -25,7 +23,7 @@ using namespace Omiscid;
 #include "TimeoutProg.h"
 
 /* @brief main program entry for the Accumulator. No need to give parameter */
-int Omiscid::DoAccumulatorTest( int argc, char*argv[] )
+int Omiscid::DoStructuredMessagesTest( int argc, char*argv[] )
 {
 	TimeoutProg ExitIn2Minutes;
 
@@ -37,13 +35,18 @@ int main( int argc, char*argv[] )
 
 #endif // OMISCID_RUNING_TEST
 
+	// Serialization of simple value, int in this case
 	int i = -12;
-	ClassIntToSerialize ObjectToSerialize;
 
-	// StructuredMessage SerializationOfObject3(i);
-	// fprintf( stderr, "%s\n", SerializationOfObject3.EncodeStructuredMessage().GetStr() );
+	// Create a structured message from an int and output it !
+	StructuredMessage SerializeMessageOfInt(i);
+	cerr << "Serialize of i (" << i << ") = " << SerializeMessageOfInt << endl;
+	// Another way to do it
+	i = 128;
+	SerializeMessageOfInt = Serialize(i);
+	cerr << "Serialize of i (" << i << ") = " << SerializeMessageOfInt << endl;
 
-
+#if 0
 	StructuredMessage SerializationOfObject = ObjectToSerialize.Serialize();
 
 	fprintf( stderr, "%s\n", ((SimpleString)SerializationOfObject).GetStr() );
@@ -73,8 +76,13 @@ int main( int argc, char*argv[] )
 		fprintf( stderr, "%d\n", My_int_List.GetCurrent() );
 	}
 
+#endif
+
+#ifndef OMISCID_RUNING_TEST
 	Event ForEver;
 	ForEver.Wait();
+#endif
 
 	return 0;
 }
+

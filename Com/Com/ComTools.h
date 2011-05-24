@@ -90,3 +90,4 @@ class ComTools
 } // namespace Omiscid
 
 #endif // __COM_TOOLS_H__
+

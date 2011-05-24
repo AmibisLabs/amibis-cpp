@@ -22,3 +22,4 @@ void * VariableAttributeListener::GetUserData() const
 {
 	return UserData;
 }
+

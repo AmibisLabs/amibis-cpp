@@ -1033,3 +1033,4 @@ int SimpleString::TestFunction()
 #ifdef WIN32
 	#undef snprintf
 #endif
+

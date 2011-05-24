@@ -70,3 +70,4 @@ SimpleString SocketException::GetExceptionType() const
 {
 	return SimpleString( "SocketException" );
 }
+

@@ -139,3 +139,4 @@ size_t TemporaryMemoryBuffer::GetLength() const
 {
 	return LogicalBufferSize;
 }
+

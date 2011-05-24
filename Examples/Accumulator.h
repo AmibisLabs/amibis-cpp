@@ -54,3 +54,4 @@ extern int DoAccumulatorTest(int argc, char*argv[] );
 } // namespace Omiscid
 
 #endif // __ACCUMULATOR_H__
+

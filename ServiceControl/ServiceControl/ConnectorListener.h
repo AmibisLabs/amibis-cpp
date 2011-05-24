@@ -104,3 +104,4 @@ private:
 } // namespace Omiscid
 
 #endif	// __CONNECTOR_LISTENER_H__
+

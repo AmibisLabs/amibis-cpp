@@ -94,3 +94,4 @@ class TcpClient : public MsgSocket, public ComTools
 } // namespace Omiscid
 
 #endif // __TCP_CLIENT_H__
+

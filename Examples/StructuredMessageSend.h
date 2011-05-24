@@ -76,3 +76,4 @@ extern int DoStructuredMessageTest(int argc, char*argv[] );
 } // namespace Omiscid
 
 #endif // __STRUCTURED_MESSAGE_SEND_H__
+

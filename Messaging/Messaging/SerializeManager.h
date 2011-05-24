@@ -1,6 +1,8 @@
 #ifndef __SERIALIZE_MANAGER_H__
 #define __SERIALIZE_MANAGER_H__
 
+#include <Messaging/ConfigMessaging.h>
+
 #include <System/SimpleString.h>
 #include <Json/json_spirit.h>
 
@@ -33,3 +35,4 @@ inline bool same_name( const json_spirit::Pair& pair, const Omiscid::SimpleStrin
 } // Omiscid
 
 #endif // __SERIALIZE_MANAGER_H__
+

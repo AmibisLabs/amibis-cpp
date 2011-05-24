@@ -103,3 +103,4 @@ const SimpleString CommonServiceValues::NameForPeerIdString( "peerId" );
 void CommonServiceValues::InitFromLayer()
 {
 }
+

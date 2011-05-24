@@ -1,6 +1,8 @@
 #ifndef __SERIALIZE_VALUE_H__
 #define __SERIALIZE_VALUE_H__
 
+#include <Messaging/ConfigMessaging.h>
+
 #include <Messaging/SerializeException.h>
 #include <Messaging/SerializeManager.h>
 
@@ -380,3 +382,4 @@ public:
 } // Omiscid
 
 #endif // __SERIALIZE_VALUE_H__
+

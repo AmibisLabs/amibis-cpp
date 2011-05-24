@@ -816,3 +816,4 @@ InOutputAttribute * ServiceProxy::FindConnector( SimpleString ConnectortName )
 	OmiscidError( "Connector '%s' not found\n", ConnectortName.GetStr() );
 	return NULL;
 }
+

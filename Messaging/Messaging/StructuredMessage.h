@@ -15,12 +15,16 @@
 #pragma warning(disable: 4521)
 #endif
 
+#include <Messaging/ConfigMessaging.h>
+
 #include <System/SimpleString.h>
+
+#include <Com/Message.h>
 
 #include <Messaging/SerializeValue.h>
 #include <Messaging/SerializeException.h>
+#include <Messaging/Serializable.h>
 
-#include <Com/Message.h>
 
 namespace Omiscid {
 
@@ -38,6 +42,56 @@ public:
  /** @brief Constructor
   */
   StructuredMessage( const SerializeValue& SerValue );
+
+ /** @brief Constructor
+  */
+  StructuredMessage( const int Val )
+  {
+	  Serializer = Serialize( Val );
+  };
+
+ /** @brief Constructor
+  */
+  StructuredMessage( const unsigned int Val )
+  {
+	  throw SerializeException("unsigned int not supported, please send as a string", SerializeException::IllegalTypeConversion );
+  }
+
+ /** @brief Constructor
+  */
+  StructuredMessage( const bool Val )
+  {
+	  Serializer = Serialize( Val );
+  };
+
+ /** @brief Constructor
+  */
+  StructuredMessage( const double Val )
+  {
+	  Serializer = Serialize( Val );
+  };
+
+ /** @brief Constructor
+  */
+  StructuredMessage( const float Val )
+  {
+	  Serializer = Serialize( Val );
+  };
+
+ /** @brief Constructor
+  */
+  StructuredMessage( char * Val )
+  {
+	  Serializer = Serialize( Val );
+  };
+  
+  /** @brief Constructor
+  */
+  StructuredMessage( const char * Val )
+  {
+	  Serializer = Serialize( (char*)Val );
+  };
+
  /** @brief Constructor
   */
   StructuredMessage( SerializeValue& SerValue );
@@ -132,4 +186,5 @@ protected:
 
 } // Omiscid
 
-#endif //__STRUCTURED_MESSAGE_H__
+#endif // __STRUCTURED_MESSAGE_H__
+

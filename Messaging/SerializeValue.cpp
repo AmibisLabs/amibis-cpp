@@ -419,3 +419,4 @@ bool SerializeValue::IsAnArray() const
 	{
 		*(static_cast<char**>(pTmpData)) = UnserializeCharStar( Val );
 	}
+

@@ -1139,3 +1139,4 @@ void init_JSON_config(JSON_config* config)
 		config->depth = JSON_PARSER_STACK_SIZE - 1;
 	}
 }
+

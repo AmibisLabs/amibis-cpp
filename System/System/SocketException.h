@@ -45,3 +45,4 @@ protected:
 } // namespace Omiscid
 
 #endif // __SOCKET_EXCEPTION_H__
+

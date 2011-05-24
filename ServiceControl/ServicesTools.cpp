@@ -49,3 +49,4 @@ WaitForOmiscidServices::~WaitForOmiscidServices(void)
 RegisterOmiscidService::~RegisterOmiscidService()
 {
 }
+

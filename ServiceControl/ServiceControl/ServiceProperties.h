@@ -205,3 +205,4 @@ protected:
 } // namespace Omiscid
 
 #endif // __SERVICE_PROPERTIES_H__
+

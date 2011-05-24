@@ -36,3 +36,4 @@ SimpleString SimpleException::GetExceptionType() const
 {
 	return SimpleString("SimpleException");
 }
+

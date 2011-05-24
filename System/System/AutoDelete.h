@@ -199,3 +199,4 @@ bool AutoDelete<TYPE>::operator!=(const AutoDelete<TYPE>& ToCompare)
 } // namespace Omiscid
 
 #endif // __AUTO_DELETE_H__
+

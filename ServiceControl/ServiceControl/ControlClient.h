@@ -402,3 +402,4 @@ protected:
 } // namespace Omiscid
 
 #endif // __CONTROL_CLIENT_H__
+

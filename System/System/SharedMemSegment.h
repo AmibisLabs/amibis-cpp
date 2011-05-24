@@ -79,3 +79,4 @@ protected:
 } // namespace Omiscid
 
 #endif // __SHARED_MEM_SEGMENT_H__
+

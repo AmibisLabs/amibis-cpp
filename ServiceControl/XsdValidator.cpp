@@ -178,3 +178,4 @@ bool XsdValidator::ValidateDoc( xmlDocPtr Doc )
 
 	return true;
 }
+

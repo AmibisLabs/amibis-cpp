@@ -79,3 +79,4 @@ private:
 } // namespace Omiscid
 
 #endif // __MUTEX_H__
+

@@ -170,3 +170,4 @@ ServiceFilter * Not(ServiceProxy& SP);
 } // namespace Omiscid
 
 #endif  // __SERVICE_FILTER_H__
+

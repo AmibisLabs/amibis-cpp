@@ -43,3 +43,4 @@ private:
 } // namespace Omiscid
 
 #endif // __ELAPSED_TIME_H__
+

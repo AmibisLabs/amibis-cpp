@@ -57,3 +57,4 @@ public:
 } // namespace Omiscid
 
 #endif // __SERVICES_TOOLS_H__
+

@@ -273,3 +273,4 @@ const SimpleString Omiscid::ServiceXsdSchema = ""
 "	<element name=\"inoutput\" type=\"omiscid:inoutputConnector\"></element>\n"
 "</schema>\n"
 ;
+

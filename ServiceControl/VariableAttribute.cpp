@@ -383,3 +383,4 @@ unsigned int VariableAttribute::GetNumberOfListeners()
 
 	return ret;
 }
+

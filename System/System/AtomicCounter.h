@@ -109,3 +109,4 @@ private:
 } // namespace Omiscid
 
 #endif // __ATOMIC_COUNTER_H__
+

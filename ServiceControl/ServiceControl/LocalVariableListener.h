@@ -60,3 +60,4 @@ private:
 } // namespace Omiscid
 
 #endif	// __LOCAL_VARIABLE_LISTENER_H__
+

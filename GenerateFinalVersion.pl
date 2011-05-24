@@ -640,4 +640,5 @@ if ( $DoPackage == 1 )
 	`perl MakeAllPackages.pl`;
 }
 
-print STDERR "=> done.\n";
+$VersionFile =~ s/\.tgz$//;
+print STDERR "=> done $VersionFile.\n";

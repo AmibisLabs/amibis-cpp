@@ -56,3 +56,4 @@ extern int DoAccumulatorWithStructuredMessageTest(int argc, char*argv[] );
 } // namespace Omiscid
 
 #endif // __ACCUMULATOR_WITH_STRUCTURED_MESSAGE_H__
+

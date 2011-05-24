@@ -41,3 +41,4 @@ public:
 } // namespace Omiscid
 
 #endif // __MSG_SOCKET_EXCEPTION_H__
+

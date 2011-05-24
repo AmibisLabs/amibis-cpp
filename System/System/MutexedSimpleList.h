@@ -244,3 +244,4 @@ bool MutexedSimpleList<TYPE>::Unlock()
 } // namespace Omiscid
 
 #endif // __MUTEXED_SIMPLE_LIST_H__
+

@@ -79,3 +79,4 @@ void ServerListener::MessageReceived(Service& TheService, const SimpleString Loc
 	StructuredMethodCallbackListener::MessageReceived( TheService, LocalConnectorName, Msg);
   }
 }
+

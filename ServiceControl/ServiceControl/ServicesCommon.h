@@ -124,3 +124,4 @@ private:
 } // namespace Omiscid
 
 #endif // __SERVICES_COMMON_H__
+

@@ -21,3 +21,4 @@ void ServiceProxyList::Empty()
 		RemoveCurrent();
 	}
 }
+

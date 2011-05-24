@@ -64,7 +64,7 @@ sub RemoveConstantStringFromFile()
 	for ( $CurrentLineNumber = 0; defined @$FileIn[$CurrentLineNumber]; $CurrentLineNumber++ )
 	{
 		@$FileIn[$CurrentLineNumber] =~ s/\\\"//g;
-		while ( @$FileIn[$CurrentLineNumber] =~ s/^\"([^\"]+)\"/\"\"/ ) {}
+		while ( @$FileIn[$CurrentLineNumber] =~ s/\"([^\"]+)\"/\"\"/ ) {}
 	}
 }
 
@@ -183,14 +183,14 @@ sub CheckIfDef()
  	my $ExpectedHeader;
  	my $Folder;
  	
- 	my @ExcludedFiles = ( 'System/ConfigSystem.h', 'Com/ConfigCom.h', 'ServiceControl/ConfigServiceControl.h', 'System/TrackingMemoryLeaks.h', 'Examples/Calculator/' );
+ 	my @ExcludedFiles = ( 'System/ConfigSystem.h', 'Com/ConfigCom.h', 'ServiceControl/ConfigServiceControl.h', 'System/TrackingMemoryLeaks.h', 'Examples/Calculator/', 'Json/' );
  	my $CurrentFile;
  	
  	foreach $CurrentFile ( @ExcludedFiles )
  	{
  		# '/' => '\/'
  		$CurrentFile =~ s/\//\\\//g;
-	 	if ( $FileName =~ /$CurrentFile$/ )
+	 	if ( $FileName =~ /$CurrentFile/ )
 	 	{
 	 		return;
 	 	}
@@ -220,10 +220,12 @@ sub CheckIfDef()
 				print "$FileName: bad prepocessor definition (is '$CurrentHeader' expected '$ExpectedHeader')\n";				
 			}
 			$Headers{$CurrentHeader}++;
-			$CurrentLine = <$fd>;
-			if ( !($CurrentLine =~ /^\#define\s+$CurrentHeader[\s\n]+$/) )
+			$LineNumber++;
+			$CurrentLine = $FileContent[$LineNumber];
+			if ( !($CurrentLine =~ /^\#define\s+$CurrentHeader[\s]*$/) )
 			{
-				print "$FileName: bad #ifndef/#define sequence\n";
+				print "$FileName: bad #ifndef/#define sequence ('$CurrentLine')\n";
+				&LogCurrentFileVersion( \@FileContent );
 			}
 			# Get out the loop
 			last;
@@ -253,7 +255,10 @@ sub CheckIfDef()
 		{
 			$CurrentLine = $FileContent[$LineNumber];
 		
-			if ( !($CurrentLine =~ /^[\s\n]+$/) )
+			if ( $CurrentLine eq '' )
+			{
+			}
+			else
 			{
 				print "$FileName: something found ('$CurrentLine') after '#endif // $CurrentHeader'\n";
 			}
@@ -311,6 +316,7 @@ sub FirstIncludeofHeaderFileisConfig()
 			}
 			# print "$CurrentLine : '$FirstIncludedFile'\n";
 			print "$FileName: the first include of an header file *must* be '$Folder/Config${Folder}.h'\n";
+			return;
 		}
 		else
 		{
@@ -524,7 +530,7 @@ sub CheckExceptionConsistancy()
 		
 		if ( $CurrentLine =~ /^throw\s+/ || $CurrentLine =~ /\s+throw\s+/ )
 		{
-			if ( $CurrentLine =~ /throw\s+\w+Exception\W/ || $CurrentLine =~ /throw\s+e\W/ )
+			if ( $CurrentLine =~ /throw\s+[\(\w]+Exception\W/ || $CurrentLine =~ /throw\s+e\W/ )
 			{
 			}
 			else

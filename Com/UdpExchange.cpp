@@ -254,3 +254,4 @@ unsigned short UdpExchange::GetUdpPort()
 {
 	return MsgSocket::GetPortNb();
 }
+

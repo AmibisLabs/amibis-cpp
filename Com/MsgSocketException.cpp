@@ -20,3 +20,4 @@ SimpleString MsgSocketException::GetExceptionType() const
 {
 	return SimpleString( "MsgSocketException" );
 }
+

@@ -80,7 +80,7 @@ Serializable::EncodeMapping * Serializable::Create( const SimpleString& Key ) th
 	if ( tmpMapping == (Serializable::EncodeMapping*)NULL )
 	{
 		// Create and add structure to the list
-		tmpMapping = new EncodeMapping;
+		tmpMapping = new OMISCID_TLM EncodeMapping;
 		tmpMapping->Key = Key;
 		SerialiseMapping.AddTail(tmpMapping);
 	}
@@ -254,3 +254,4 @@ void Serializable::Unserialize( const StructuredMessage& SMsg )
 		tmpMapping->Decode( SMsg.FindAndGetValue( tmpMapping->Key ) );
 	}
 }
+

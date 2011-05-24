@@ -136,3 +136,4 @@ bool MsgManager::HasMessages()
 {
 	return GetNbMessages() != 0;
 }
+

@@ -248,3 +248,4 @@ void Client::sendStructuredMessageWithExpectedResult(const StructuredMessage& Ms
   }
   delete dr;
 }
+

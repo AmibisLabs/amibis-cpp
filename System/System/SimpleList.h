@@ -584,3 +584,4 @@ void SimpleList<TYPE>::ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) co
 } // namespace Omiscid
 
 #endif // __SIMPLE_LIST_H__
+

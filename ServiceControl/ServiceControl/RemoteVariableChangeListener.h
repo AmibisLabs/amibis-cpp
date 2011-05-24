@@ -70,3 +70,4 @@ private:
 } // namespace Omiscid
 
 #endif	// __REMOTE_VARIABLE_CHANGE_LISTENER_H__
+

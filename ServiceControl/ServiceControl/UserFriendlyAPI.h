@@ -1,4 +1,4 @@
-/* @file ServiceControl/ServiceControl/UserFriendlyAPI.h
+/* @file ServiceControl/ServiceControl//UserFriendlyAPI.h
  * @ingroup UserFriendly
 
  * @brief Files included when using user friendly API
@@ -49,5 +49,14 @@
 #include <ServiceControl/ServiceRepository.h>
 #include <ServiceControl/ServiceRepositoryListener.h>
 
+// Messaging subfolder
+#include <Messaging/Serializable.h>
+#include <Messaging/SerializeException.h>
+#include <Messaging/SerializeManager.h>
+#include <Messaging/SerializeValue.h>
+#include <Messaging/StructuredMessage.h>
+
 
 #endif // __USER_FRIENDLY_API_H__
+
+

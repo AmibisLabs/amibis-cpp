@@ -22,3 +22,4 @@ namespace json_spirit
 }
 
 #endif
+

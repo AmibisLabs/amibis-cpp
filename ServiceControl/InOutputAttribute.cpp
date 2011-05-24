@@ -295,3 +295,4 @@ void InOutputAttribute::AddPeer(unsigned int peer_id)
 {
 	listPeerId.Add(peer_id);
 }
+

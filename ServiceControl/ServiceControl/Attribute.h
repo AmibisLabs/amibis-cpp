@@ -113,3 +113,4 @@ class Attribute
 } // namespace Omiscid
 
 #endif // __ATTRIBUTE_H__
+

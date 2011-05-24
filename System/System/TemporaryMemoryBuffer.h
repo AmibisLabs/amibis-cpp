@@ -56,3 +56,4 @@ private:
 } // namespace Omiscid
 
 #endif // __TEMPORARY_MEMORY_BUFFER_H__
+

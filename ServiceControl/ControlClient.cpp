@@ -1054,3 +1054,4 @@ void ControlClient::SetCtrlEventListener(CtrlEventListener fct, void* user_ptr)
 	callback = fct;
 	userDataPtr = user_ptr;
 }
+

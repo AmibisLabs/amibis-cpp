@@ -38,3 +38,4 @@ public:
 } // namespace Omiscid
 
 #endif // __SIMPLE_LIST_EXCEPTION_H__
+

@@ -283,3 +283,4 @@ void SharedMemSegment::Close()
 	iSegMem = -1;
 #endif
 }
+

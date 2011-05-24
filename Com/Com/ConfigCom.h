@@ -58,3 +58,4 @@ extern void OmiscidComLayerInit();
 } // namespace Omiscid
 
 #endif	// __CONFIG_COM_H__
+

@@ -223,3 +223,4 @@ void StructuredMessage::Put( const SimpleString Key, const SerializeObject& Val 
 {
 	Put( Key, SerializeValue(Val) );
 }
+

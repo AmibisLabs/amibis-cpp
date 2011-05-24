@@ -66,3 +66,4 @@ public:
 } // namespace Omiscid
 
 #endif // __SIMPLE_EXCEPTION_H__
+

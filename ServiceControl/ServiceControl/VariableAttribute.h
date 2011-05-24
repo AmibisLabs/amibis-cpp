@@ -201,3 +201,4 @@ private:
 } // namespace Omiscid
 
 #endif // __VARIABLE_ATTRIBUTE_H__
+

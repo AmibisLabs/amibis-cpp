@@ -89,3 +89,4 @@ private:
 } // namespace Omiscid
 
 #endif // __MULTIPLE_REFERENCED_DATA_H__
+

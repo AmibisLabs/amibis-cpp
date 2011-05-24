@@ -65,3 +65,4 @@ void FUNCTION_CALL_TYPE RegisterThread::Run()
 	delete pServ;
 	NbRegistered--;
 }
+

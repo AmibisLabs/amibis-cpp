@@ -67,3 +67,4 @@ extern Factory ServiceFactory;
 } // namespace Omiscid
 
 #endif  // __FACTORY_H__
+

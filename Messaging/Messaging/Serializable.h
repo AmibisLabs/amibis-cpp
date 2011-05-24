@@ -15,6 +15,8 @@
 #pragma warning(disable: 4290)
 #endif
 
+#include <Messaging/ConfigMessaging.h>
+
 #include <System/ReentrantMutex.h>
 #include <System/SimpleList.h>
 #include <System/SimpleString.h>
@@ -26,6 +28,8 @@
 #include <list>
 
 namespace Omiscid {
+
+class StructuredMessage;
 
 class Serializable : protected ReentrantMutex {
 public:
@@ -166,4 +170,5 @@ void Serializable::AddToSerialization( const SimpleString& Key, std::list<Curren
 
 } // Omiscid
 
-#endif //__SERIALIZABLE_H__
+#endif // __SERIALIZABLE_H__
+

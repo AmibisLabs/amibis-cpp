@@ -88,3 +88,4 @@ ConnectionInfos& ConnectionInfos::operator=(ConnectionInfos& ToCopy)
 
 	return *this;
 }
+

@@ -588,3 +588,4 @@ const ServiceProperties& ServiceProperties::operator=(const ServiceProperties& T
 	ImportTXTRecord( ToCopy.GetTXTRecordLength(), ToCopy.ExportTXTRecord() );
 	return *this;
 }
+

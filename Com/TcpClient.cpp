@@ -79,3 +79,4 @@ void TcpClient::SetMaxMessageSizeForTCP(int max)
 {
 	MsgSocket::SetMaxMessageSizeForTCP(max);
 }
+

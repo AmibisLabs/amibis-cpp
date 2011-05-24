@@ -17,3 +17,4 @@ void ControlUtils::IntToStr(int value, SimpleString& str)
 {
   str = value;
 }
+

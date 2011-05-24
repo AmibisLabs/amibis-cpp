@@ -31,3 +31,4 @@ public:
 } // namespace Omiscid
 
 #endif // __CONTROL_UTILS_H__
+

@@ -124,3 +124,4 @@ public:
 } // namespace Omiscid
 
 #endif // __IN_OUTPUT_ATTRIBUTE_H__
+

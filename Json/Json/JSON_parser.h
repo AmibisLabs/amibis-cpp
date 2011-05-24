@@ -175,3 +175,4 @@ JSON_PARSER_DLL_API extern int JSON_parser_get_last_error(JSON_parser jc);
 
 
 #endif /* JSON_PARSER_H */
+

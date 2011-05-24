@@ -1552,3 +1552,4 @@ bool MsgSocket::SetTcpNoDelay(bool Set)
 {
 	return socket->SetTcpNoDelay(Set);
 }
+

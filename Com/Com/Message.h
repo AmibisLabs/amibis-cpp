@@ -91,3 +91,4 @@ protected:
 } // namespace Omiscid
 
 #endif // __MESSAGE_H__
+

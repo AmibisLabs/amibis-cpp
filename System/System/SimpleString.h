@@ -329,3 +329,4 @@ std::ostream& operator<<( std::ostream &os, const SimpleString &str );
 } // namespace Omiscid
 
 #endif // __SIMPLE_STRING_H__
+

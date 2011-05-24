@@ -35,3 +35,4 @@ bool LocalVariableListener::IsValid( VariableAttribute * ChangedVariable, Simple
 
 	return IsValid(*CurrentService, ChangedVariable->GetName(), NewValue);
 }
+

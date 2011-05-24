@@ -26,3 +26,4 @@ SimpleString StringVariableAttribute::GetValue() const
 {
 	return StringValue;
 }
+

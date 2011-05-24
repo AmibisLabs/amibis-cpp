@@ -168,3 +168,4 @@ class UdpExchange : public MsgSocket, virtual public ComTools
 } // namespace Omiscid
 
 #endif // __UDP_EXCHANGE_H__
+
