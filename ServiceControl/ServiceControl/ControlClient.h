@@ -117,7 +117,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
    */
   void SetCtrlEventListener(CtrlEventListener fct, void* user_ptr);
 
-  /** \name Query to the ControlServer */
+  /** @name Query to the ControlServer */
   //@{
 
   /** @brief Query a global description
@@ -228,7 +228,7 @@ class ControlClient : public TcpClient, public XMLTreeParser, protected AnswersM
   //@}
 #endif	// ifdef DEBUG
 
-  /** \name Accss to list of attribute by kind */
+  /** @name Accss to list of attribute by kind */
   //@{
   /** @brief Access to the list of variable name */
   MutexedSimpleList<SimpleString>& GetVariableNameList();
@@ -295,13 +295,13 @@ private:
    */
   XMLMessage* QueryToServer(SimpleString& str, bool wait_answer = true);
 
-  /** \name Message processing */
+  /** @name Message processing */
   //@{
   /** @brief Extract global description from message
    * @param xml_msg [in] message to parse */
   void ProcessGlobalDescription(XMLMessage* xml_msg);
 
-  /** \name Message processing */
+  /** @name Message processing */
   //@{
   /** @brief Extract global description from message
    * @param xml_msg [in] message to parse */
@@ -359,7 +359,7 @@ private:
    unsigned int id; /*!< query id */
 
 protected:
-  /** \name List of name */
+  /** @name List of name */
   //@{
   MutexedSimpleList<SimpleString> listVariableName; /*!< list of variable name */
   MutexedSimpleList<SimpleString> listInputName; /*!< list of input name */
@@ -367,7 +367,7 @@ protected:
   MutexedSimpleList<SimpleString> listInOutputName; /*!< list of inoutput name */
   //@}
 
-  /** \name List of attributes*/
+  /** @name List of attributes*/
   //@{
   MutexedSimpleList<VariableAttribute*> listVariableAttr; /*!< list of variable attribute*/
   MutexedSimpleList<InOutputAttribute*> listInputAttr; /*!< list of input attribute*/

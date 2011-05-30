@@ -72,7 +72,7 @@ private:
 		 */
 		// bool ChangeData(const char* str);
 
-		/** \name Comparaison */
+		/** @name Comparaison */
 		//@{
 		/** @return if the string contained by this object match the string contained in 'sd'*/
 		bool Equals(const StringData& sd);
@@ -234,7 +234,7 @@ public:
 	// bool CompareNoCase(const SimpleString& str) const;
 	//@}
 
-	/** \name Comparaison */
+	/** @name Comparaison */
 	//@{
 	/** Lock my internal data */
 	bool Lock() const;

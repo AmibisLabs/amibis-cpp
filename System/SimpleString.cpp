@@ -207,13 +207,13 @@ bool SimpleString::StringData::NotEqualsCaseInsensitive(const StringData& sd)
 /** Lock my internal data */
 bool SimpleString::Lock() const
 {
-	return ((Omiscid::ReentrantMutex&)Protect).Lock();
+	return ((ReentrantMutex*)&Protect)->Lock();
 }
 
 /** Unlock my internal data */
 bool SimpleString::Unlock() const
 {
-	return ((Omiscid::ReentrantMutex&)Protect).Unlock();
+	return ((ReentrantMutex*)&Protect)->Unlock();
 }
 
 SimpleString::SimpleString()

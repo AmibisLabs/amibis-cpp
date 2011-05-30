@@ -36,6 +36,7 @@ ReentrantMutex::~ReentrantMutex()
 	if ( mutex )
 	{
 		CloseHandle( mutex );
+		mutex = (HANDLE)0xfeeefeee;
 	}
 #else
 	pthread_mutex_destroy(&mutex);
@@ -45,6 +46,7 @@ ReentrantMutex::~ReentrantMutex()
 	if ( OwnerIds != (SimpleList<unsigned int>*)NULL )
 	{
 		delete OwnerIds;
+		OwnerIds = (SimpleList<unsigned int>*)0xfeeefeee;
 	}
 #endif
 }

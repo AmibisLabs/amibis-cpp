@@ -29,7 +29,7 @@ namespace Omiscid {
 class Attribute
 {
  public:
-  /** \name Constructors */
+  /** @name Constructors */
   //@{
   Attribute(); /*!< @brief Default Constructor*/
 
@@ -42,19 +42,19 @@ class Attribute
   virtual ~Attribute();
 
  public:
-  /** \name Read Accessors */
+  /** @name Read Accessors */
   //@{
   const SimpleString& GetName() const;
   const SimpleString& GetDescription() const;
   //@}
 
-  /** \name Write Accessors */
+  /** @name Write Accessors */
   //@{
   void SetName(const SimpleString str);
   void SetDescription(const SimpleString str);
   //@}
 
-  /** \name XML Generation */
+  /** @name XML Generation */
   //@{
   /** @brief Add to str a short xml description of the attribut.
    *

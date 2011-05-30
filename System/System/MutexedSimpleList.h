@@ -184,6 +184,47 @@ public:
 #endif
 
 public:
+	   /** @brief equal operator
+	*
+	* Build a copy of the list.
+	*/
+	MutexedSimpleList<TYPE>& operator=(MutexedSimpleList<TYPE>& ToCopy)
+	{
+		SmartLocker SL_ToCopy(ToCopy);
+		SmartLocker SL_Myself(*this);
+
+		SimpleList<TYPE>::Init(); // SimpleList<TYPE>:: to make gcc happy
+
+		// We can not call SimpleList<TYPE>::operator= because of instrumented version
+		for( ToCopy.First(); ToCopy.NotAtEnd(); ToCopy.Next() )
+		{
+			// Add tail in order to preserve the order of the list ToCopy
+			AddTail(ToCopy.GetCurrent());
+		}
+
+		return *this;
+	}
+
+	/** @brief equal operator
+	*
+	* Build a copy of the list.
+	*/
+	MutexedSimpleList<TYPE>& operator=(SimpleList<TYPE>& ToCopy)
+	{
+		SmartLocker SL_Myself(*this);
+
+		SimpleList<TYPE>::Init(); // SimpleList<TYPE>:: to make gcc happy
+
+		// We can not call SimpleList<TYPE>::operator= because of instrumented version
+		for( ToCopy.First(); ToCopy.NotAtEnd(); ToCopy.Next() )
+		{
+			// Add tail in order to preserve the order of the list ToCopy
+			AddTail(ToCopy.GetCurrent());
+		}
+
+		return *this;
+	}
+
 	/** @brief Lock the access to the list
 	*
 	* Wait until the mutex can be locked.

@@ -1,0 +1,26 @@
+This file gives you clues about using mDNS on several platforms.
+
+[Windows]
+You can download and use the last version of the installer
+found on http://developer.apple.com/opensource/ .
+If you experiment problem, please contact us.
+
+[Linux]
+You can download the version 214.3.2 from
+http://opensource.apple.com/tarballs/mDNSResponder/
+(warning, archives are in *alphabetic* order).
+Just run the folowing commands in the untar files :
+* cd mDNSPosix
+* make install os=linux
+
+On some Linux platforms (like Ubuntu), you may
+need to modify the Makefile in the mDNSPosix folder
+(because of specific gcc flags on these version of
+Linux). You must add '-fno-stack-protector' to
+the CFLAGS in order to compile. After that,
+previous commands remain valid.
+
+[Mac OSX]
+You can download and use the last version from
+http://developer.apple.com/opensource/ without problem.
+If you experiment problem, please contact us.

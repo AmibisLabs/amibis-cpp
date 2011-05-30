@@ -86,6 +86,12 @@ public:
 	*/
 	SimpleList(SimpleList<TYPE>& ToCopy);
 
+	/** @brief equal operator
+	*
+	* Build a copy of the list.
+	*/
+	SimpleList& operator=(SimpleList<TYPE>& ToCopy);
+
 	/** @brief Destructor */
 	virtual ~SimpleList();
 
@@ -112,7 +118,7 @@ public:
 	*/
 	unsigned int GetNumberOfElements() const;
 
-	/** \name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
+	/** @name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
 	//@{
 	/** @brief Set position to the first element */
 	void First();
@@ -212,13 +218,9 @@ protected:
 	*/
 	void ReleaseSimpleListElement(SimpleListElement<TYPE>* elt) const;
 
-private:
-	SimpleListElement<TYPE> * Head, * Tail; /*!< pointers on head and tail of the list */
-	unsigned int NumberOfElements; /*!< number of elements in the list*/
-
-	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
-	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
-
+   /** @brief Init Myself
+	*
+	*/
 	void Init()
 	{
 		// There is nothing in the list
@@ -231,6 +233,13 @@ private:
 		CurrentElement = NULL;
 		RemoveCurrentHasOccured = false;
 	}
+
+private:
+	SimpleListElement<TYPE> * Head, * Tail; /*!< pointers on head and tail of the list */
+	unsigned int NumberOfElements; /*!< number of elements in the list*/
+
+	SimpleListElement<TYPE> * PreviousElement, * CurrentElement; /*!< pointer on list cells */
+	bool RemoveCurrentHasOccured; /*!< set to the value 'true' after a call to the method RemoveCurrent */
 };
 
 template <typename TYPE>
@@ -255,6 +264,24 @@ SimpleList<TYPE>::SimpleList(SimpleList<TYPE>& ToCopy)
 		AddTail(ToCopy.GetCurrent());
 	}
 }
+
+/** @brief equal operator
+*
+* Build a copy of the list.
+*/
+template <typename TYPE>
+SimpleList<TYPE>& SimpleList<TYPE>:: operator=(SimpleList<TYPE>& ToCopy)
+{
+	Empty();
+
+	// From the first to the last
+	for( ToCopy.First(); ToCopy.NotAtEnd(); ToCopy.Next() )
+	{
+		// Add tail in order to preserve the order of the list ToCopy
+		AddTail(ToCopy.GetCurrent());
+	}
+}
+
 
 template <typename TYPE>
 SimpleList<TYPE>::~SimpleList()

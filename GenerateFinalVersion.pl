@@ -168,7 +168,7 @@ while( defined $ARGV[$PosArgv] )
 	die "Wrong parameter\n";
 }
 
-@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'README', 'CHANGES', 'Doxyfile', 'TESTS', 'Omiscid-config.in.scons', 'Omiscid.h' );
+@UsualFiles = ( 'SConstruct', 'OmiscidScons.py', 'OmiscidInit.py', 'LICENCE', 'MDNS_README', 'README', 'CHANGES', 'Doxyfile', 'TESTS', 'Omiscid-config.in.scons', 'Omiscid.h' );
 $Version = "1.0.0";
 
 $CurrentPath = cwd;

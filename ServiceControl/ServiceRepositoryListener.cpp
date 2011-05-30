@@ -55,17 +55,19 @@ void FUNCTION_CALL_TYPE ServiceRepositoryListener::DnsSdProxyServiceBrowseReply(
 		// A new service appear
 		// AS this *ù## gcc do not want to create a reference on "on the fly" constructed objects
 		// construct it first
-		ServiceProxy LocalSP( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
+		ServiceProxy  * LocalSP = new OMISCID_TLM ServiceProxy( ComTools::GeneratePeerId(), ServiceInfo.HostName, ServiceInfo.Port, (ServiceProperties &)ServiceInfo.Properties );
 
 		// If no filter or if the service is valid for this filter
-		if ( FilterForMonitoring == (ServiceFilter *)NULL || FilterForMonitoring->IsAGoodService( LocalSP ) == true )
+		if ( FilterForMonitoring == (ServiceFilter *)NULL || FilterForMonitoring->IsAGoodService( *LocalSP ) == true )
 		{
 			// Add this peerId to the list of Monitored Service
-			MonitoredServicesForRemovals.Add(LocalSP.GetPeerId());
+			MonitoredServicesForRemovals.Add((*LocalSP).GetPeerId());
 
 			// Send notification
-			ServiceAdded( LocalSP );
+			ServiceAdded( *LocalSP );
 		}
+
+		delete LocalSP;
 	}
 	else
 	{

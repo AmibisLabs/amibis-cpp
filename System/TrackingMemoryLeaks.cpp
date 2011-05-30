@@ -245,7 +245,7 @@ public:
 	 */
 	unsigned int GetNumberOfElements() const;
 
-	/** \name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
+	/** @name First, Next, GetCurrent, AtEnd, NotAtEnd RemoveCurrent */
 	//@{
 	/** @brief Set position to the first element */
 	void First();

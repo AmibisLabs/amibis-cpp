@@ -107,6 +107,20 @@ void VariableAttribute::Display()
 	printf("Access : %s\n", AccessToStr(access).GetStr());
 }
 
+SimpleString VariableAttribute::GenerateHumanReadableDescription( SimpleString LineFormat /* = "" */ )
+{
+	SimpleString Result;
+
+	SmartLocker SL_LockThis(*this);
+
+	Result = LineFormat + "Name : " + GetName() + "\n";
+	Result += LineFormat + "Type : " + type + "\n";
+	Result += LineFormat + "Default Value : " + defaultValue + "\n";
+	Result += LineFormat + "Last Value : " + valueStr + "\n";
+	Result += LineFormat + "Access : " + AccessToStr(access) + "\n";
+
+	return Result;
+}
 
 void VariableAttribute::SetValue(const SimpleString value_str)
 {

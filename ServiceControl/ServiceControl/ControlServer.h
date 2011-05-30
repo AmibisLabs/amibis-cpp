@@ -289,7 +289,7 @@ protected:
    */
   void GenerateGlobalShortDescription(SimpleString& str);
 
-  /**\name request processing*/
+  /**@name request processing*/
   //@{
   void ProcessInOutputQuery(xmlNodePtr node, SimpleString& str_answer);
   void ProcessVariableQuery(xmlNodePtr node, unsigned int peer_id, SimpleString& str_answer);

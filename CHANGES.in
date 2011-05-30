@@ -10,10 +10,20 @@ In this files, you will find changes between OMiSCID versions._#_#_O_#_#__#_#_O_
 
 	[Bug corrections]
 	- correct bug in copy constructor mecanism in SimpleList
+	- correct bug in GetDescription for connectors.
 
 	[API]
+	- Add equal operator to SimpleList and MutexedSimpleList to
+	prevent automatic definition by the compiler
 	- Add SerializeValue, Serializable, StructuredMessage
 	add SerializeException classes. See examples for details.
+	- Add GenerateHumanReadableDescription function for connectors
+	and variables (see ServiceProxy, VariableAttribute and
+	InOutputAttribute).
+	
+	[Documentation]
+	- See MDNS_README, when you plan to use and install mDNS
+	from Apple.
 
 1.6.0	2009-7-23
 	[Global modifications]

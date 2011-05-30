@@ -227,7 +227,7 @@ private:
 
   MutexedSimpleList<ClientConnection*> ListClients; /*!< list of client connections*/
 
-  /** \name Callback information */
+  /** @name Callback information */
   //@{
   MsgSocketCallbackObject * CallbackObject; /*!< the callback object called when new messages are received*/
   //@}

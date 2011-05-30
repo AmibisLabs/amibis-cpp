@@ -296,3 +296,19 @@ void InOutputAttribute::AddPeer(unsigned int peer_id)
 	listPeerId.Add(peer_id);
 }
 
+  /** @brief Generate description into a SimpleString
+   *  @param LineFormat format for begining of the line
+   *  @result Formated description string
+   */
+SimpleString InOutputAttribute::GenerateHumanReadableDescription( SimpleString LineFormat /* = "" */ )
+{
+	SimpleString Result;
+
+	Result = LineFormat + "Name : " + GetName() + "\n";
+	Result += LineFormat + "PeerId : " + ComTools::PeerIdAsString(peerId) + "\n";
+	Result += LineFormat + "Type : " + KindToStr() + "\n";
+	Result += LineFormat + "TCP Port : " + tcpPort + "\n";
+	Result += LineFormat + "UDP Port : " + udpPort + "\n";
+
+	return Result;
+}

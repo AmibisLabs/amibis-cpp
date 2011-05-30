@@ -24,6 +24,6 @@ MessagingSources=['Messaging/ConfigMessaging.cpp','Messaging/Serializable.cpp','
 
 # Full sources
 
-OmiscidHeaders=SystemHeaders+ComHeaders+ServiceControlHeaders+JsonHeaders+MessagingHeaders
+OmiscidHeaders=SystemHeaders+ComHeaders+ServiceControlHeaders+JsonHeaders+MessagingHeaders+[['Omiscid.h','']]
 OmiscidSources=SystemSources+ComSources+ServiceControlSources+JsonSources+MessagingSources
 

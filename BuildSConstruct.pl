@@ -104,9 +104,8 @@ print $SconsInit "import os\n\n";
 &CreateInitTables('Json');
 &CreateInitTables('Messaging');
 
-
 print $SconsInit "# Full sources\n\n";
-print $SconsInit "OmiscidHeaders=SystemHeaders+ComHeaders+ServiceControlHeaders+JsonHeaders+MessagingHeaders\n";
+print $SconsInit "OmiscidHeaders=SystemHeaders+ComHeaders+ServiceControlHeaders+JsonHeaders+MessagingHeaders+[['Omiscid.h','']]\n";
 print $SconsInit "OmiscidSources=SystemSources+ComSources+ServiceControlSources+JsonSources+MessagingSources\n\n";
 
 close( $SconsInit );

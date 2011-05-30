@@ -138,6 +138,20 @@ public:
 	VariableAccessType GetVariableAccessType(const SimpleString VarName);
 
 	/**
+	 * @brief Gets a human readable description of a variable
+	 * @param VarName the name of the remote variable
+	 * @return a formated SimpleString
+	 */
+	SimpleString GetVariableHumanReadableDescription(const SimpleString VarName);
+
+	/**
+	 * @brief Gets a human readable description of a connector
+	 * @param ConnectorName the name of the remote variable
+	 * @return a formated SimpleString
+	 */
+	SimpleString GetConnectorHumanReadableDescription(const SimpleString ConnectorName);
+
+	/**
 	 * Add a listener to monitor variable changes
 	 * @param VarName the name of the remote variable
 	 * @param value the value (SimpleString format)

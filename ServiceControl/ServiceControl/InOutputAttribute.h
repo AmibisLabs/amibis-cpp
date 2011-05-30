@@ -35,7 +35,7 @@ class InOutputAttribute : public Attribute
   static const SimpleString unknown_str; /*!< String associated to the kind UnknownConnectorKind */
 
  public:
-  /** \name Constructors */
+  /** @name Constructors */
   //@{
   /** @brief Default Constructor */
   InOutputAttribute();
@@ -54,10 +54,10 @@ class InOutputAttribute : public Attribute
   InOutputAttribute(const SimpleString a_name, ConnectorKind kind_of_input);
   //@}
 
-	// Virtual destructor always
-	virtual ~InOutputAttribute();
+  // Virtual destructor always
+  virtual ~InOutputAttribute();
 
-  /** \name Read Accessors */
+  /** @name Read Accessors */
   //@{
   bool IsAnInput() const; /*!< test if the object kind is AnInput*/
   bool IsAnOutput() const; /*!< test if the object kind is AnOutput*/
@@ -72,7 +72,7 @@ class InOutputAttribute : public Attribute
   const SimpleList<unsigned int>& GetListPeerId(); /*!< Access to the list of connected peer */
   //@}
 
-  /** \name Write Accessors */
+  /** @name Write Accessors */
   //@{
   void SetKindOfInput(ConnectorKind kind_of_input); /*!< Change the kind of the object */
 
@@ -80,7 +80,13 @@ class InOutputAttribute : public Attribute
   ComTools * GetComTool();			   /*!< retrieve the comunication tool associated to the input/output */
   //@}
 
-  /** \name Write Accessor for data storage when request to controlServer
+  /** @brief Generate description into a SimpleString
+   *  @param LineFormat format for begining of the line
+   *  @result Formated description string
+   */
+  SimpleString GenerateHumanReadableDescription( SimpleString LineFormat = "" );
+
+  /** @name Write Accessor for data storage when request to controlServer
    *
    * Methods use by the ControlClient class.
    */
@@ -91,7 +97,7 @@ public:
   void AddPeer(unsigned int peer_id);
   //@}
 
-  /** \name XML Generation */
+  /** @name XML Generation */
   //@{
   void GenerateShortDescription(SimpleString& str); /*<! generate short XML description */
   void GenerateLongDescription(SimpleString& str); /*<! generates long XML description */

@@ -422,7 +422,7 @@ private:
    */
   void ReceiveUdpExchange();
 
-  /** \name Parse BIP Message */
+  /** @name Parse BIP Message */
   //@{
   /** @brief Find the beginning tag for BIP in the buffer
    * @param buf [in] byte buffer where look for tag

@@ -535,6 +535,62 @@ SimpleString ServiceProxy::GetVariableDescription(const SimpleString VarName)
 	return pVar->GetDescription();
 }
 
+SimpleString ServiceProxy::GetVariableHumanReadableDescription(const SimpleString VarName)
+{
+	VariableAttribute * pVar = FindVariable(VarName);
+	if ( pVar == NULL )
+	{
+		SimpleString ErrMesg;
+		ErrMesg = "Unknown variable '";
+		ErrMesg += VarName;
+		ErrMesg += "'. Call HasVariableFirst.";
+		throw  SimpleException( ErrMesg );
+	}
+
+	// If the variable is initialised
+	if ( pVar->IsInitialised() )
+	{
+		// return the current description
+		return pVar->GenerateHumanReadableDescription("\t");
+	}
+
+	if ( IsConnected() == false )
+	{
+		// Update description if needed
+		if ( ConnectToCtrlServer(HostName, ControlPort) == false )
+		{
+			throw SimpleException("Can not connect to the Service.");
+		}
+	}
+
+	// Il all other cases
+	pVar = QueryVariableDescription( VarName );
+	if ( pVar == NULL )
+	{
+		// This one *here* should not appear
+		throw SimpleException( "Could not retrieve variable '" + VarName + "'." );
+	}
+
+	return pVar->GenerateHumanReadableDescription("\t");
+}
+
+SimpleString ServiceProxy::GetConnectorHumanReadableDescription(const SimpleString ConnectorName)
+{
+	UpdateDescription(true);
+
+	InOutputAttribute * pAtt = FindConnector(ConnectorName);
+	if ( pAtt == NULL )
+	{
+		SimpleString ErrMesg;
+		ErrMesg = "Unknown connector '";
+		ErrMesg += ConnectorName;
+		ErrMesg += "'.";
+		throw  SimpleException( ErrMesg );
+	}
+
+	return pAtt->GenerateHumanReadableDescription("\t");
+}
+
 	/**
 	 * Add a listener to monitor variable changes
 	 * @param VarName the name of the remote variable
@@ -707,6 +763,7 @@ SimpleString ServiceProxy::FindConnector( unsigned int PeerId )
 SimpleString ServiceProxy::GetConnectorDescription(const SimpleString ConnectorName)
 {
 	InOutputAttribute * pAtt;
+
 	pAtt = FindConnector( ConnectorName );
 	if ( pAtt == (InOutputAttribute *)NULL )
 	{
@@ -717,8 +774,10 @@ SimpleString ServiceProxy::GetConnectorDescription(const SimpleString ConnectorN
 		throw  SimpleException( ErrMesg );
 	}
 
+	// First update everything
 	UpdateDescription(true);
 
+	pAtt = FindConnector( ConnectorName );
 	return pAtt->GetDescription();
 }
 

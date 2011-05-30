@@ -63,7 +63,7 @@ public:
   //@}
 
 
-  /** \name Write Accessors */
+  /** @name Write Accessors */
   //@{
   void SetType(const SimpleString str);
   void SetDefaultValue(const SimpleString str);
@@ -145,6 +145,12 @@ public:
    * The display is a set of line as 'name attribute :  value'
    */
   void Display();
+
+  /** @brief Generate description into a SimpleString
+   *  @param LineFormat format for begining of the line
+   *  @result Formated description string
+   */
+  SimpleString GenerateHumanReadableDescription( SimpleString LineFormat = "" );
 
   /** @brief Add a listener to this variable.
    *
