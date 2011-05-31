@@ -385,6 +385,8 @@ if ( $DoTest == 1 )
 	$NumComputer = 1;
 	foreach $TestConfig ( keys %Configs )
 	{	
+		$TestComputer = $Computer{$TestConfig};
+		
 		# Check if computer if available
 		if ( &StartComputer($TestConfig) == 0 )
 		{
@@ -392,8 +394,6 @@ if ( $DoTest == 1 )
 			&AddLog( "WRN: Could not start and connect to $TestComputer" );
 			next;
 		}
-		
-		$TestComputer = $Computer{$TestConfig};
 		
 		&AddLog( "TOK: Connected to $TestComputer." );
 		
@@ -637,7 +637,7 @@ $VersionFile =~ s/\.zip/\.tgz/;
 # Generate package
 if ( $DoPackage == 1 )
 {
-	`perl MakeAllPackages.pl`;
+	`perl ../MakeAllPackages.pl`;
 }
 
 $VersionFile =~ s/\.tgz$//;
