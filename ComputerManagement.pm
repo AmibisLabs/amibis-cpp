@@ -43,10 +43,7 @@ sub StartAndWaitVM()
 	
 	# print "$res\n";
 	
-	# Wait 30 seconds
-	sleep(30);
-
-	$NbTry = 20;
+	$NbTry = 30;
 	while( $NbTry > 0 )
 	{
 		$res = `ssh $Computer{$TestComputer} "echo 'ssh is now ok.'"`;
@@ -70,8 +67,8 @@ sub StopVM()
 	`VBoxManage controlvm $TestComputer acpipowerbutton`;
 	
 	# Wait 30 seconds, we do not want to have 2 running VMs
-	print STDERR "Wait 30 seconds for VM to stop (we do not want 2 VMs at the same time\n";
-	sleep(30);
+	print STDERR "Wait 5 seconds for VM to stop (we do not want 2 VMs at the same time\n";
+	sleep(5);
 }
 
 sub StartComputer()
@@ -108,21 +105,21 @@ sub StopComputer()
 }
 
 $Configs{'debian-i386-with-avahi'} = 0;
-$Computer{'debian-i386-with-avahi'} = 'rhea';
+$Computer{'debian-i386-with-avahi'} = '192.168.56.2';
 $Options{'debian-i386-with-avahi'} = '("zeroconf=avahi")';
 $SupportedDebugMode{'rhea-i386-with-avahi'} = 'insure';
 
 $Configs{'debian-i386-with-mdns'} = 0;
-$Computer{'debian-i386-with-mdns'} = 'rhea';
+$Computer{'debian-i386-with-mdns'} = '192.168.56.5';
 $Options{'debian-i386-with-mdns'} = '("zeroconf=mdns")';
 
 $Configs{'debian-amd64-with-avahi'} = 0;
-$Computer{'debian-amd64-with-avahi'} = 'rhea';
+$Computer{'debian-amd64-with-avahi'} = '192.168.56.4';
 $Options{'debian-amd64-with-avahi'} = '("zeroconf=avahi")';
 $SupportedDebugMode{'rhea-amd64-with-avahi'} = 'insure';
 
 $Configs{'debian-amd64-with-mdns'} = 0;
-$Computer{'debian-amd64-with-mdns'} = 'rhea';
+$Computer{'debian-amd64-with-mdns'} = '192.168.56.3';
 $Options{'debian-amd64-with-mdns'} = '("zeroconf=mdns")';
 
 $Configs{'MaxOsX'} = '000d936fc38c';

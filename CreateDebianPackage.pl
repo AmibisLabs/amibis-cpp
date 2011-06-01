@@ -313,7 +313,8 @@ print STDERR "Move debian folder in OMiSCID\n";
 
 $PackageFolder = $OMISCID_PACKAGENAME . '-' . $OMISCID_MAJORVERSION;
 
-$computer = $Archi{$PackageArch}{'computer'};
+#$computer = $Archi{$PackageArch}{'computer'};
+$computer = $Computer{$VMName};
 
 print STDERR "Create $computer:tmp/ if not exists\n";
 `ssh $computer "mkdir tmp"`;

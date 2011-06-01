@@ -172,17 +172,17 @@ while( defined $ARGV[$PosArgv] )
 $Version = "1.0.0";
 
 $CurrentPath = cwd;
-$WorkingRep = $CurrentPath;
+# $WorkingRep = $CurrentPath;
 
-$WorkingRep =~ /\/([^\/]+)\/?$/;
-$WorkingRep = $1;
+# $WorkingRep =~ /\/([^\/]+)\/?$/;
+# $WorkingRep = $1;
 
-if ( $WorkingRep eq '' )
-{
-	die "Unable to find working rep\n";
-}
+# if ( $WorkingRep eq '' )
+# {
+#	die "Unable to find working rep\n";
+#}
 
-# $WorkingRep = 'OMiSCID-Dev'; # 'OMiSCID';
+$WorkingRep = 'OMiSCID';
 
 # Change current Working directory to a subdirectory
 if ( !-e './CreateFinalVersion' )
@@ -196,37 +196,42 @@ if ( -e 'LastVersion.info' )
 {
 	open( $fd, '<LastVersion.info' ) or die "Unable to open 'LastVersion.info'\n";
 	$line = <$fd>;
-	if ( $line =~ /^(\d+)\.(\d+)\.(\d+)[\s\r\n]+$/ )
+    close( $fd );
+}
+else
+{
+    $line = "1.0.0\n";
+}
+if ( $line =~ /^(\d+)\.(\d+)\.(\d+)[\s\r\n]+$/ )
+{
+	$majorn = $1;
+	$middlen = $2;
+	$lastn = $3;
+	if ( $IncrVersionType == -1 )
 	{
-		$majorn = $1;
-		$middlen = $2;
-		$lastn = $3;
-		if ( $IncrVersionType == -1 )
-		{
-			# Nothing
-		}
-		if ( $IncrVersionType == 0 )
-		{
-			$lastn++;
-		}
-		if ( $IncrVersionType == 1 )
-		{
-			$middlen++;
-			$lastn = 0;
-		}
-		if ( $IncrVersionType == 2 )
-		{
-			$majorn++;
-			$middlen = 0;
-			$lastn = 0;
-		}
+		# Nothing
+	}
+	if ( $IncrVersionType == 0 )
+	{
+		$lastn++;
+	}
+	if ( $IncrVersionType == 1 )
+	{
+		$middlen++;
+		$lastn = 0;
+	}
+	if ( $IncrVersionType == 2 )
+	{
+		$majorn++;
+		$middlen = 0;
+		$lastn = 0;
+	}
 
-		$Version = "$majorn.$middlen.$lastn";
-	}
-	else
-	{
-		die "unable to parse '../LastVersion.info'\n";
-	}
+	$Version = "$majorn.$middlen.$lastn";
+}
+else
+{
+	die "unable to parse '../LastVersion.info'\n";
 }
 
 print "=> $Version\n";
@@ -312,9 +317,9 @@ foreach $file ( @UsualFiles )
 }
 system( $command );
 
-chdir( './CreateFinalVersion/OMiSCID' );
+chdir( './CreateFinalVersion/' );
 
-$command = "zip -9 -r ../$VersionFile OMiSCID";
+$command = "zip -9 -r $VersionFile OMiSCID";
 # print $command
 
 system( $command );
@@ -324,7 +329,6 @@ if ( $StopAfterZip == 1 )
 	exit();
 }
 
-chdir( '..' );
 
 $TestSuite  = "###########################################################\n";
 $TestSuite .= "#\n";
@@ -479,10 +483,10 @@ if ( $DoTest == 1 )
 		        
 			# copy Archive to the test computer
 			print STDERR "$TestComputer: Copy and unzip Omiscid in /tmp/\n";
-			`scp ../$VersionFile $TestComputer:/tmp/;ssh $TestComputer "cd /tmp;rm -rf $WorkingRep OmiscidInstall;unzip $VersionFile;mkdir OmiscidInstall"`;
+			`scp $VersionFile $TestComputer:/tmp/;ssh $TestComputer "cd /tmp;rm -rf $WorkingRep OmiscidInstall;unzip $VersionFile;mkdir OmiscidInstall"`;
 			
 			print STDERR "$TestComputer: Change permissions on test scripts in /tmp/$WorkingRep/Test/\n";
-			`ssh $TestComputer "chmod 755 /tmp/$WorkingRep/Test"`;
+			`ssh $TestComputer "chmod -R 755 /tmp/$WorkingRep/Test"`;
 			
 			# set that it is not tested successfully
 			$Tested = 0;

@@ -9,7 +9,7 @@ InvoqueDebugger=$5
 export LD_LIBRARY_PATH=/tmp/OmiscidInstall/lib/:./:$LD_LIBRARY_PATH:./:/tmp/OmiscidInstall/lib/
 export DYLD_LIBRARY_PATH=/tmp/OmiscidInstall/lib/:./:$DYLD_LIBRARY_PATH:./:/tmp/OmiscidInstall/lib/
 export PATH=/tmp/OmiscidInstall/bin:./:$PATH:/softs/stow/insure++-7.1.2/bin/:./:/tmp/OmiscidInstall/bin
-export OMISCID_WORKING_DOMAIN=_bip_test_valid._tcp
+export OMISCID_WORKING_DOMAIN=_bip._tcp
 
 cd /tmp/$WorkingRep/Examples
 rm -f ./Test
