@@ -206,7 +206,7 @@ int main(int argc, char* argv[])
 				fprintf( stderr, "Warning: debug mode already set\n" );
 			}
 			Debug = true;
-			 continue;
+			continue;
 		}
 
 		sprintf( Message, "invalid option in parameter %d ('%s')", Argument+1, argv[Argument] );

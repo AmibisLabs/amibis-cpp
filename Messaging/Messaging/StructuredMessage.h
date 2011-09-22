@@ -11,7 +11,7 @@
 // these functions
 #ifdef WIN32
 #pragma warning(disable: 4290)
-// Warning azbout multiple copy constructors (C4521)
+// Warning about multiple copy constructors (C4521)
 #pragma warning(disable: 4521)
 #endif
 

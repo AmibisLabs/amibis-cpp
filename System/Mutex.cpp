@@ -13,20 +13,20 @@ Mutex::Mutex()
 #ifdef WIN32
 	// mutex = CreateMutex( NULL, false, NULL );
 	mutex = CreateSemaphore(NULL, 1, (LONG)0xffff, NULL );
-	#ifdef DEBUG
-		if ( mutex == NULL )
-		{
-			int err = GetLastError();
-			OmiscidError( "Could not create mutex : %d\n", err );
-		}
-	#endif
+#ifdef DEBUG_MUTEX_OWNER
+	if ( mutex == NULL )
+	{
+		int err = GetLastError();
+		OmiscidError( "Could not create mutex : %d\n", err );
+	}
+#endif
 #else
 	if ( pthread_mutex_init(&mutex, NULL) != 0 )
 	{
 		throw  SimpleException("Error Mutex Init");
 	}
 #endif
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 	OwnerId = 0;
 	PreviousOwnerId = 0;
 #endif
@@ -50,7 +50,7 @@ bool Mutex::Lock()
 	unsigned int Result = WaitForSingleObject( mutex, INFINITE );
 	if ( Result == WAIT_OBJECT_0 )
 	{
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 		// In debug mode, set the owner id
 		OwnerId = Thread::GetThreadId();
 #endif
@@ -86,7 +86,7 @@ bool Mutex::Unlock()
 	}
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 	PreviousOwnerId = OwnerId;
 	OwnerId = 0;
 #endif

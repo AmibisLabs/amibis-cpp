@@ -64,7 +64,7 @@ public:
 
 private:
 
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 	SimpleList<unsigned int> * OwnerIds;
 	unsigned int PreviousOwnerId;
 #endif

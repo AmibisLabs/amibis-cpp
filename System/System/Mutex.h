@@ -61,7 +61,7 @@ public:
 
 private:
 
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 	unsigned int OwnerId;
 	unsigned int PreviousOwnerId;
 #endif

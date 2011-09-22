@@ -24,7 +24,7 @@ ReentrantMutex::ReentrantMutex()
 		throw SimpleException("Error Mutex Init");
 	}
 #endif
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 	OwnerIds = new OMISCID_TLM SimpleList<unsigned int>;
 	PreviousOwnerId = 0xffffffff;
 #endif
@@ -42,7 +42,7 @@ ReentrantMutex::~ReentrantMutex()
 	pthread_mutex_destroy(&mutex);
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 	if ( OwnerIds != (SimpleList<unsigned int>*)NULL )
 	{
 		delete OwnerIds;
@@ -57,7 +57,7 @@ bool ReentrantMutex::Lock()
 	unsigned int Result = WaitForSingleObject( mutex, INFINITE );
 	if ( Result == WAIT_OBJECT_0 )
 	{
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 		// In debug mode, set the owner id
 		OwnerIds->AddHead( Thread::GetThreadId() );
 #endif
@@ -67,7 +67,7 @@ bool ReentrantMutex::Lock()
 #else
 	if( pthread_mutex_lock(&mutex) == 0 )
 	{
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 		// In debug mode, set the owner id
 		OwnerIds->AddHead( Thread::GetThreadId() );
 #endif
@@ -91,7 +91,7 @@ bool ReentrantMutex::Unlock()
 		return false;
 	}
 #endif
-#ifdef DEBUG
+#ifdef DEBUG_MUTEX_OWNER
 	if ( OwnerIds->GetNumberOfElements() != 0 )
 	{
 		PreviousOwnerId = OwnerIds->ExtractFirst();
