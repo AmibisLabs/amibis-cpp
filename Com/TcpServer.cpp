@@ -284,7 +284,7 @@ bool TcpServer::AcceptConnection(MsgSocket* sock)
 {
 	// OmiscidTrace( "in TcpServer::acceptConnection(MsgSocket*) %u\n", sock->GetPeerPid());
 
-	// OmiscidTrace( "TcpServer::AcceptConnection:: connection from (%s)\n", sock->GetSocket()->GetConnectedHost().GetStr());
+	OmiscidTrace( "TcpServer::AcceptConnection:: connection from (%s)\n", sock->GetSocket()->GetConnectedHost().GetStr());
 
 	SmartLocker SL_protectSend( protectSend );	// Prevent send before synchronisation
 	SmartLocker SL_listConnections(listConnections);

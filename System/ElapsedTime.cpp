@@ -58,3 +58,20 @@ unsigned int ElapsedTime::Get(bool DoReset /* = false */)
 	return CurrentElapsedTime;
 }
 
+
+/** @brief Get the current time in ms
+ */
+unsigned int ElapsedTime::GetCurrentTime()
+{
+	struct timeval CurrentTimeOfDay;
+	unsigned int   CurrentTime;
+
+	// retrieve the current time
+	gettimeofday(&CurrentTimeOfDay, NULL);
+
+	// Compute the time in ms since epoque
+	CurrentTime = CurrentTimeOfDay.tv_sec * 1000 + CurrentTimeOfDay.tv_usec/1000;
+
+	return CurrentTime;
+}
+

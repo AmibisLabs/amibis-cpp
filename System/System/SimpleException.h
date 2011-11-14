@@ -17,6 +17,8 @@
 
 namespace Omiscid {
 
+class SimpleString;
+
 /**
  * @class SimpleException SimpleException.h System/SimpleException.h
  * @brief Exception raised by the object of the OMiSCID system library

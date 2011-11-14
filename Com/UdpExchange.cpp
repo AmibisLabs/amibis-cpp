@@ -120,7 +120,7 @@ UdpConnection* UdpExchange::AcceptConnection(const UdpConnection& udp_connect, b
 	UdpConnection* udp_found = NULL;
 	for ( listUdpConnections.First(); !udp_found && listUdpConnections.NotAtEnd(); listUdpConnections.Next())
 	{
-		if(udp_connect == *(listUdpConnections.GetCurrent()))
+		if (udp_connect == *(listUdpConnections.GetCurrent()))
 		{
 			udp_found = listUdpConnections.GetCurrent();
 		}

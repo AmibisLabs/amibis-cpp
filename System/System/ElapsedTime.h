@@ -36,6 +36,10 @@ public:
 	 */
 	unsigned int Get(bool DoReset = false);
 
+	/** @brief Get the current time in ms
+	 */
+	static unsigned int GetCurrentTime();
+
 private:
 	unsigned int StartTime; /*!< A value to store start time in millisecond since epoque */
 };

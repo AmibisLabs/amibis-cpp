@@ -905,9 +905,11 @@ void MsgSocket::AcceptConnection()
 
 bool MsgSocket::AcceptConnection(MsgSocket* ms)
 {
-	//std::cerr << "in MsgSocket::acceptConnection(MsgSocket*)\n";
+	OmiscidTrace( "Subclass MsgSocket::AcceptConnection to accept connection\n"
+				  "\t(Default behaviour is to close just opened socket\n" );
 	delete ms;
 	return false;
+
 }
 
 int MsgSocket::Send(int Sendlen, const char* buf)

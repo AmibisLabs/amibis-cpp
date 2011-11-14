@@ -310,21 +310,61 @@ const SimpleString operator+(const char* str1, const SimpleString& str2);
  */
 const SimpleString operator+(const SimpleString& str1, const char* str2);
 
+
 /*
  * @brief A serialisation input operator
  * @param [in] is, an input stream
  * @param [in] str2, a char * buffer (ended by '0')
  * @return Returns the input stream
  */
-std::istream& operator>>( std::istream &is , SimpleString &str );
+inline std::istream& operator>>( std::istream &is , SimpleString &str )
+{
+	// To optimize !
+	char c;
+	bool LineIsNotTerminated;
 
+	// Create a new buffer,
+	char TmpS[256];
+
+	str.Empty();
+	// Get the data
+	do
+	{
+		// Get the first 5 characters of the line
+		is.get((char*)TmpS,5);
+		// Add them to the line
+		str += (char*)TmpS;
+
+		is.get( c );
+
+		if ( c == '\n' )
+		{
+			LineIsNotTerminated = false;
+		}
+		else
+		{
+			// push back the character in the input
+			is.unget();
+
+			// Loop again
+			LineIsNotTerminated = true;
+		}
+	}
+	while ( LineIsNotTerminated == true );
+
+	return is;
+}
 /*
  * @brief A serialisation output operator
  * @param [in] is, an input stream
  * @param [in] str2, a char * buffer (ended by '0')
  * @return Returns the input stream
  */
-std::ostream& operator<<( std::ostream &os, const SimpleString &str );
+inline std::ostream& operator<<( std::ostream &os, const SimpleString &str )
+{
+	os << str.GetStr();
+	return os;
+}
 
 } // namespace Omiscid
 

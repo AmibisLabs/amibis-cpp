@@ -330,6 +330,15 @@ SimpleString ServiceProxy::GetHostName()
 	return HostName;
 }
 
+	/**
+	 * Port control where the remote service is waiting
+	 * @return the control port number
+	 */
+unsigned int ServiceProxy::GetPortNumber()
+{
+	return ControlPort;
+}
+
 SimpleString ServiceProxy::GetName()
 {
 	return GetVariableValue( CommonServiceValues::NameForNameString );

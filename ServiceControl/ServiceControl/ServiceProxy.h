@@ -79,6 +79,12 @@ public:
 	SimpleString GetHostName();
 
 	/**
+	 * Host name where the remote service is located
+	 * @return the host name
+	 */
+	unsigned int GetPortNumber();
+
+	/**
 	 * The Peer Id of the remote Omiscid service
 	 * @return the peer id
 	 */

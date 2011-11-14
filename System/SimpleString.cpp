@@ -834,7 +834,14 @@ bool SimpleString::ReplaceAll(const SimpleString& SearchPattern, const SimpleStr
 
 
 
-using namespace std;
+/*
+ * @brief A serialisation input operator
+ * @param [in] is, an input stream
+ * @param [in] str2, a char * buffer (ended by '0')
+ * @return Returns the input stream
+ */
+// std::istream& Omiscid::operator>>( std::istream &is , SimpleString &str )
+
 
 /*
  * @brief A serialisation input operator
@@ -842,55 +849,8 @@ using namespace std;
  * @param [in] str2, a char * buffer (ended by '0')
  * @return Returns the input stream
  */
-istream& Omiscid::operator>>( istream &is , SimpleString &str )
-{
-	// To optimize !
-	char c;
-	bool LineIsNotTerminated;
+// std::ostream& Omiscid::operator<<( std::ostream &os, const SimpleString &str )
 
-	// Create a new buffer,
-	TemporaryMemoryBuffer TmpS( 256 );
-
-	str.Empty();
-	// Get the data
-	do
-	{
-		// Get the first 5 characters of the line
-		is.get((char*)TmpS,5);
-		// Add them to the line
-		str += (char*)TmpS;
-
-		is.get( c );
-
-		if ( c == '\n' )
-		{
-			LineIsNotTerminated = false;
-		}
-		else
-		{
-			// push back the character in the input
-			is.unget();
-
-			// Loop again
-			LineIsNotTerminated = true;
-		}
-	}
-	while ( LineIsNotTerminated == true );
-
-	return is;
-}
-
-/*
- * @brief A serialisation input operator
- * @param [in] is, an input stream
- * @param [in] str2, a char * buffer (ended by '0')
- * @return Returns the input stream
- */
-std::ostream& Omiscid::operator<<( std::ostream &os, const SimpleString &str )
-{
-	os << str.GetStr();
-	return os;
-}
 
 //----------------------------------------------//
 
