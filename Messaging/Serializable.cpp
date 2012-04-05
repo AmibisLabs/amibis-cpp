@@ -255,3 +255,10 @@ void Serializable::Unserialize( const StructuredMessage& SMsg )
 	}
 }
 
+namespace Omiscid {
+
+SerializeValue Serialize( Serializable& Data ) { return (SerializeValue)Data.Serialize(); }
+void Unserialize( const SerializeValue& Val, Serializable * pData ) { pData->Unserialize(Val); }
+void Unserialize( const SerializeValue& Val, Serializable& Data ) { Data.Unserialize(Val); }
+
+}; // namespace Omiscid

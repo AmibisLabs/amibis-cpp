@@ -117,6 +117,9 @@ protected:
 	}
 };
 
+SerializeValue Serialize( Serializable& Data );
+void Unserialize( const SerializeValue& Val, Serializable * pData );
+void Unserialize( const SerializeValue& Val, Serializable& Data );
 
 template <typename CurrentType>
 void Serializable::AddToSerialization( const SimpleString& Key, SimpleList<CurrentType>& Val )
