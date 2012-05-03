@@ -164,7 +164,7 @@ void Serializable::AddToSerialization( const SimpleString& Key, std::list<Curren
 	CallDeclareSerializeMappingIfNeeded();
 
 	Serializable::EncodeMapping * tmpMapping = Create( Key );
-
+    
 	// Fill (new) structure
 	tmpMapping->AddressOfObject = (void*)&Val;
 	tmpMapping->FunctionToEncode = (SerializeFunction)SerializeStdListFromAddress<CurrentType>;

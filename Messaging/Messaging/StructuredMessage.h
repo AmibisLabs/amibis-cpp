@@ -147,7 +147,7 @@ public:
 
   operator SimpleString()
   {
-	  return SimpleString(json_spirit::write_formatted(Serializer).c_str());
+	  return SimpleString(json_spirit::write(Serializer).c_str());
   }
 
  /** \find Find an element value hashed by Key
